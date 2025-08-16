@@ -12,71 +12,12 @@ import { raise } from '../../state/notification/notification.actions';
   selector: 'app-landing',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-      <div class="max-w-md w-full bg-white rounded-lg shadow-xl p-8 text-center">
-        <div class="mb-8">
-          <h1 class="text-4xl font-bold text-gray-900 mb-2">Pockito</h1>
-          <p class="text-gray-600 text-lg">Smart Personal Finance</p>
-        </div>
-        
-        <!-- Loading State -->
-        <div *ngIf="isLoading" class="mb-8">
-          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p class="text-gray-600">Initializing...</p>
-        </div>
-        
-        <!-- Main Content -->
-        <div *ngIf="!isLoading">
-          <div class="mb-8">
-            <p class="text-gray-700 mb-4">
-              Take control of your finances with our intuitive budget tracking and expense management tools.
-            </p>
-          </div>
-          
-          <div class="space-y-3 mb-8">
-            <button 
-              (click)="login()"
-              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-            >
-              Sign In to Continue
-            </button>
-            
-            <button 
-              (click)="register()"
-              class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-            >
-              Create New Account
-            </button>
-          </div>
-          
-          <!-- Test API Buttons -->
-          <div class="mt-6 space-y-3">
-            <button 
-              (click)="testPublicEndpoint()"
-              class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-            >
-              Test Public API
-            </button>
-            <button 
-              (click)="testProtectedEndpoint()"
-              class="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-            >
-              Test Protected API
-            </button>
-          </div>
-          
-          <div class="mt-6 text-sm text-gray-500">
-            <p>Secure authentication powered by Keycloak</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  `,
-  styles: []
+  templateUrl: './landing.component.html',
+  styleUrls: ['./landing.component.scss']
 })
 export class LandingComponent implements OnInit, OnDestroy {
   isLoading = true;
+  isMobileMenuOpen = false;
   private subscription = new Subscription();
 
   constructor(
@@ -113,49 +54,16 @@ export class LandingComponent implements OnInit, OnDestroy {
     this.keycloakService.register();
   }
 
-  testPublicEndpoint(): void {
-    this.utilitiesService.getPublicInfo().subscribe({
-      next: (response) => {
-        console.log('Public API Response:', response);
-        this.store.dispatch(raise({ 
-          message: `Public API Success: ${response.message}`, 
-          status: 200, 
-          displayType: 'banner',
-          notificationType: 'success'
-        }));
-      },
-      error: (error) => {
-        console.error('Public API Error:', error);
-        this.store.dispatch(raise({ 
-          message: `Public API Error: ${error.message || 'Unknown error'}`, 
-          status: error.status || 500, 
-          displayType: 'banner',
-          notificationType: 'error'
-        }));
-      }
-    });
+  scrollToSection(sectionId: string): void {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    // Close mobile menu after navigation
+    this.isMobileMenuOpen = false;
   }
 
-  testProtectedEndpoint(): void {
-    this.utilitiesService.accessProtectedEndpoint().subscribe({
-      next: (response) => {
-        console.log('Protected API Response:', response);
-        this.store.dispatch(raise({ 
-          message: `Protected API Success: ${response.message}`, 
-          status: 200, 
-          displayType: 'banner',
-          notificationType: 'success'
-        }));
-      },
-      error: (error) => {
-        console.error('Protected API Error:', error);
-        this.store.dispatch(raise({ 
-          message: `Protected API Error: ${error.message || 'Unknown error'}`, 
-          status: error.status || 500, 
-          displayType: 'banner',
-          notificationType: 'error'
-        }));
-      }
-    });
+  toggleMobileMenu(): void {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
 }
