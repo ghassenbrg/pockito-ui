@@ -1,5 +1,5 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';
-import { Observable, from, switchMap } from 'rxjs';
+import { Observable, from, switchMap, of } from 'rxjs';
 import { inject } from '@angular/core';
 import { KeycloakService } from './keycloak.service';
 
@@ -7,11 +7,21 @@ export function tokenInterceptor(
   req: HttpRequest<unknown>, 
   next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> {
-  const kc = inject(KeycloakService);
+  const keycloakService = inject(KeycloakService);
   
-  return from(kc.getToken()).pipe(
+  // Only add token if user is authenticated and token is not expired
+  if (!keycloakService.isAuthenticated() || keycloakService.isTokenExpired()) {
+    return next(req);
+  }
+  
+  return from(keycloakService.getToken()).pipe(
     switchMap(token => {
-      const authReq = req.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
+      const authReq = req.clone({ 
+        setHeaders: { 
+          Authorization: `Bearer ${token}`,
+          'X-Request-ID': crypto.randomUUID() // Add correlation ID for tracking
+        } 
+      });
       return next(authReq);
     })
   );

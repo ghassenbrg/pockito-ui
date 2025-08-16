@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Silent Check SSO</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <script>
+        // This page is used for silent SSO checks
+        // It receives the authentication result from Keycloak and posts it back to the parent window
+        parent.postMessage(location.href, location.origin);
+    </script>
+</body>
+</html>

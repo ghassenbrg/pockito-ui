@@ -1,15 +1,44 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import { KeycloakService } from './core/keycloak.service';
+import { Observable, combineLatest } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { NotificationBannerComponent } from './shared/notification-banner/notification-banner.component';
 import { NotificationToastComponent } from './shared/notification-toast/notification-toast.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NotificationBannerComponent, NotificationToastComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  imports: [CommonModule, RouterOutlet, NotificationBannerComponent, NotificationToastComponent],
+  template: `
+    <div *ngIf="isLoading$ | async" class="min-h-screen flex items-center justify-center bg-gray-50">
+      <div class="text-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p class="text-gray-600">Initializing Keycloak...</p>
+      </div>
+    </div>
+    
+    <router-outlet *ngIf="!(isLoading$ | async)"></router-outlet>
+    
+    <!-- Notification components -->
+    <pockito-notification-banner></pockito-notification-banner>
+    <pockito-notification-toast></pockito-notification-toast>
+  `,
+  styles: []
 })
-export class AppComponent {
-  title = 'pockito-ui';
+export class AppComponent implements OnInit {
+  isLoading$: Observable<boolean>;
+
+  constructor(private keycloakService: KeycloakService) {
+    // Show loading until Keycloak is fully initialized
+    this.isLoading$ = this.keycloakService.getInitialized().pipe(
+      map(initialized => !initialized)
+    );
+  }
+
+  ngOnInit(): void {
+    // Keycloak initialization is handled in app.config.ts via APP_INITIALIZER
+    // This ensures the app doesn't start until Keycloak is ready
+  }
 }
