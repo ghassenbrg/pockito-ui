@@ -14,7 +14,7 @@ export function errorInterceptor(
 
   return next(req).pipe(
     catchError((err: HttpErrorResponse) => {
-      if (err.status === 401 || err.status === 403) {
+      if (err.status === 401) {
         // Unauthorized or Forbidden - handle authentication issues
         if (keycloakService.isAuthenticated()) {
           // If we have a token but still get 401/403, token might be expired or invalid
@@ -24,10 +24,16 @@ export function errorInterceptor(
           // User is not authenticated, redirect to login
           keycloakService.login();
         }
+      } else if (err.status === 403) {
+        // Forbidden - user doesn't have permission
+        store.dispatch(raise({
+          message: 'Access denied - you do not have permission to perform this action',
+          status: err.status
+        }));
       } else {
         // For other errors, show notification
         store.dispatch(raise({
-          message: err.error?.message || err.statusText || 'Unexpected error',
+          message: err.error?.message || err.status + ' - ' +  'Unexpected error',
           status: err.status
         }));
       }

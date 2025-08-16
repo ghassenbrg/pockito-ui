@@ -33,7 +33,7 @@ function calculateNotificationType(status: number, explicitType?: 'error' | 'war
   if (explicitType) return explicitType;
   
   if (status >= 500) return 'error';
-  if (status >= 400) return 'warning';
+  if (status >= 400) return 'error';
   if (status >= 300) return 'info';
   if (status >= 200) return 'success';
   return 'error';
