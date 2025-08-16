@@ -2,6 +2,10 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet, Router } from '@angular/router';
 import { KeycloakService } from '../../core/keycloak.service';
+import { UtilitiesService } from '../../services/utilities.service';
+import { Store } from '@ngrx/store';
+import { AppState } from '../../state/app.state';
+import { raise } from '../../state/notification/notification.actions';
 
 @Component({
   selector: 'app-layout',
@@ -21,6 +25,21 @@ import { KeycloakService } from '../../core/keycloak.service';
               <span class="text-sm text-gray-700">
                 Welcome, {{ getUserDisplayName() }}
               </span>
+              
+              <!-- Test API Buttons -->
+              <button 
+                (click)="testPublicEndpoint()"
+                class="bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+              >
+                Test Public API
+              </button>
+              <button 
+                (click)="testProtectedEndpoint()"
+                class="bg-orange-600 hover:bg-orange-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+              >
+                Test Protected API
+              </button>
+              
               <button 
                 (click)="openAccountManagement()"
                 class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
@@ -51,7 +70,9 @@ import { KeycloakService } from '../../core/keycloak.service';
 export class AppLayoutComponent {
   constructor(
     private keycloakService: KeycloakService,
-    private router: Router
+    private router: Router,
+    private utilitiesService: UtilitiesService,
+    private store: Store<AppState>
   ) {}
 
   getUserDisplayName(): string {
@@ -75,5 +96,33 @@ export class AppLayoutComponent {
 
   hasRole(role: string): boolean {
     return this.keycloakService.hasRole(role);
+  }
+
+  testPublicEndpoint(): void {
+    this.utilitiesService.getPublicInfo().subscribe({
+      next: (response) => {
+        console.log('Public API Response:', response);
+        this.store.dispatch(raise({ 
+          message: `Public API Success: ${response.message}`, 
+          status: 200, 
+          displayType: 'banner',
+          notificationType: 'success'
+        }));
+      }
+    });
+  }
+
+  testProtectedEndpoint(): void {
+    this.utilitiesService.accessProtectedEndpoint().subscribe({
+      next: (response) => {
+        console.log('Protected API Response:', response);
+        this.store.dispatch(raise({ 
+          message: `Protected API Success: ${response.message}`, 
+          status: 200, 
+          displayType: 'banner',
+          notificationType: 'success'
+        }));
+      }
+    });
   }
 }
