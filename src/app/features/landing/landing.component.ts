@@ -17,7 +17,7 @@ import { raise } from '../../state/notification/notification.actions';
       <div class="max-w-md w-full bg-white rounded-lg shadow-xl p-8 text-center">
         <div class="mb-8">
           <h1 class="text-4xl font-bold text-gray-900 mb-2">Pockito</h1>
-          <p class="text-gray-600 text-lg">Smart Budget Management</p>
+          <p class="text-gray-600 text-lg">Smart Personal Finance</p>
         </div>
         
         <!-- Loading State -->
