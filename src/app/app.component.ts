@@ -6,11 +6,12 @@ import { Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { NotificationBannerComponent } from './shared/notification-banner/notification-banner.component';
 import { NotificationToastComponent } from './shared/notification-toast/notification-toast.component';
+import { PwaInstallToastComponent } from './shared/pwa-install-toast/pwa-install-toast.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NotificationBannerComponent, NotificationToastComponent],
+  imports: [CommonModule, RouterOutlet, NotificationBannerComponent, NotificationToastComponent, PwaInstallToastComponent],
   template: `
     <div *ngIf="isLoading$ | async" class="min-h-screen flex items-center justify-center bg-gray-50">
       <div class="text-center">
@@ -24,6 +25,7 @@ import { NotificationToastComponent } from './shared/notification-toast/notifica
     <!-- Notification components -->
     <pockito-notification-banner></pockito-notification-banner>
     <pockito-notification-toast></pockito-notification-toast>
+    <pockito-pwa-install-toast></pockito-pwa-install-toast>
   `,
   styles: []
 })
