@@ -65,6 +65,11 @@ export class KeycloakService {
     this.keycloak?.login(options);
   }
 
+  register(): void {
+    // Keycloak registration is handled through the login method with action=register
+    this.keycloak?.login({ action: 'register' });
+  }
+
   logout(options?: any): void {
     this.keycloak?.logout(options);
   }

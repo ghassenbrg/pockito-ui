@@ -34,12 +34,21 @@ import { raise } from '../../state/notification/notification.actions';
             </p>
           </div>
           
-          <button 
-            (click)="login()"
-            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            Sign In to Continue
-          </button>
+          <div class="space-y-3 mb-8">
+            <button 
+              (click)="login()"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            >
+              Sign In to Continue
+            </button>
+            
+            <button 
+              (click)="register()"
+              class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            >
+              Create New Account
+            </button>
+          </div>
           
           <!-- Test API Buttons -->
           <div class="mt-6 space-y-3">
@@ -98,6 +107,10 @@ export class LandingComponent implements OnInit, OnDestroy {
 
   login(): void {
     this.keycloakService.login();
+  }
+
+  register(): void {
+    this.keycloakService.register();
   }
 
   testPublicEndpoint(): void {
