@@ -1,11 +1,11 @@
 export const environment = {
   production: true,
   keycloak: {
-    url: 'https://your-keycloak-domain.com',
+    url: 'https://auth.ghassen.io/',
     realm: 'pockito',
     clientId: 'pockito-web'
   },
   api: {
-    baseUrl: 'https://your-api-domain.com/api'
+    baseUrl: '/api'
   }
 };
