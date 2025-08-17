@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { EnvironmentService } from '../core/environment.service';
 import { 
   ProtectedResponse, 
   HealthResponse, 
@@ -17,16 +17,21 @@ import {
   providedIn: 'root'
 })
 export class UtilitiesService {
-  private readonly baseUrl = environment.api.baseUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private environmentService: EnvironmentService
+  ) {
+    // No initialization needed! EnvironmentService auto-loads when needed
+  }
 
   /**
    * Access protected endpoint that requires authentication with USER role
    * @returns Observable of protected response data
    */
   accessProtectedEndpoint(): Observable<ProtectedResponse> {
-    return this.http.post<ProtectedResponse>(`${this.baseUrl}/sample/protected`, {});
+    // Just use environmentService.apiBaseUrl directly - it auto-loads config if needed!
+    return this.http.post<ProtectedResponse>(`${this.environmentService.apiBaseUrl}/sample/protected`, {});
   }
 
   /**
@@ -34,7 +39,8 @@ export class UtilitiesService {
    * @returns Observable of health response data
    */
   getHealthStatus(): Observable<HealthResponse> {
-    return this.http.get<HealthResponse>(`${this.baseUrl}/sample/health`);
+    // Just use environmentService.apiBaseUrl directly - it auto-loads config if needed!
+    return this.http.get<HealthResponse>(`${this.environmentService.apiBaseUrl}/sample/health`);
   }
 
   /**
@@ -49,7 +55,8 @@ export class UtilitiesService {
     if (message.length > 100) {
       throw new Error('Message cannot exceed 100 characters');
     }
-    return this.http.get<EchoResponse>(`${this.baseUrl}/sample/echo/${encodeURIComponent(message)}`);
+    // Just use environmentService.apiBaseUrl directly - it auto-loads config if needed!
+    return this.http.get<EchoResponse>(`${this.environmentService.apiBaseUrl}/sample/echo/${encodeURIComponent(message)}`);
   }
 
   /**
@@ -57,6 +64,7 @@ export class UtilitiesService {
    * @returns Observable of public response data
    */
   getPublicInfo(): Observable<PublicResponse> {
-    return this.http.get<PublicResponse>(`${this.baseUrl}/public`);
+    // Just use environmentService.apiBaseUrl directly - it auto-loads config if needed!
+    return this.http.get<PublicResponse>(`${this.environmentService.apiBaseUrl}/public`);
   }
 }
