@@ -8,6 +8,7 @@ import {
   EchoResponse, 
   PublicResponse 
 } from '../models/api-models';
+import { EnvironmentService } from '../core/environment.service';
 
 /**
  * Service for utility endpoints including health checks, echo, and protected access
@@ -19,8 +20,8 @@ import {
 export class UtilitiesService {
 
   constructor(
-    // eslint-disable-next-line no-unused-vars
-    private http: HttpClient
+    private http: HttpClient,
+    private environmentService: EnvironmentService
   ) {
     // No initialization needed! EnvironmentService auto-loads when needed
   }
