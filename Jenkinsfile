@@ -24,8 +24,9 @@ pipeline {
     stage('Install, Lint, Test, Build (Node 20 + Chrome)') {
       agent {
         docker {
-          // Public image; no registry credentials needed here
-          image 'node:20-bullseye'
+          // Explicit official image path to avoid registry-1 alias issues
+          image 'docker.io/library/node:20-bullseye'
+          alwaysPull true
           args '-u 0:0'   // root to apt-get Chrome
           reuseNode true
         }
@@ -81,7 +82,7 @@ pipeline {
 
         stage('Test') {
           steps {
-            // running as root in container: --no-sandbox is typically required
+            // Running as root in container: --no-sandbox avoids Chrome sandbox issues
             sh 'npm run test -- --watch=false --browsers=ChromeHeadless --no-sandbox'
           }
           post {
@@ -106,7 +107,8 @@ pipeline {
     }
 
     stage('Docker Build') {
-      agent any // use a node with Docker daemon access; change to label if needed
+      // ensure this runs on a node with Docker daemon access
+      agent any
       steps {
         script {
           docker.build("${env.IMAGE}")
@@ -119,7 +121,6 @@ pipeline {
       agent any
       steps {
         script {
-          // CLI login with your token (String credential)
           withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKERHUB_TOKEN')]) {
             sh """
               echo "\$DOCKERHUB_TOKEN" | docker login -u \${DOCKER_HUB_USERNAME:-ghassenbrg} --password-stdin
@@ -138,7 +139,6 @@ pipeline {
       agent any
       steps {
         sh 'docker system prune -f || true'
-        // avoid cleanWs() plugin dependency
         deleteDir()
       }
     }
