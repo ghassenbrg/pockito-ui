@@ -147,15 +147,27 @@ describe('UtilitiesService', () => {
         apiBaseUrl: '/api'
       });
 
-      TestBed.overrideProvider(EnvironmentService, { useValue: notReadySpy });
+      // Create a new TestBed configuration for this specific test
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        imports: [HttpClientTestingModule],
+        providers: [
+          UtilitiesService,
+          { provide: EnvironmentService, useValue: notReadySpy }
+        ]
+      });
+
       const testService = TestBed.inject(UtilitiesService);
+      const testHttpMock = TestBed.inject(HttpTestingController);
 
       testService.getHealthStatus().subscribe(response => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`/api/sample/health`);
+      const req = testHttpMock.expectOne(`/api/sample/health`);
       req.flush(mockResponse);
+      
+      testHttpMock.verify();
     });
   });
 });
