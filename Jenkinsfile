@@ -8,23 +8,21 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '20'))
   }
 
-  // ---------- Configure your registry / image here ----------
   environment {
-    REGISTRY      = 'docker.io'
-    DOCKER_ORG    = 'ghassenbrg'
-    IMAGE_NAME    = 'pockito-ui'
-
-    GIT_SHA       = "${env.GIT_COMMIT?.take(7) ?: ''}"
-    BRANCH_SAFE   = "${env.BRANCH_NAME?.replaceAll('[^a-zA-Z0-9_.-]','-') ?: 'local'}"
-    IMAGE_TAG     = "${BRANCH_SAFE}-${GIT_SHA}"
-    FULL_IMAGE    = "${REGISTRY}/${DOCKER_ORG}/${IMAGE_NAME}:${IMAGE_TAG}"
-    LATEST_IMAGE  = "${REGISTRY}/${DOCKER_ORG}/${IMAGE_NAME}:latest"
-
-    // Docker Hub credentials ID in Jenkins (username+password)
+    // Registry settings
+    REGISTRY        = 'docker.io'
+    DOCKER_ORG      = 'ghassenbrg'
+    IMAGE_NAME      = 'pockito-ui'
     DOCKERHUB_CREDS = 'dockerhub-creds'
-
-    // Stage image for Node/Angular work
-    STAGE_IMAGE = 'node:20-bullseye'
+    // Node build image
+    STAGE_IMAGE     = 'node:20-bullseye'
+    // Will be set in Checkout stage
+    GIT_SHA         = ''
+    BRANCH_SAFE     = ''
+    IMAGE_TAG       = ''
+    FULL_IMAGE      = ''
+    LATEST_IMAGE    = ''
+    DIST_DIR        = ''
   }
 
   stages {
@@ -32,17 +30,53 @@ pipeline {
       agent any
       steps {
         checkout scm
-        sh 'echo "Branch: ${BRANCH_NAME}  Commit: ${GIT_COMMIT}"'
+        script {
+          // Compute tags safely (no Groovy calls in environment block)
+          def rawBranch = env.BRANCH_NAME?.trim()
+          if (!rawBranch) { rawBranch = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim() }
+          def rawSha = env.GIT_COMMIT?.trim()
+          if (!rawSha) { rawSha = sh(script: "git rev-parse HEAD", returnStdout: true).trim() }
+
+          def shortSha   = rawSha.length() >= 7 ? rawSha.substring(0,7) : rawSha
+          def branchSafe = rawBranch.replaceAll(/[^a-zA-Z0-9_.-]/, '-')
+
+          env.GIT_SHA      = shortSha
+          env.BRANCH_SAFE  = branchSafe
+          env.IMAGE_TAG    = "${branchSafe}-${shortSha}"
+          env.FULL_IMAGE   = "${env.REGISTRY}/${env.DOCKER_ORG}/${env.IMAGE_NAME}:${env.IMAGE_TAG}"
+          env.LATEST_IMAGE = "${env.REGISTRY}/${env.DOCKER_ORG}/${env.IMAGE_NAME}:latest"
+
+          echo "Branch: ${rawBranch}  Commit: ${rawSha}"
+          echo "Image tag: ${env.IMAGE_TAG}"
+        }
       }
     }
 
-    // ---- Everything Node-related runs inside a Node 20 container ----
-    stage('Frontend Pipeline (Node 20 + Chrome)') {
+    stage('Lint') {
       agent {
         docker {
           image "${env.STAGE_IMAGE}"
           alwaysPull true
-          args '-u 0:0'        // root to apt-get Chrome
+          args '-u 0:0'
+          reuseNode true
+        }
+      }
+      steps {
+        sh '''
+          node -v
+          npm -v
+          npm ci --prefer-offline --no-audit --no-fund
+          npm run --if-present lint
+        '''
+      }
+    }
+
+    stage('Test') {
+      agent {
+        docker {
+          image "${env.STAGE_IMAGE}"
+          alwaysPull true
+          args '-u 0:0'
           reuseNode true
         }
       }
@@ -50,112 +84,69 @@ pipeline {
         CHROME_BIN = '/usr/local/bin/chrome-no-sandbox'
         PUPPETEER_SKIP_DOWNLOAD = 'true'
       }
-      stages {
-        stage('Show Versions') {
-          steps {
-            sh '''
-              set -e
-              node -v
-              npm -v
-            '''
-          }
-        }
-
-        stage('Install Chrome') {
-          steps {
-            sh '''
-              set -eux
-              apt-get update
-              apt-get install -y wget gnupg ca-certificates
-
-              install -m 0755 -d /etc/apt/keyrings
-              wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/keyrings/google.gpg
-              chmod a+r /etc/apt/keyrings/google.gpg
-              echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
-
-              apt-get update
-              apt-get install -y google-chrome-stable
-
-              cat >/usr/local/bin/chrome-no-sandbox <<'EOF'
+      steps {
+        sh '''
+          set -eux
+          # Install Chrome for headless tests (safe if tests don't need it)
+          apt-get update
+          apt-get install -y wget gnupg ca-certificates
+          install -m 0755 -d /etc/apt/keyrings
+          wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/keyrings/google.gpg
+          chmod a+r /etc/apt/keyrings/google.gpg
+          echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+          apt-get update
+          apt-get install -y google-chrome-stable
+          cat >/usr/local/bin/chrome-no-sandbox <<'EOF'
 #!/usr/bin/env bash
 exec /usr/bin/google-chrome --no-sandbox --disable-dev-shm-usage "$@"
 EOF
-              chmod +x /usr/local/bin/chrome-no-sandbox
-
-              google-chrome --version
-            '''
-          }
-        }
-
-        stage('Install Dependencies') {
-          steps {
-            sh 'npm ci --prefer-offline --no-audit --no-fund'
-          }
-        }
-
-        stage('Lint') {
-          steps {
-            sh 'npm run --if-present lint'
-          }
-        }
-
-        stage('Test') {
-          steps {
-            // Expect your package.json to have "test:ci" (e.g., Karma headless + JUnit)
-            // If not present, this will no-op.
-            sh 'npm run --if-present test:ci'
-          }
-          post {
-            always {
-              // Adjust if your junit.xml lands elsewhere
-              junit testResults: 'test-results/junit.xml', allowEmptyResults: true
-            }
-          }
-        }
-
-        stage('Build') {
-          steps {
-            sh '''
-              # Fail if no "build" script:
-              jq -r '.scripts.build // empty' package.json >/dev/null 2>&1 || {
-                echo "❌ No \\"build\\" script defined in package.json"; exit 1;
-              }
-              npm run build
-            '''
-          }
-        }
-
-        stage('Detect DIST_DIR') {
-          steps {
-            script {
-              def distDir = sh(
-                script: '''
-                  node -e "const fs=require('fs');
-                    const a=JSON.parse(fs.readFileSync('angular.json','utf8'));
-                    const proj=a.defaultProject || Object.keys(a.projects||{})[0];
-                    if(!proj){ console.error('No projects found in angular.json'); process.exit(2); }
-                    const out=a.projects?.[proj]?.architect?.build?.options?.outputPath;
-                    const fallback=`dist/${proj}/browser`;
-                    console.log(out || fallback);"
-                ''',
-                returnStdout: true
-              ).trim()
-              env.DIST_DIR = distDir
-              echo "✅ DIST_DIR resolved to: ${env.DIST_DIR}"
-            }
-          }
+          chmod +x /usr/local/bin/chrome-no-sandbox
+          
+          npm ci --prefer-offline --no-audit --no-fund
+          npm run --if-present test:ci
+        '''
+      }
+      post {
+        always {
+          junit testResults: 'test-results/junit.xml', allowEmptyResults: true
         }
       }
     }
 
-    // ---- Docker build/push happens on a node with Docker daemon access ----
-    stage('Docker Build') {
+    stage('Build') {
+      agent {
+        docker {
+          image "${env.STAGE_IMAGE}"
+          alwaysPull true
+          args '-u 0:0'
+          reuseNode true
+        }
+      }
+      steps {
+        sh '''
+          # Ensure build script exists then build
+          jq -r '.scripts.build // empty' package.json >/dev/null 2>&1 || {
+            echo "❌ No \\"build\\" script in package.json"; exit 1;
+          }
+          npm ci --prefer-offline --no-audit --no-fund
+          npm run build
+
+          # Detect Angular dist output path (fallback to Angular 17+ default)
+          DIST_DIR=$(node -e "const fs=require('fs');const a=JSON.parse(fs.readFileSync('angular.json','utf8'));const p=a.defaultProject||Object.keys(a.projects||{})[0];if(!p){process.exit(2)}const out=a.projects?.[p]?.architect?.build?.options?.outputPath;process.stdout.write(out||('dist/'+p+'/browser'))")
+          echo "DIST_DIR detected: ${DIST_DIR}"
+          echo "DIST_DIR=${DIST_DIR}" > .dist_env
+        '''
+      }
+    }
+
+    stage('Build Docker Image') {
       agent any
       steps {
         sh '''
           set -eux
           docker version
-          echo "Building image: ${FULL_IMAGE}"
+          . ./.dist_env
+          echo "Building image: ${FULL_IMAGE}  with DIST_DIR=${DIST_DIR}"
           docker build \
             --build-arg BUILD_CMD="npm run build" \
             --build-arg DIST_DIR="${DIST_DIR}" \
@@ -166,8 +157,7 @@ EOF
       }
     }
 
-    stage('Docker Push') {
-      when { anyOf { branch 'master'; branch 'main' } }
+    stage('Push Image') {
       agent any
       steps {
         withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDS}", passwordVariable: 'DOCKERHUB_PASS', usernameVariable: 'DOCKERHUB_USER')]) {
@@ -175,8 +165,13 @@ EOF
             set -eux
             echo "${DOCKERHUB_PASS}" | docker login -u "${DOCKERHUB_USER}" --password-stdin "${REGISTRY}"
             docker push "${FULL_IMAGE}"
-            docker tag "${FULL_IMAGE}" "${LATEST_IMAGE}"
-            docker push "${LATEST_IMAGE}"
+
+            # Also tag as :latest on main/master
+            BR="${BRANCH_NAME:-$(git rev-parse --abbrev-ref HEAD)}"
+            if [ "$BR" = "main" ] || [ "$BR" = "master" ]; then
+              docker tag "${FULL_IMAGE}" "${LATEST_IMAGE}"
+              docker push "${LATEST_IMAGE}"
+            fi
           '''
         }
       }
@@ -194,5 +189,6 @@ EOF
   post {
     success { echo "✅ Build OK. Image: ${FULL_IMAGE}" }
     failure { echo "❌ Build failed." }
+    always  { sh 'docker images | head -n 20 || true' }
   }
 }
