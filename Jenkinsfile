@@ -10,7 +10,7 @@ pipeline {
     DOCKER_REPO = 'ghassenbrg/pockito-ui'
     DOCKER_TAG  = "${env.BRANCH_NAME == 'master' ? 'latest' : env.BRANCH_NAME}"
     IMAGE       = "${DOCKER_REPO}:${DOCKER_TAG}"
-    STAGE_IMAGE = 'library/node:20-bullseye' // important: include "library/"
+    STAGE_IMAGE = 'library/node:20-bullseye' // include library/ for Jenkins global registry wrappers
   }
 
   stages {
@@ -25,7 +25,6 @@ pipeline {
     stage('Install, Lint, Test, Build (Node 20 + Chrome)') {
       agent {
         docker {
-          // Jenkins may prepend its configured registry host; using "library/..." keeps it valid
           image "${env.STAGE_IMAGE}"
           alwaysPull true
           args '-u 0:0'   // root so we can apt-get Chrome
@@ -82,12 +81,21 @@ pipeline {
 
         stage('Test') {
           steps {
-            // --no-sandbox recommended when running Chrome as root in containers
-            sh 'npm run test -- --watch=false --browsers=ChromeHeadless --no-sandbox'
+            // IMPORTANT: do not pass --no-sandbox to Angular CLI; it doesn't recognize it.
+            // Use the default ChromeHeadless launcher here.
+            sh 'npm run test -- --watch=false --browsers=ChromeHeadless'
           }
           post {
             always {
-              junit testResults: '**/test-results.xml', allowEmptyResults: true
+              // Only publish JUnit if XML files actually exist
+              script {
+                def hasReports = sh(script: "ls -1 **/*.xml 2>/dev/null | wc -l", returnStdout: true).trim()
+                if (hasReports != '0') {
+                  junit testResults: '**/*.xml', allowEmptyResults: true
+                } else {
+                  echo 'No JUnit XML reports found; skipping publish.'
+                }
+              }
             }
           }
         }
@@ -107,8 +115,7 @@ pipeline {
     }
 
     stage('Docker Build') {
-      // ensure this runs on a node with Docker daemon access
-      agent any
+      agent any // ensure this runs on a node with Docker daemon access
       steps {
         script {
           docker.build("${env.IMAGE}")
