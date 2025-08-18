@@ -3,14 +3,16 @@ pipeline {
 
   options {
     timestamps()
-    skipDefaultCheckout(true)
+    skipDefaultCheckout(true) // explicit checkout stage only
   }
 
   environment {
     DOCKER_REPO = 'ghassenbrg/pockito-ui'
     DOCKER_TAG  = "${env.BRANCH_NAME == 'master' ? 'latest' : env.BRANCH_NAME}"
     IMAGE       = "${DOCKER_REPO}:${DOCKER_TAG}"
-    STAGE_IMAGE = 'library/node:20-bullseye' // keep library/ so Jenkins' registry wrapper resolves correctly
+
+    // Use explicit official namespace so Jenkins' global registry wrapper resolves correctly
+    STAGE_IMAGE = 'library/node:20-bullseye'
   }
 
   stages {
@@ -27,12 +29,13 @@ pipeline {
         docker {
           image "${env.STAGE_IMAGE}"
           alwaysPull true
-          args '-u 0:0'     // root so we can apt-get Chrome
+          // run as root so we can apt-get Chrome and write npm caches if needed
+          args '-u 0:0'
           reuseNode true
         }
       }
       environment {
-        // We'll point this to a wrapper we create after installing Chrome
+        // Wrapper we create below; ensures Chrome runs with --no-sandbox in CI
         CHROME_BIN = '/usr/local/bin/chrome-no-sandbox'
         PUPPETEER_SKIP_DOWNLOAD = 'true'
       }
@@ -60,7 +63,7 @@ pipeline {
               apt-get update
               apt-get install -y google-chrome-stable
 
-              # Create a wrapper so Chrome always runs with no-sandbox + dev-shm workaround
+              # Wrapper so Chrome always runs with safe flags in CI
               cat >/usr/local/bin/chrome-no-sandbox <<'EOF'
 #!/usr/bin/env bash
 exec /usr/bin/google-chrome --no-sandbox --disable-dev-shm-usage "$@"
@@ -73,60 +76,45 @@ EOF
         }
 
         stage('Install Dependencies') {
-          steps { sh 'npm ci' }
+          steps {
+            sh 'npm ci'
+          }
         }
 
         stage('Lint (if present)') {
           steps {
-            sh '''
-              if npm run -s | grep -q "^  lint "; then
-                npm run lint
-              else
-                echo "ℹ️  No \\"lint\\" script found in package.json; skipping."
-              fi
-            '''
+            // Runs only if a "lint" script exists; no-op otherwise
+            sh 'npm run --if-present lint'
           }
         }
 
-        stage('Test') {
+        stage('Test (JUnit XML)') {
           steps {
-            // Do NOT pass --no-sandbox here; the wrapper handles it.
-            sh 'npm run test -- --watch=false --browsers=ChromeHeadless'
+            // Expect karma.conf.js to define ChromeHeadlessNoSandbox + JUnit reporter -> test-results/junit.xml
+            sh 'npm run test:ci'
           }
           post {
             always {
-              // Publish JUnit only if XML exists
-              script {
-                def hasReports = sh(script: "ls -1 **/*.xml 2>/dev/null | wc -l", returnStdout: true).trim()
-                if (hasReports != '0') {
-                  junit testResults: '**/*.xml', allowEmptyResults: true
-                } else {
-                  echo 'No JUnit XML reports found; skipping publish.'
-                }
-              }
+              junit testResults: 'test-results/junit.xml', allowEmptyResults: true
             }
           }
         }
 
+        // Optional: pre-compile to fail fast before Docker image build
         stage('Build (if present)') {
           steps {
-            sh '''
-              if npm run -s | grep -q "^  build "; then
-                npm run build
-              else
-                echo "ℹ️  No \\"build\\" script found in package.json; skipping."
-              fi
-            '''
+            sh 'npm run --if-present build'
           }
         }
       }
     }
 
     stage('Docker Build') {
-      agent any   // run on a node with Docker daemon access
+      // Ensure this runs on a node with Docker daemon access
+      agent any
       steps {
         script {
-          docker.build("${env.IMAGE}")
+          docker.build("${env.IMAGE}", ".")
         }
       }
     }
