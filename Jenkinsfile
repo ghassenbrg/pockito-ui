@@ -23,11 +23,6 @@ pipeline {
     DOCKERHUB_CREDS = 'dockerhub-creds'
   }
 
-  triggers {
-    // uncomment if you want auto-builds (polling example)
-    // pollSCM('H/5 * * * *')
-  }
-
   stages {
     stage('Checkout') {
       steps {
