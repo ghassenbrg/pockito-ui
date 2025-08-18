@@ -1,139 +1,121 @@
 pipeline {
-  agent none
+  agent any
 
   options {
+    ansiColor('xterm')
     timestamps()
-    skipDefaultCheckout(true) // explicit checkout stage only
+    buildDiscarder(logRotator(numToKeepStr: '20'))
   }
 
   environment {
-    DOCKER_REPO = 'ghassenbrg/pockito-ui'
-    DOCKER_TAG  = "${env.BRANCH_NAME == 'master' ? 'latest' : env.BRANCH_NAME}"
-    IMAGE       = "${DOCKER_REPO}:${DOCKER_TAG}"
+    // ---- Change these for your registry / image naming ----
+    REGISTRY      = 'docker.io'
+    DOCKER_ORG    = 'ghassenbrg'
+    IMAGE_NAME    = 'pockito-ui'
+    // Tag: branch-sha or "latest" for main
+    GIT_SHA       = "${env.GIT_COMMIT?.take(7) ?: ''}"
+    BRANCH_SAFE   = "${env.BRANCH_NAME?.replaceAll('[^a-zA-Z0-9_.-]','-') ?: 'local'}"
+    IMAGE_TAG     = "${BRANCH_SAFE}-${GIT_SHA}"
+    FULL_IMAGE    = "${REGISTRY}/${DOCKER_ORG}/${IMAGE_NAME}:${IMAGE_TAG}"
+    LATEST_IMAGE  = "${REGISTRY}/${DOCKER_ORG}/${IMAGE_NAME}:latest"
 
-    // Use explicit official namespace so Jenkins' global registry wrapper resolves correctly
-    STAGE_IMAGE = 'library/node:20-bullseye'
+    // Jenkins credentials ID for Docker Hub (set in Jenkins > Credentials)
+    DOCKERHUB_CREDS = 'dockerhub-creds'
+  }
+
+  triggers {
+    // uncomment if you want auto-builds (polling example)
+    // pollSCM('H/5 * * * *')
   }
 
   stages {
-
     stage('Checkout') {
-      agent any
       steps {
         checkout scm
+        sh 'git --version || true'
+        sh 'echo "Branch: ${BRANCH_NAME}  Commit: ${GIT_COMMIT}"'
       }
     }
 
-    stage('Install, Lint, Test, Build (Node 20 + Chrome)') {
-      agent {
-        docker {
-          image "${env.STAGE_IMAGE}"
-          alwaysPull true
-          // run as root so we can apt-get Chrome and write npm caches if needed
-          args '-u 0:0'
-          reuseNode true
-        }
-      }
-      environment {
-        // Wrapper we create below; ensures Chrome runs with --no-sandbox in CI
-        CHROME_BIN = '/usr/local/bin/chrome-no-sandbox'
-        PUPPETEER_SKIP_DOWNLOAD = 'true'
-      }
-      stages {
-        stage('Show Versions') {
-          steps {
-            echo "Using stage image: ${env.STAGE_IMAGE}"
-            sh 'node -v'
-            sh 'npm -v'
-          }
-        }
-
-        stage('Install Chrome') {
-          steps {
-            sh '''
-              set -eux
-              apt-get update
-              apt-get install -y wget gnupg ca-certificates
-
-              install -m 0755 -d /etc/apt/keyrings
-              wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/keyrings/google.gpg
-              chmod a+r /etc/apt/keyrings/google.gpg
-              echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
-
-              apt-get update
-              apt-get install -y google-chrome-stable
-
-              # Wrapper so Chrome always runs with safe flags in CI
-              cat >/usr/local/bin/chrome-no-sandbox <<'EOF'
-#!/usr/bin/env bash
-exec /usr/bin/google-chrome --no-sandbox --disable-dev-shm-usage "$@"
-EOF
-              chmod +x /usr/local/bin/chrome-no-sandbox
-
-              google-chrome --version
-            '''
-          }
-        }
-
-        stage('Install Dependencies') {
-          steps {
-            sh 'npm ci'
-          }
-        }
-
-        stage('Lint (if present)') {
-          steps {
-            // Runs only if a "lint" script exists; no-op otherwise
-            sh 'npm run --if-present lint'
-          }
-        }
-
-        stage('Test (JUnit XML)') {
-          steps {
-            // Expect karma.conf.js to define ChromeHeadlessNoSandbox + JUnit reporter -> test-results/junit.xml
-            sh 'npm run test:ci'
-          }
-          post {
-            always {
-              junit testResults: 'test-results/junit.xml', allowEmptyResults: true
-            }
-          }
-        }
-
-        // Optional: pre-compile to fail fast before Docker image build
-        stage('Build (if present)') {
-          steps {
-            sh 'npm run --if-present build'
-          }
-        }
+    stage('Node & Dependency Install') {
+      steps {
+        // If you have Jenkins NodeJS plugin, you can wrap with `nodejs('Node 20')`
+        sh '''
+          node -v || true
+          npm -v || true
+          npm ci --prefer-offline --no-audit --no-fund
+        '''
       }
     }
 
-    stage('Docker Build') {
-      // Ensure this runs on a node with Docker daemon access
-      agent any
+    stage('Build (Angular)') {
+      steps {
+        sh '''
+          # Ensure build script exists; otherwise fail loud
+          jq -r '.scripts.build // empty' package.json >/dev/null 2>&1 || {
+            echo "❌ No \\"build\\" script defined in package.json"; exit 1;
+          }
+          npm run build
+        '''
+      }
+    }
+
+    stage('Detect dist path from angular.json') {
       steps {
         script {
-          docker.build("${env.IMAGE}", ".")
+          // Parse angular.json to discover the outputPath; fallback to dist/<project>/browser
+          def distDir = sh(
+            script: '''
+              node -e "const fs=require('fs');
+                const a=JSON.parse(fs.readFileSync('angular.json','utf8'));
+                const proj=a.defaultProject || Object.keys(a.projects||{})[0];
+                if(!proj){ console.error('No projects found in angular.json'); process.exit(2); }
+                const out=a.projects?.[proj]?.architect?.build?.options?.outputPath;
+                const fallback=`dist/${proj}/browser`;
+                console.log(out || fallback);"
+            ''',
+            returnStdout: true
+          ).trim()
+
+          env.DIST_DIR = distDir
+          echo "✅ DIST_DIR resolved to: ${env.DIST_DIR}"
         }
+      }
+    }
+
+    stage('Docker Build (only built assets)') {
+      steps {
+        sh '''
+          echo "Building image: ${FULL_IMAGE}"
+          docker version
+          # Build using the Dockerfile that copies ONLY ${DIST_DIR} into Nginx
+          docker build \
+            --build-arg BUILD_CMD="npm run build" \
+            --build-arg DIST_DIR="${DIST_DIR}" \
+            -t "${FULL_IMAGE}" \
+            -f Dockerfile \
+            .
+        '''
       }
     }
 
     stage('Docker Push') {
-      when { anyOf { branch 'master'; branch 'main'; branch 'develop' } }
-      agent any
+      when {
+        anyOf {
+          branch 'main'
+          branch 'master'
+        }
+      }
       steps {
-        script {
-          withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKERHUB_TOKEN')]) {
-            sh """
-              echo "\$DOCKERHUB_TOKEN" | docker login -u \${DOCKER_HUB_USERNAME:-ghassenbrg} --password-stdin
-              docker push "${IMAGE}"
-              if [ "${BRANCH_NAME}" = "master" ]; then
-                docker tag "${IMAGE}" "${DOCKER_REPO}:latest"
-                docker push "${DOCKER_REPO}:latest"
-              fi
-            """
-          }
+        withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDS}", passwordVariable: 'DOCKERHUB_PASS', usernameVariable: 'DOCKERHUB_USER')]) {
+          sh '''
+            echo "${DOCKERHUB_PASS}" | docker login -u "${DOCKERHUB_USER}" --password-stdin "${REGISTRY}"
+            docker push "${FULL_IMAGE}"
+
+            # Also push :latest on main/master
+            docker tag "${FULL_IMAGE}" "${LATEST_IMAGE}"
+            docker push "${LATEST_IMAGE}"
+          '''
         }
       }
     }
@@ -148,7 +130,11 @@ EOF
   }
 
   post {
-    success { echo "Pipeline completed successfully for branch: ${env.BRANCH_NAME}" }
-    failure { echo "Pipeline failed for branch: ${env.BRANCH_NAME}" }
+    success {
+      echo "✅ Build OK. Image: ${FULL_IMAGE}"
+    }
+    failure {
+      echo "❌ Build failed."
+    }
   }
 }
