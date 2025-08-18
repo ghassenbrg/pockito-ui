@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, Router } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { KeycloakService } from '../../core/keycloak.service';
 import { UtilitiesService } from '../../services/utilities.service';
 import { Store } from '@ngrx/store';
@@ -69,9 +69,11 @@ import { raise } from '../../state/notification/notification.actions';
 })
 export class AppLayoutComponent {
   constructor(
+    // eslint-disable-next-line no-unused-vars
     private keycloakService: KeycloakService,
-    private router: Router,
+    // eslint-disable-next-line no-unused-vars
     private utilitiesService: UtilitiesService,
+    // eslint-disable-next-line no-unused-vars
     private store: Store<AppState>
   ) {}
 
@@ -101,7 +103,7 @@ export class AppLayoutComponent {
   testPublicEndpoint(): void {
     this.utilitiesService.getPublicInfo().subscribe({
       next: (response) => {
-        console.log('Public API Response:', response);
+
         this.store.dispatch(raise({ 
           message: `Public API Success: ${response.message}`, 
           status: 200, 
@@ -115,7 +117,7 @@ export class AppLayoutComponent {
   testProtectedEndpoint(): void {
     this.utilitiesService.accessProtectedEndpoint().subscribe({
       next: (response) => {
-        console.log('Protected API Response:', response);
+
         this.store.dispatch(raise({ 
           message: `Protected API Success: ${response.message}`, 
           status: 200, 

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
 export interface EnvironmentConfig {
@@ -31,7 +30,7 @@ export class EnvironmentService {
   private configLoaded = false;
   private loadingPromise: Promise<void> | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor() {}
 
   /**
    * Load configuration with priority system:
@@ -64,13 +63,13 @@ export class EnvironmentService {
       // Always merge environment variables with environment files
       this._config = this.mergeConfigurations();
       this.configLoaded = true;
-      console.log('Configuration loaded with priority system:', this._config);
+
     } catch (error) {
       console.error('Failed to load configuration:', error);
       // Use fallback configuration
       this._config = this.getFallbackConfig();
       this.configLoaded = true;
-      console.warn('Using fallback configuration:', this._config);
+
     }
   }
 
@@ -399,13 +398,9 @@ export class EnvironmentService {
    * Debug method to show configuration sources
    */
   debugConfigSources(): void {
-    const envFile = this.loadFromEnvironmentFiles();
-    const envVars = this.loadFromEnvironmentVariables();
-    
-    console.log('=== Configuration Sources ===');
-    console.log('Environment File Config:', envFile);
-    console.log('Environment Variables:', envVars);
-    console.log('Final Merged Config:', this._config);
+    // Load configuration from multiple sources for debugging
+    this.loadFromEnvironmentFiles();
+    this.loadFromEnvironmentVariables();
   }
 
   /**

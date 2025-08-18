@@ -20,20 +20,20 @@
       "extends": [
         "eslint:recommended"
       ],
-      "rules": {
-        "no-console": [
-          "warn",
-          {
-            "allow": [
-              "warn",
-              "error"
-            ]
-          }
-        ],
-        "prefer-const": "error",
-        "no-var": "error",
-        "no-unused-vars": "warn"
-      }
+              "rules": {
+          "no-console": [
+            "warn",
+            {
+              "allow": [
+                "warn",
+                "error"
+              ]
+            }
+          ],
+          "prefer-const": "error",
+          "no-var": "error",
+          "no-unused-vars": "warn"
+        }
     }
   ]
 }

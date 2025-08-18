@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { AppState } from '../../state/app.state';
-import { selectNotificationQueue, selectNotificationType } from '../../state/notification/notification.selectors';
+import { selectNotificationQueue } from '../../state/notification/notification.selectors';
 import { dismissById } from '../../state/notification/notification.actions';
 
 @Component({
@@ -81,7 +81,10 @@ export class NotificationToastComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private currentQueue: any[] = [];
 
-  constructor(private store: Store<AppState>) {
+  constructor(
+    // eslint-disable-next-line no-unused-vars
+    private store: Store<AppState>
+  ) {
     this.notificationQueue$ = this.store.select(selectNotificationQueue);
   }
 

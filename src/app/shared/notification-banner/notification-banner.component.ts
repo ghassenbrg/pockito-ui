@@ -11,7 +11,7 @@ import {
   selectNextNotification,
   selectNotificationType
 } from '../../state/notification/notification.selectors';
-import { dismiss, dismissById } from '../../state/notification/notification.actions';
+import { dismiss } from '../../state/notification/notification.actions';
 
 @Component({
   selector: 'pockito-notification-banner',
@@ -114,7 +114,10 @@ export class NotificationBannerComponent implements OnInit, OnDestroy {
   notificationType$: Observable<string>;
   private destroy$ = new Subject<void>();
 
-  constructor(private store: Store<AppState>) {
+  constructor(
+    // eslint-disable-next-line no-unused-vars
+    private store: Store<AppState>
+  ) {
     this.currentNotification$ = this.store.select(selectCurrentNotification);
     this.shouldShowBanner$ = this.store.select(selectShouldShowBanner);
     this.bannerQueueLength$ = this.store.select(selectBannerQueueLength);

@@ -3,10 +3,6 @@ import { CommonModule } from '@angular/common';
 import { KeycloakService } from '../../core/keycloak.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { UtilitiesService } from '../../services/utilities.service';
-import { Store } from '@ngrx/store';
-import { AppState } from '../../state/app.state';
-import { raise } from '../../state/notification/notification.actions';
 
 @Component({
   selector: 'app-landing',
@@ -21,10 +17,10 @@ export class LandingComponent implements OnInit, OnDestroy {
   private subscription = new Subscription();
 
   constructor(
+    // eslint-disable-next-line no-unused-vars
     private keycloakService: KeycloakService,
-    private router: Router,
-    private utilitiesService: UtilitiesService,
-    private store: Store<AppState>
+    // eslint-disable-next-line no-unused-vars
+    private router: Router
   ) {}
 
   ngOnInit(): void {

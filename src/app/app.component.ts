@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { KeycloakService } from './core/keycloak.service';
-import { Observable, combineLatest } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { NotificationBannerComponent } from './shared/notification-banner/notification-banner.component';
 import { NotificationToastComponent } from './shared/notification-toast/notification-toast.component';
@@ -32,7 +32,10 @@ import { PwaInstallToastComponent } from './shared/pwa-install-toast/pwa-install
 export class AppComponent implements OnInit {
   isLoading$: Observable<boolean>;
 
-  constructor(private keycloakService: KeycloakService) {
+  constructor(
+    // eslint-disable-next-line no-unused-vars
+    private keycloakService: KeycloakService
+  ) {
     // Show loading until Keycloak is fully initialized
     this.isLoading$ = this.keycloakService.getInitialized().pipe(
       map(initialized => !initialized)

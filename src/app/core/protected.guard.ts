@@ -1,5 +1,4 @@
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
 import { KeycloakService } from './keycloak.service';
 import { map, take } from 'rxjs/operators';
 
@@ -10,7 +9,6 @@ import { map, take } from 'rxjs/operators';
  */
 export const authRequiredGuard = () => {
   const kc = inject(KeycloakService);
-  const router = inject(Router);
   
   return kc.getInitialized().pipe(
     take(1),

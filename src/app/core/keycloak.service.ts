@@ -15,7 +15,7 @@ export class KeycloakService {
   private initialized$ = new BehaviorSubject<boolean>(false);
 
   constructor() {
-    console.log('KeycloakService initialized');
+
   }
 
   async init(cfg: KeycloakConfig): Promise<boolean> {
@@ -33,7 +33,7 @@ export class KeycloakService {
         enableLogging: false // Disable verbose logging
       });
 
-      console.log('Keycloak initialized:', authenticated ? 'authenticated' : 'not authenticated');
+
       
       this.authenticated$.next(authenticated);
       this.initialized$.next(true);
@@ -145,11 +145,7 @@ export class KeycloakService {
       throw new Error('Not authenticated');
     }
     
-    try {
-      await this.keycloak.updateToken(lifetime);
-      return this.keycloak.token || '';
-    } catch (error) {
-      throw error;
-    }
+    await this.keycloak.updateToken(lifetime);
+    return this.keycloak.token || '';
   }
 }

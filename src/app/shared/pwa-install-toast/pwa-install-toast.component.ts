@@ -72,7 +72,10 @@ export class PwaInstallToastComponent implements OnInit, OnDestroy {
   showInstallPrompt$: Observable<boolean>;
   private destroy$ = new Subject<void>();
 
-  constructor(private pwaInstallService: PwaInstallService) {
+  constructor(
+    // eslint-disable-next-line no-unused-vars
+    private pwaInstallService: PwaInstallService
+  ) {
     this.showInstallPrompt$ = this.pwaInstallService.isInstallPromptAvailable();
   }
 

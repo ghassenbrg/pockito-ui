@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { EnvironmentService } from '../core/environment.service';
+
 import { 
   ProtectedResponse, 
   HealthResponse, 
@@ -19,8 +19,8 @@ import {
 export class UtilitiesService {
 
   constructor(
-    private http: HttpClient,
-    private environmentService: EnvironmentService
+    // eslint-disable-next-line no-unused-vars
+    private http: HttpClient
   ) {
     // No initialization needed! EnvironmentService auto-loads when needed
   }

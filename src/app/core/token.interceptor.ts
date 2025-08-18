@@ -1,5 +1,5 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest } from '@angular/common/http';
-import { Observable, from, switchMap, of } from 'rxjs';
+import { Observable, from, switchMap } from 'rxjs';
 import { inject } from '@angular/core';
 import { KeycloakService } from './keycloak.service';
 

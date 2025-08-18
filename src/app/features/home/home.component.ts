@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+
 import { KeycloakService } from '../../core/keycloak.service';
 import { PwaInstallService } from '../../core/pwa-install.service';
 
@@ -120,8 +120,9 @@ import { PwaInstallService } from '../../core/pwa-install.service';
 })
 export class HomeComponent implements OnInit {
   constructor(
+    // eslint-disable-next-line no-unused-vars
     private keycloakService: KeycloakService,
-    private router: Router,
+    // eslint-disable-next-line no-unused-vars
     public pwaInstallService: PwaInstallService
   ) {}
 
@@ -132,9 +133,9 @@ export class HomeComponent implements OnInit {
   async installPwa(): Promise<void> {
     try {
       const installed = await this.pwaInstallService.promptForInstall();
-      if (installed) {
-        console.log('PWA installation initiated');
-      }
+              if (installed) {
+          // PWA installation was successful
+        }
     } catch (error) {
       console.error('Failed to install PWA:', error);
     }
@@ -148,62 +149,57 @@ export class HomeComponent implements OnInit {
     const manifestLink = document.querySelector('link[rel="manifest"]');
     if (manifestLink) {
       const href = manifestLink.getAttribute('href');
-      console.log('Manifest link found:', href);
+
       
       // Try to fetch the manifest
       fetch(href!)
         .then(response => {
-          console.log('Manifest response status:', response.status);
-          console.log('Manifest response headers:', response.headers);
           return response.json();
         })
-        .then(manifest => {
-          console.log('Manifest content:', manifest);
+        .then(() => {
+          // Manifest loaded successfully
         })
         .catch(error => {
           console.error('Failed to fetch manifest:', error);
         });
-    } else {
-      console.log('No manifest link found');
-    }
+          } else {
+        // No manifest link found
+      }
   }
 
   // Test PWA functionality
   testPwaFiles(): void {
-    console.log('=== Testing PWA Files ===');
+
     
     // Test manifest
     fetch('/assets/manifest.webmanifest')
-      .then(response => {
-        console.log('Manifest status:', response.status);
-        return response.text();
-      })
-      .then(text => {
-        console.log('Manifest content:', text);
-      })
+              .then(response => {
+          return response.text();
+        })
+        .then(() => {
+          // Manifest content loaded
+        })
       .catch(error => {
         console.error('Manifest fetch error:', error);
       });
 
     // Test service worker
     fetch('/assets/ngsw-worker.js')
-      .then(response => {
-        console.log('Service Worker status:', response.status);
-        return response.text();
-      })
-      .then(text => {
-        console.log('Service Worker content length:', text.length);
-      })
+              .then(response => {
+          return response.text();
+        })
+        .then(() => {
+          // Service Worker content loaded
+        })
       .catch(error => {
         console.error('Service Worker fetch error:', error);
       });
 
     // Test favicon
     fetch('/assets/favicon.png')
-      .then(response => {
-        console.log('Favicon status:', response.status);
-        console.log('Favicon size:', response.headers.get('content-length'));
-      })
+              .then(() => {
+          // Favicon loaded successfully
+        })
       .catch(error => {
         console.error('Favicon fetch error:', error);
       });
@@ -238,7 +234,7 @@ export class HomeComponent implements OnInit {
   async refreshToken(): Promise<void> {
     try {
       await this.keycloakService.getToken();
-      console.log('Token refreshed successfully');
+
     } catch (error) {
       console.error('Failed to refresh token:', error);
     }
