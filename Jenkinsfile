@@ -16,12 +16,15 @@ pipeline {
       }
     }
 
-    stage('Install, Lint, Test, Build (Node 18.20.5 + Chrome)') {
+    stage('Install, Lint, Test, Build (Node 20 + Chrome)') {
       agent {
-        // Exact Node version required
         docker {
-          image 'node:18.20.5'
-          // run as root so we can apt-get install Chrome
+          // Node 20 on Debian; suitable for apt-get installing Chrome
+          image 'node:20-bullseye'
+          // Login to Docker Hub before pulling (prevents pull denials/rate limits)
+          registryUrl 'https://index.docker.io/v1/'
+          registryCredentialsId 'dockerhub-token'
+          // Run as root so we can apt-get Chrome & write caches if needed
           args '-u 0:0'
           reuseNode true
         }
@@ -40,13 +43,11 @@ pipeline {
 
         stage('Install Chrome') {
           steps {
-            // Install Google Chrome inside the container
             sh '''
               set -eux
               apt-get update
               apt-get install -y wget gnupg ca-certificates
 
-              # Google signing key + repo
               install -m 0755 -d /etc/apt/keyrings
               wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/keyrings/google.gpg
               chmod a+r /etc/apt/keyrings/google.gpg
@@ -54,7 +55,6 @@ pipeline {
 
               apt-get update
               apt-get install -y google-chrome-stable
-
               google-chrome --version
             '''
           }
@@ -80,12 +80,12 @@ pipeline {
 
         stage('Test') {
           steps {
-            // Running as root; use --no-sandbox to avoid Chrome sandbox issues
+            // Running as root in container: --no-sandbox avoids Chrome sandbox issues
             sh 'npm run test -- --watch=false --browsers=ChromeHeadless --no-sandbox'
           }
           post {
             always {
-              // Adjust glob to your reporter output
+              // Adjust glob to match your reporter output if needed
               junit testResults: '**/test-results.xml', allowEmptyResults: true
             }
           }
@@ -106,7 +106,7 @@ pipeline {
     }
 
     stage('Docker Build') {
-      // choose a node that has Docker CLI + daemon access
+      // ensure this runs on a node with Docker daemon access
       agent any
       steps {
         script {
