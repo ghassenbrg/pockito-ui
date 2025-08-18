@@ -1,5 +1,5 @@
 pipeline {
-  agent none  // we choose agents per stage
+  agent none  // choose agents per stage
 
   environment {
     DOCKER_REPO = 'ghassenbrg/pockito-ui'
@@ -16,10 +16,12 @@ pipeline {
       }
     }
 
-    stage('Install, Lint, Test, Build (Node + Chrome)') {
+    stage('Install, Lint, Test, Build (Node 18.20.5 + Chrome)') {
       agent {
+        // Exact Node version required
         docker {
-          image 'cypress/browsers:node18.12.0-chrome107'
+          image 'node:18.20.5'
+          // run as root so we can apt-get install Chrome
           args '-u 0:0'
           reuseNode true
         }
@@ -29,10 +31,32 @@ pipeline {
         PUPPETEER_SKIP_DOWNLOAD = 'true'
       }
       stages {
-        stage('Node Versions') {
+        stage('Show Versions') {
           steps {
             sh 'node -v'
             sh 'npm -v'
+          }
+        }
+
+        stage('Install Chrome') {
+          steps {
+            // Install Google Chrome inside the container
+            sh '''
+              set -eux
+              apt-get update
+              apt-get install -y wget gnupg ca-certificates
+
+              # Google signing key + repo
+              install -m 0755 -d /etc/apt/keyrings
+              wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/keyrings/google.gpg
+              chmod a+r /etc/apt/keyrings/google.gpg
+              echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/google.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list
+
+              apt-get update
+              apt-get install -y google-chrome-stable
+
+              google-chrome --version
+            '''
           }
         }
 
@@ -56,11 +80,12 @@ pipeline {
 
         stage('Test') {
           steps {
-            // add --no-sandbox if your launcher needs it
-            sh 'npm run test -- --watch=false --browsers=ChromeHeadless'
+            // Running as root; use --no-sandbox to avoid Chrome sandbox issues
+            sh 'npm run test -- --watch=false --browsers=ChromeHeadless --no-sandbox'
           }
           post {
             always {
+              // Adjust glob to your reporter output
               junit testResults: '**/test-results.xml', allowEmptyResults: true
             }
           }
@@ -81,7 +106,7 @@ pipeline {
     }
 
     stage('Docker Build') {
-      // pick a node that has Docker daemon access
+      // choose a node that has Docker CLI + daemon access
       agent any
       steps {
         script {
@@ -119,11 +144,7 @@ pipeline {
   }
 
   post {
-    success {
-      echo "Pipeline completed successfully for branch: ${env.BRANCH_NAME}"
-    }
-    failure {
-      echo "Pipeline failed for branch: ${env.BRANCH_NAME}"
-    }
+    success { echo "Pipeline completed successfully for branch: ${env.BRANCH_NAME}" }
+    failure { echo "Pipeline failed for branch: ${env.BRANCH_NAME}" }
   }
 }
