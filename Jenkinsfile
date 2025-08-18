@@ -1,8 +1,13 @@
 pipeline {
-  agent none  // choose agents per stage
+  agent none
+
+  options {
+    timestamps()
+    skipDefaultCheckout(true) // explicit checkout stage
+  }
 
   environment {
-    DOCKER_REPO = 'ghassenbrg/pockito-ui'
+    DOCKER_REPO = 'ghassen-io/pockito-ui'
     DOCKER_TAG  = "${env.BRANCH_NAME == 'master' ? 'latest' : env.BRANCH_NAME}"
     IMAGE       = "${DOCKER_REPO}:${DOCKER_TAG}"
   }
@@ -16,13 +21,12 @@ pipeline {
       }
     }
 
-    stage('Install, Lint, Test, Build (Node 18.20.5 + Chrome)') {
+    stage('Install, Lint, Test, Build (Node 20 + Chrome)') {
       agent {
-        // Exact Node version required
         docker {
-          image 'node:18.20.5'
-          // run as root so we can apt-get install Chrome
-          args '-u 0:0'
+          // Public image; no registry credentials needed here
+          image 'node:20-bullseye'
+          args '-u 0:0'   // root to apt-get Chrome
           reuseNode true
         }
       }
@@ -40,13 +44,11 @@ pipeline {
 
         stage('Install Chrome') {
           steps {
-            // Install Google Chrome inside the container
             sh '''
               set -eux
               apt-get update
               apt-get install -y wget gnupg ca-certificates
 
-              # Google signing key + repo
               install -m 0755 -d /etc/apt/keyrings
               wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/keyrings/google.gpg
               chmod a+r /etc/apt/keyrings/google.gpg
@@ -54,7 +56,6 @@ pipeline {
 
               apt-get update
               apt-get install -y google-chrome-stable
-
               google-chrome --version
             '''
           }
@@ -80,12 +81,11 @@ pipeline {
 
         stage('Test') {
           steps {
-            // Running as root; use --no-sandbox to avoid Chrome sandbox issues
+            // running as root in container: --no-sandbox is typically required
             sh 'npm run test -- --watch=false --browsers=ChromeHeadless --no-sandbox'
           }
           post {
             always {
-              // Adjust glob to your reporter output
               junit testResults: '**/test-results.xml', allowEmptyResults: true
             }
           }
@@ -106,8 +106,7 @@ pipeline {
     }
 
     stage('Docker Build') {
-      // choose a node that has Docker CLI + daemon access
-      agent any
+      agent any // use a node with Docker daemon access; change to label if needed
       steps {
         script {
           docker.build("${env.IMAGE}")
@@ -120,6 +119,7 @@ pipeline {
       agent any
       steps {
         script {
+          // CLI login with your token (String credential)
           withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKERHUB_TOKEN')]) {
             sh """
               echo "\$DOCKERHUB_TOKEN" | docker login -u \${DOCKER_HUB_USERNAME:-ghassenbrg} --password-stdin
@@ -138,7 +138,8 @@ pipeline {
       agent any
       steps {
         sh 'docker system prune -f || true'
-        cleanWs()
+        // avoid cleanWs() plugin dependency
+        deleteDir()
       }
     }
   }
