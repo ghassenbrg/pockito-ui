@@ -10,6 +10,7 @@ pipeline {
     DOCKER_REPO = 'ghassenbrg/pockito-ui'
     DOCKER_TAG  = "${env.BRANCH_NAME == 'master' ? 'latest' : env.BRANCH_NAME}"
     IMAGE       = "${DOCKER_REPO}:${DOCKER_TAG}"
+    STAGE_IMAGE = 'library/node:20-bullseye' // important: include "library/"
   }
 
   stages {
@@ -24,10 +25,10 @@ pipeline {
     stage('Install, Lint, Test, Build (Node 20 + Chrome)') {
       agent {
         docker {
-          // IMPORTANT: no "docker.io/..." prefix; Jenkins' Docker registry wrapper will add its own registry host
-          image 'node:20-bullseye'
+          // Jenkins may prepend its configured registry host; using "library/..." keeps it valid
+          image "${env.STAGE_IMAGE}"
           alwaysPull true
-          args '-u 0:0'   // root to apt-get Chrome
+          args '-u 0:0'   // root so we can apt-get Chrome
           reuseNode true
         }
       }
@@ -38,6 +39,7 @@ pipeline {
       stages {
         stage('Show Versions') {
           steps {
+            echo "Using stage image: ${env.STAGE_IMAGE}"
             sh 'node -v'
             sh 'npm -v'
           }
@@ -80,7 +82,7 @@ pipeline {
 
         stage('Test') {
           steps {
-            // Running as root in container: --no-sandbox avoids Chrome sandbox issues
+            // --no-sandbox recommended when running Chrome as root in containers
             sh 'npm run test -- --watch=false --browsers=ChromeHeadless --no-sandbox'
           }
           post {
