@@ -155,26 +155,25 @@ EOF
       }
     }
 
-    stage('Push Image') {
-      agent any
-      steps {
-        withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDS}", passwordVariable: 'DOCKERHUB_PASS', usernameVariable: 'DOCKERHUB_USER')]) {
-          sh '''
-            set -eux
-            . ./.image_env
-            echo "${DOCKERHUB_PASS}" | docker login -u "${DOCKERHUB_USER}" --password-stdin "${REGISTRY}"
-            docker push "${FULL_IMAGE}"
-
-            # Also tag :latest on main/master
-            BR="${BRANCH_NAME:-$(git rev-parse --abbrev-ref HEAD)}"
-            if [ "$BR" = "main" ] || [ "$BR" = "master" ]; then
-              docker tag "${FULL_IMAGE}" "${LATEST_IMAGE}"
-              docker push "${LATEST_IMAGE}"
-            fi
-          '''
-        }
-      }
+  stage('Push Image') {
+  agent any
+  steps {
+    withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKERHUB_TOKEN')]) {
+      sh '''
+        set -eux
+        . ./.image_env
+        echo "$DOCKERHUB_TOKEN" | docker login -u ${DOCKER_HUB_USERNAME:-ghassenbrg} --password-stdin
+        docker push "${FULL_IMAGE}"
+        BR="${BRANCH_NAME:-$(git rev-parse --abbrev-ref HEAD)}"
+        if [ "$BR" = "main" ] || [ "$BR" = "master" ]; then
+          docker tag "${FULL_IMAGE}" "${LATEST_IMAGE}"
+          docker push "${LATEST_IMAGE}"
+        fi
+      '''
     }
+  }
+}
+
   }
 
   post {
