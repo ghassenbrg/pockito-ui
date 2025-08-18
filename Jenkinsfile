@@ -7,7 +7,7 @@ pipeline {
   }
 
   environment {
-    DOCKER_REPO = 'ghassen-io/pockito-ui'
+    DOCKER_REPO = 'ghassenbrg/pockito-ui'
     DOCKER_TAG  = "${env.BRANCH_NAME == 'master' ? 'latest' : env.BRANCH_NAME}"
     IMAGE       = "${DOCKER_REPO}:${DOCKER_TAG}"
   }
