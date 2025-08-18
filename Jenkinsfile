@@ -3,14 +3,14 @@ pipeline {
 
   options {
     timestamps()
-    skipDefaultCheckout(true) // explicit checkout stage only
+    skipDefaultCheckout(true)
   }
 
   environment {
     DOCKER_REPO = 'ghassenbrg/pockito-ui'
     DOCKER_TAG  = "${env.BRANCH_NAME == 'master' ? 'latest' : env.BRANCH_NAME}"
     IMAGE       = "${DOCKER_REPO}:${DOCKER_TAG}"
-    STAGE_IMAGE = 'library/node:20-bullseye' // include library/ for Jenkins global registry wrappers
+    STAGE_IMAGE = 'library/node:20-bullseye' // keep library/ so Jenkins' registry wrapper resolves correctly
   }
 
   stages {
@@ -27,12 +27,13 @@ pipeline {
         docker {
           image "${env.STAGE_IMAGE}"
           alwaysPull true
-          args '-u 0:0'   // root so we can apt-get Chrome
+          args '-u 0:0'     // root so we can apt-get Chrome
           reuseNode true
         }
       }
       environment {
-        CHROME_BIN = '/usr/bin/google-chrome'
+        // We'll point this to a wrapper we create after installing Chrome
+        CHROME_BIN = '/usr/local/bin/chrome-no-sandbox'
         PUPPETEER_SKIP_DOWNLOAD = 'true'
       }
       stages {
@@ -58,6 +59,14 @@ pipeline {
 
               apt-get update
               apt-get install -y google-chrome-stable
+
+              # Create a wrapper so Chrome always runs with no-sandbox + dev-shm workaround
+              cat >/usr/local/bin/chrome-no-sandbox <<'EOF'
+#!/usr/bin/env bash
+exec /usr/bin/google-chrome --no-sandbox --disable-dev-shm-usage "$@"
+EOF
+              chmod +x /usr/local/bin/chrome-no-sandbox
+
               google-chrome --version
             '''
           }
@@ -81,13 +90,12 @@ pipeline {
 
         stage('Test') {
           steps {
-            // IMPORTANT: do not pass --no-sandbox to Angular CLI; it doesn't recognize it.
-            // Use the default ChromeHeadless launcher here.
+            // Do NOT pass --no-sandbox here; the wrapper handles it.
             sh 'npm run test -- --watch=false --browsers=ChromeHeadless'
           }
           post {
             always {
-              // Only publish JUnit if XML files actually exist
+              // Publish JUnit only if XML exists
               script {
                 def hasReports = sh(script: "ls -1 **/*.xml 2>/dev/null | wc -l", returnStdout: true).trim()
                 if (hasReports != '0') {
@@ -115,7 +123,7 @@ pipeline {
     }
 
     stage('Docker Build') {
-      agent any // ensure this runs on a node with Docker daemon access
+      agent any   // run on a node with Docker daemon access
       steps {
         script {
           docker.build("${env.IMAGE}")
@@ -146,7 +154,7 @@ pipeline {
       agent any
       steps {
         sh 'docker system prune -f || true'
-        deleteDir() // lighter than cleanWs()
+        deleteDir()
       }
     }
   }
