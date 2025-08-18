@@ -128,8 +128,11 @@ EOF
 
           # Detect Angular dist output path (fallback supports Angular 17+)
           DIST_DIR=$(node -e "const fs=require('fs');const a=JSON.parse(fs.readFileSync('angular.json','utf8'));const p=a.defaultProject||Object.keys(a.projects||{})[0];if(!p){process.exit(2)}const out=a.projects?.[p]?.architect?.build?.options?.outputPath;process.stdout.write(out||('dist/'+p+'/browser'))")
-          echo "DIST_DIR detected: ${DIST_DIR}"
-          echo "DIST_DIR=${DIST_DIR}" > .dist_env
+          if [ -d \"$DIST_DIR/browser\" ]; then
+            DIST_DIR=\"$DIST_DIR/browser\"
+          fi
+          echo \"DIST_DIR detected: ${DIST_DIR}\"
+          echo \"DIST_DIR=${DIST_DIR}\" > .dist_env
           echo '--- .dist_env ---'
           cat .dist_env
         '''
