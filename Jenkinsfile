@@ -1,5 +1,5 @@
 pipeline {
-  agent none  // we'll pick agents per-stage
+  agent none  // we choose agents per stage
 
   environment {
     DOCKER_REPO = 'ghassenbrg/pockito-ui'
@@ -8,6 +8,7 @@ pipeline {
   }
 
   stages {
+
     stage('Checkout') {
       agent any
       steps {
@@ -17,17 +18,13 @@ pipeline {
 
     stage('Install, Lint, Test, Build (Node + Chrome)') {
       agent {
-        // Node + Chrome preinstalled
         docker {
           image 'cypress/browsers:node18.12.0-chrome107'
-          // run as root so npm can write cache/node_modules if needed
           args '-u 0:0'
-          // reuse workspace across stages
           reuseNode true
         }
       }
       environment {
-        // helps Karma/Angular find Chrome in container if needed
         CHROME_BIN = '/usr/bin/google-chrome'
         PUPPETEER_SKIP_DOWNLOAD = 'true'
       }
@@ -47,7 +44,6 @@ pipeline {
 
         stage('Lint (if present)') {
           steps {
-            // Run lint only if script exists
             sh '''
               if npm run -s | grep -q "^  lint "; then
                 npm run lint
@@ -60,12 +56,11 @@ pipeline {
 
         stage('Test') {
           steps {
-            // Headless Chrome in container; add --no-sandbox if your Karma launcher requires it
+            // add --no-sandbox if your launcher needs it
             sh 'npm run test -- --watch=false --browsers=ChromeHeadless'
           }
           post {
             always {
-              // Adjust glob to your reporter output
               junit testResults: '**/test-results.xml', allowEmptyResults: true
             }
           }
@@ -86,7 +81,7 @@ pipeline {
     }
 
     stage('Docker Build') {
-      // Needs an agent with docker CLI + daemon access
+      // pick a node that has Docker daemon access
       agent any
       steps {
         script {
@@ -113,15 +108,22 @@ pipeline {
         }
       }
     }
+
+    stage('Cleanup') {
+      agent any
+      steps {
+        sh 'docker system prune -f || true'
+        cleanWs()
+      }
+    }
   }
 
   post {
-    always {
-      // run where post executes; tolerate missing docker access
-      sh 'docker system prune -f || true'
-      cleanWs()
+    success {
+      echo "Pipeline completed successfully for branch: ${env.BRANCH_NAME}"
     }
-    success { echo "Pipeline completed successfully for branch: ${env.BRANCH_NAME}" }
-    failure { echo "Pipeline failed for branch: ${env.BRANCH_NAME}" }
+    failure {
+      echo "Pipeline failed for branch: ${env.BRANCH_NAME}"
+    }
   }
 }
