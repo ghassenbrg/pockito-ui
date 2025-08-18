@@ -9,14 +9,16 @@ pipeline {
   }
 
   environment {
-    // Registry settings
+    // Registry & image
     REGISTRY        = 'docker.io'
     DOCKER_ORG      = 'ghassenbrg'
     IMAGE_NAME      = 'pockito-ui'
     DOCKERHUB_CREDS = 'dockerhub-creds'
-    // Node build image
-    STAGE_IMAGE     = 'node:20-bullseye'
-    // Will be set in Checkout stage
+
+    // Use fully qualified public image name (fix for registry-1 issues)
+    STAGE_IMAGE     = 'library/node:20-bullseye'
+
+    // Will be set in Checkout
     GIT_SHA         = ''
     BRANCH_SAFE     = ''
     IMAGE_TAG       = ''
@@ -31,7 +33,6 @@ pipeline {
       steps {
         checkout scm
         script {
-          // Compute tags safely (no Groovy calls in environment block)
           def rawBranch = env.BRANCH_NAME?.trim()
           if (!rawBranch) { rawBranch = sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim() }
           def rawSha = env.GIT_COMMIT?.trim()
@@ -87,7 +88,7 @@ pipeline {
       steps {
         sh '''
           set -eux
-          # Install Chrome for headless tests (safe if tests don't need it)
+          # Install Chrome for headless tests (safe to keep even if tests skip)
           apt-get update
           apt-get install -y wget gnupg ca-certificates
           install -m 0755 -d /etc/apt/keyrings
@@ -101,7 +102,7 @@ pipeline {
 exec /usr/bin/google-chrome --no-sandbox --disable-dev-shm-usage "$@"
 EOF
           chmod +x /usr/local/bin/chrome-no-sandbox
-          
+
           npm ci --prefer-offline --no-audit --no-fund
           npm run --if-present test:ci
         '''
@@ -124,14 +125,12 @@ EOF
       }
       steps {
         sh '''
-          # Ensure build script exists then build
-          jq -r '.scripts.build // empty' package.json >/dev/null 2>&1 || {
-            echo "❌ No \\"build\\" script in package.json"; exit 1;
-          }
+          # Ensure a build script exists using Node (no jq dependency)
+          node -e "const p=require('./package.json'); if(!p.scripts||!p.scripts.build){console.error('No build script in package.json'); process.exit(1)}"
           npm ci --prefer-offline --no-audit --no-fund
           npm run build
 
-          # Detect Angular dist output path (fallback to Angular 17+ default)
+          # Detect Angular dist output path (fallback for Angular 17+)
           DIST_DIR=$(node -e "const fs=require('fs');const a=JSON.parse(fs.readFileSync('angular.json','utf8'));const p=a.defaultProject||Object.keys(a.projects||{})[0];if(!p){process.exit(2)}const out=a.projects?.[p]?.architect?.build?.options?.outputPath;process.stdout.write(out||('dist/'+p+'/browser'))")
           echo "DIST_DIR detected: ${DIST_DIR}"
           echo "DIST_DIR=${DIST_DIR}" > .dist_env
@@ -166,7 +165,7 @@ EOF
             echo "${DOCKERHUB_PASS}" | docker login -u "${DOCKERHUB_USER}" --password-stdin "${REGISTRY}"
             docker push "${FULL_IMAGE}"
 
-            # Also tag as :latest on main/master
+            # Also tag :latest on main/master
             BR="${BRANCH_NAME:-$(git rev-parse --abbrev-ref HEAD)}"
             if [ "$BR" = "main" ] || [ "$BR" = "master" ]; then
               docker tag "${FULL_IMAGE}" "${LATEST_IMAGE}"
@@ -174,14 +173,6 @@ EOF
             fi
           '''
         }
-      }
-    }
-
-    stage('Cleanup') {
-      agent any
-      steps {
-        sh 'docker system prune -f || true'
-        deleteDir()
       }
     }
   }
