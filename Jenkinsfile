@@ -3,7 +3,7 @@ pipeline {
 
   options {
     timestamps()
-    skipDefaultCheckout(true) // explicit checkout stage
+    skipDefaultCheckout(true) // explicit checkout stage only
   }
 
   environment {
@@ -24,8 +24,8 @@ pipeline {
     stage('Install, Lint, Test, Build (Node 20 + Chrome)') {
       agent {
         docker {
-          // Explicit official image path to avoid registry-1 alias issues
-          image 'docker.io/library/node:20-bullseye'
+          // IMPORTANT: no "docker.io/..." prefix; Jenkins' Docker registry wrapper will add its own registry host
+          image 'node:20-bullseye'
           alwaysPull true
           args '-u 0:0'   // root to apt-get Chrome
           reuseNode true
@@ -63,9 +63,7 @@ pipeline {
         }
 
         stage('Install Dependencies') {
-          steps {
-            sh 'npm ci'
-          }
+          steps { sh 'npm ci' }
         }
 
         stage('Lint (if present)') {
@@ -139,7 +137,7 @@ pipeline {
       agent any
       steps {
         sh 'docker system prune -f || true'
-        deleteDir()
+        deleteDir() // lighter than cleanWs()
       }
     }
   }
