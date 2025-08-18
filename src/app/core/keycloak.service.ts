@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import * as Keycloak from 'keycloak-js';
+import { environment } from '../../environments/environment';
 
 export interface KeycloakConfig {
   url: string;
@@ -18,13 +19,19 @@ export class KeycloakService {
 
   }
 
-  async init(cfg: KeycloakConfig): Promise<boolean> {
+  async init(cfg?: KeycloakConfig): Promise<boolean> {
+    // Use provided config or fall back to environment
+    const config = cfg || {
+      url: environment.keycloak.url,
+      realm: environment.keycloak.realm,
+      clientId: environment.keycloak.clientId
+    };
     try {
       if (!(Keycloak as any).default) {
         throw new Error('Keycloak.default is not available');
       }
 
-      this.keycloak = new (Keycloak as any).default(cfg);
+      this.keycloak = new (Keycloak as any).default(config);
       
       const authenticated = await this.keycloak.init({
         onLoad: 'check-sso',

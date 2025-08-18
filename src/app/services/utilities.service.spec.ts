@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { UtilitiesService } from './utilities.service';
-import { EnvironmentService } from '../core/environment.service';
 import { 
   ProtectedResponse, 
   HealthResponse, 
@@ -12,25 +11,17 @@ import {
 describe('UtilitiesService', () => {
   let service: UtilitiesService;
   let httpMock: HttpTestingController;
-  let environmentService: jasmine.SpyObj<EnvironmentService>;
 
   beforeEach(() => {
-    const environmentSpy = jasmine.createSpyObj('EnvironmentService', ['loadConfig'], {
-      isReady: true,
-      apiBaseUrl: '/api'
-    });
-
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
-        UtilitiesService,
-        { provide: EnvironmentService, useValue: environmentSpy }
+        UtilitiesService
       ]
     });
 
     service = TestBed.inject(UtilitiesService);
     httpMock = TestBed.inject(HttpTestingController);
-    environmentService = TestBed.inject(EnvironmentService) as jasmine.SpyObj<EnvironmentService>;
   });
 
   afterEach(() => {
@@ -131,43 +122,5 @@ describe('UtilitiesService', () => {
     });
   });
 
-  describe('configuration handling', () => {
-    it('should use fallback URL when config is not ready', () => {
-      const mockResponse: HealthResponse = {
-        status: 'UP',
-        timestamp: new Date().toISOString(),
-        service: 'pockito-api',
-        version: '1.0.0',
-        uptime: 'PT1H30M'
-      };
 
-      // Create a new spy for this test case
-      const notReadySpy = jasmine.createSpyObj('EnvironmentService', ['loadConfig'], {
-        isReady: false,
-        apiBaseUrl: '/api'
-      });
-
-      // Create a new TestBed configuration for this specific test
-      TestBed.resetTestingModule();
-      TestBed.configureTestingModule({
-        imports: [HttpClientTestingModule],
-        providers: [
-          UtilitiesService,
-          { provide: EnvironmentService, useValue: notReadySpy }
-        ]
-      });
-
-      const testService = TestBed.inject(UtilitiesService);
-      const testHttpMock = TestBed.inject(HttpTestingController);
-
-      testService.getHealthStatus().subscribe(response => {
-        expect(response).toEqual(mockResponse);
-      });
-
-      const req = testHttpMock.expectOne(`/api/sample/health`);
-      req.flush(mockResponse);
-      
-      testHttpMock.verify();
-    });
-  });
 });

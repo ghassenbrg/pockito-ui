@@ -6,7 +6,7 @@ export const environment = {
     clientId: 'pockito-web'
   },
   api: {
-    baseUrl: 'api'
+    baseUrl: '/api'
   },
   app: {
     name: 'Pockito',

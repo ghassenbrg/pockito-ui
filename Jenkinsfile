@@ -110,6 +110,36 @@ EOF
       }
     }
 
+    stage('Configure Environment') {
+      agent {
+        docker {
+          image "${env.STAGE_IMAGE}"
+          alwaysPull true
+          args '-u 0:0'
+          reuseNode true
+        }
+      }
+      steps {
+        sh '''
+          # Replace environment files with production configuration
+          echo "Replacing environment files with production configuration..."
+          
+          # Copy the production environment file from pockito-infra
+          if [ -f "/home/app/ghassen-io/pockito/pockito-infra/pockito-ui/environment.ts" ]; then
+            cp "/home/app/ghassen-io/pockito/pockito-infra/pockito-ui/environment.ts" "src/environments/environment.ts"
+            cp "/home/app/ghassen-io/pockito/pockito-infra/pockito-ui/environment.ts" "src/environments/environment.prod.ts"
+            echo "✅ Environment files replaced with production configuration"
+          else
+            echo "⚠️  Production environment file not found, using default configuration"
+          fi
+          
+          # Show the configuration being used
+          echo "--- Environment Configuration ---"
+          cat src/environments/environment.ts
+        '''
+      }
+    }
+
     stage('Build') {
       agent {
         docker {

@@ -9,18 +9,13 @@ import { tokenInterceptor } from './core/token.interceptor';
 import { errorInterceptor } from './core/error.interceptor';
 import { notificationReducer } from './state/notification/notification.reducer';
 import { KeycloakService } from './core/keycloak.service';
-import { EnvironmentService } from './core/environment.service';
 
-// Initialize environment configuration and Keycloak before the application starts
-function initializeApp(environmentService: EnvironmentService, keycloakService: KeycloakService) {
+// Initialize Keycloak before the application starts
+function initializeApp(keycloakService: KeycloakService) {
   return async () => {
     try {
-      // First, load environment configuration
-      await environmentService.loadConfig();
-      
-      // Then initialize Keycloak with the loaded config
-      const config = environmentService.config;
-      await keycloakService.init(config.keycloak);
+      // Initialize Keycloak with environment configuration
+      await keycloakService.init();
       
       return true;
     } catch (error) {
@@ -43,12 +38,11 @@ export const appConfig: ApplicationConfig = {
       traceLimit: 75,
     }),
     // Provide services explicitly
-    EnvironmentService,
     KeycloakService,
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,
-      deps: [EnvironmentService, KeycloakService],
+      deps: [KeycloakService],
       multi: true
     }
   ],
