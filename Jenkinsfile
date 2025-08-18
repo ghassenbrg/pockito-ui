@@ -1,13 +1,7 @@
 pipeline {
-  agent any
-
-  // Use the NodeJS tool configured in Manage Jenkins → Tools → NodeJS (name: NodeJS-18)
-  tools {
-    nodejs 'NodeJS-18'
-  }
+  agent none  // we'll pick agents per-stage
 
   environment {
-    // Use repo name only here; we'll append the tag later
     DOCKER_REPO = 'ghassenbrg/pockito-ui'
     DOCKER_TAG  = "${env.BRANCH_NAME == 'master' ? 'latest' : env.BRANCH_NAME}"
     IMAGE       = "${DOCKER_REPO}:${DOCKER_TAG}"
@@ -15,51 +9,85 @@ pipeline {
 
   stages {
     stage('Checkout') {
+      agent any
       steps {
         checkout scm
       }
     }
 
-    stage('Setup Node.js') {
-      steps {
-        sh 'node -v'
-        sh 'npm -v'
+    stage('Install, Lint, Test, Build (Node + Chrome)') {
+      agent {
+        // Node + Chrome preinstalled
+        docker {
+          image 'cypress/browsers:node18.12.0-chrome107'
+          // run as root so npm can write cache/node_modules if needed
+          args '-u 0:0'
+          // reuse workspace across stages
+          reuseNode true
+        }
       }
-    }
+      environment {
+        // helps Karma/Angular find Chrome in container if needed
+        CHROME_BIN = '/usr/bin/google-chrome'
+        PUPPETEER_SKIP_DOWNLOAD = 'true'
+      }
+      stages {
+        stage('Node Versions') {
+          steps {
+            sh 'node -v'
+            sh 'npm -v'
+          }
+        }
 
-    stage('Install Dependencies') {
-      steps {
-        sh 'npm ci'
-      }
-    }
+        stage('Install Dependencies') {
+          steps {
+            sh 'npm ci'
+          }
+        }
 
-    stage('Lint') {
-      steps {
-        sh 'npm run lint'
-      }
-    }
+        stage('Lint (if present)') {
+          steps {
+            // Run lint only if script exists
+            sh '''
+              if npm run -s | grep -q "^  lint "; then
+                npm run lint
+              else
+                echo "ℹ️  No \\"lint\\" script found in package.json; skipping."
+              fi
+            '''
+          }
+        }
 
-    stage('Test') {
-      steps {
-        // If Chrome isn't available on your agent, this will fail.
-        // You can switch to a Docker agent with Chrome, or install Chrome on the node.
-        sh 'npm run test -- --watch=false --browsers=ChromeHeadless'
-      }
-      post {
-        always {
-          // Adjust the pattern if your test reporter writes to a different filename/path.
-          junit testResults: '**/test-results.xml', allowEmptyResults: true
+        stage('Test') {
+          steps {
+            // Headless Chrome in container; add --no-sandbox if your Karma launcher requires it
+            sh 'npm run test -- --watch=false --browsers=ChromeHeadless'
+          }
+          post {
+            always {
+              // Adjust glob to your reporter output
+              junit testResults: '**/test-results.xml', allowEmptyResults: true
+            }
+          }
+        }
+
+        stage('Build (if present)') {
+          steps {
+            sh '''
+              if npm run -s | grep -q "^  build "; then
+                npm run build
+              else
+                echo "ℹ️  No \\"build\\" script found in package.json; skipping."
+              fi
+            '''
+          }
         }
       }
     }
 
-    stage('Build') {
-      steps {
-        sh 'npm run build'
-      }
-    }
-
     stage('Docker Build') {
+      // Needs an agent with docker CLI + daemon access
+      agent any
       steps {
         script {
           docker.build("${env.IMAGE}")
@@ -68,20 +96,19 @@ pipeline {
     }
 
     stage('Docker Push') {
-      when {
-        anyOf { branch 'master'; branch 'main'; branch 'develop' }
-      }
+      when { anyOf { branch 'master'; branch 'main'; branch 'develop' } }
+      agent any
       steps {
         script {
           withCredentials([string(credentialsId: 'dockerhub-token', variable: 'DOCKERHUB_TOKEN')]) {
-            sh '''
-              echo "$DOCKERHUB_TOKEN" | docker login -u ${DOCKER_HUB_USERNAME:-ghassenbrg} --password-stdin
-              docker push '"${IMAGE}"'
+            sh """
+              echo "\$DOCKERHUB_TOKEN" | docker login -u \${DOCKER_HUB_USERNAME:-ghassenbrg} --password-stdin
+              docker push "${IMAGE}"
               if [ "${BRANCH_NAME}" = "master" ]; then
-                docker tag '"${IMAGE}"' '"${DOCKER_REPO}:latest"'
-                docker push '"${DOCKER_REPO}:latest"'
+                docker tag "${IMAGE}" "${DOCKER_REPO}:latest"
+                docker push "${DOCKER_REPO}:latest"
               fi
-            '''
+            """
           }
         }
       }
@@ -90,15 +117,11 @@ pipeline {
 
   post {
     always {
-      // Don't fail the build if pruning or Docker access is restricted
+      // run where post executes; tolerate missing docker access
       sh 'docker system prune -f || true'
       cleanWs()
     }
-    success {
-      echo "Pipeline completed successfully for branch: ${env.BRANCH_NAME}"
-    }
-    failure {
-      echo "Pipeline failed for branch: ${env.BRANCH_NAME}"
-    }
+    success { echo "Pipeline completed successfully for branch: ${env.BRANCH_NAME}" }
+    failure { echo "Pipeline failed for branch: ${env.BRANCH_NAME}" }
   }
 }
