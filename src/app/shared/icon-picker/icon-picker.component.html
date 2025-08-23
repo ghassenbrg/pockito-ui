@@ -2,9 +2,9 @@
   <!-- Current Icon Display -->
   <div class="current-icon" (click)="togglePicker()">
     <div *ngIf="value?.value" class="icon-display">
-      <span *ngIf="value.type === 'EMOJI'" class="emoji-icon">{{ value.value }}</span>
-      <img *ngIf="value.type === 'URL'" [src]="value.value" [alt]="value.label || 'Icon'" class="url-icon">
-      <span *ngIf="value.label" class="icon-label">{{ value.label }}</span>
+      <span *ngIf="value?.type === 'EMOJI'" class="emoji-icon">{{ value?.value }}</span>
+      <img *ngIf="value?.type === 'URL'" [src]="value?.value" [alt]="value?.label || 'Icon'" class="url-icon">
+      <span *ngIf="value?.label" class="icon-label">{{ value?.label }}</span>
     </div>
     <div *ngIf="!value?.value" class="icon-placeholder">
       <svg class="icon-placeholder-svg" fill="currentColor" viewBox="0 0 20 20">
