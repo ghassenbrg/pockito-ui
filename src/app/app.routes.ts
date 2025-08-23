@@ -15,11 +15,36 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent)
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
       },
       {
-        path: 'home',
-        loadComponent: () => import('./features/home/home.component').then(m => m.HomeComponent)
+        path: 'dashboard',
+        loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
+      },
+      {
+        path: 'wallets',
+        loadComponent: () => import('./features/wallets/wallets.component').then(m => m.WalletsComponent)
+      },
+      {
+        path: 'transactions',
+        loadComponent: () => import('./features/transactions/transactions.component').then(m => m.TransactionsComponent)
+      },
+      {
+        path: 'subscriptions',
+        loadComponent: () => import('./features/subscriptions/subscriptions.component').then(m => m.SubscriptionsComponent)
+      },
+      {
+        path: 'budgets',
+        loadComponent: () => import('./features/budgets/budgets.component').then(m => m.BudgetsComponent)
+      },
+      {
+        path: 'agreements',
+        loadComponent: () => import('./features/agreements/agreements.component').then(m => m.AgreementsComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent)
       }
     ]
   },
