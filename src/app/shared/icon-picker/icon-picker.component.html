@@ -1,0 +1,123 @@
+<div class="icon-picker">
+  <!-- Current Icon Display -->
+  <div class="current-icon" (click)="togglePicker()">
+    <div *ngIf="value?.value" class="icon-display">
+      <span *ngIf="value.type === 'EMOJI'" class="emoji-icon">{{ value.value }}</span>
+      <img *ngIf="value.type === 'URL'" [src]="value.value" [alt]="value.label || 'Icon'" class="url-icon">
+      <span *ngIf="value.label" class="icon-label">{{ value.label }}</span>
+    </div>
+    <div *ngIf="!value?.value" class="icon-placeholder">
+      <svg class="icon-placeholder-svg" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"></path>
+      </svg>
+      <span>{{ placeholder }}</span>
+    </div>
+    <svg class="chevron-down" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+    </svg>
+  </div>
+
+  <!-- Icon Picker Dropdown -->
+  <div *ngIf="showPicker" class="icon-picker-dropdown" 
+       (click)="onBackdropClick($event)" 
+       (keydown)="onKeyDown($event)"
+       tabindex="0">
+    
+    <!-- Search Bar -->
+    <div class="icon-search">
+      <div class="search-input-wrapper">
+        <svg class="search-icon" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+        </svg>
+        <input type="text" 
+               placeholder="Search icons"
+               [(ngModel)]="searchTerm"
+               (input)="onSearchInput($event)"
+               class="search-input">
+        <button *ngIf="searchTerm" 
+                (click)="clearSearch()"
+                class="clear-search"
+                type="button">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <span>Searching...</span>
+    </div>
+
+    <!-- API Suggestions -->
+    <div *ngIf="!isLoading && suggestions.length > 0" class="suggestions-section">
+      <h4 class="section-title">Suggestions</h4>
+      <div class="suggestions-grid">
+        <button *ngFor="let suggestion of suggestions"
+                (click)="selectIcon(suggestion)"
+                class="suggestion-item"
+                type="button">
+          <span *ngIf="suggestion.type === 'EMOJI'" class="emoji-icon">{{ suggestion.value }}</span>
+          <img *ngIf="suggestion.type === 'URL'" 
+               [src]="suggestion.value" 
+               [alt]="suggestion.label || 'Icon'"
+               class="url-icon">
+          <span *ngIf="suggestion.label" class="suggestion-label">{{ suggestion.label }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Emoji Categories -->
+    <div *ngIf="config.showEmoji && (!searchTerm || searchTerm.length < 2)" class="emoji-section">
+      <div *ngFor="let category of emojiCategories" class="emoji-category">
+        <h4 class="category-title">{{ category.name }}</h4>
+        <div class="emoji-grid">
+          <button *ngFor="let emoji of category.emojis"
+                  (click)="selectEmoji(emoji)"
+                  class="emoji-item"
+                  type="button"
+                  [title]="emoji">
+            {{ emoji }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- URL Input -->
+    <div *ngIf="config.showUrl" class="url-section">
+      <h4 class="section-title">Custom URL</h4>
+      <div class="url-input-wrapper">
+        <input type="url" 
+               placeholder="Enter icon URL"
+               [ngModel]="urlInputValue"
+               (ngModelChange)="onUrlInputChange($event)"
+               class="url-input"
+               [class.error]="urlInputInvalid && urlInputTouched">
+        <button (click)="selectUrl(urlInputValue)"
+                [disabled]="!urlInputValid"
+                class="url-select-btn"
+                type="button">
+          Use URL
+        </button>
+      </div>
+      <div *ngIf="urlInputInvalid && urlInputTouched" 
+           class="error-message">
+        Please enter a valid URL
+      </div>
+    </div>
+
+    <!-- Clear Button -->
+    <div *ngIf="value?.value" class="clear-section">
+      <button (click)="clearIcon()" 
+              class="clear-icon-btn"
+              type="button">
+        <svg fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+        Clear Icon
+      </button>
+    </div>
+  </div>
+</div>
