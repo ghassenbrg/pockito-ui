@@ -3,11 +3,14 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
+import { provideEffects } from '@ngrx/effects';
 
 import { routes } from './app.routes';
 import { tokenInterceptor } from './core/token.interceptor';
 import { errorInterceptor } from './core/error.interceptor';
 import { notificationReducer } from './state/notification/notification.reducer';
+import { walletReducer } from './state/wallets/wallet.state';
+import { WalletEffects } from './state/wallets/wallet.effects';
 import { KeycloakService } from './core/keycloak.service';
 
 // Initialize Keycloak before the application starts
@@ -29,7 +32,11 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideHttpClient(withInterceptors([tokenInterceptor, errorInterceptor])),
-    provideStore({ notification: notificationReducer }),
+    provideStore({ 
+      notification: notificationReducer,
+      wallets: walletReducer
+    }),
+    provideEffects([WalletEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: false,

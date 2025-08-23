@@ -24,7 +24,11 @@ export const routes: Routes = [
       },
       {
         path: 'wallets',
-        loadComponent: () => import('./features/wallets/wallets.component').then(m => m.WalletsComponent)
+        loadComponent: () => import('./features/wallets/wallet-list/wallet-list.component').then(m => m.WalletListComponent)
+      },
+      {
+        path: 'wallets/:id',
+        loadComponent: () => import('./features/wallets/wallet-detail/wallet-detail.component').then(m => m.WalletDetailComponent)
       },
       {
         path: 'transactions',
