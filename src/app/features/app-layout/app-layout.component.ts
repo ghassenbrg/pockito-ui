@@ -222,7 +222,7 @@ export class AppLayoutComponent {
   }
 
   openTransactionModal(): void {
-    this.modalService.open('transaction-modal');
+    this.modalService.openLegacy('transaction-modal');
   }
 
   testPublicEndpoint(): void {

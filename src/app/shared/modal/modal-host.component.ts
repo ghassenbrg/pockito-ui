@@ -1,111 +1,352 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ModalService, ModalData } from './modal.service';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ComponentRef,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+  ViewContainerRef
+} from '@angular/core';
 import { Subscription } from 'rxjs';
+import { FocusTrapService } from './focus-trap.service';
+import { ModalInstance, ModalService } from './modal.service';
 
 @Component({
   selector: 'app-modal-host',
   standalone: true,
   imports: [CommonModule],
   template: `
-    <!-- Transaction Modal -->
-    <div 
-      *ngIf="currentModal?.type === 'transaction-modal'"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-      (click)="closeModal()"
+    <div
+      *ngFor="let modal of activeModals; trackBy: trackByModalId"
+      class="modal-overlay"
+      [class]="modal.config.modalClass || ''"
+      [attr.aria-modal]="true"
+      [attr.aria-labelledby]="'modal-title-' + modal.config.id"
+      [attr.aria-describedby]="'modal-content-' + modal.config.id"
+      role="dialog"
+      tabindex="-1"
+      (click)="onBackdropClick($event, modal)"
+      (keydown)="onKeyDown($event)"
     >
-      <div 
-        class="bg-white rounded-lg shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+      <div
+        #modalContent
+        class="modal-content"
+        [class]="modal.config.contentClass || ''"
         (click)="$event.stopPropagation()"
+        role="document"
+        [attr.id]="'modal-content-' + modal.config.id"
       >
-        <div class="p-6">
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-lg font-semibold text-gray-900">Add Transaction</h3>
-            <button 
-              (click)="closeModal()"
-              class="text-gray-400 hover:text-gray-600 transition-colors duration-200"
+        <!-- Modal Header -->
+        <div
+          class="modal-header"
+          *ngIf="modal.config.title || modal.config.showCloseButton"
+        >
+          <h2
+            *ngIf="modal.config.title"
+            class="modal-title"
+            [id]="'modal-title-' + modal.config.id"
+          >
+            {{ modal.config.title }}
+          </h2>
+
+          <button
+            *ngIf="modal.config.showCloseButton"
+            type="button"
+            class="modal-close-btn"
+            (click)="closeModal(modal.config.id)"
+            [attr.aria-label]="'Close ' + (modal.config.title || 'modal')"
+            tabindex="0"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-          </div>
-          
-          <!-- Transaction Form Placeholder -->
-          <div class="space-y-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
-              <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option value="EXPENSE">Expense</option>
-                <option value="INCOME">Income</option>
-                <option value="TRANSFER">Transfer</option>
-              </select>
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <!-- Component-based modal -->
+          <ng-container *ngIf="modal.config.component">
+            <ng-container #componentContainer></ng-container>
+          </ng-container>
+
+          <!-- Template-based modal -->
+          <ng-container *ngIf="modal.config.template">
+            <ng-container
+              [ngTemplateOutlet]="modal.config.template"
+              [ngTemplateOutletContext]="modal.config.data"
+            ></ng-container>
+          </ng-container>
+
+          <!-- Legacy type-based modal -->
+          <ng-container
+            *ngIf="!modal.config.component && !modal.config.template"
+          >
+            <div class="legacy-modal-content">
+              <p class="text-gray-600">{{ modal.config.title }}</p>
+              <div *ngIf="modal.config.data" class="mt-4">
+                <pre class="text-sm bg-gray-100 p-2 rounded">{{
+                  modal.config.data | json
+                }}</pre>
+              </div>
             </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Amount</label>
-              <input 
-                type="number" 
-                step="0.01" 
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="0.00"
-              >
-            </div>
-            
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Note</label>
-              <input 
-                type="text" 
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Transaction description"
-              >
-            </div>
-            
-            <div class="flex space-x-3 pt-4">
-              <button 
-                (click)="closeModal()"
-                class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors duration-200"
-              >
-                Cancel
-              </button>
-              <button 
-                class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
-              >
-                Save Transaction
-              </button>
-            </div>
-          </div>
+          </ng-container>
         </div>
       </div>
     </div>
   `,
-  styles: []
-})
-export class ModalHostComponent implements OnInit, OnDestroy {
-  currentModal: ModalData | null = null;
-  private subscription = new Subscription();
+  styles: [
+    `
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1050;
+        padding: 1rem;
+      }
 
-  constructor(private modalService: ModalService) {}
+      .modal-content {
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        max-width: 90vw;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        outline: none;
+      }
+
+      .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.5rem 1.5rem 0 1.5rem;
+        border-bottom: 1px solid #e5e7eb;
+        margin-bottom: 1rem;
+      }
+
+      .modal-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #111827;
+        margin: 0;
+      }
+
+      .modal-close-btn {
+        background: none;
+        border: none;
+        color: #6b7280;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 0.25rem;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-close-btn:hover {
+        color: #374151;
+        background-color: #f3f4f6;
+      }
+
+      .modal-close-btn:focus {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+      }
+
+      .modal-body {
+        padding: 0 1.5rem 1.5rem 1.5rem;
+      }
+
+      .legacy-modal-content {
+        min-width: 300px;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 640px) {
+        .modal-overlay {
+          padding: 0.5rem;
+        }
+
+        .modal-content {
+          max-width: 95vw;
+          max-height: 95vh;
+        }
+
+        .modal-header,
+        .modal-body {
+          padding-left: 1rem;
+          padding-right: 1rem;
+        }
+      }
+
+      /* Focus styles for accessibility */
+      .modal-content:focus {
+        outline: 2px solid #3b82f6;
+        outline-offset: 2px;
+      }
+    `,
+  ],
+})
+export class ModalHostComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('componentContainer', { read: ViewContainerRef, static: false })
+  componentContainer!: ViewContainerRef;
+
+  activeModals: ModalInstance[] = [];
+  private subscription = new Subscription();
+  private modalComponentRefs = new Map<string, ComponentRef<any>>();
+
+  constructor(
+    private modalService: ModalService,
+    private focusTrapService: FocusTrapService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.subscription.add(
-      this.modalService.onOpen().subscribe(modal => {
-        this.currentModal = modal;
+      this.modalService.getActiveModals().subscribe((modals) => {
+        this.activeModals = modals;
+        this.cdr.detectChanges();
       })
     );
+  }
 
-    this.subscription.add(
-      this.modalService.onClose().subscribe(() => {
-        this.currentModal = null;
-      })
-    );
+  ngAfterViewInit(): void {
+    // Process any modals that were already active
+    this.processActiveModals();
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+
+    // Clean up component references
+    this.modalComponentRefs.forEach((ref) => ref.destroy());
+    this.modalComponentRefs.clear();
   }
 
-  closeModal(): void {
-    this.modalService.close();
+  /**
+   * Process active modals and create component instances
+   */
+  private processActiveModals(): void {
+    this.activeModals.forEach((modal) => {
+      if (
+        modal.config.component &&
+        !this.modalComponentRefs.has(modal.config.id)
+      ) {
+        this.createModalComponent(modal);
+      }
+    });
+  }
+
+  /**
+   * Create a component instance for a modal
+   */
+  private createModalComponent(modal: ModalInstance): void {
+    if (!modal.config.component || !this.componentContainer) return;
+
+    try {
+      const componentRef = this.componentContainer.createComponent(
+        modal.config.component
+      );
+
+      // Pass data to component if it has an input
+      if (modal.config.data && componentRef.instance) {
+        Object.assign(componentRef.instance, modal.config.data);
+      }
+
+      // Store component reference
+      this.modalComponentRefs.set(modal.config.id, componentRef);
+      this.modalService.registerModalComponent(modal.config.id, componentRef);
+
+      // Activate focus trap if enabled
+      if (modal.config.trapFocus) {
+        setTimeout(() => {
+          const modalElement = this.getModalElement(modal.config.id);
+          if (modalElement) {
+            this.modalService.activateFocusTrap(modalElement);
+          }
+        }, 100);
+      }
+    } catch (error) {
+      console.error('Error creating modal component:', error);
+    }
+  }
+
+  /**
+   * Get modal element by ID
+   */
+  private getModalElement(modalId: string): HTMLElement | null {
+    return document.querySelector(`[id="modal-content-${modalId}"]`);
+  }
+
+  /**
+   * Handle backdrop click
+   */
+  onBackdropClick(event: MouseEvent, modal: ModalInstance): void {
+    if (
+      modal.config.closeOnBackdropClick &&
+      event.target === event.currentTarget
+    ) {
+      this.closeModal(modal.config.id);
+    }
+  }
+
+  /**
+   * Handle keyboard events
+   */
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+    // Handle Escape key for closing modals
+    if (event.key === 'Escape' && this.activeModals.length > 0) {
+      const topModal = this.activeModals[this.activeModals.length - 1];
+      if (topModal.config.closeOnEscape) {
+        this.closeModal(topModal.config.id);
+      }
+    }
+  }
+
+  /**
+   * Close a specific modal
+   */
+  closeModal(modalId: string): void {
+    this.modalService.close(modalId);
+  }
+
+  /**
+   * Track modal by ID for ngFor
+   */
+  trackByModalId(index: number, modal: ModalInstance): string {
+    return modal.config.id;
+  }
+
+  /**
+   * Handle changes in modal configuration
+   */
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['activeModals']) {
+      this.processActiveModals();
+    }
   }
 }
