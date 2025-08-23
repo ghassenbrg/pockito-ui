@@ -39,6 +39,8 @@ export interface ModalInstance {
 }
 
 export interface ModalResult<T = any> {
+  /** ID of the modal this result belongs to */
+  modalId: string;
   /** Whether the modal was confirmed/approved */
   confirmed: boolean;
   /** Data returned from the modal */

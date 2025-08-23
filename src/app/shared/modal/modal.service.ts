@@ -48,7 +48,8 @@ export class ModalService {
     // Return observable for modal result
     return new Observable<ModalResult>(observer => {
       const subscription = this.modalResults$.subscribe(result => {
-        if (result && this.activeModals.has(modalConfig.id)) {
+        // Check if this result is for this specific modal
+        if (result && result.modalId === modalConfig.id) {
           observer.next(result);
           observer.complete();
           subscription.unsubscribe();
@@ -111,7 +112,10 @@ export class ModalService {
 
     // Emit result
     if (result) {
-      this.modalResults$.next(result);
+      this.modalResults$.next({
+        ...result,
+        modalId: modalId
+      });
     }
   }
 

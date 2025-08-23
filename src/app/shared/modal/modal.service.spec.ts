@@ -56,7 +56,7 @@ describe('ModalService', () => {
     expect(service.getOpenModalCount()).toBe(1);
     
     // Close the modal with a result to complete the observable
-    service.close('test-modal', { confirmed: true });
+    service.close('test-modal', { modalId: 'test-modal', confirmed: true });
   });
 
   it('should open a modal with custom configuration', (done: any) => {
@@ -79,7 +79,7 @@ describe('ModalService', () => {
     expect(service.isModalOpen('custom-modal')).toBe(true);
     
     // Close the modal with a result to complete the observable
-    service.close('custom-modal', { confirmed: false });
+    service.close('custom-modal', { modalId: 'custom-modal', confirmed: false });
   });
 
   it('should close a specific modal', () => {
