@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
+  apiUrl: '/api', // Relative path for production
   keycloak: {
     url: 'https://auth.ghassen.io',
     realm: 'pockito',

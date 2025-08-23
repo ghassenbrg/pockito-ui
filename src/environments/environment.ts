@@ -1,5 +1,6 @@
 export const environment = {
   production: false,
+  apiUrl: 'http://localhost:8080',
   keycloak: {
     url: 'https://auth.ghassen.io',
     realm: 'pockito',

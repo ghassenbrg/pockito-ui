@@ -11,3 +11,9 @@ export * from './modal/example-modal.component';
 
 // Icon Picker
 export * from './icon-picker';
+
+// Models
+export * from './models';
+
+// Services
+export * from './services';
