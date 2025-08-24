@@ -121,6 +121,7 @@ export interface WalletFormData {
                 <option value="JPY">JPY - Japanese Yen</option>
                 <option value="CAD">CAD - Canadian Dollar</option>
                 <option value="AUD">AUD - Australian Dollar</option>
+                <option value="TND">TND - Tunisian Dinar</option>
                 <option value="CHF">CHF - Swiss Franc</option>
               </select>
               <div *ngIf="walletForm.get('currencyCode')?.invalid && walletForm.get('currencyCode')?.touched" 
