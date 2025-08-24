@@ -163,9 +163,6 @@ export const walletReducer = createReducer(
   })),
   
   on(WalletActions.reorderWalletSuccess, (state, { walletId, newOrder }) => {
-    console.log(`State: Processing reorder success for wallet ${walletId} to position ${newOrder}`);
-    console.log(`State: Current wallets before update:`, state.wallets.map(w => ({ id: w.id, name: w.name, displayOrder: w.displayOrder })));
-    
     // Update the display order of the reordered wallet
     const updatedWallets = state.wallets.map(wallet => {
       if (wallet.id === walletId) {
@@ -176,8 +173,6 @@ export const walletReducer = createReducer(
 
     // Sort wallets by display order to maintain proper sequence
     updatedWallets.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
-    
-    console.log(`State: Updated wallets after reorder:`, updatedWallets.map(w => ({ id: w.id, name: w.name, displayOrder: w.displayOrder })));
 
     return {
       ...state,

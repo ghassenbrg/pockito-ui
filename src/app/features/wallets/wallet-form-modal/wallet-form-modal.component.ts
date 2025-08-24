@@ -255,9 +255,6 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit(): void {
-    console.log('WalletFormModalComponent ngOnInit called');
-    console.log('Current data:', this.data);
-    
     // Initialize form after a short delay to ensure component is ready
     setTimeout(() => {
       this.initializeForm();
@@ -295,9 +292,7 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('WalletFormModalComponent ngOnChanges called with:', changes);
     if (changes['data'] && changes['data'].currentValue) {
-      console.log('Data changed, reinitializing form with:', changes['data'].currentValue);
       // Use setTimeout to ensure the component is fully initialized
       setTimeout(() => {
         this.initializeForm();
@@ -315,8 +310,6 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private initializeForm(): void {
-    console.log('Initializing form, mode:', this.data.mode, 'wallet:', this.data.wallet);
-    
     // Reset form to initial state
     this.walletForm.reset({
       name: '',
@@ -333,22 +326,16 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
 
     // Populate form if in edit mode
     if (this.isEditMode && this.data.wallet) {
-      console.log('Populating form for edit mode');
       this.populateForm(this.data.wallet);
-    } else {
-      console.log('Not in edit mode or no wallet data');
     }
   }
 
   populateForm(wallet: Wallet): void {
-    console.log('Populating form with wallet:', wallet);
-    
     // First set the icon value
     this.iconValue = {
       type: wallet.iconType,
       value: wallet.iconValue
     };
-    console.log('Set icon value to:', this.iconValue);
     
     // Then populate the form
     this.walletForm.patchValue({
@@ -366,26 +353,15 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
 
     // Mark form as pristine since we're loading existing data
     this.walletForm.markAsPristine();
-    
-    console.log('Form populated, current values:', this.walletForm.value);
-    console.log('Icon value after population:', this.iconValue);
   }
 
   onIconChange(icon: IconOption | null): void {
-    console.log('Icon changed to:', icon);
     this.iconValue = icon;
   }
 
   onSubmit(): void {
-    console.log('Form submission started');
-    console.log('Form valid:', this.walletForm.valid);
-    console.log('Form value:', this.walletForm.value);
-    console.log('Icon value:', this.iconValue);
-    console.log('Form errors:', this.walletForm.errors);
-    
     if (this.walletForm.valid && this.iconValue) {
       const formValue = this.walletForm.value;
-      console.log('Processing form submission with data:', formValue);
 
       if (this.isEditMode && this.data.wallet) {
         const updateData: UpdateWalletRequest = {
@@ -397,7 +373,6 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
           type: formValue.type,
           goalAmount: formValue.goalAmount
         };
-        console.log('Dispatching update wallet action:', updateData);
         this.store.dispatch(updateWallet({ id: this.data.wallet!.id, wallet: updateData }));
       } else {
         const createData: CreateWalletRequest = {
@@ -411,22 +386,7 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
           goalAmount: formValue.goalAmount,
           setDefault: formValue.setDefault
         };
-        console.log('Dispatching create wallet action:', createData);
         this.store.dispatch(createWallet({ wallet: createData }));
-      }
-    } else {
-      console.log('Form validation failed');
-      if (!this.walletForm.valid) {
-        console.log('Form errors:', this.walletForm.errors);
-        Object.keys(this.walletForm.controls).forEach(key => {
-          const control = this.walletForm.get(key);
-          if (control?.errors) {
-            console.log(`Control ${key} errors:`, control.errors);
-          }
-        });
-      }
-      if (!this.iconValue) {
-        console.log('No icon selected');
       }
     }
   }

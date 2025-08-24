@@ -32,6 +32,7 @@ describe('WalletService', () => {
     isDefault: true,
     goalAmount: undefined,
     userId: 'user-123',
+    displayOrder: 1,
     createdAt: '2024-01-15T10:30:00Z',
     updatedAt: '2024-01-15T10:30:00Z'
   };

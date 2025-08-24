@@ -491,7 +491,6 @@ export class WalletListComponent implements OnInit, OnDestroy {
   }
 
   refreshWallets(): void {
-    console.log('Manually refreshing wallets...');
     this.loadWallets();
   }
 
@@ -509,13 +508,11 @@ export class WalletListComponent implements OnInit, OnDestroy {
   }
 
   openEditModal(wallet: Wallet): void {
-    console.log('Opening edit modal for wallet:', wallet);
     this.modalService.openComponent(WalletFormModalComponent, {
       id: 'edit-wallet-modal',
       title: 'Edit Wallet',
       data: { mode: 'edit', wallet }
     }).subscribe(result => {
-      console.log('Edit modal result:', result);
       if (result?.confirmed) {
         // Modal was closed successfully, refresh wallets
         this.loadWallets();
@@ -554,12 +551,8 @@ export class WalletListComponent implements OnInit, OnDestroy {
         
         // Validate the new order is within bounds
         if (newOrder < 1 || newOrder > wallets.length) {
-          console.warn('Invalid reorder position:', newOrder, 'for wallets count:', wallets.length);
           return;
         }
-
-        // Log the reorder operation for debugging
-        console.log(`Reordering wallet "${wallet.name}" from position ${wallet.displayOrder} to position ${newOrder}`);
         
         // Dispatch reorder action
         this.store.dispatch(reorderWallet({ id: wallet.id, newOrder }));

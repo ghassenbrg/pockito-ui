@@ -283,8 +283,6 @@ export class ModalHostComponent implements OnInit, OnDestroy, AfterViewInit {
 
       // Pass data to component through inputs
       if (modal.config.data && componentRef.instance) {
-        console.log('Setting modal data:', modal.config.data);
-        
         // Set input properties directly
         if (modal.config.data.mode) {
           (componentRef.instance as any).data = modal.config.data;
