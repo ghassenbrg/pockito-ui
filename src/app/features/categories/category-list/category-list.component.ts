@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { 
   selectAllCategories, 
   selectActiveCategories,
