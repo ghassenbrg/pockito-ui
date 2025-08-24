@@ -21,7 +21,7 @@ import { ModalHostComponent } from '../../shared/modal/modal-host.component';
           <div class="flex justify-between items-center h-16">
             <!-- Logo and App Name -->
             <div class="flex items-center">
-              <h1 class="text-xl font-semibold text-gray-900">Pockito</h1>
+              <img src="assets/pockito-logo-horizontal-light.svg" alt="Pockito" class="h-8 w-auto">
             </div>
             
             <!-- Desktop Navigation -->
@@ -106,7 +106,7 @@ import { ModalHostComponent } from '../../shared/modal/modal-host.component';
       </header>
 
       <!-- Main Content -->
-      <main class="flex-1 pb-20 md:pb-6">
+      <main class="flex-1 pb-34 md:pb-6">
         <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div class="px-4 py-6 sm:px-0">
             <router-outlet></router-outlet>
@@ -115,7 +115,7 @@ import { ModalHostComponent } from '../../shared/modal/modal-host.component';
       </main>
 
       <!-- Bottom Navigation (Mobile) -->
-      <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30">
+      <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-30 pb-safe-bottom">
         <div class="flex justify-around">
           <a 
             routerLink="/app/dashboard" 
@@ -177,7 +177,7 @@ import { ModalHostComponent } from '../../shared/modal/modal-host.component';
       <!-- Floating Action Button (FAB) -->
       <button 
         (click)="openTransactionModal()"
-        class="fixed bottom-24 md:bottom-8 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-300 z-50"
+        class="fixed bottom-26 md:bottom-8 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-300 z-50"
         title="Add Transaction"
       >
         <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">

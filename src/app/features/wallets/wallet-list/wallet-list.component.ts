@@ -500,14 +500,26 @@ export class WalletListComponent implements OnInit, OnDestroy {
       id: 'create-wallet-modal',
       title: 'Create New Wallet',
       data: { mode: 'create' }
+    }).subscribe(result => {
+      if (result?.confirmed) {
+        // Modal was closed successfully, refresh wallets
+        this.loadWallets();
+      }
     });
   }
 
   openEditModal(wallet: Wallet): void {
+    console.log('Opening edit modal for wallet:', wallet);
     this.modalService.openComponent(WalletFormModalComponent, {
       id: 'edit-wallet-modal',
       title: 'Edit Wallet',
       data: { mode: 'edit', wallet }
+    }).subscribe(result => {
+      console.log('Edit modal result:', result);
+      if (result?.confirmed) {
+        // Modal was closed successfully, refresh wallets
+        this.loadWallets();
+      }
     });
   }
 

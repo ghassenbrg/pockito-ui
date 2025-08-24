@@ -111,17 +111,6 @@ export class WalletEffects {
       ))
   ));
 
-  // Navigation effects
-  createWalletSuccess$ = createEffect(() => this.actions$.pipe(
-    ofType(WalletActions.createWalletSuccess),
-    tap(() => this.router.navigate(['/wallets']))
-  ), { dispatch: false });
-
-  updateWalletSuccess$ = createEffect(() => this.actions$.pipe(
-    ofType(WalletActions.updateWalletSuccess),
-    tap(() => this.router.navigate(['/wallets']))
-  ), { dispatch: false });
-
   constructor(
     private actions$: Actions,
     private walletService: WalletService,

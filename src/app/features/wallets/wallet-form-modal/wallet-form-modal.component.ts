@@ -19,7 +19,9 @@ import {
   UpdateWalletRequest, 
   WALLET_TYPES 
 } from '@shared/models';
-import { IconPickerComponent } from '@shared/icon-picker';
+import { IconPickerComponent, IconOption } from '@shared/icon-picker';
+import { ModalService } from '@shared/modal/modal.service';
+import { raise } from '@state/notification/notification.actions';
 
 export interface WalletFormData {
   mode: 'create' | 'edit';
@@ -145,12 +147,12 @@ export interface WalletFormData {
         </div>
 
         <!-- Financial Information -->
-        <div class="space-y-4">
+        <div  *ngIf="!isEditMode" class="space-y-4">
           <h3 class="text-lg font-medium text-gray-900">Financial Information</h3>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Initial Balance (Create mode only) -->
-            <div *ngIf="!isEditMode">
+            <div *ngIf="!isEditMode || walletForm.get('type')?.value === 'SAVINGS'">
               <label for="initialBalance" class="block text-sm font-medium text-gray-700 mb-1">
                 Initial Balance
               </label>
@@ -227,7 +229,7 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
   @Output() success = new EventEmitter<Wallet>();
 
   walletForm: FormGroup;
-  iconValue: any = null;
+  iconValue: IconOption | null = null;
   walletTypes = WALLET_TYPES;
 
   creating$ = this.store.select(selectWalletCreating);
@@ -238,7 +240,8 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(
     private fb: FormBuilder,
-    private store: Store
+    private store: Store,
+    private modalService: ModalService
   ) {
     this.walletForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
@@ -252,7 +255,13 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit(): void {
-    this.initializeForm();
+    console.log('WalletFormModalComponent ngOnInit called');
+    console.log('Current data:', this.data);
+    
+    // Initialize form after a short delay to ensure component is ready
+    setTimeout(() => {
+      this.initializeForm();
+    }, 50);
 
     // Watch for type changes to show/hide goal amount
     this.walletForm.get('type')?.valueChanges.pipe(
@@ -266,14 +275,33 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
         goalAmountControl?.setValue(null);
       }
     });
+
+    // Watch for success states to close modal and show success message
+    this.creating$.pipe(takeUntil(this.destroy$)).subscribe(creating => {
+      if (!creating && this.walletForm.dirty) {
+        // Wallet was created successfully
+        this.showSuccessMessage('Wallet created successfully!');
+        this.closeModalWithSuccess();
+      }
+    });
+
+    this.updating$.pipe(takeUntil(this.destroy$)).subscribe(updating => {
+      if (!updating && this.walletForm.dirty) {
+        // Wallet was updated successfully
+        this.showSuccessMessage('Wallet updated successfully!');
+        this.closeModalWithSuccess();
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('WalletFormModalComponent ngOnChanges called with:', changes);
     if (changes['data'] && changes['data'].currentValue) {
+      console.log('Data changed, reinitializing form with:', changes['data'].currentValue);
       // Use setTimeout to ensure the component is fully initialized
       setTimeout(() => {
         this.initializeForm();
-      }, 0);
+      }, 150);
     }
   }
 
@@ -287,6 +315,8 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private initializeForm(): void {
+    console.log('Initializing form, mode:', this.data.mode, 'wallet:', this.data.wallet);
+    
     // Reset form to initial state
     this.walletForm.reset({
       name: '',
@@ -303,11 +333,24 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
 
     // Populate form if in edit mode
     if (this.isEditMode && this.data.wallet) {
+      console.log('Populating form for edit mode');
       this.populateForm(this.data.wallet);
+    } else {
+      console.log('Not in edit mode or no wallet data');
     }
   }
 
   populateForm(wallet: Wallet): void {
+    console.log('Populating form with wallet:', wallet);
+    
+    // First set the icon value
+    this.iconValue = {
+      type: wallet.iconType,
+      value: wallet.iconValue
+    };
+    console.log('Set icon value to:', this.iconValue);
+    
+    // Then populate the form
     this.walletForm.patchValue({
       name: wallet.name,
       type: wallet.type,
@@ -321,19 +364,28 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
       });
     }
 
-    this.iconValue = {
-      type: wallet.iconType,
-      value: wallet.iconValue
-    };
+    // Mark form as pristine since we're loading existing data
+    this.walletForm.markAsPristine();
+    
+    console.log('Form populated, current values:', this.walletForm.value);
+    console.log('Icon value after population:', this.iconValue);
   }
 
-  onIconChange(icon: any): void {
+  onIconChange(icon: IconOption | null): void {
+    console.log('Icon changed to:', icon);
     this.iconValue = icon;
   }
 
   onSubmit(): void {
+    console.log('Form submission started');
+    console.log('Form valid:', this.walletForm.valid);
+    console.log('Form value:', this.walletForm.value);
+    console.log('Icon value:', this.iconValue);
+    console.log('Form errors:', this.walletForm.errors);
+    
     if (this.walletForm.valid && this.iconValue) {
       const formValue = this.walletForm.value;
+      console.log('Processing form submission with data:', formValue);
 
       if (this.isEditMode && this.data.wallet) {
         const updateData: UpdateWalletRequest = {
@@ -345,6 +397,7 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
           type: formValue.type,
           goalAmount: formValue.goalAmount
         };
+        console.log('Dispatching update wallet action:', updateData);
         this.store.dispatch(updateWallet({ id: this.data.wallet!.id, wallet: updateData }));
       } else {
         const createData: CreateWalletRequest = {
@@ -358,13 +411,63 @@ export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
           goalAmount: formValue.goalAmount,
           setDefault: formValue.setDefault
         };
+        console.log('Dispatching create wallet action:', createData);
         this.store.dispatch(createWallet({ wallet: createData }));
+      }
+    } else {
+      console.log('Form validation failed');
+      if (!this.walletForm.valid) {
+        console.log('Form errors:', this.walletForm.errors);
+        Object.keys(this.walletForm.controls).forEach(key => {
+          const control = this.walletForm.get(key);
+          if (control?.errors) {
+            console.log(`Control ${key} errors:`, control.errors);
+          }
+        });
+      }
+      if (!this.iconValue) {
+        console.log('No icon selected');
       }
     }
   }
 
   onCancel(): void {
-    this.cancel.emit();
+    this.closeModal();
+  }
+
+  private closeModal(): void {
+    // Close the modal using the modal service
+    if (this.data.mode === 'create') {
+      this.modalService.close('create-wallet-modal');
+    } else {
+      this.modalService.close('edit-wallet-modal');
+    }
+  }
+
+  private closeModalWithSuccess(): void {
+    // Close the modal with success result
+    if (this.data.mode === 'create') {
+      this.modalService.close('create-wallet-modal', {
+        modalId: 'create-wallet-modal',
+        confirmed: true,
+        data: { success: true }
+      });
+    } else {
+      this.modalService.close('edit-wallet-modal', {
+        modalId: 'edit-wallet-modal',
+        confirmed: true,
+        data: { success: true }
+      });
+    }
+  }
+
+  private showSuccessMessage(message: string): void {
+    this.store.dispatch(raise({
+      message,
+      status: 200,
+      displayType: 'toast',
+      notificationType: 'success'
+    }));
   }
 
   clearError(): void {
