@@ -1,15 +1,20 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { 
   selectAllCategories, 
+  selectActiveCategories,
   selectCategoriesLoading, 
   selectCategoriesError,
   selectCategoryArchiving,
   selectCategoryActivating,
   selectExpenseCategories,
-  selectIncomeCategories
+  selectIncomeCategories,
+  selectActiveExpenseCategories,
+  selectActiveIncomeCategories
 } from '@state/categories';
 import { 
   loadCategories, 
@@ -24,7 +29,7 @@ import { CategoryFormModalComponent } from '../category-form-modal/category-form
 @Component({
   selector: 'app-category-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   template: `
     <div class="container mx-auto px-4 py-6">
       <!-- Header -->
@@ -51,6 +56,17 @@ import { CategoryFormModalComponent } from '../category-form-modal/category-form
               class="px-3 py-2 rounded-md text-sm font-medium transition-all duration-200">
               Income
             </button>
+          </div>
+          
+          <!-- Show Archived Toggle -->
+          <div class="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="showArchived"
+              [(ngModel)]="showArchived"
+              (change)="onShowArchivedChange()"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+            <label for="showArchived" class="text-sm text-gray-700">Show Archived</label>
           </div>
           
           <button 
@@ -99,7 +115,8 @@ import { CategoryFormModalComponent } from '../category-form-modal/category-form
           *ngFor="let category of filteredCategories$ | async; trackBy: trackByCategoryId" 
           class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow category-card-hover"
           [style.border-left-color]="category.color || '#6B73FF'"
-          [style.border-left-width]="'4px'">
+          [style.border-left-width]="'4px'"
+          [class.opacity-60]="!category.isActive">
           
           <!-- Category Header -->
           <div class="flex items-center justify-between mb-4">
@@ -115,10 +132,18 @@ import { CategoryFormModalComponent } from '../category-form-modal/category-form
               <div>
                 <h3 class="font-semibold text-gray-900">{{ category.name }}</h3>
                 <p class="text-sm text-gray-500">{{ getCategoryTypeLabel(category.type) }}</p>
+                <p *ngIf="category.parentName" class="text-xs text-gray-400">
+                  Parent: {{ category.parentName }}
+                </p>
               </div>
             </div>
-            <div class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full">
-              {{ category.type }}
+            <div class="flex flex-col items-end gap-2">
+              <div class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full">
+                {{ category.type }}
+              </div>
+              <div *ngIf="!category.isActive" class="bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">
+                Archived
+              </div>
             </div>
           </div>
 
@@ -135,20 +160,33 @@ import { CategoryFormModalComponent } from '../category-form-modal/category-form
                 <span class="text-sm text-gray-600">{{ category.color || '#6B73FF' }}</span>
               </div>
             </div>
+            <div *ngIf="category.parentName" class="flex justify-between">
+              <span class="text-gray-600">Parent:</span>
+              <span class="font-medium text-gray-900">{{ category.parentName }}</span>
+            </div>
           </div>
 
           <!-- Category Actions -->
           <div class="flex gap-2">
             <button 
               (click)="editCategory(category)"
-              class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded text-sm transition-colors">
+              [disabled]="!category.isActive"
+              class="flex-1 bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-2 rounded text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
               Edit
             </button>
             <button 
+              *ngIf="category.isActive"
               (click)="confirmArchive(category)"
               [disabled]="archiving$ | async"
               class="flex-1 bg-red-100 hover:bg-red-200 text-red-700 px-3 py-2 rounded text-sm transition-colors disabled:opacity-50">
               {{ (archiving$ | async) ? 'Archiving...' : 'Archive' }}
+            </button>
+            <button 
+              *ngIf="!category.isActive"
+              (click)="confirmActivate(category)"
+              [disabled]="activating$ | async"
+              class="flex-1 bg-green-100 hover:bg-green-200 text-green-700 px-3 py-2 rounded text-sm transition-colors disabled:opacity-50">
+              {{ (activating$ | async) ? 'Activating...' : 'Activate' }}
             </button>
           </div>
         </div>
@@ -161,9 +199,12 @@ import { CategoryFormModalComponent } from '../category-form-modal/category-form
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">No categories yet</h3>
-        <p class="text-gray-500 mb-4">Get started by creating your first category to organize your transactions.</p>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No categories found</h3>
+        <p class="text-gray-500 mb-4">
+          {{ showArchived ? 'No categories match your current filters.' : 'Get started by creating your first category to organize your transactions.' }}
+        </p>
         <button 
+          *ngIf="!showArchived"
           (click)="openCreateModal()"
           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
           Create Category
@@ -219,15 +260,19 @@ import { CategoryFormModalComponent } from '../category-form-modal/category-form
 })
 export class CategoryListComponent implements OnInit, OnDestroy {
   allCategories$ = this.store.select(selectAllCategories);
+  activeCategories$ = this.store.select(selectActiveCategories);
   expenseCategories$ = this.store.select(selectExpenseCategories);
   incomeCategories$ = this.store.select(selectIncomeCategories);
+  activeExpenseCategories$ = this.store.select(selectActiveExpenseCategories);
+  activeIncomeCategories$ = this.store.select(selectActiveIncomeCategories);
   loading$ = this.store.select(selectCategoriesLoading);
   error$ = this.store.select(selectCategoriesError);
   archiving$ = this.store.select(selectCategoryArchiving);
   activating$ = this.store.select(selectCategoryActivating);
 
   typeFilter: 'ALL' | 'EXPENSE' | 'INCOME' = 'ALL';
-  filteredCategories$ = this.allCategories$;
+  showArchived = false;
+  filteredCategories$ = this.activeCategories$;
 
   private destroy$ = new Subject<void>();
 
@@ -247,15 +292,38 @@ export class CategoryListComponent implements OnInit, OnDestroy {
 
   setTypeFilter(type: 'ALL' | 'EXPENSE' | 'INCOME'): void {
     this.typeFilter = type;
-    switch (type) {
-      case 'EXPENSE':
-        this.filteredCategories$ = this.expenseCategories$;
-        break;
-      case 'INCOME':
-        this.filteredCategories$ = this.incomeCategories$;
-        break;
-      default:
-        this.filteredCategories$ = this.allCategories$;
+    this.updateFilteredCategories();
+  }
+
+  onShowArchivedChange(): void {
+    this.updateFilteredCategories();
+  }
+
+  private updateFilteredCategories(): void {
+    if (this.showArchived) {
+      // Show all categories (including archived)
+      switch (this.typeFilter) {
+        case 'EXPENSE':
+          this.filteredCategories$ = this.expenseCategories$;
+          break;
+        case 'INCOME':
+          this.filteredCategories$ = this.incomeCategories$;
+          break;
+        default:
+          this.filteredCategories$ = this.allCategories$;
+      }
+    } else {
+      // Show only active categories
+      switch (this.typeFilter) {
+        case 'EXPENSE':
+          this.filteredCategories$ = this.activeExpenseCategories$;
+          break;
+        case 'INCOME':
+          this.filteredCategories$ = this.activeIncomeCategories$;
+          break;
+        default:
+          this.filteredCategories$ = this.activeCategories$;
+      }
     }
   }
 
@@ -264,12 +332,20 @@ export class CategoryListComponent implements OnInit, OnDestroy {
   }
 
   editCategory(category: Category): void {
-    this.openEditModal(category);
+    if (category.isActive) {
+      this.openEditModal(category);
+    }
   }
 
   confirmArchive(category: Category): void {
     if (confirm(`Are you sure you want to archive "${category.name}"? This action can be undone.`)) {
       this.store.dispatch(archiveCategory({ id: category.id }));
+    }
+  }
+
+  confirmActivate(category: Category): void {
+    if (confirm(`Are you sure you want to activate "${category.name}"?`)) {
+      this.store.dispatch(activateCategory({ id: category.id }));
     }
   }
 

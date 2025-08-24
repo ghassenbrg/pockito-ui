@@ -75,7 +75,7 @@ export const activateCategory = createAction(
 );
 export const activateCategorySuccess = createAction(
   '[Category] Activate Category Success',
-  props<{ category: Category }>()
+  props<{ categoryId: string }>()
 );
 export const activateCategoryFailure = createAction(
   '[Category] Activate Category Failure',

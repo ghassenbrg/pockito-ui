@@ -6,7 +6,8 @@ import { Subject, takeUntil } from 'rxjs';
 import { 
   selectCategoryCreating, 
   selectCategoryUpdating, 
-  selectCategoriesError 
+  selectCategoriesError,
+  selectAllCategories
 } from '@state/categories';
 import { 
   createCategory, 
@@ -70,8 +71,8 @@ export interface CategoryFormData {
               </div>
             </div>
 
-            <!-- Type -->
-            <div>
+            <!-- Type (only for create mode) -->
+            <div *ngIf="!isEditMode">
               <label for="type" class="block text-sm font-medium text-gray-700 mb-1">
                 Category Type *
               </label>
@@ -89,6 +90,35 @@ export interface CategoryFormData {
                 Category type is required
               </div>
             </div>
+
+            <!-- Type Display (for edit mode) -->
+            <div *ngIf="isEditMode">
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Category Type
+              </label>
+              <div class="px-3 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700">
+                {{ getCategoryTypeLabel(data.category?.type) }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Parent Category -->
+          <div>
+            <label for="parentId" class="block text-sm font-medium text-gray-700 mb-1">
+              Parent Category
+            </label>
+            <select
+              id="parentId"
+              formControlName="parentId"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="">No parent (top-level category)</option>
+              <option *ngFor="let parent of availableParentCategories" [value]="parent.id">
+                {{ parent.name }} ({{ getCategoryTypeLabel(parent.type) }})
+              </option>
+            </select>
+            <p class="text-sm text-gray-500 mt-1">
+              Parent categories help organize your categories into groups
+            </p>
           </div>
 
           <!-- Icon -->
@@ -154,10 +184,12 @@ export class CategoryFormModalComponent implements OnInit, OnDestroy, OnChanges 
   categoryForm: FormGroup;
   iconValue: IconOption | null = null;
   categoryTypes = CATEGORY_TYPES;
+  availableParentCategories: Category[] = [];
 
   creating$ = this.store.select(selectCategoryCreating);
   updating$ = this.store.select(selectCategoryUpdating);
   error$ = this.store.select(selectCategoriesError);
+  allCategories$ = this.store.select(selectAllCategories);
 
   private destroy$ = new Subject<void>();
 
@@ -169,7 +201,8 @@ export class CategoryFormModalComponent implements OnInit, OnDestroy, OnChanges 
     this.categoryForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
       type: ['', Validators.required],
-      color: ['#6B73FF']
+      color: ['#6B73FF'],
+      parentId: ['']
     });
   }
 
@@ -194,6 +227,11 @@ export class CategoryFormModalComponent implements OnInit, OnDestroy, OnChanges 
         this.showSuccessMessage('Category updated successfully!');
         this.closeModalWithSuccess();
       }
+    });
+
+    // Load available parent categories
+    this.allCategories$.pipe(takeUntil(this.destroy$)).subscribe(categories => {
+      this.updateAvailableParentCategories(categories);
     });
   }
 
@@ -220,7 +258,8 @@ export class CategoryFormModalComponent implements OnInit, OnDestroy, OnChanges 
     this.categoryForm.reset({
       name: '',
       type: '',
-      color: '#6B73FF'
+      color: '#6B73FF',
+      parentId: ''
     });
 
     // Reset icon value
@@ -245,11 +284,31 @@ export class CategoryFormModalComponent implements OnInit, OnDestroy, OnChanges 
     this.categoryForm.patchValue({
       name: category.name,
       type: category.type,
-      color: category.color || '#6B73FF'
+      color: category.color || '#6B73FF',
+      parentId: category.parentId || ''
     });
 
     // Mark form as pristine since we're loading existing data
     this.categoryForm.markAsPristine();
+  }
+
+  private updateAvailableParentCategories(categories: Category[]): void {
+    if (this.isEditMode && this.data.category) {
+      // For edit mode, exclude the current category and its descendants
+      this.availableParentCategories = categories.filter(cat => 
+        cat.id !== this.data.category!.id && 
+        cat.type === this.data.category!.type &&
+        cat.isActive
+      );
+    } else {
+      // For create mode, show all active categories of the selected type
+      const selectedType = this.categoryForm.get('type')?.value;
+      if (selectedType) {
+        this.availableParentCategories = categories.filter(cat => 
+          cat.type === selectedType && cat.isActive
+        );
+      }
+    }
   }
 
   onIconChange(icon: IconOption | null): void {
@@ -263,10 +322,10 @@ export class CategoryFormModalComponent implements OnInit, OnDestroy, OnChanges 
       if (this.isEditMode && this.data.category) {
         const updateData: UpdateCategoryRequest = {
           name: formValue.name,
-          type: formValue.type,
           color: formValue.color,
           iconType: this.iconValue?.type,
-          iconValue: this.iconValue?.value
+          iconValue: this.iconValue?.value,
+          parentId: formValue.parentId || null
         };
         this.store.dispatch(updateCategory({ id: this.data.category!.id, category: updateData }));
       } else {
@@ -275,7 +334,8 @@ export class CategoryFormModalComponent implements OnInit, OnDestroy, OnChanges 
           type: formValue.type,
           color: formValue.color,
           iconType: this.iconValue?.type,
-          iconValue: this.iconValue?.value
+          iconValue: this.iconValue?.value,
+          parentId: formValue.parentId || null
         };
         this.store.dispatch(createCategory({ category: createData }));
       }
@@ -323,5 +383,11 @@ export class CategoryFormModalComponent implements OnInit, OnDestroy, OnChanges 
 
   clearError(): void {
     this.store.dispatch(clearCategoryError());
+  }
+
+  getCategoryTypeLabel(type: string | undefined): string {
+    if (!type) return '';
+    const categoryType = CATEGORY_TYPES.find(t => t.value === type);
+    return categoryType?.label || type;
   }
 }

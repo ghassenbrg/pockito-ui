@@ -8,8 +8,24 @@ export const selectAllCategories = createSelector(
   (state: CategoryState) => state.categories
 );
 
+export const selectActiveCategories = createSelector(
+  selectAllCategories,
+  (categories) => categories.filter(category => category.isActive)
+);
+
+export const selectArchivedCategories = createSelector(
+  selectAllCategories,
+  (categories) => categories.filter(category => !category.isActive)
+);
+
 export const selectCategoriesByType = createSelector(
   selectAllCategories,
+  (categories) => (type: 'EXPENSE' | 'INCOME') => 
+    categories.filter(category => category.type === type)
+);
+
+export const selectActiveCategoriesByType = createSelector(
+  selectActiveCategories,
   (categories) => (type: 'EXPENSE' | 'INCOME') => 
     categories.filter(category => category.type === type)
 );
@@ -21,6 +37,16 @@ export const selectExpenseCategories = createSelector(
 
 export const selectIncomeCategories = createSelector(
   selectAllCategories,
+  (categories) => categories.filter(category => category.type === 'INCOME')
+);
+
+export const selectActiveExpenseCategories = createSelector(
+  selectActiveCategories,
+  (categories) => categories.filter(category => category.type === 'EXPENSE')
+);
+
+export const selectActiveIncomeCategories = createSelector(
+  selectActiveCategories,
   (categories) => categories.filter(category => category.type === 'INCOME')
 );
 

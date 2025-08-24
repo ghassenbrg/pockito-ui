@@ -4,3 +4,4 @@
  */
 
 export * from './utilities.service';
+export * from './category.service';

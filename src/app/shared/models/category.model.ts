@@ -7,8 +7,10 @@ export interface Category {
   iconType?: 'EMOJI' | 'URL';
   iconValue?: string;
   parentId?: string;
-  createdAt: string;
-  updatedAt: string;
+  parentName?: string;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface CreateCategoryRequest {
@@ -21,7 +23,6 @@ export interface CreateCategoryRequest {
 }
 
 export interface UpdateCategoryRequest {
-  type: 'EXPENSE' | 'INCOME';
   name: string;
   color?: string;
   iconType?: 'EMOJI' | 'URL';
