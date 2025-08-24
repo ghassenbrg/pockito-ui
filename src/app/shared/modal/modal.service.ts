@@ -68,6 +68,11 @@ export class ModalService {
     component: Type<T>,
     config: Omit<ModalConfig, 'component'>
   ): Observable<ModalResult> {
+    // Close any existing modal with the same ID to prevent conflicts
+    if (config.id && this.activeModals.has(config.id)) {
+      this.close(config.id);
+    }
+    
     return this.open({
       ...config,
       component

@@ -23,92 +23,153 @@
        (keydown)="onKeyDown($event)"
        tabindex="0">
     
-    <!-- Search Bar -->
-    <div class="icon-search">
-      <div class="search-input-wrapper">
-        <svg class="search-icon" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
-        </svg>
-        <input type="text" 
-               placeholder="Search icons"
-               [(ngModel)]="searchTerm"
-               (input)="onSearchInput($event)"
-               class="search-input">
-        <button *ngIf="searchTerm" 
-                (click)="clearSearch()"
-                class="clear-search"
+    <!-- Step 1: Type Selection -->
+    <div *ngIf="currentStep === 'type-selection'" class="type-selection-step">
+      <h3 class="step-title">Choose Icon Type</h3>
+      <div class="type-selection-grid">
+        <button *ngIf="config.showEmoji"
+                (click)="selectIconType('EMOJI')"
+                class="type-option emoji-type"
                 type="button">
+          <div class="type-icon">😊</div>
+          <div class="type-label">Emoji</div>
+          <div class="type-description">Choose from popular emojis</div>
+        </button>
+        <button *ngIf="config.showUrl"
+                (click)="selectIconType('URL')"
+                class="type-option url-type"
+                type="button">
+          <div class="type-icon">🔗</div>
+          <div class="type-label">Custom URL</div>
+          <div class="type-description">Use your own image URL</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: Emoji Selection -->
+    <div *ngIf="currentStep === 'emoji-selection'" class="emoji-selection-step">
+      <div class="step-header">
+        <button (click)="goBackToTypeSelection()" class="back-button" type="button">
           <svg fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
           </svg>
+          Back
         </button>
+        <h3 class="step-title">Choose Emoji</h3>
       </div>
-    </div>
 
-    <!-- Loading State -->
-    <div *ngIf="isLoading" class="loading-state">
-      <div class="spinner"></div>
-      <span>Searching...</span>
-    </div>
-
-    <!-- API Suggestions -->
-    <div *ngIf="!isLoading && suggestions.length > 0" class="suggestions-section">
-      <h4 class="section-title">Suggestions</h4>
-      <div class="suggestions-grid">
-        <button *ngFor="let suggestion of suggestions"
-                (click)="selectIcon(suggestion)"
-                class="suggestion-item"
-                type="button">
-          <span *ngIf="suggestion.type === 'EMOJI'" class="emoji-icon">{{ suggestion.value }}</span>
-          <img *ngIf="suggestion.type === 'URL'" 
-               [src]="suggestion.value" 
-               [alt]="suggestion.label || 'Icon'"
-               class="url-icon">
-          <span *ngIf="suggestion.label" class="suggestion-label">{{ suggestion.label }}</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Emoji Categories -->
-    <div *ngIf="config.showEmoji && (!searchTerm || searchTerm.length < 2)" class="emoji-section">
-      <div *ngFor="let category of emojiCategories" class="emoji-category">
-        <h4 class="category-title">{{ category.name }}</h4>
-        <div class="emoji-grid">
-          <button *ngFor="let emoji of category.emojis"
-                  (click)="selectEmoji(emoji)"
-                  class="emoji-item"
-                  type="button"
-                  [title]="emoji">
-            {{ emoji }}
+      <!-- Search Bar -->
+      <div class="icon-search">
+        <div class="search-input-wrapper">
+          <svg class="search-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+          </svg>
+          <input type="text" 
+                 placeholder="Search emojis..."
+                 [(ngModel)]="searchTerm"
+                 (input)="onSearchInput($event)"
+                 class="search-input">
+          <button *ngIf="searchTerm" 
+                  (click)="clearSearch()"
+                  class="clear-search"
+                  type="button">
+            <svg fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+            </svg>
           </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-state">
+        <div class="spinner"></div>
+        <span>Searching...</span>
+      </div>
+
+      <!-- API Suggestions -->
+      <div *ngIf="!isLoading && suggestions.length > 0" class="suggestions-section">
+        <h4 class="section-title">Suggestions</h4>
+        <div class="suggestions-grid">
+          <button *ngFor="let suggestion of suggestions"
+                  (click)="selectIcon(suggestion)"
+                  class="suggestion-item"
+                  type="button">
+            <span *ngIf="suggestion.type === 'EMOJI'" class="emoji-icon">{{ suggestion.value }}</span>
+            <img *ngIf="suggestion.type === 'URL'" 
+                 [src]="suggestion.value" 
+                 [alt]="suggestion.label || 'Icon'"
+                 class="url-icon">
+            <span *ngIf="suggestion.label" class="suggestion-label">{{ suggestion.label }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Emoji Categories -->
+      <div *ngIf="(!searchTerm || searchTerm.length < 2)" class="emoji-section">
+        <div *ngFor="let category of emojiCategories" class="emoji-category">
+          <h4 class="category-title">{{ category.name }}</h4>
+          <div class="emoji-grid">
+            <button *ngFor="let emoji of category.emojis"
+                    (click)="selectEmoji(emoji)"
+                    class="emoji-item"
+                    type="button"
+                    [title]="emoji">
+              {{ emoji }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- URL Input -->
-    <div *ngIf="config.showUrl" class="url-section">
-      <h4 class="section-title">Custom URL</h4>
-      <div class="url-input-wrapper">
-        <input type="url" 
-               placeholder="Enter icon URL"
-               [ngModel]="urlInputValue"
-               (ngModelChange)="onUrlInputChange($event)"
-               class="url-input"
-               [class.error]="urlInputInvalid && urlInputTouched">
-        <button (click)="selectUrl(urlInputValue)"
-                [disabled]="!urlInputValid"
-                class="url-select-btn"
-                type="button">
-          Use URL
+    <!-- Step 3: URL Input -->
+    <div *ngIf="currentStep === 'url-input'" class="url-input-step">
+      <div class="step-header">
+        <button (click)="goBackToTypeSelection()" class="back-button" type="button">
+          <svg fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"></path>
+          </svg>
+          Back
         </button>
+        <h3 class="step-title">Enter Image URL</h3>
       </div>
-      <div *ngIf="urlInputInvalid && urlInputTouched" 
-           class="error-message">
-        Please enter a valid URL
+
+      <div class="url-input-section">
+        <p class="url-description">Enter the URL of an image you'd like to use as an icon.</p>
+        
+        <div class="url-input-wrapper">
+          <input type="url" 
+                 placeholder="https://example.com/image.png"
+                 [ngModel]="urlInputValue"
+                 (ngModelChange)="onUrlInputChange($event)"
+                 class="url-input"
+                 [class.error]="urlInputInvalid && urlInputTouched">
+          <button (click)="selectUrl(urlInputValue)"
+                  [disabled]="!urlInputValid"
+                  class="url-select-btn"
+                  type="button">
+            Use URL
+          </button>
+        </div>
+        
+        <div *ngIf="urlInputInvalid && urlInputTouched" 
+             class="error-message">
+          Please enter a valid URL (e.g., https://example.com/image.png)
+        </div>
+        
+        <div *ngIf="urlInputValid && urlInputValue" class="url-preview">
+          <h4 class="section-title">Preview</h4>
+          <div class="url-preview-content">
+            <img [src]="urlInputValue" 
+                 [alt]="'URL preview'" 
+                 class="url-preview-image"
+                 (error)="onImageError($event)">
+            <div class="url-preview-text">{{ urlInputValue }}</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Clear Button -->
+    <!-- Clear Button (shown when icon is selected) -->
     <div *ngIf="value?.value" class="clear-section">
       <button (click)="clearIcon()" 
               class="clear-icon-btn"

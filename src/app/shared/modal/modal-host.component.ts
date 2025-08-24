@@ -7,7 +7,6 @@ import {
   HostListener,
   OnDestroy,
   OnInit,
-  SimpleChanges,
   ViewChild,
   ViewContainerRef
 } from '@angular/core';
@@ -33,7 +32,6 @@ import { ModalInstance, ModalService } from './modal.service';
       (keydown)="onKeyDown($event)"
     >
       <div
-        #modalContent
         class="modal-content"
         [class]="modal.config.contentClass || ''"
         (click)="$event.stopPropagation()"
@@ -43,18 +41,16 @@ import { ModalInstance, ModalService } from './modal.service';
         <!-- Modal Header -->
         <div
           class="modal-header"
-          *ngIf="modal.config.title || modal.config.showCloseButton"
+          *ngIf="modal.config.title"
         >
           <h2
-            *ngIf="modal.config.title"
             class="modal-title"
             [id]="'modal-title-' + modal.config.id"
           >
             {{ modal.config.title }}
           </h2>
-
+          
           <button
-            *ngIf="modal.config.showCloseButton"
             type="button"
             class="modal-close-btn"
             (click)="closeModal(modal.config.id)"
@@ -81,7 +77,7 @@ import { ModalInstance, ModalService } from './modal.service';
         <div class="modal-body">
           <!-- Component-based modal -->
           <ng-container *ngIf="modal.config.component">
-            <ng-container #componentContainer></ng-container>
+            <div #componentContainer></div>
           </ng-container>
 
           <!-- Template-based modal -->
@@ -130,7 +126,8 @@ import { ModalInstance, ModalService } from './modal.service';
         border-radius: 0.5rem;
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
           0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        max-width: 90vw;
+        width: 90vw;
+        max-width: 600px;
         max-height: 90vh;
         overflow-y: auto;
         position: relative;
@@ -158,17 +155,14 @@ import { ModalInstance, ModalService } from './modal.service';
         border: none;
         color: #6b7280;
         cursor: pointer;
-        padding: 0.25rem;
-        border-radius: 0.25rem;
+        padding: 0.5rem;
+        border-radius: 0.375rem;
         transition: all 0.2s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
 
       .modal-close-btn:hover {
-        color: #374151;
         background-color: #f3f4f6;
+        color: #374151;
       }
 
       .modal-close-btn:focus {
@@ -181,7 +175,8 @@ import { ModalInstance, ModalService } from './modal.service';
       }
 
       .legacy-modal-content {
-        min-width: 300px;
+        text-align: center;
+        padding: 2rem;
       }
 
       /* Responsive adjustments */
@@ -195,10 +190,12 @@ import { ModalInstance, ModalService } from './modal.service';
           max-height: 95vh;
         }
 
-        .modal-header,
+        .modal-header {
+          padding: 1rem 1rem 0 1rem;
+        }
+
         .modal-body {
-          padding-left: 1rem;
-          padding-right: 1rem;
+          padding: 0 1rem 1rem 1rem;
         }
       }
 
@@ -229,6 +226,11 @@ export class ModalHostComponent implements OnInit, OnDestroy, AfterViewInit {
       this.modalService.getActiveModals().subscribe((modals) => {
         this.activeModals = modals;
         this.cdr.detectChanges();
+        
+        // Process modals after change detection
+        setTimeout(() => {
+          this.processActiveModals();
+        });
       })
     );
   }
@@ -250,6 +252,15 @@ export class ModalHostComponent implements OnInit, OnDestroy, AfterViewInit {
    * Process active modals and create component instances
    */
   private processActiveModals(): void {
+    // Clear any existing component references that are no longer active
+    this.modalComponentRefs.forEach((ref, modalId) => {
+      if (!this.activeModals.find(m => m.config.id === modalId)) {
+        ref.destroy();
+        this.modalComponentRefs.delete(modalId);
+      }
+    });
+
+    // Create new component instances for active modals
     this.activeModals.forEach((modal) => {
       if (
         modal.config.component &&
@@ -267,9 +278,8 @@ export class ModalHostComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!modal.config.component || !this.componentContainer) return;
 
     try {
-      const componentRef = this.componentContainer.createComponent(
-        modal.config.component
-      );
+      // Create the component
+      const componentRef = this.componentContainer.createComponent(modal.config.component);
 
       // Pass data to component if it has an input
       if (modal.config.data && componentRef.instance) {
@@ -339,14 +349,5 @@ export class ModalHostComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   trackByModalId(index: number, modal: ModalInstance): string {
     return modal.config.id;
-  }
-
-  /**
-   * Handle changes in modal configuration
-   */
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['activeModals']) {
-      this.processActiveModals();
-    }
   }
 }

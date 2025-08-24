@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -31,21 +31,7 @@ export interface WalletFormData {
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IconPickerComponent],
   template: `
-    <div class="p-6 max-w-2xl mx-auto">
-      <!-- Header -->
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
-          {{ isEditMode ? 'Edit Wallet' : 'Create New Wallet' }}
-        </h2>
-        <button 
-          (click)="onCancel()"
-          class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-
+    <div class="p-6 max-w-4xl mx-auto">
       <!-- Error Banner -->
       <div *ngIf="error$ | async as error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
         <div class="flex justify-between items-center">
@@ -62,28 +48,50 @@ export interface WalletFormData {
       <form [formGroup]="walletForm" (ngSubmit)="onSubmit()" class="space-y-6">
         <!-- Basic Information -->
         <div class="space-y-4">
-          <h3 class="text-lg font-medium text-gray-900 dark:text-white">Basic Information</h3>
+          <h3 class="text-lg font-medium text-gray-900">Basic Information</h3>
           
-          <!-- Name -->
-          <div>
-            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Wallet Name *
-            </label>
-            <input
-              id="name"
-              type="text"
-              formControlName="name"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-              placeholder="Enter wallet name">
-            <div *ngIf="walletForm.get('name')?.invalid && walletForm.get('name')?.touched" 
-                 class="text-red-600 text-sm mt-1">
-              Wallet name is required
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Name -->
+            <div>
+              <label for="name" class="block text-sm font-medium text-gray-700 mb-1">
+                Wallet Name *
+              </label>
+              <input
+                id="name"
+                type="text"
+                formControlName="name"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter wallet name">
+              <div *ngIf="walletForm.get('name')?.invalid && walletForm.get('name')?.touched" 
+                   class="text-red-600 text-sm mt-1">
+                Wallet name is required
+              </div>
+            </div>
+
+            <!-- Type -->
+            <div>
+              <label for="type" class="block text-sm font-medium text-gray-700 mb-1">
+                Wallet Type *
+              </label>
+              <select
+                id="type"
+                formControlName="type"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="">Select wallet type</option>
+                <option *ngFor="let walletType of walletTypes" [value]="walletType.value">
+                  {{ walletType.label }}
+                </option>
+              </select>
+              <div *ngIf="walletForm.get('type')?.invalid && walletForm.get('type')?.touched" 
+                   class="text-red-600 text-sm mt-1">
+                Wallet type is required
+              </div>
             </div>
           </div>
 
           <!-- Icon -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label class="block text-sm font-medium text-gray-700 mb-1">
               Wallet Icon *
             </label>
             <app-icon-picker
@@ -96,95 +104,79 @@ export interface WalletFormData {
             </div>
           </div>
 
-          <!-- Type -->
-          <div>
-            <label for="type" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Wallet Type *
-            </label>
-            <select
-              id="type"
-              formControlName="type"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
-              <option value="">Select wallet type</option>
-              <option *ngFor="let walletType of walletTypes" [value]="walletType.value">
-                {{ walletType.label }}
-              </option>
-            </select>
-            <div *ngIf="walletForm.get('type')?.invalid && walletForm.get('type')?.touched" 
-                 class="text-red-600 text-sm mt-1">
-              Wallet type is required
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Currency -->
+            <div>
+              <label for="currencyCode" class="block text-sm font-medium text-gray-700 mb-1">
+                Currency *
+              </label>
+              <select
+                id="currencyCode"
+                formControlName="currencyCode"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="">Select currency</option>
+                <option value="USD">USD - US Dollar</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - British Pound</option>
+                <option value="JPY">JPY - Japanese Yen</option>
+                <option value="CAD">CAD - Canadian Dollar</option>
+                <option value="AUD">AUD - Australian Dollar</option>
+                <option value="CHF">CHF - Swiss Franc</option>
+              </select>
+              <div *ngIf="walletForm.get('currencyCode')?.invalid && walletForm.get('currencyCode')?.touched" 
+                   class="text-red-600 text-sm mt-1">
+                Currency is required
+              </div>
             </div>
-          </div>
 
-          <!-- Currency -->
-          <div>
-            <label for="currencyCode" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Currency *
-            </label>
-            <select
-              id="currencyCode"
-              formControlName="currencyCode"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white">
-              <option value="">Select currency</option>
-              <option value="USD">USD - US Dollar</option>
-              <option value="EUR">EUR - Euro</option>
-              <option value="GBP">GBP - British Pound</option>
-              <option value="JPY">JPY - Japanese Yen</option>
-              <option value="CAD">CAD - Canadian Dollar</option>
-              <option value="AUD">AUD - Australian Dollar</option>
-              <option value="CHF">CHF - Swiss Franc</option>
-            </select>
-            <div *ngIf="walletForm.get('currencyCode')?.invalid && walletForm.get('currencyCode')?.touched" 
-                 class="text-red-600 text-sm mt-1">
-              Currency is required
+            <!-- Color -->
+            <div>
+              <label for="color" class="block text-sm font-medium text-gray-700 mb-1">
+                Color
+              </label>
+              <input
+                id="color"
+                type="color"
+                formControlName="color"
+                class="w-16 h-10 border border-gray-300 rounded-lg cursor-pointer">
             </div>
-          </div>
-
-          <!-- Color -->
-          <div>
-            <label for="color" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Color
-            </label>
-            <input
-              id="color"
-              type="color"
-              formControlName="color"
-              class="w-16 h-10 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer">
           </div>
         </div>
 
         <!-- Financial Information -->
         <div class="space-y-4">
-          <h3 class="text-lg font-medium text-gray-900 dark:text-white">Financial Information</h3>
+          <h3 class="text-lg font-medium text-gray-900">Financial Information</h3>
           
-          <!-- Initial Balance (Create mode only) -->
-          <div *ngIf="!isEditMode">
-            <label for="initialBalance" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Initial Balance
-            </label>
-            <input
-              id="initialBalance"
-              type="number"
-              formControlName="initialBalance"
-              step="0.01"
-              min="0"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-              placeholder="0.00">
-          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Initial Balance (Create mode only) -->
+            <div *ngIf="!isEditMode">
+              <label for="initialBalance" class="block text-sm font-medium text-gray-700 mb-1">
+                Initial Balance
+              </label>
+              <input
+                id="initialBalance"
+                type="number"
+                formControlName="initialBalance"
+                step="0.01"
+                min="0"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="0.00">
+            </div>
 
-          <!-- Goal Amount (Savings only) -->
-          <div *ngIf="walletForm.get('type')?.value === 'SAVINGS'">
-            <label for="goalAmount" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Goal Amount
-            </label>
-            <input
-              id="goalAmount"
-              type="number"
-              formControlName="goalAmount"
-              step="0.01"
-              min="0"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-              placeholder="Enter goal amount">
+            <!-- Goal Amount (Savings only) -->
+            <div *ngIf="walletForm.get('type')?.value === 'SAVINGS'">
+              <label for="goalAmount" class="block text-sm font-medium text-gray-700 mb-1">
+                Goal Amount
+              </label>
+              <input
+                id="goalAmount"
+                type="number"
+                formControlName="goalAmount"
+                step="0.01"
+                min="0"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter goal amount">
+            </div>
           </div>
 
           <!-- Set as Default (Create mode only) -->
@@ -194,18 +186,18 @@ export interface WalletFormData {
               type="checkbox"
               formControlName="setDefault"
               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-            <label for="setDefault" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+            <label for="setDefault" class="ml-2 block text-sm text-gray-700">
               Set as default wallet
             </label>
           </div>
         </div>
 
         <!-- Form Actions -->
-        <div class="flex justify-end gap-3 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
           <button
             type="button"
             (click)="onCancel()"
-            class="px-4 py-2 text-gray-700 dark:text-gray-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg transition-colors">
+            class="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors">
             Cancel
           </button>
           <button
@@ -228,7 +220,7 @@ export interface WalletFormData {
     }
   `]
 })
-export class WalletFormModalComponent implements OnInit, OnDestroy {
+export class WalletFormModalComponent implements OnInit, OnDestroy, OnChanges {
   @Input() data: WalletFormData = { mode: 'create' };
   @Output() cancel = new EventEmitter<void>();
   @Output() success = new EventEmitter<Wallet>();
@@ -259,9 +251,7 @@ export class WalletFormModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    if (this.isEditMode && this.data.wallet) {
-      this.populateForm(this.data.wallet);
-    }
+    this.initializeForm();
 
     // Watch for type changes to show/hide goal amount
     this.walletForm.get('type')?.valueChanges.pipe(
@@ -277,6 +267,15 @@ export class WalletFormModalComponent implements OnInit, OnDestroy {
     });
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['data'] && changes['data'].currentValue) {
+      // Use setTimeout to ensure the component is fully initialized
+      setTimeout(() => {
+        this.initializeForm();
+      }, 0);
+    }
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -284,6 +283,27 @@ export class WalletFormModalComponent implements OnInit, OnDestroy {
 
   get isEditMode(): boolean {
     return this.data.mode === 'edit';
+  }
+
+  private initializeForm(): void {
+    // Reset form to initial state
+    this.walletForm.reset({
+      name: '',
+      type: '',
+      currencyCode: '',
+      color: '#3B82F6',
+      initialBalance: 0,
+      goalAmount: null,
+      setDefault: false
+    });
+
+    // Reset icon value
+    this.iconValue = null;
+
+    // Populate form if in edit mode
+    if (this.isEditMode && this.data.wallet) {
+      this.populateForm(this.data.wallet);
+    }
   }
 
   populateForm(wallet: Wallet): void {

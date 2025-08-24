@@ -52,6 +52,10 @@ export class IconPickerComponent implements OnInit, OnDestroy {
   urlInputTouched = false;
   urlInputValid = false;
   
+  // New UX flow properties
+  currentStep: 'type-selection' | 'emoji-selection' | 'url-input' = 'type-selection';
+  selectedType: 'EMOJI' | 'URL' | null = null;
+  
   private destroy$ = new Subject<void>();
   private search$ = new Subject<string>();
 
@@ -82,6 +86,7 @@ export class IconPickerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (this.value) {
       this.iconForm.patchValue(this.value);
+      this.selectedType = this.value.type;
     }
 
     // Setup search with debouncing
@@ -121,6 +126,7 @@ export class IconPickerComponent implements OnInit, OnDestroy {
   togglePicker(): void {
     this.showPicker = !this.showPicker;
     if (this.showPicker) {
+      this.resetToTypeSelection();
       setTimeout(() => {
         const searchInput = document.querySelector('.icon-search input') as HTMLInputElement;
         if (searchInput) {
@@ -128,6 +134,40 @@ export class IconPickerComponent implements OnInit, OnDestroy {
         }
       }, 100);
     }
+  }
+
+  // New UX flow methods
+  resetToTypeSelection(): void {
+    this.currentStep = 'type-selection';
+    this.selectedType = null;
+    this.searchTerm = '';
+    this.urlInputValue = '';
+    this.urlInputInvalid = false;
+    this.urlInputTouched = false;
+    this.urlInputValid = false;
+  }
+
+  selectIconType(type: 'EMOJI' | 'URL'): void {
+    this.selectedType = type;
+    this.currentStep = type === 'EMOJI' ? 'emoji-selection' : 'url-input';
+    
+    // Update form type
+    this.iconForm.patchValue({ type });
+    
+    // Focus appropriate input
+    setTimeout(() => {
+      if (type === 'URL') {
+        const urlInput = document.querySelector('.url-input') as HTMLInputElement;
+        if (urlInput) {
+          urlInput.focus();
+        }
+      }
+    }, 100);
+  }
+
+  goBackToTypeSelection(): void {
+    this.currentStep = 'type-selection';
+    this.selectedType = null;
   }
 
   selectEmoji(emoji: string): void {
@@ -150,6 +190,7 @@ export class IconPickerComponent implements OnInit, OnDestroy {
     this.iconForm.patchValue(icon);
     this.iconSelect.emit(icon);
     this.showPicker = false;
+    this.resetToTypeSelection();
   }
 
   searchIcons(term: string): void {
@@ -190,12 +231,21 @@ export class IconPickerComponent implements OnInit, OnDestroy {
   onBackdropClick(event: Event): void {
     if (event.target === event.currentTarget) {
       this.showPicker = false;
+      this.resetToTypeSelection();
     }
   }
 
   onKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
       this.showPicker = false;
+      this.resetToTypeSelection();
+    }
+  }
+
+  onImageError(event: Event): void {
+    const imgElement = event.target as HTMLImageElement;
+    if (imgElement) {
+      imgElement.style.display = 'none';
     }
   }
 }

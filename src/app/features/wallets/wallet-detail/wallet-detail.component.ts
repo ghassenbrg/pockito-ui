@@ -20,7 +20,7 @@ import { loadWallet, clearSelectedWallet } from '@state/wallets';
       <div class="mb-6">
         <button 
           (click)="goBack()"
-          class="flex items-center gap-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors">
+          class="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
           </svg>
@@ -44,14 +44,21 @@ import { loadWallet, clearSelectedWallet } from '@state/wallets';
       </div>
 
       <!-- Wallet Detail Content -->
-      <div *ngIf="!(loading$ | async) && (wallet$ | async) as wallet" class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+      <div *ngIf="!(loading$ | async) && (wallet$ | async) as wallet" class="bg-white rounded-lg shadow-md p-6">
         <!-- Wallet Header -->
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center gap-4">
-            <div class="text-4xl">{{ wallet.iconType === 'EMOJI' ? wallet.iconValue : '🏦' }}</div>
+            <div class="text-4xl">
+              <span *ngIf="wallet.iconType === 'EMOJI'">{{ wallet.iconValue }}</span>
+              <img *ngIf="wallet.iconType === 'URL'" 
+                   [src]="wallet.iconValue" 
+                   [alt]="wallet.name + ' icon'"
+                   class="w-12 h-12 object-contain rounded"
+                   (error)="onImageError($event)">
+            </div>
             <div>
-              <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ wallet.name }}</h1>
-              <p class="text-lg text-gray-500 dark:text-gray-400">{{ getWalletTypeLabel(wallet.type) }}</p>
+              <h1 class="text-3xl font-bold text-gray-900">{{ wallet.name }}</h1>
+              <p class="text-lg text-gray-500">{{ getWalletTypeLabel(wallet.type) }}</p>
             </div>
           </div>
           <div class="flex gap-2">
@@ -71,20 +78,20 @@ import { loadWallet, clearSelectedWallet } from '@state/wallets';
         <!-- Wallet Information -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div class="space-y-4">
-            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-              <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Basic Information</h3>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h3 class="font-semibold text-gray-900 mb-2">Basic Information</h3>
               <div class="space-y-2">
                 <div class="flex justify-between">
-                  <span class="text-gray-600 dark:text-gray-400">Type:</span>
-                  <span class="font-medium text-gray-900 dark:text-white">{{ getWalletTypeLabel(wallet.type) }}</span>
+                  <span class="text-gray-600">Type:</span>
+                  <span class="font-medium text-gray-900">{{ getWalletTypeLabel(wallet.type) }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600 dark:text-gray-400">Currency:</span>
-                  <span class="font-medium text-gray-900 dark:text-white">{{ wallet.currencyCode }}</span>
+                  <span class="text-gray-600">Currency:</span>
+                  <span class="font-medium text-gray-900">{{ wallet.currencyCode }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-gray-600 dark:text-gray-400">Status:</span>
-                  <span class="font-medium text-gray-900 dark:text-white">
+                  <span class="text-gray-600">Status:</span>
+                  <span class="font-medium text-gray-900">
                     <span *ngIf="wallet.isDefault" class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
                       Default
                     </span>
@@ -96,24 +103,24 @@ import { loadWallet, clearSelectedWallet } from '@state/wallets';
           </div>
 
           <div class="space-y-4">
-            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-              <h3 class="font-semibold text-gray-900 dark:text-white mb-2">Financial Details</h3>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <h3 class="font-semibold text-gray-900 mb-2">Financial Details</h3>
               <div class="space-y-2">
                 <div class="flex justify-between">
-                  <span class="text-gray-600 dark:text-gray-400">Initial Balance:</span>
-                  <span class="font-medium text-gray-900 dark:text-white">
+                  <span class="text-gray-600">Initial Balance:</span>
+                  <span class="font-medium text-gray-900">
                     {{ wallet.initialBalance | currency:wallet.currencyCode }}
                   </span>
                 </div>
                 <div *ngIf="wallet.goalAmount" class="flex justify-between">
-                  <span class="text-gray-600 dark:text-gray-400">Goal Amount:</span>
-                  <span class="font-medium text-gray-900 dark:text-white">
+                  <span class="text-gray-600">Goal Amount:</span>
+                  <span class="font-medium text-gray-900">
                     {{ wallet.goalAmount | currency:wallet.currencyCode }}
                   </span>
                 </div>
                 <div *ngIf="wallet.goalAmount" class="flex justify-between">
-                  <span class="text-gray-600 dark:text-gray-400">Progress:</span>
-                  <span class="font-medium text-gray-900 dark:text-white">
+                  <span class="text-gray-600">Progress:</span>
+                  <span class="font-medium text-gray-900">
                     {{ (wallet.initialBalance / wallet.goalAmount * 100) | number:'1.0-1' }}%
                   </span>
                 </div>
@@ -123,8 +130,8 @@ import { loadWallet, clearSelectedWallet } from '@state/wallets';
         </div>
 
         <!-- Additional Actions -->
-        <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
-          <h3 class="font-semibold text-gray-900 dark:text-white mb-4">Actions</h3>
+        <div class="border-t border-gray-200 pt-6">
+          <h3 class="font-semibold text-gray-900 mb-4">Actions</h3>
           <div class="flex gap-3">
             <button 
               *ngIf="!wallet.isDefault"
@@ -141,14 +148,14 @@ import { loadWallet, clearSelectedWallet } from '@state/wallets';
         </div>
 
         <!-- Placeholder for future content -->
-        <div class="mt-8 p-6 bg-gray-50 dark:bg-gray-700 rounded-lg text-center">
+        <div class="mt-8 p-6 bg-gray-50 rounded-lg text-center">
           <div class="text-gray-400 mb-2">
             <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
             </svg>
           </div>
-          <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-2">More Features Coming Soon</h4>
-          <p class="text-gray-500 dark:text-gray-400">
+          <h4 class="text-lg font-medium text-gray-900 mb-2">More Features Coming Soon</h4>
+          <p class="text-gray-500">
             Transaction history, charts, and detailed analytics will be available in future updates.
           </p>
         </div>
@@ -161,8 +168,8 @@ import { loadWallet, clearSelectedWallet } from '@state/wallets';
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.47-.881-6.08-2.33"></path>
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">Wallet Not Found</h3>
-        <p class="text-gray-500 dark:text-gray-400 mb-4">The wallet you're looking for doesn't exist or has been archived.</p>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Wallet Not Found</h3>
+        <p class="text-gray-500 mb-4">The wallet you're looking for doesn't exist or has been archived.</p>
         <button 
           (click)="goBack()"
           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
@@ -236,5 +243,14 @@ export class WalletDetailComponent implements OnInit, OnDestroy {
     ];
     const walletType = walletTypes.find(t => t.value === type);
     return walletType?.label || type;
+  }
+
+  onImageError(event: Event): void {
+    const imgElement = event.target as HTMLImageElement;
+    // Replace the broken image with a fallback emoji
+    const parentDiv = imgElement.parentElement;
+    if (parentDiv) {
+      parentDiv.innerHTML = '<span class="text-4xl">🏦</span>';
+    }
   }
 }
