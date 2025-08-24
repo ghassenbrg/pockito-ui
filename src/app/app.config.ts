@@ -11,6 +11,8 @@ import { errorInterceptor } from './core/error.interceptor';
 import { notificationReducer } from './state/notification/notification.reducer';
 import { walletReducer } from './state/wallets/wallet.state';
 import { WalletEffects } from './state/wallets/wallet.effects';
+import { categoryReducer } from './state/categories/category.state';
+import { CategoryEffects } from './state/categories/category.effects';
 import { KeycloakService } from './core/keycloak.service';
 
 // Initialize Keycloak before the application starts
@@ -34,9 +36,10 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([tokenInterceptor, errorInterceptor])),
     provideStore({ 
       notification: notificationReducer,
-      wallets: walletReducer
+      wallets: walletReducer,
+      categories: categoryReducer
     }),
-    provideEffects([WalletEffects]),
+    provideEffects([WalletEffects, CategoryEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: false,

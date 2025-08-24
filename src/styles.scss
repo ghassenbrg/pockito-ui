@@ -12,5 +12,5 @@
 
 /* Ensure safe area utilities work across devices */
 .pb-safe-bottom {
-  padding-bottom: calc(1rem + var(--safe-area-inset-bottom));
+  padding-bottom: calc(0.5rem + var(--safe-area-inset-bottom));
 }

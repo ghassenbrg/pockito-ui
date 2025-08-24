@@ -31,6 +31,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/wallets/wallet-detail/wallet-detail.component').then(m => m.WalletDetailComponent)
       },
       {
+        path: 'categories',
+        loadComponent: () => import('./features/categories/categories.component').then(m => m.CategoriesComponent)
+      },
+      {
         path: 'transactions',
         loadComponent: () => import('./features/transactions/transactions.component').then(m => m.TransactionsComponent)
       },
