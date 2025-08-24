@@ -155,7 +155,63 @@ export const walletReducer = createReducer(
     settingDefault: false,
     error
   })),
+
+  // Reorder wallet
+  on(WalletActions.reorderWallet, (state) => ({
+    ...state,
+    error: null
+  })),
   
+  on(WalletActions.reorderWalletSuccess, (state, { walletId, newOrder }) => {
+    console.log(`State: Processing reorder success for wallet ${walletId} to position ${newOrder}`);
+    console.log(`State: Current wallets before update:`, state.wallets.map(w => ({ id: w.id, name: w.name, displayOrder: w.displayOrder })));
+    
+    // Update the display order of the reordered wallet
+    const updatedWallets = state.wallets.map(wallet => {
+      if (wallet.id === walletId) {
+        return { ...wallet, displayOrder: newOrder };
+      }
+      return wallet;
+    });
+
+    // Sort wallets by display order to maintain proper sequence
+    updatedWallets.sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+    
+    console.log(`State: Updated wallets after reorder:`, updatedWallets.map(w => ({ id: w.id, name: w.name, displayOrder: w.displayOrder })));
+
+    return {
+      ...state,
+      wallets: updatedWallets,
+      loading: false,
+      error: null
+    };
+  }),
+  
+  on(WalletActions.reorderWalletFailure, (state, { error }) => ({
+    ...state,
+    error: error,
+    loading: false
+  })),
+
+  // Normalize display orders
+  on(WalletActions.normalizeDisplayOrders, (state) => ({
+    ...state,
+    loading: true,
+    error: null
+  })),
+
+  on(WalletActions.normalizeDisplayOrdersSuccess, (state) => ({
+    ...state,
+    loading: false,
+    error: null
+  })),
+
+  on(WalletActions.normalizeDisplayOrdersFailure, (state, { error }) => ({
+    ...state,
+    error: error,
+    loading: false
+  })),
+
   // Clear error
   on(WalletActions.clearWalletError, (state) => ({
     ...state,

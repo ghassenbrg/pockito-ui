@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Subject } from 'rxjs';
+import { CdkDragDrop, DragDropModule } from '@angular/cdk/drag-drop';
 import { 
   selectAllWallets, 
   selectWalletsLoading, 
@@ -14,7 +15,9 @@ import {
   loadWallets, 
   archiveWallet, 
   setDefaultWallet,
-  clearWalletError 
+  clearWalletError,
+  reorderWallet,
+  normalizeDisplayOrders
 } from '@state/wallets';
 import { Wallet, WALLET_TYPES } from '@shared/models';
 import { ModalService } from '@shared/modal/modal.service';
@@ -23,7 +26,7 @@ import { WalletFormModalComponent } from '../wallet-form-modal/wallet-form-modal
 @Component({
   selector: 'app-wallet-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DragDropModule],
   template: `
     <div class="container mx-auto px-4 py-6">
       <!-- Header -->
@@ -61,6 +64,27 @@ import { WalletFormModalComponent } from '../wallet-form-modal/wallet-form-modal
             <span class="hidden sm:inline">New Wallet</span>
             <span class="sm:hidden">New</span>
           </button>
+          
+          <!-- Debug/Utility Buttons -->
+          <button 
+            (click)="refreshWallets()"
+            class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-2 rounded-lg flex items-center gap-2 transition-colors"
+            title="Refresh wallets">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            <span class="hidden sm:inline">Refresh</span>
+          </button>
+          
+          <button 
+            (click)="normalizeDisplayOrders()"
+            class="bg-yellow-100 hover:bg-yellow-200 text-yellow-700 px-3 py-2 rounded-lg flex items-center gap-2 transition-colors"
+            title="Normalize display orders">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
+            </svg>
+            <span class="hidden sm:inline">Fix Order</span>
+          </button>
         </div>
       </div>
 
@@ -83,14 +107,17 @@ import { WalletFormModalComponent } from '../wallet-form-modal/wallet-form-modal
 
       <!-- Grid View -->
       <div *ngIf="!(loading$ | async) && (wallets$ | async)?.length && viewMode === 'grid'" 
-           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in"
+           cdkDropList
+           (cdkDropListDropped)="onDrop($event)">
         <div 
           *ngFor="let wallet of wallets$ | async; trackBy: trackByWalletId" 
           class="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow wallet-card-hover"
           [style.border-left-color]="wallet.color || '#3B82F6'"
-          [style.border-left-width]="'4px'">
+          [style.border-left-width]="'4px'"
+          cdkDrag>
           
-          <!-- Wallet Header -->
+          <!-- Drag Handle -->
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-3">
               <div class="text-2xl">
@@ -106,8 +133,15 @@ import { WalletFormModalComponent } from '../wallet-form-modal/wallet-form-modal
                 <p class="text-sm text-gray-500">{{ getWalletTypeLabel(wallet.type) }}</p>
               </div>
             </div>
-            <div *ngIf="wallet.isDefault" class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
-              Default
+            <div class="flex items-center gap-2">
+              <div *ngIf="wallet.isDefault" class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">
+                Default
+              </div>
+              <div class="cursor-move text-gray-400 hover:text-gray-600 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+                </svg>
+              </div>
             </div>
           </div>
 
@@ -162,12 +196,15 @@ import { WalletFormModalComponent } from '../wallet-form-modal/wallet-form-modal
 
       <!-- List View -->
       <div *ngIf="!(loading$ | async) && (wallets$ | async)?.length && viewMode === 'list'" 
-           class="space-y-3 animate-fade-in">
+           class="space-y-3 animate-fade-in"
+           cdkDropList
+           (cdkDropListDropped)="onDrop($event)">
         <div 
           *ngFor="let wallet of wallets$ | async; trackBy: trackByWalletId" 
           class="bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow p-4 wallet-list-item"
           [style.border-left-color]="wallet.color || '#3B82F6'"
-          [style.border-left-width]="'4px'">
+          [style.border-left-width]="'4px'"
+          cdkDrag>
           
           <div class="flex items-center justify-between">
             <!-- Left side: Icon, Name, Type -->
@@ -205,6 +242,12 @@ import { WalletFormModalComponent } from '../wallet-form-modal/wallet-form-modal
 
             <!-- Right side: Actions -->
             <div class="flex items-center gap-1 sm:gap-2 ml-2 sm:ml-4">
+              <div class="cursor-move text-gray-400 hover:text-gray-600 transition-colors mr-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l4-4 4 4m0 6l-4 4-4-4"></path>
+                </svg>
+              </div>
+              
               <button 
                 (click)="viewWallet(wallet.id)"
                 class="p-1.5 sm:p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
@@ -348,6 +391,31 @@ import { WalletFormModalComponent } from '../wallet-form-modal/wallet-form-modal
       .view-mode-transition {
         transition: all 0.3s ease-in-out;
       }
+
+      /* Drag and Drop Styles */
+      .cdk-drag-preview {
+        box-sizing: border-box;
+        border-radius: 4px;
+        box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+                    0 8px 10px 1px rgba(0, 0, 0, 0.14),
+                    0 3px 14px 2px rgba(0, 0, 0, 0.12);
+      }
+
+      .cdk-drag-placeholder {
+        opacity: 0;
+      }
+
+      .cdk-drag-animating {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+      }
+
+      .cdk-drop-list-dragging .wallet-card-hover:not(.cdk-drag-placeholder) {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+      }
+
+      .cdk-drop-list-dragging .wallet-list-item:not(.cdk-drag-placeholder) {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+      }
     `
   ]
 })
@@ -416,6 +484,17 @@ export class WalletListComponent implements OnInit, OnDestroy {
     }
   }
 
+  normalizeDisplayOrders(): void {
+    if (confirm('This will normalize display orders to ensure they are sequential starting from 1. Continue?')) {
+      this.store.dispatch(normalizeDisplayOrders());
+    }
+  }
+
+  refreshWallets(): void {
+    console.log('Manually refreshing wallets...');
+    this.loadWallets();
+  }
+
   openCreateModal(): void {
     this.modalService.openComponent(WalletFormModalComponent, {
       id: 'create-wallet-modal',
@@ -448,6 +527,32 @@ export class WalletListComponent implements OnInit, OnDestroy {
     if (parentDiv) {
       parentDiv.innerHTML = '<span class="text-2xl">🏦</span>';
     }
+  }
+
+  onDrop(event: CdkDragDrop<Wallet[]>): void {
+    if (event.previousIndex === event.currentIndex) {
+      return;
+    }
+    
+    // Get current wallets from the store
+    this.wallets$.subscribe(wallets => {
+      if (wallets && wallets.length > 0) {
+        const wallet = wallets[event.previousIndex];
+        const newOrder = event.currentIndex + 1; // +1 because display order starts at 1
+        
+        // Validate the new order is within bounds
+        if (newOrder < 1 || newOrder > wallets.length) {
+          console.warn('Invalid reorder position:', newOrder, 'for wallets count:', wallets.length);
+          return;
+        }
+
+        // Log the reorder operation for debugging
+        console.log(`Reordering wallet "${wallet.name}" from position ${wallet.displayOrder} to position ${newOrder}`);
+        
+        // Dispatch reorder action
+        this.store.dispatch(reorderWallet({ id: wallet.id, newOrder }));
+      }
+    }).unsubscribe();
   }
 
   trackByWalletId(index: number, wallet: Wallet): string {

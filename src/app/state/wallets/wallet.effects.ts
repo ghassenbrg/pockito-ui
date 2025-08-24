@@ -63,6 +63,54 @@ export class WalletEffects {
       ))
   ));
 
+  reorderWallet$ = createEffect(() => this.actions$.pipe(
+    ofType(WalletActions.reorderWallet),
+    tap(({ id, newOrder }) => console.log(`Effect: Reordering wallet ${id} to position ${newOrder}`)),
+    mergeMap(({ id, newOrder }) => this.walletService.reorderWallet(id, newOrder)
+      .pipe(
+        tap(() => console.log(`Effect: Reorder API call successful for wallet ${id}`)),
+        map(() => WalletActions.reorderWalletSuccess({ walletId: id, newOrder })),
+        catchError(error => {
+          console.error(`Effect: Reorder failed for wallet ${id}:`, error);
+          return of(WalletActions.reorderWalletFailure({ error: error.message || 'Failed to reorder wallet' }));
+        })
+      ))
+  ));
+
+  // Reload wallets after successful reorder to ensure state consistency
+  reloadAfterReorder$ = createEffect(() => this.actions$.pipe(
+    ofType(WalletActions.reorderWalletSuccess),
+    tap(({ walletId, newOrder }) => console.log(`Effect: Reloading wallets after reorder success for wallet ${walletId} to position ${newOrder}`)),
+    mergeMap(() => this.walletService.getWallets()
+      .pipe(
+        tap(wallets => console.log(`Effect: Reloaded ${wallets.length} wallets after reorder`)),
+        map(wallets => WalletActions.loadWalletsSuccess({ wallets })),
+        catchError(error => {
+          console.error('Effect: Failed to reload wallets after reorder:', error);
+          return of(WalletActions.loadWalletsFailure({ error: error.message || 'Failed to reload wallets' }));
+        })
+      ))
+  ));
+
+  normalizeDisplayOrders$ = createEffect(() => this.actions$.pipe(
+    ofType(WalletActions.normalizeDisplayOrders),
+    mergeMap(() => this.walletService.normalizeDisplayOrders()
+      .pipe(
+        map(() => WalletActions.normalizeDisplayOrdersSuccess()),
+        catchError(error => of(WalletActions.normalizeDisplayOrdersFailure({ error: error.message || 'Failed to normalize display orders' })))
+      ))
+  ));
+
+  // Reload wallets after successful normalization to ensure state consistency
+  reloadAfterNormalize$ = createEffect(() => this.actions$.pipe(
+    ofType(WalletActions.normalizeDisplayOrdersSuccess),
+    mergeMap(() => this.walletService.getWallets()
+      .pipe(
+        map(wallets => WalletActions.loadWalletsSuccess({ wallets })),
+        catchError(error => of(WalletActions.loadWalletsFailure({ error: error.message || 'Failed to reload wallets' })))
+      ))
+  ));
+
   // Navigation effects
   createWalletSuccess$ = createEffect(() => this.actions$.pipe(
     ofType(WalletActions.createWalletSuccess),

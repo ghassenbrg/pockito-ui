@@ -94,6 +94,36 @@ export const setDefaultWalletFailure = createAction(
   props<{ error: string }>()
 );
 
+// Reorder wallet
+export const reorderWallet = createAction(
+  '[Wallet] Reorder Wallet',
+  props<{ id: string; newOrder: number }>()
+);
+
+export const reorderWalletSuccess = createAction(
+  '[Wallet] Reorder Wallet Success',
+  props<{ walletId: string; newOrder: number }>()
+);
+
+export const reorderWalletFailure = createAction(
+  '[Wallet] Reorder Wallet Failure',
+  props<{ error: string }>()
+);
+
+// Normalize display orders
+export const normalizeDisplayOrders = createAction(
+  '[Wallet] Normalize Display Orders'
+);
+
+export const normalizeDisplayOrdersSuccess = createAction(
+  '[Wallet] Normalize Display Orders Success'
+);
+
+export const normalizeDisplayOrdersFailure = createAction(
+  '[Wallet] Normalize Display Orders Failure',
+  props<{ error: string }>()
+);
+
 // Utility actions
 export const clearWalletError = createAction('[Wallet] Clear Error');
 

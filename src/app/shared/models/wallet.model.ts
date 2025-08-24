@@ -10,6 +10,7 @@ export interface Wallet {
   isDefault: boolean;
   goalAmount?: number;
   userId: string;
+  displayOrder: number;
   createdAt: string;
   updatedAt: string;
 }

@@ -7,6 +7,7 @@ import {
   CreateWalletRequest, 
   UpdateWalletRequest 
 } from '../models/wallet.model';
+import { catchError, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -63,6 +64,35 @@ export class WalletService {
    */
   activateWallet(id: string): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/${id}/activate`, {});
+  }
+
+  /**
+   * Reorder a wallet to a new position
+   */
+  reorderWallet(id: string, newOrder: number): Observable<void> {
+    console.log(`Service: Reordering wallet ${id} to position ${newOrder}`);
+    
+    return this.http.post<void>(`${this.baseUrl}/${id}/reorder`, null, {
+      params: { newOrder: newOrder.toString() }
+    }).pipe(
+      tap(() => console.log(`Service: Reorder request sent successfully for wallet ${id}`)),
+      catchError(error => {
+        console.error('Service: Failed to reorder wallet:', error);
+        throw new Error(error.error?.message || 'Failed to reorder wallet');
+      })
+    );
+  }
+
+  /**
+   * Normalize display orders for all wallets
+   */
+  normalizeDisplayOrders(): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/normalize-orders`, null).pipe(
+      catchError(error => {
+        console.error('Failed to normalize display orders:', error);
+        throw new Error(error.error?.message || 'Failed to normalize display orders');
+      })
+    );
   }
 
   /**
