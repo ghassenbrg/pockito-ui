@@ -1,16 +1,28 @@
 export const environment = {
   production: true,
-  apiUrl: '/api', // Relative path for production
+  
+  // Keycloak Configuration
   keycloak: {
     url: 'https://auth.ghassen.io',
     realm: 'pockito',
     clientId: 'pockito-web'
   },
+  
+  // API Configuration
   api: {
     baseUrl: '/api'
   },
+  
+  // Application Configuration
   app: {
     name: 'Pockito',
     version: '1.0.0'
+  },
+  
+  // Feature Flags
+  features: {
+    pwa: true,
+    analytics: false,
+    debug: false
   }
 };

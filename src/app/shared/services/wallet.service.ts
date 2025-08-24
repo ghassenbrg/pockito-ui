@@ -12,7 +12,7 @@ import {
   providedIn: 'root'
 })
 export class WalletService {
-  private readonly baseUrl = `${environment.apiUrl}/api/wallets`;
+  private readonly baseUrl = `${environment.api.baseUrl}/wallets`;
 
   constructor(private http: HttpClient) {}
 

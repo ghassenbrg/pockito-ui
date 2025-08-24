@@ -13,7 +13,7 @@ declare const describe: any;
 declare const it: any;
 declare const beforeEach: any;
 declare const expect: any;
-declare const jasmine: any;
+declare const afterEach: any;
 
 describe('WalletService', () => {
   let service: WalletService;
@@ -66,7 +66,7 @@ describe('WalletService', () => {
 
     service = TestBed.inject(WalletService);
     httpMock = TestBed.inject(HttpTestingController);
-    baseUrl = environment.apiUrl;
+    baseUrl = environment.api.baseUrl;
   });
 
   afterEach(() => {
@@ -85,7 +85,7 @@ describe('WalletService', () => {
         expect(wallets).toEqual(mockWallets);
       });
 
-      const req = httpMock.expectOne(`${baseUrl}/api/wallets`);
+      const req = httpMock.expectOne(`${baseUrl}/wallets`);
       expect(req.request.method).toBe('GET');
       req.flush(mockWallets);
     });
@@ -99,7 +99,7 @@ describe('WalletService', () => {
         expect(wallet).toEqual(mockWallet);
       });
 
-      const req = httpMock.expectOne(`${baseUrl}/api/wallets/${walletId}`);
+      const req = httpMock.expectOne(`${baseUrl}/wallets/${walletId}`);
       expect(req.request.method).toBe('GET');
       req.flush(mockWallet);
     });
@@ -111,7 +111,7 @@ describe('WalletService', () => {
         expect(wallet).toEqual(mockWallet);
       });
 
-      const req = httpMock.expectOne(`${baseUrl}/api/wallets`);
+      const req = httpMock.expectOne(`${baseUrl}/wallets`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(mockCreateRequest);
       req.flush(mockWallet);
@@ -127,7 +127,7 @@ describe('WalletService', () => {
         expect(wallet).toEqual(updatedWallet);
       });
 
-      const req = httpMock.expectOne(`${baseUrl}/api/wallets/${walletId}`);
+      const req = httpMock.expectOne(`${baseUrl}/wallets/${walletId}`);
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(mockUpdateRequest);
       req.flush(updatedWallet);
@@ -142,7 +142,7 @@ describe('WalletService', () => {
         expect(true).toBe(true); // Success callback
       });
 
-      const req = httpMock.expectOne(`${baseUrl}/api/wallets/${walletId}/default`);
+      const req = httpMock.expectOne(`${baseUrl}/wallets/${walletId}/default`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({});
       req.flush(null);
@@ -157,7 +157,7 @@ describe('WalletService', () => {
         expect(true).toBe(true); // Success callback
       });
 
-      const req = httpMock.expectOne(`${baseUrl}/api/wallets/${walletId}/archive`);
+      const req = httpMock.expectOne(`${baseUrl}/wallets/${walletId}/archive`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({});
       req.flush(null);
@@ -172,7 +172,7 @@ describe('WalletService', () => {
         expect(true).toBe(true); // Success callback
       });
 
-      const req = httpMock.expectOne(`${baseUrl}/api/wallets/${walletId}/activate`);
+      const req = httpMock.expectOne(`${baseUrl}/wallets/${walletId}/activate`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({});
       req.flush(null);
@@ -187,7 +187,7 @@ describe('WalletService', () => {
         expect(true).toBe(true); // Success callback
       });
 
-      const req = httpMock.expectOne(`${baseUrl}/api/wallets/${walletId}`);
+      const req = httpMock.expectOne(`${baseUrl}/wallets/${walletId}`);
       expect(req.request.method).toBe('DELETE');
       req.flush(null);
     });
