@@ -136,7 +136,7 @@ export const categoryReducer = createReducer(
     error: null
   })),
   
-  on(CategoryActions.activateCategorySuccess, (state, { categoryId }) => ({
+  on(CategoryActions.activateCategorySuccess, (state, { categoryId: _categoryId }) => ({
     ...state,
     // Since we're reloading categories after activation, we don't need to add it here
     // The categories will be refreshed from the API
