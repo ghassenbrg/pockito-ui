@@ -7,6 +7,14 @@ import {
   EchoResponse, 
   PublicResponse 
 } from '../models/api-models';
+import { environment } from '../../environments/environment';
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+declare const describe: any;
+declare const it: any;
+declare const beforeEach: any;
+declare const expect: any;
+declare const afterEach: any;
 
 describe('UtilitiesService', () => {
   let service: UtilitiesService;
@@ -46,7 +54,7 @@ describe('UtilitiesService', () => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`/api/sample/protected`);
+      const req = httpMock.expectOne(`${environment.api.baseUrl}/sample/protected`);
       expect(req.request.method).toBe('POST');
       req.flush(mockResponse);
     });
@@ -66,7 +74,7 @@ describe('UtilitiesService', () => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`/api/sample/health`);
+      const req = httpMock.expectOne(`${environment.api.baseUrl}/sample/health`);
       expect(req.request.method).toBe('GET');
       req.flush(mockResponse);
     });
@@ -87,7 +95,7 @@ describe('UtilitiesService', () => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`/api/sample/echo/${encodeURIComponent(message)}`);
+      const req = httpMock.expectOne(`${environment.api.baseUrl}/sample/echo/${encodeURIComponent(message)}`);
       expect(req.request.method).toBe('GET');
       req.flush(mockResponse);
     });
@@ -116,7 +124,7 @@ describe('UtilitiesService', () => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(`/api/public`);
+      const req = httpMock.expectOne(`${environment.api.baseUrl}/public`);
       expect(req.request.method).toBe('GET');
       req.flush(mockResponse);
     });
