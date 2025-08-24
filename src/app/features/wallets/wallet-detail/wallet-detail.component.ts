@@ -216,20 +216,20 @@ export class WalletDetailComponent implements OnInit, OnDestroy {
     this.router.navigate(['/wallets']);
   }
 
-  editWallet(wallet: any): void {
+  editWallet(_wallet: any): void {
     // TODO: Implement edit modal
-    console.log('Edit wallet:', wallet);
+    // console.log('Edit wallet:', _wallet);
   }
 
-  setAsDefault(id: string): void {
+  setAsDefault(_id: string): void {
     // TODO: Implement set default action
-    console.log('Set as default:', id);
+    // console.log('Set as default:', _id);
   }
 
   confirmArchive(wallet: any): void {
     if (confirm(`Are you sure you want to archive "${wallet.name}"? This action can be undone.`)) {
       // TODO: Implement archive action
-      console.log('Archive wallet:', wallet.id);
+      // console.log('Archive wallet:', wallet.id);
     }
   }
 

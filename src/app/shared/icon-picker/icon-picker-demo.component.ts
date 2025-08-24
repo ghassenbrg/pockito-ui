@@ -118,27 +118,27 @@ export class IconPickerDemoComponent {
     placeholder: 'Select your favorite icon...'
   };
 
-  onIconChange(icon: IconOption | null): void {
-    console.log('Icon changed:', icon);
+  onIconChange(_icon: IconOption | null): void {
+    // console.log('Icon changed:', _icon);
   }
 
   onIconSelect(icon: IconOption): void {
     this.selectedIcon = icon;
-    console.log('Icon selected:', icon);
+    // console.log('Icon selected:', icon);
   }
 
   onEmojiSelect(icon: IconOption): void {
     this.emojiIcon = icon;
-    console.log('Emoji selected:', icon);
+    // console.log('Emoji selected:', icon);
   }
 
   onUrlSelect(icon: IconOption): void {
     this.urlIcon = icon;
-    console.log('URL icon selected:', icon);
+    // console.log('URL icon selected:', icon);
   }
 
   onCustomSelect(icon: IconOption): void {
     this.customIcon = icon;
-    console.log('Custom icon selected:', icon);
+    // console.log('Custom icon selected:', icon);
   }
 }

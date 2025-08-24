@@ -1,4 +1,4 @@
-import { Injectable, ComponentRef, Type, TemplateRef, ViewContainerRef, Injector, EmbeddedViewRef } from '@angular/core';
+import { Injectable, ComponentRef, Type, TemplateRef, Injector } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ModalConfig, ModalInstance, ModalResult } from './modal.interface';
 import { FocusTrapService } from './focus-trap.service';
