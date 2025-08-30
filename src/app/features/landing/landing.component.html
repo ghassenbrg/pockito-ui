@@ -1,44 +1,92 @@
 <!-- Navigation Bar -->
-<nav class="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-200">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex justify-between items-center h-16">
+<nav class="landing-nav">
+  <div class="container">
+    <div class="nav-content">
       <!-- Logo -->
-      <div class="flex items-center space-x-2">
-        <img src="assets/pockito-logo-horizontal-light.svg" alt="Pockito" class="h-12 w-auto" />
+      <div class="nav-logo">
+        <img src="assets/pockito-logo-horizontal-light.svg" alt="Pockito" class="logo-image" />
       </div>
       
       <!-- Mobile Menu Button -->
-      <button class="md:hidden p-2 rounded-lg text-gray-600 hover:text-indigo-600 hover:bg-gray-100 transition-colors" (click)="toggleMobileMenu()">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-      </button>
+      <p-button 
+        icon="pi pi-bars" 
+        styleClass="p-button-text p-button-rounded mobile-menu-btn"
+        (onClick)="toggleMobileMenu()"
+      ></p-button>
       
       <!-- Desktop Navigation Links -->
-      <div class="hidden md:flex items-center space-x-8">
-        <button (click)="scrollToSection('benefits')" class="text-gray-600 hover:text-indigo-600 transition-colors">Benefits</button>
-        <button (click)="scrollToSection('features')" class="text-gray-600 hover:text-indigo-600 transition-colors">Features</button>
-        <button (click)="scrollToSection('how-it-works')" class="text-gray-600 hover:text-indigo-600 transition-colors">How It Works</button>
-        <button (click)="scrollToSection('key-features')" class="text-gray-600 hover:text-indigo-600 transition-colors">Why Pockito</button>
+      <div class="nav-links desktop-only">
+        <p-button 
+          label="Benefits" 
+          styleClass="p-button-text p-button-link"
+          (onClick)="scrollToSection('benefits')"
+        ></p-button>
+        <p-button 
+          label="Features" 
+          styleClass="p-button-text p-button-link"
+          (onClick)="scrollToSection('features')"
+        ></p-button>
+        <p-button 
+          label="How It Works" 
+          styleClass="p-button-text p-button-link"
+          (onClick)="scrollToSection('how-it-works')"
+        ></p-button>
+        <p-button 
+          label="Why Pockito" 
+          styleClass="p-button-text p-button-link"
+          (onClick)="scrollToSection('key-features')"
+        ></p-button>
       </div>
       
       <!-- Desktop Auth Buttons -->
-      <div class="hidden md:flex items-center space-x-3">
-        <button (click)="login()" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Sign In</button>
-        <button (click)="register()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">Join Now</button>
+      <div class="nav-auth desktop-only">
+        <p-button 
+          label="Sign In" 
+          styleClass="p-button-text p-button-link"
+          (onClick)="login()"
+        ></p-button>
+        <p-button 
+          label="Join Now" 
+          styleClass="p-button-primary"
+          (onClick)="register()"
+        ></p-button>
       </div>
     </div>
     
     <!-- Mobile Menu -->
-    <div *ngIf="isMobileMenuOpen" class="md:hidden py-4 border-t border-gray-200">
-      <div class="flex flex-col space-y-4">
-        <button (click)="scrollToSection('benefits')" class="text-left text-gray-600 hover:text-indigo-600 transition-colors py-2">Benefits</button>
-        <button (click)="scrollToSection('features')" class="text-left text-gray-600 hover:text-indigo-600 transition-colors py-2">Features</button>
-        <button (click)="scrollToSection('how-it-works')" class="text-left text-gray-600 hover:text-indigo-600 transition-colors py-2">How It Works</button>
-        <button (click)="scrollToSection('key-features')" class="text-left text-gray-600 hover:text-indigo-600 transition-colors py-2">Why Pockito</button>
-        <div class="pt-4 border-t border-gray-200">
-          <button (click)="login()" class="w-full text-left text-gray-600 hover:text-indigo-600 font-medium transition-colors py-2">Sign In</button>
-          <button (click)="register()" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">Join Now</button>
+    <div *ngIf="isMobileMenuOpen" class="mobile-menu">
+      <div class="mobile-menu-content">
+        <p-button 
+          label="Benefits" 
+          styleClass="p-button-text p-button-link mobile-menu-item"
+          (onClick)="scrollToSection('benefits')"
+        ></p-button>
+        <p-button 
+          label="Features" 
+          styleClass="p-button-text p-button-link mobile-menu-item"
+          (onClick)="scrollToSection('features')"
+        ></p-button>
+        <p-button 
+          label="How It Works" 
+          styleClass="p-button-text p-button-link mobile-menu-item"
+          (onClick)="scrollToSection('how-it-works')"
+        ></p-button>
+        <p-button 
+          label="Why Pockito" 
+          styleClass="p-button-text p-button-link mobile-menu-item"
+          (onClick)="scrollToSection('key-features')"
+        ></p-button>
+        <div class="mobile-auth">
+          <p-button 
+            label="Sign In" 
+            styleClass="p-button-text p-button-link mobile-menu-item"
+            (onClick)="login()"
+          ></p-button>
+          <p-button 
+            label="Join Now" 
+            styleClass="p-button-primary mobile-menu-item"
+            (onClick)="register()"
+          ></p-button>
         </div>
       </div>
     </div>
@@ -46,310 +94,323 @@
 </nav>
 
 <!-- Loading State -->
-<div *ngIf="isLoading" class="min-h-screen bg-gradient-to-br from-indigo-50 to-cyan-50 flex items-center justify-center">
-  <div class="text-center">
-    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4 loading-spinner"></div>
-    <p class="text-gray-600 text-lg">Initializing Pockito...</p>
+<div *ngIf="isLoading" class="loading-container">
+  <div class="loading-content">
+    <p-progressSpinner 
+      styleClass="loading-spinner"
+      strokeWidth="4"
+    ></p-progressSpinner>
+    <p class="loading-text">Initializing Pockito...</p>
   </div>
 </div>
 
 <!-- Main Content -->
-<div *ngIf="!isLoading" class="min-h-screen">
+<div *ngIf="!isLoading" class="landing-content">
   
   <!-- Hero Section -->
-  <section class="pt-20 sm:pt-24 pb-12 sm:pb-16 bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight hero-title">
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">
           Smart Money Management
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500">Made Simple</span>
+          <span class="hero-highlight">Made Simple</span>
         </h1>
-        <p class="text-lg sm:text-xl md:text-2xl text-gray-600 mb-6 sm:mb-8 leading-relaxed hero-subtitle px-4">
+        <p class="hero-subtitle">
           Take control of your finances with intuitive budgeting, smart spending insights, and goal tracking that actually works.
         </p>
-        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-          <button (click)="register()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 transform hover:scale-105 hover:shadow-xl cta-button">
-            Start Free Today
-          </button>
-          <button (click)="login()" class="border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 secondary-button">
-            Sign In
-          </button>
+        <div class="hero-actions">
+          <p-button 
+            label="Start Free Today" 
+            styleClass="p-button-primary p-button-lg hero-cta"
+            (onClick)="register()"
+          ></p-button>
+          <p-button 
+            label="Sign In" 
+            styleClass="p-button-outlined p-button-lg hero-secondary"
+            (onClick)="login()"
+          ></p-button>
         </div>
-        <p class="text-sm text-gray-500 mt-4">No credit card required • Free forever</p>
+        <p class="hero-note">No credit card required • Free forever</p>
       </div>
     </div>
   </section>
 
   <!-- Benefits Section -->
-  <section id="benefits" class="py-12 sm:py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12 sm:mb-16">
-        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Core Benefits</h2>
-        <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto px-4">
+  <section id="benefits" class="benefits-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Core Benefits</h2>
+        <p class="section-subtitle">
           Join thousands of users who have transformed their financial lives with our smart money management tools.
         </p>
       </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-        <div class="text-center p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100 hover:shadow-lg transition-all duration-300 benefit-card">
-          <div class="w-12 h-12 sm:w-16 sm:h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 icon-container">
-            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
-          </div>
-          <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Budget Smarter</h3>
-          <p class="text-sm sm:text-base text-gray-600">Intelligent categorization and spending insights help you make better financial decisions.</p>
-        </div>
-        
-        <div class="text-center p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-cyan-50 to-cyan-100 hover:shadow-lg transition-all duration-300 benefit-card">
-          <div class="w-12 h-12 sm:w-16 sm:h-16 bg-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4 icon-container">
-            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-            </svg>
-          </div>
-          <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Spend Wiser</h3>
-          <p class="text-sm sm:text-base text-gray-600">Track every transaction with smart categorization and get insights into your spending patterns.</p>
-        </div>
-        
-        <div class="text-center p-4 sm:p-6 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100 hover:shadow-lg transition-all duration-300 benefit-card">
-          <div class="w-12 h-12 sm:w-16 sm:h-16 bg-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 icon-container">
-            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-          </div>
-          <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Achieve Goals</h3>
-          <p class="text-sm sm:text-base text-gray-600">Set financial goals and track your progress with visual progress indicators and smart reminders.</p>
-        </div>
+      <div class="benefits-grid">
+        <p-card styleClass="benefit-card">
+          <ng-template pTemplate="header">
+            <div class="benefit-icon benefit-icon--budget">
+              <i class="pi pi-chart-pie"></i>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <h3 class="benefit-title">Budget Smarter</h3>
+            <p class="benefit-description">Intelligent categorization and spending insights help you make better financial decisions.</p>
+          </ng-template>
+        </p-card>
+
+        <p-card styleClass="benefit-card">
+          <ng-template pTemplate="header">
+            <div class="benefit-icon benefit-icon--spend">
+              <i class="pi pi-credit-card"></i>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <h3 class="benefit-title">Spend Wiser</h3>
+            <p class="benefit-description">Track every transaction with smart categorization and get insights into your spending patterns.</p>
+          </ng-template>
+        </p-card>
+
+        <p-card styleClass="benefit-card">
+          <ng-template pTemplate="header">
+            <div class="benefit-icon benefit-icon--goals">
+              <i class="pi pi-flag"></i>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <h3 class="benefit-title">Achieve Goals</h3>
+            <p class="benefit-description">Set financial goals and track your progress with visual progress indicators and smart reminders.</p>
+          </ng-template>
+        </p-card>
       </div>
     </div>
   </section>
 
   <!-- Features Section -->
-  <section id="features" class="py-12 sm:py-16 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12 sm:mb-16">
-        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Powerful Features</h2>
-        <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto px-4">
-          Everything you need to manage your money effectively, all in one beautiful app.
+  <section id="features" class="features-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Powerful Features</h2>
+        <p class="section-subtitle">
+          Everything you need to take control of your finances in one powerful platform.
         </p>
       </div>
       
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 feature-card">
-          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4 icon-container">
-            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
-            </svg>
-          </div>
-          <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Wallet Management</h3>
-          <p class="text-sm sm:text-base text-gray-600">Organize your money across multiple accounts, cards, and cash with smart categorization.</p>
-        </div>
-        
-        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 feature-card">
-          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-cyan-100 rounded-lg flex items-center justify-center mb-4 icon-container">
-            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-            </svg>
-          </div>
-          <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Transaction Tracking</h3>
-          <p class="text-sm sm:text-base text-gray-600">Automatically categorize and track every expense and income with smart AI-powered insights.</p>
-        </div>
-        
-        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 feature-card">
-          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-amber-100 rounded-lg flex items-center justify-center mb-4 icon-container">
-            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
-          </div>
-          <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Smart Budgeting</h3>
-          <p class="text-sm sm:text-base text-gray-600">Create personalized budgets and get real-time alerts when you're approaching limits.</p>
-        </div>
-        
-        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 feature-card">
-          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4 icon-container">
-            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
-          </div>
-          <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Financial Goals</h3>
-          <p class="text-sm sm:text-base text-gray-600">Set and track progress towards your financial goals with visual progress indicators.</p>
-        </div>
-        
-        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 feature-card">
-          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 icon-container">
-            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-            </svg>
-          </div>
-          <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Detailed Reports</h3>
-          <p class="text-sm sm:text-base text-gray-600">Get comprehensive insights into your spending patterns with beautiful charts and analytics.</p>
-        </div>
-        
-        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 feature-card">
-          <div class="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4 icon-container">
-            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-            </svg>
-          </div>
-          <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Bank-Level Security</h3>
-          <p class="text-sm sm:text-base text-gray-600">Your financial data is protected with enterprise-grade security and encryption.</p>
-        </div>
+      <div class="features-grid">
+        <p-card styleClass="feature-card">
+          <ng-template pTemplate="header">
+            <div class="feature-icon feature-icon--wallet">
+              <i class="pi pi-wallet"></i>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <h3 class="feature-title">Wallet Management</h3>
+            <p class="feature-description">Organize your money across multiple accounts, cards, and cash with smart categorization.</p>
+          </ng-template>
+        </p-card>
+
+        <p-card styleClass="feature-card">
+          <ng-template pTemplate="header">
+            <div class="feature-icon feature-icon--tracking">
+              <i class="pi pi-list"></i>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <h3 class="feature-title">Transaction Tracking</h3>
+            <p class="feature-description">Automatically categorize and track every expense and income with smart AI-powered insights.</p>
+          </ng-template>
+        </p-card>
+
+        <p-card styleClass="feature-card">
+          <ng-template pTemplate="header">
+            <div class="feature-icon feature-icon--budgeting">
+              <i class="pi pi-chart-line"></i>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <h3 class="feature-title">Smart Budgeting</h3>
+            <p class="feature-description">Create personalized budgets and get real-time alerts when you're approaching limits.</p>
+          </ng-template>
+        </p-card>
+
+        <p-card styleClass="feature-card">
+          <ng-template pTemplate="header">
+            <div class="feature-icon feature-icon--goals">
+              <i class="pi pi-target"></i>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <h3 class="feature-title">Financial Goals</h3>
+            <p class="feature-description">Set and track progress towards your financial goals with visual progress indicators.</p>
+          </ng-template>
+        </p-card>
+
+        <p-card styleClass="feature-card">
+          <ng-template pTemplate="header">
+            <div class="feature-icon feature-icon--reports">
+              <i class="pi pi-chart-bar"></i>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <h3 class="feature-title">Detailed Reports</h3>
+            <p class="feature-description">Get comprehensive insights into your spending patterns with beautiful charts and analytics.</p>
+          </ng-template>
+        </p-card>
+
+        <p-card styleClass="feature-card">
+          <ng-template pTemplate="header">
+            <div class="feature-icon feature-icon--security">
+              <i class="pi pi-shield"></i>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <h3 class="feature-title">Bank-Level Security</h3>
+            <p class="feature-description">Your financial data is protected with enterprise-grade security and encryption.</p>
+          </ng-template>
+        </p-card>
       </div>
     </div>
   </section>
 
   <!-- How It Works Section -->
-  <section id="how-it-works" class="py-12 sm:py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12 sm:mb-16">
-        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">How It Works</h2>
-        <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto px-4">
-          Get started with Pockito in just three simple steps and transform your financial life today.
+  <section id="how-it-works" class="how-it-works-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-subtitle">
+          Get started in minutes with our simple three-step process.
         </p>
       </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-12">
-        <div class="text-center">
-          <div class="w-16 h-16 sm:w-20 sm:h-20 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 text-white text-xl sm:text-2xl font-bold step-number">1</div>
-          <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">Connect Your Wallet</h3>
-          <p class="text-sm sm:text-base text-gray-600 px-2">Securely connect your bank accounts, credit cards, and cash accounts to get a complete view of your finances.</p>
+      <div class="steps-grid">
+        <div class="step-item">
+          <div class="step-number">1</div>
+          <h3 class="step-title">Connect Your Wallet</h3>
+          <p class="step-description">Securely connect your bank accounts, credit cards, and cash accounts to get a complete view of your finances.</p>
         </div>
         
-        <div class="text-center">
-          <div class="w-16 h-16 sm:w-20 sm:h-20 bg-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 text-white text-xl sm:text-2xl font-bold step-number">2</div>
-          <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">Track Your Spending</h3>
-          <p class="text-sm sm:text-base text-gray-600 px-2">Our smart AI automatically categorizes your transactions and provides insights into your spending patterns.</p>
+        <div class="step-item">
+          <div class="step-number">2</div>
+          <h3 class="step-title">Track Your Spending</h3>
+          <p class="step-description">Our smart AI automatically categorizes your transactions and provides insights into your spending patterns.</p>
         </div>
         
-        <div class="text-center">
-          <div class="w-16 h-16 sm:w-20 sm:h-20 bg-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 text-white text-xl sm:text-2xl font-bold step-number">3</div>
-          <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">Reach Your Goals</h3>
-          <p class="text-sm sm:text-base text-gray-600 px-2">Set financial goals, create budgets, and watch your progress as you build wealth and achieve financial freedom.</p>
+        <div class="step-item">
+          <div class="step-number">3</div>
+          <h3 class="step-title">Achieve Your Goals</h3>
+          <p class="step-description">Set financial goals and watch your progress with beautiful visualizations and smart recommendations.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Key Features Section (replacing testimonials) -->
-  <section id="key-features" class="py-12 sm:py-16 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12 sm:mb-16">
-        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Why Choose Pockito?</h2>
-        <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto px-4">
-          Experience the difference with our thoughtfully designed features that make financial management effortless and enjoyable.
+  <!-- Key Features Section -->
+  <section id="key-features" class="key-features-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Why Choose Pockito?</h2>
+        <p class="section-subtitle">
+          Discover what makes us the preferred choice for smart money management.
         </p>
       </div>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 key-feature-card">
-          <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-            </svg>
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2 text-center">Lightning Fast</h3>
-          <p class="text-sm sm:text-base text-gray-600 text-center">Enjoy smooth, responsive performance that keeps up with your busy lifestyle.</p>
-        </div>
-        
-        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 key-feature-card">
-          <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-            </svg>
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2 text-center">Bank-Level Security</h3>
-          <p class="text-sm sm:text-base text-gray-600 text-center">Your financial data is protected with enterprise-grade security and encryption.</p>
-        </div>
-        
-        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 key-feature-card">
-          <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-            </svg>
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2 text-center">Always Reliable</h3>
-          <p class="text-sm sm:text-base text-gray-600 text-center">Built with reliability in mind, ensuring your financial data is always accessible.</p>
-        </div>
-        
-        <div class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 key-feature-card">
-          <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <svg class="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-            </svg>
-          </div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-2 text-center">Mobile First</h3>
-          <p class="text-sm sm:text-base text-gray-600 text-center">Responsive design that works perfectly on all devices and screen sizes.</p>
-        </div>
+      <div class="key-features-grid">
+        <p-card styleClass="key-feature-card">
+          <ng-template pTemplate="header">
+            <div class="key-feature-icon">
+              <i class="pi pi-mobile"></i>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <h3 class="key-feature-title">Mobile First</h3>
+            <p class="key-feature-description">Access your finances anywhere with our responsive mobile app designed for on-the-go money management.</p>
+          </ng-template>
+        </p-card>
+
+        <p-card styleClass="key-feature-card">
+          <ng-template pTemplate="header">
+            <div class="key-feature-icon">
+              <i class="pi pi-bolt"></i>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <h3 class="key-feature-title">Lightning Fast</h3>
+            <p class="key-feature-description">Built with modern technology for instant updates and real-time financial insights.</p>
+          </ng-template>
+        </p-card>
+
+        <p-card styleClass="key-feature-card">
+          <ng-template pTemplate="header">
+            <div class="key-feature-icon">
+              <i class="pi pi-users"></i>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="content">
+            <h3 class="key-feature-title">Family Friendly</h3>
+            <p class="key-feature-description">Share accounts with family members and collaborate on financial goals together.</p>
+          </ng-template>
+        </p-card>
       </div>
     </div>
   </section>
 
-  <!-- Final CTA Section -->
-  <section class="py-12 sm:py-16 bg-gradient-to-r from-indigo-600 to-cyan-600">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">Ready to Take Control?</h2>
-      <p class="text-lg sm:text-xl text-indigo-100 mb-6 sm:mb-8 px-4">
-        Join thousands of users who have already transformed their financial lives with Pockito.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-        <button (click)="register()" class="bg-white text-indigo-600 hover:bg-gray-100 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200 transform hover:scale-105">
-          Start Free Today
-        </button>
-        <button (click)="login()" class="border-2 border-white text-white hover:bg-white hover:text-indigo-600 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-base sm:text-lg transition-all duration-200">
-          Sign In
-        </button>
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2 class="cta-title">Ready to Transform Your Finances?</h2>
+        <p class="cta-subtitle">Join thousands of users who have already taken control of their money with Pockito.</p>
+        <div class="cta-actions">
+          <p-button 
+            label="Start Free Today" 
+            styleClass="p-button-primary p-button-lg"
+            (onClick)="register()"
+          ></p-button>
+          <p-button 
+            label="Sign In" 
+            styleClass="p-button-outlined p-button-lg"
+            (onClick)="login()"
+          ></p-button>
+        </div>
+        <p class="cta-note">No credit card required • Free forever</p>
       </div>
-      <p class="text-indigo-200 mt-4 text-sm">No credit card required • Free forever</p>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="bg-gray-900 text-white py-8 sm:py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
-        <div class="text-center sm:text-left">
-          <div class="flex items-center justify-center sm:justify-start space-x-2 mb-4">
-            <img src="assets/pockito-logo-horizontal-dark.svg" alt="Pockito" class="h-10 w-auto" />
+  <footer class="landing-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <img src="assets/pockito-logo-horizontal-light.svg" alt="Pockito" class="footer-logo" />
+          <p class="footer-tagline">Smart money management made simple.</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-section">
+            <h4 class="footer-section-title">Product</h4>
+            <a href="#" class="footer-link">Features</a>
+            <a href="#" class="footer-link">Pricing</a>
+            <a href="#" class="footer-link">Security</a>
           </div>
-          <p class="text-sm sm:text-base text-gray-400">Smart money management made simple for everyone.</p>
-        </div>
-        
-        <div class="text-center sm:text-left">
-          <h4 class="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Product</h4>
-          <ul class="space-y-2 text-gray-400">
-            <li><a href="#" class="hover:text-white transition-colors footer-link text-sm sm:text-base">Features</a></li>
-            <li><a href="#" class="hover:text-white transition-colors footer-link text-sm sm:text-base">Pricing</a></li>
-            <li><a href="#" class="hover:text-white transition-colors footer-link text-sm sm:text-base">Security</a></li>
-          </ul>
-        </div>
-        
-        <div class="text-center sm:text-left">
-          <h4 class="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Company</h4>
-          <ul class="space-y-2 text-gray-400">
-            <li><a href="#" class="hover:text-white transition-colors footer-link text-sm sm:text-base">About</a></li>
-            <li><a href="#" class="hover:text-white transition-colors footer-link text-sm sm:text-base">Blog</a></li>
-            <li><a href="#" class="hover:text-white transition-colors footer-link text-sm sm:text-base">Careers</a></li>
-          </ul>
-        </div>
-        
-        <div class="text-center sm:text-left">
-          <h4 class="font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Support</h4>
-          <ul class="space-y-2 text-gray-400">
-            <li><a href="#" class="hover:text-white transition-colors footer-link text-sm sm:text-base">Help Center</a></li>
-            <li><a href="#" class="hover:text-white transition-colors footer-link text-sm sm:text-base">Contact</a></li>
-            <li><a href="#" class="hover:text-white transition-colors footer-link text-sm sm:text-base">Privacy Policy</a></li>
-          </ul>
+          <div class="footer-section">
+            <h4 class="footer-section-title">Company</h4>
+            <a href="#" class="footer-link">About</a>
+            <a href="#" class="footer-link">Blog</a>
+            <a href="#" class="footer-link">Careers</a>
+          </div>
+          <div class="footer-section">
+            <h4 class="footer-section-title">Support</h4>
+            <a href="#" class="footer-link">Help Center</a>
+            <a href="#" class="footer-link">Contact</a>
+            <a href="#" class="footer-link">Status</a>
+          </div>
         </div>
       </div>
-      
-      <div class="border-t border-gray-800 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-gray-400">
-        <p class="text-sm mb-2">&copy; 2024 Pockito. All rights reserved.</p>
-        <p class="text-sm">
-          Built with ❤️ by 
-          <a href="https://ghassen.io" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:text-indigo-300 transition-colors">Ghassen</a>
-          • 
-          <a href="https://github.com/ghassenbrg/pockito" target="_blank" rel="noopener noreferrer" class="text-indigo-400 hover:text-indigo-300 transition-colors">View on GitHub</a>
-        </p>
+      <div class="footer-bottom">
+        <p class="footer-copyright">© 2024 Pockito. All rights reserved.</p>
+        <div class="footer-legal">
+          <a href="#" class="footer-link">Privacy Policy</a>
+          <a href="#" class="footer-link">Terms of Service</a>
+        </div>
       </div>
     </div>
   </footer>

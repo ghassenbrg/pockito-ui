@@ -3,11 +3,19 @@ import { CommonModule } from '@angular/common';
 import { KeycloakService } from '../../core/keycloak.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    ButtonModule,
+    CardModule,
+    ProgressSpinnerModule
+  ],
   templateUrl: './landing.component.html',
   styleUrls: ['./landing.component.scss']
 })

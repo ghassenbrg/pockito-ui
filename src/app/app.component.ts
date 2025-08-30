@@ -4,14 +4,14 @@ import { RouterOutlet } from '@angular/router';
 import { KeycloakService } from './core/keycloak.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { NotificationBannerComponent } from './shared/notification-banner/notification-banner.component';
-import { NotificationToastComponent } from './shared/notification-toast/notification-toast.component';
-import { PwaInstallToastComponent } from './shared/pwa-install-toast/pwa-install-toast.component';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NotificationBannerComponent, NotificationToastComponent, PwaInstallToastComponent],
+  imports: [CommonModule, RouterOutlet, ToastModule],
+  providers: [MessageService] ,
   template: `
     <div *ngIf="isLoading$ | async" class="min-h-screen flex items-center justify-center bg-gray-50">
       <div class="text-center">
@@ -20,12 +20,9 @@ import { PwaInstallToastComponent } from './shared/pwa-install-toast/pwa-install
       </div>
     </div>
     
+    <p-toast position="top-center" key="tc" />
+
     <router-outlet *ngIf="!(isLoading$ | async)"></router-outlet>
-    
-    <!-- Notification components -->
-    <pockito-notification-banner></pockito-notification-banner>
-    <pockito-notification-toast></pockito-notification-toast>
-    <pockito-pwa-install-toast></pockito-pwa-install-toast>
   `,
   styles: []
 })
