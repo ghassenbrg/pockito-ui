@@ -162,10 +162,9 @@ export class DashboardComponent implements OnInit {
   /**
    * Navigate to project details
    */
-  viewProject(projectId: string): void {
+  viewProject(_projectId: string): void {
     // In a real application, this would navigate to project details
-    console.log(`Viewing project: ${projectId}`);
-    // this.router.navigate(['/app/projects', projectId]);
+    // this.router.navigate(['/app/projects', _projectId]);
   }
 
   /**
@@ -173,7 +172,6 @@ export class DashboardComponent implements OnInit {
    */
   createProject(): void {
     // In a real application, this would open a create project modal or navigate to create page
-    console.log('Creating new project');
     // this.router.navigate(['/app/projects/create']);
   }
 
@@ -182,7 +180,6 @@ export class DashboardComponent implements OnInit {
    */
   importProject(): void {
     // In a real application, this would open an import dialog
-    console.log('Importing project');
   }
 
   /**
@@ -190,7 +187,6 @@ export class DashboardComponent implements OnInit {
    */
   viewAnalytics(): void {
     // In a real application, this would navigate to analytics page
-    console.log('Viewing analytics');
     // this.router.navigate(['/app/analytics']);
   }
 
@@ -199,7 +195,6 @@ export class DashboardComponent implements OnInit {
    */
   openSettings(): void {
     // In a real application, this would open settings modal or navigate to settings page
-    console.log('Opening settings');
     // this.router.navigate(['/app/settings']);
   }
 
