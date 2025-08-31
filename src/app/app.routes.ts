@@ -25,6 +25,38 @@ export const routes: Routes = [
         path: 'dashboard',
         loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
+      {
+        path: 'wallets',
+        loadComponent: () => import('./features/wallets/wallets.component').then(m => m.WalletsComponent)
+      },
+      {
+        path: 'transactions',
+        loadComponent: () => import('./features/transactions/transactions.component').then(m => m.TransactionsComponent)
+      },
+      {
+        path: 'subscriptions',
+        loadComponent: () => import('./features/subscriptions/subscriptions.component').then(m => m.SubscriptionsComponent)
+      },
+      {
+        path: 'budgets',
+        loadComponent: () => import('./features/budgets/budgets.component').then(m => m.BudgetsComponent)
+      },
+      {
+        path: 'agreements',
+        loadComponent: () => import('./features/agreements/agreements.component').then(m => m.AgreementsComponent)
+      },
+      {
+        path: 'categories',
+        loadComponent: () => import('./features/categories/categories.component').then(m => m.CategoriesComponent)
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent)
+      },
+      {
+        path: 'account',
+        loadComponent: () => import('./features/account/account.component').then(m => m.AccountComponent)
+      }
     ],
   },
   {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { PockitoTerminalComponent } from '@core/pockito-terminal/pockito-terminal.component';
 import { MenuItem, MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { DockModule } from 'primeng/dock';
@@ -7,7 +8,7 @@ import { GalleriaModule } from 'primeng/galleria';
 import { MenubarModule } from 'primeng/menubar';
 import { TerminalModule, TerminalService } from 'primeng/terminal';
 import { TreeModule } from 'primeng/tree';
-import { Subscription } from 'rxjs';
+import { KeycloakService } from './../keycloak.service';
 
 @Component({
   selector: 'app-layout',
@@ -19,6 +20,7 @@ import { Subscription } from 'rxjs';
     TreeModule,
     TerminalModule,
     GalleriaModule,
+    PockitoTerminalComponent,
   ],
   providers: [MessageService, TerminalService],
   templateUrl: './app-layout.component.html',
@@ -27,26 +29,16 @@ import { Subscription } from 'rxjs';
 export class AppLayoutComponent implements OnInit {
   displayTerminal: boolean = false;
 
-  displayFinder: boolean = false;
-
-  displayGalleria: boolean = false;
+  displayMore: boolean = false;
 
   dockItems: MenuItem[] | undefined;
 
-  menubarItems: any[] | undefined;
-
-  responsiveOptions: any[] | undefined;
-
-  images: any[] = [];
-
-  nodes: any[] = [];
-
-  subscription: Subscription | undefined;
+  moreItems: MenuItem[] | undefined;
 
   constructor(
     private messageService: MessageService,
-    private terminalService: TerminalService,
-    private router: Router
+    private router: Router,
+    private KeycloakService: KeycloakService
   ) {}
 
   ngOnInit() {
@@ -58,11 +50,112 @@ export class AppLayoutComponent implements OnInit {
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
-          showDelay: 1000,
+          showDelay: 300,
         },
         icon: '/assets/favicon.png',
         command: () => {
-          this.router.navigate(['/dashboard']);
+          this.navigateTo('/app/dashboard');
+        },
+      },
+      {
+        label: 'Wallets',
+        tooltipOptions: {
+          tooltipLabel: 'Wallets',
+          tooltipPosition: 'top',
+          positionTop: -15,
+          positionLeft: 15,
+          showDelay: 300,
+        },
+        icon: '/assets/icons/wallet.png',
+        command: () => {
+          this.navigateTo('/app/wallets');
+        },
+      },
+      {
+        label: 'Transactions',
+        tooltipOptions: {
+          tooltipLabel: 'Transactions',
+          tooltipPosition: 'top',
+          positionTop: -15,
+          positionLeft: 15,
+          showDelay: 300,
+        },
+        icon: '/assets/icons/transaction.png',
+        command: () => {
+          this.navigateTo('/app/transactions');
+        },
+      },
+      {
+        label: 'Subscriptions',
+        tooltipOptions: {
+          tooltipLabel: 'Subscriptions',
+          tooltipPosition: 'top',
+          positionTop: -15,
+          positionLeft: 15,
+          showDelay: 300,
+        },
+        icon: '/assets/icons/subscription.png',
+        command: () => {
+          this.navigateTo('/app/subscriptions');
+        },
+      },
+      {
+        label: 'Budgets',
+        tooltipOptions: {
+          tooltipLabel: 'Budgets',
+          tooltipPosition: 'top',
+          positionTop: -15,
+          positionLeft: 15,
+          showDelay: 300,
+        },
+        icon: '/assets/icons/budget.png',
+        command: () => {
+          this.navigateTo('/app/budgets');
+        },
+      },
+      {
+        label: 'Agreements',
+        tooltipOptions: {
+          tooltipLabel: 'Agreements',
+          tooltipPosition: 'top',
+          positionTop: -15,
+          positionLeft: 15,
+          showDelay: 300,
+        },
+        icon: '/assets/icons/agreement.png',
+        command: () => {
+          this.navigateTo('/app/agreements');
+        },
+      },
+      {
+        label: 'More',
+        tooltipOptions: {
+          tooltipLabel: 'More',
+          tooltipPosition: 'top',
+          positionTop: -15,
+          positionLeft: 15,
+          showDelay: 300,
+        },
+        icon: '/assets/icons/more.png',
+        command: () => {
+          this.displayMore = true;
+        },
+      },
+    ];
+
+    this.moreItems = [
+      {
+        label: 'Categories',
+        tooltipOptions: {
+          tooltipLabel: 'Categories',
+          tooltipPosition: 'top',
+          positionTop: -15,
+          positionLeft: 15,
+          showDelay: 300,
+        },
+        icon: '/assets/icons/category.png',
+        command: () => {
+          this.navigateTo('/app/categories');
         },
       },
       {
@@ -72,62 +165,11 @@ export class AppLayoutComponent implements OnInit {
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
-          showDelay: 1000,
+          showDelay: 300,
         },
-        icon: 'https://primefaces.org/cdn/primeng/images/dock/terminal.svg',
+        icon: '/assets/icons/terminal.svg',
         command: () => {
           this.displayTerminal = true;
-        },
-      },
-      {
-        label: 'App Store',
-        tooltipOptions: {
-          tooltipLabel: 'App Store',
-          tooltipPosition: 'top',
-          positionTop: -15,
-          positionLeft: 15,
-          showDelay: 1000,
-        },
-        icon: 'https://primefaces.org/cdn/primeng/images/dock/appstore.svg',
-        command: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'An unexpected error occurred while signing in.',
-            detail: 'UNTRUSTED_CERT_TITLE',
-            key: 'tc',
-          });
-        },
-      },
-      {
-        label: 'Safari',
-        tooltipOptions: {
-          tooltipLabel: 'Safari',
-          tooltipPosition: 'top',
-          positionTop: -15,
-          positionLeft: 15,
-          showDelay: 1000,
-        },
-        icon: 'https://primefaces.org/cdn/primeng/images/dock/safari.svg',
-        command: () => {
-          this.messageService.add({
-            severity: 'warn',
-            summary: 'Safari has stopped working',
-            key: 'tc',
-          });
-        },
-      },
-      {
-        label: 'Photos',
-        tooltipOptions: {
-          tooltipLabel: 'Photos',
-          tooltipPosition: 'top',
-          positionTop: -15,
-          positionLeft: 15,
-          showDelay: 1000,
-        },
-        icon: 'https://primefaces.org/cdn/primeng/images/dock/photos.svg',
-        command: () => {
-          this.displayGalleria = true;
         },
       },
       {
@@ -137,204 +179,64 @@ export class AppLayoutComponent implements OnInit {
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
-          showDelay: 1000,
+          showDelay: 300,
         },
-        icon: 'https://primefaces.org/cdn/primeng/images/dock/github.svg',
+        icon: '/assets/icons/github.svg',
+        command: () => {
+          window.open('https://github.com/ghassenbrg/pockito', '_blank');
+        },
       },
       {
-        label: 'Trash',
+        label: 'Account',
         tooltipOptions: {
-          tooltipLabel: 'Trash',
+          tooltipLabel: 'Account',
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
-          showDelay: 1000,
+          showDelay: 300,
         },
-        icon: 'https://primefaces.org/cdn/primeng/images/dock/trash.png',
+        icon: '/assets/icons/account.png',
         command: () => {
-          this.messageService.add({
-            severity: 'info',
-            summary: 'Empty Trash',
-            key: 'tc',
-          });
+          this.navigateTo('/app/account');
         },
       },
+      {
+        label: 'Settings',
+        tooltipOptions: {
+          tooltipLabel: 'Settings',
+          tooltipPosition: 'top',
+          positionTop: -15,
+          positionLeft: 15,
+          showDelay: 300,
+        },
+        icon: '/assets/icons/settings.png',
+        command: () => {
+          this.navigateTo('/app/settings');
+        },
+      },
+      {
+        label: 'Logout',
+        tooltipOptions: {
+          tooltipLabel: 'Logout',
+          tooltipPosition: 'top',
+          positionTop: -15,
+          positionLeft: 15,
+          showDelay: 300,
+        },
+        icon: '/assets/icons/logout.png',
+        command: () => {
+          this.KeycloakService.logout();
+        },
+      }
     ];
-
-    this.menubarItems = [
-      {
-        label: 'Finder',
-        styleClass: 'menubar-root',
-      },
-      {
-        label: 'File',
-        items: [
-          {
-            label: 'New',
-            icon: 'pi pi-fw pi-plus',
-            items: [
-              {
-                label: 'Bookmark',
-                icon: 'pi pi-fw pi-bookmark',
-              },
-              {
-                label: 'Video',
-                icon: 'pi pi-fw pi-video',
-              },
-            ],
-          },
-          {
-            label: 'Delete',
-            icon: 'pi pi-fw pi-trash',
-          },
-          {
-            separator: true,
-          },
-          {
-            label: 'Export',
-            icon: 'pi pi-fw pi-external-link',
-          },
-        ],
-      },
-      {
-        label: 'Edit',
-        items: [
-          {
-            label: 'Left',
-            icon: 'pi pi-fw pi-align-left',
-          },
-          {
-            label: 'Right',
-            icon: 'pi pi-fw pi-align-right',
-          },
-          {
-            label: 'Center',
-            icon: 'pi pi-fw pi-align-center',
-          },
-          {
-            label: 'Justify',
-            icon: 'pi pi-fw pi-align-justify',
-          },
-        ],
-      },
-      {
-        label: 'Users',
-        items: [
-          {
-            label: 'New',
-            icon: 'pi pi-fw pi-user-plus',
-          },
-          {
-            label: 'Delete',
-            icon: 'pi pi-fw pi-user-minus',
-          },
-          {
-            label: 'Search',
-            icon: 'pi pi-fw pi-users',
-            items: [
-              {
-                label: 'Filter',
-                icon: 'pi pi-fw pi-filter',
-                items: [
-                  {
-                    label: 'Print',
-                    icon: 'pi pi-fw pi-print',
-                  },
-                ],
-              },
-              {
-                icon: 'pi pi-fw pi-bars',
-                label: 'List',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        label: 'Events',
-        items: [
-          {
-            label: 'Edit',
-            icon: 'pi pi-fw pi-pencil',
-            items: [
-              {
-                label: 'Save',
-                icon: 'pi pi-fw pi-calendar-plus',
-              },
-              {
-                label: 'Delete',
-                icon: 'pi pi-fw pi-calendar-minus',
-              },
-            ],
-          },
-          {
-            label: 'Archieve',
-            icon: 'pi pi-fw pi-calendar-times',
-            items: [
-              {
-                label: 'Remove',
-                icon: 'pi pi-fw pi-calendar-minus',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        label: 'Quit',
-      },
-    ];
-
-    this.responsiveOptions = [
-      {
-        breakpoint: '1024px',
-        numVisible: 3,
-      },
-      {
-        breakpoint: '768px',
-        numVisible: 2,
-      },
-      {
-        breakpoint: '560px',
-        numVisible: 1,
-      },
-    ];
-
-    this.subscription = this.terminalService.commandHandler.subscribe(
-      (command) => this.commandHandler(command)
-    );
   }
 
-  commandHandler(text: any) {
-    let response;
-    const argsIndex = text.indexOf(' ');
-    const command = argsIndex !== -1 ? text.substring(0, argsIndex) : text;
-
-    switch (command) {
-      case 'date':
-        response = 'Today is ' + new Date().toDateString();
-        break;
-
-      case 'greet':
-        response = 'Hola ' + text.substring(argsIndex + 1) + '!';
-        break;
-
-      case 'random':
-        response = Math.floor(Math.random() * 100);
-        break;
-
-      default:
-        response = 'Unknown command: ' + command;
-        break;
-    }
-
-    if (response) {
-      this.terminalService.sendResponse(response as string);
-    }
+  navigateTo(route: string) {
+    this.router.navigate([route]);
   }
 
-  ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
+  commandHandler(command: any) {
+    this.displayMore = false;
+    command();
   }
 }
