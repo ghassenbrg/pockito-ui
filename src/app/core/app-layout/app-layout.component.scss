@@ -1,363 +1,571 @@
 // =============================================================================
-// APP LAYOUT COMPONENT STYLES
+// APP LAYOUT COMPONENT - MOBILE-FIRST RESPONSIVE DESIGN
 // =============================================================================
 
 // -----------------------------------------------------------------------------
-// GLOBAL HOST DEEP STYLES
+// CSS CUSTOM PROPERTIES (DESIGN TOKENS)
 // -----------------------------------------------------------------------------
-:host ::ng-deep {
-  // Sticky positioning utilities
-  .sticky-bar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background-color: var(--surface-0);
-    border-bottom: 1px solid var(--surface-border);
-  }
-
-  .sticky-dock {
-    position: sticky;
-    bottom: 0;
-    z-index: 1000;
-    background-color: var(--surface-0);
-    border-top: 1px solid var(--surface-border);
-  }
-
-  // Dock window background
-  .dock-window {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    background-image: url("https://primefaces.org/cdn/primeng/images/dock/window.jpg");
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    z-index: 0;
-  }
-
-  // PrimeNG Dock positioning
-  .p-dock {
-    position: fixed;
-    z-index: 1000;
-    
-    // Ensure dock items are always accessible
-    .p-dock-item {
-      &:focus-within {
-        // Remove aria-hidden when any descendant has focus
-        &[aria-hidden="true"] {
-          aria-hidden: false !important;
-        }
-      }
-      
-      // Ensure dock actions are always focusable
-      .p-dock-action {
-        &:focus {
-          outline: 2px solid var(--primary-color);
-          outline-offset: 2px;
-        }
-      }
-    }
-  }
-
-  // Dialog and toast positioning
-  .p-dialog-mask,
-  .p-toast {
-    position: absolute;
-  }
-
-  // Dialog styles
-  .p-dialog {
-    .p-dialog-header {
-      padding: 0.2rem;
-    }
-
-    .p-dialog-content {
-      padding: 0;
-    }
-
-    p {
-      margin-top: 0;
-    }
-
-    // Terminal styling within dialogs
-    .p-terminal {
-      background-color: #212121;
-      color: #ffffff;
-      border: 0 none;
-      min-height: 18rem;
-      height: 100%;
-
-      .p-terminal-command {
-        color: #80cbc4;
-      }
-
-      .p-terminal-prompt {
-        color: #ffd54f;
-      }
-
-      .p-terminal-response {
-        color: #9fa8da;
-      }
-    }
-
-    // Tree component styling
-    .p-tree {
-      height: 100%;
-      border-radius: 0;
-      border-left-width: 0;
-      border-right-width: 0;
-      border-bottom-width: 0;
-    }
-  }
-
-  // Toast positioning
-  .p-toast {
-    top: 20px;
-  }
-
-  // Menubar styling
-  .p-menubar {
-    padding-top: 0;
-    padding-bottom: 0;
-    border-radius: 0;
-
-    .p-menuitem:first-child {
-      font-weight: bold;
-      padding: 0 1rem;
-    }
-
-    .p-menuitem-link {
-      padding: 0.5rem 0.75rem;
-    }
-
-    .p-menubar-root-list > .p-menuitem > .p-menuitem-link {
-      padding: 0.5rem 0.75rem;
-
-      > .p-submenu-icon {
-        display: none;
-      }
-    }
-
-    .p-menubar-end {
-      span,
-      i {
-        padding: 0 0.75rem;
-      }
-    }
-  }
+:host {
+  // Layout dimensions
+  --mobile-bottom-nav-height: 80px;
+  --mobile-side-nav-width: 280px;
+  --desktop-dock-width: 96px;
+  
+  // Spacing and sizing
+  --transition-duration: 0.3s;
+  
+  // Shadows
+  --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.2);
+  
+  // Colors
+  --background-color: #f9fafb;
+  --text-color: #1e293b;
+  --primary-color: #2563eb;
+  --surface-color: rgba(255, 255, 255, 0.98);
+  --overlay-color: rgba(0, 0, 0, 0.5);
 }
 
 // -----------------------------------------------------------------------------
-// TOOLTIP STYLING
+// BASE LAYOUT STRUCTURE
 // -----------------------------------------------------------------------------
-.dark-tooltip {
-  .p-tooltip {
-    .p-tooltip-arrow {
-      border-top-color: var(--surface-900);
-    }
-
-    .p-tooltip-text {
-      background-color: var(--surface-900);
-    }
-  }
-}
-
-// -----------------------------------------------------------------------------
-// MAIN LAYOUT STRUCTURE
-// -----------------------------------------------------------------------------
-
-// App container base
-.app-container {
-  background-color: white;
-}
-
-// Root 2-column grid shell
-.shell {
-  display: grid;
-  grid-template-columns: 96px minmax(0, 1fr);
-  grid-auto-rows: 100dvh;
-  height: 100dvh;
+.app-shell {
+  position: relative;
   width: 100%;
-  overflow: hidden;
-  color: var(--text-color, #e6e8ec);
+  min-height: 100vh;
   background-image: url("https://primefaces.org/cdn/primeng/images/dock/window.jpg");
-  background: rgba(255, 255, 255, 0.1); // 30% opacity background color
-
-  //background: var(--surface-ground, #0b0d12);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-}
-
-// Left column: dock rail
-.dock-col {
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.02),
-    rgba(255, 255, 255, 0)
-  );
-  padding: 8px 0;
-  display: flex;
-}
-
-// Right column: app area
-.app-col {
-  min-width: 0;
-  overflow: hidden;
-}
-
-// App container content
-.app-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-  background-color: #f9fafb;
-}
-
-// App header section
-.app-header {
-  padding: 20px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-// App content area
-.app-content {
-  padding: 24px;
-  overflow: auto;
-  height: 100%;
-}
-
-// Placeholder card styling
-.placeholder-card {
-  margin-top: 16px;
-  padding: 16px;
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
+  overflow-x: hidden;
 }
 
 // -----------------------------------------------------------------------------
-// PRIMENG DOCK CUSTOMIZATION
+// MOBILE NAVIGATION COMPONENTS
 // -----------------------------------------------------------------------------
 
-// Override PrimeNG Dock positioning for inline rail behavior
-:host ::ng-deep .inline-dock.p-dock {
-  position: static !important;
-  inset: auto !important;
-  width: 100%;
-  height: 100%;
-  display: flex;
+// Mobile Navigation Overlay
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay-color);
+  z-index: 1001;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-duration) ease;
+
+  &.active {
+    opacity: 1;
+    visibility: visible;
+  }
 }
 
-// Vertical rail layout for dock list
-:host ::ng-deep .inline-dock .p-dock-list {
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 12px;
-  padding: 12px 0;
-  height: 100%;
-  width: 100%;
-}
+// Mobile Side Navigation
+.mobile-side-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--mobile-side-nav-width);
+  height: 100vh;
+  background: var(--surface-color);
+  backdrop-filter: blur(20px);
+  z-index: 1002;
+  transform: translateX(-100%);
+  transition: transform var(--transition-duration) ease;
+  overflow-y: auto;
+  box-shadow: var(--shadow-heavy);
 
-
-// Dock item styling
-:host ::ng-deep .inline-dock .p-dock-item {
-  transform: none !important;
-}
-
-:host ::ng-deep .p-dock-item,
-:host ::ng-deep .p-dock-item .p-dock-action {
-  cursor: pointer !important;
-}
-
-
-// Dock action button styling
-:host ::ng-deep .inline-dock .p-dock-item .p-dock-action {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-// Focus state for dock actions
-:host ::ng-deep .inline-dock .p-dock-item .p-dock-action:focus-visible {
-  outline: 2px solid #6ea8fe;
-  outline-offset: 2px;
-}
-
-// Dock label centering
-:host ::ng-deep .inline-dock .p-dock-item .p-dock-label {
-  text-align: center;
-}
-
-// -----------------------------------------------------------------------------
-// RESPONSIVE DESIGN
-// -----------------------------------------------------------------------------
-
-// Mobile layout adjustments
-@media (max-width: 640px) {
-  .shell {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
+  &.active {
+    transform: translateX(0);
   }
 
+  // Navigation Header
+  .mobile-nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+    .mobile-nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+      }
+
+      span {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-color);
+      }
+    }
+
+    .mobile-nav-close {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      i {
+        font-size: 18px;
+        color: var(--text-color);
+      }
+    }
+  }
+
+  // Navigation Items
+  .mobile-nav-items {
+    padding: 24px;
+
+    .mobile-nav-section {
+      margin-bottom: 32px;
+
+      h3 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 16px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .mobile-nav-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+
+        .mobile-nav-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          padding: 16px 12px;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          text-align: center;
+          background: rgba(0, 0, 0, 0.02);
+          border: 1px solid rgba(0, 0, 0, 0.05);
+          
+          &:hover {
+            background: rgba(0, 0, 0, 0.05);
+            border-color: rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+          }
+          
+          &:active {
+            transform: translateY(0);
+          }
+          
+          img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+          }
+          
+          span {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-color);
+            line-height: 1.2;
+          }
+        }
+      }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// MOBILE BOTTOM NAVIGATION
+// -----------------------------------------------------------------------------
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--mobile-bottom-nav-height);
+  background: var(--surface-color);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: var(--shadow-light);
+
+  .mobile-bottom-nav-items {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 100%;
+    padding: 8px 16px;
+
+    .mobile-bottom-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 64px;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+
+      &.active {
+        background: rgba(37, 99, 235, 0.1);
+        border: 1px solid rgba(37, 99, 235, 0.2);
+
+        span {
+          color: var(--primary-color);
+          font-weight: 600;
+        }
+      }
+
+      img {
+        width: 24px;
+        height: 24px;
+        object-fit: contain;
+      }
+
+      span {
+        font-size: 10px;
+        font-weight: 500;
+        color: var(--text-color);
+        text-align: center;
+        line-height: 1.2;
+        transition: color 0.2s ease, font-weight 0.2s ease;
+      }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// MAIN CONTENT AREA (RESPONSIVE)
+// -----------------------------------------------------------------------------
+.main-content-area {
+  display: block;
+  min-height: calc(100vh - var(--mobile-bottom-nav-height));
+  background-color: var(--background-color);
+  
+  @media (min-width: 1024px) {
+    position: fixed;
+    top: 0;
+    left: var(--desktop-dock-width);
+    right: 0;
+    bottom: 0;
+    min-height: auto;
+    overflow-y: auto;
+    z-index: 1;
+    background-color: transparent;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// DESKTOP LAYOUT COMPONENTS
+// -----------------------------------------------------------------------------
+.desktop-shell {
+  display: none;
+  
+  @media (min-width: 1024px) {
+    display: grid;
+    grid-template-columns: var(--desktop-dock-width) minmax(0, 1fr);
+    grid-auto-rows: 100dvh;
+    height: 100dvh;
+    width: 100%;
+    overflow: hidden;
+    color: var(--text-color);
+    background-image: url("https://primefaces.org/cdn/primeng/images/dock/window.jpg");
+    background: rgba(255, 255, 255, 0.1);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
+
+  // Left column: dock rail
   .dock-col {
-    grid-row: 1 / 2;
-    border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 6px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px 0;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+
+    .dock-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+    }
   }
 
-  :host ::ng-deep .inline-dock .p-dock-list {
-    flex-direction: row;
-    justify-content: center;
-    height: auto;
+  // Right column: app area
+  .app-col {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  // App container content
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    background-color: var(--background-color);
+  }
+
+  // App content area
+  .app-content {
+    padding: 24px;
+    overflow: auto;
+    height: 100%;
   }
 }
 
 // -----------------------------------------------------------------------------
-// MORE MODAL SIMPLE STYLING
+// RESPONSIVE BREAKPOINTS
 // -----------------------------------------------------------------------------
 
+// Tablet and up (768px+)
+@media (min-width: 768px) {
+  .mobile-side-nav {
+    width: 320px;
+  }
+
+  .mobile-nav-items .mobile-nav-section .mobile-nav-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+// Desktop and up (1024px+)
+@media (min-width: 1024px) {
+  .mobile-bottom-nav,
+  .mobile-side-nav,
+  .mobile-nav-overlay {
+    display: none;
+  }
+}
+
+// Large desktop (1280px+)
+@media (min-width: 1280px) {
+  .app-content {
+    padding: 32px;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// PRIMENG DOCK CUSTOMIZATION (DESKTOP ONLY)
+// -----------------------------------------------------------------------------
+@media (min-width: 1024px) {
+  :host ::ng-deep {
+    // Override PrimeNG Dock positioning for inline rail behavior
+    .inline-dock.p-dock {
+      position: static !important;
+      inset: auto !important;
+      width: 100%;
+      height: 100%;
+      display: flex;
+    }
+
+    // Vertical rail layout for dock list
+    .inline-dock .p-dock-list {
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    // Dock item styling
+    .inline-dock .p-dock-item {
+      transform: none !important;
+    }
+
+    .inline-dock .p-dock-item .p-dock-action {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    // Focus state for dock actions
+    .inline-dock .p-dock-item .p-dock-action:focus-visible {
+      outline: 2px solid #6ea8fe;
+      outline-offset: 2px;
+    }
+
+    // Dock label centering
+    .inline-dock .p-dock-item .p-dock-label {
+      text-align: center;
+    }
+
+    // Dialog styles
+    .p-dialog {
+      .p-dialog-header {
+        padding: 0.2rem;
+      }
+
+      .p-dialog-content {
+        padding: 0;
+      }
+
+      p {
+        margin-top: 0;
+      }
+
+      // Tree component styling
+      .p-tree {
+        height: 100%;
+        border-radius: 0;
+        border-left-width: 0;
+        border-right-width: 0;
+        border-bottom-width: 0;
+      }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// TERMINAL STYLING (APPLIES TO ALL SCREEN SIZES)
+// -----------------------------------------------------------------------------
+:host ::ng-deep {
+  // Terminal styling within dialogs - same for mobile and desktop
+  .p-dialog .p-terminal {
+    background-color: #212121;
+    color: #ffffff;
+    border: 0 none;
+    min-height: 18rem;
+    height: 100%;
+
+    .p-terminal-command {
+      color: #80cbc4;
+    }
+
+    .p-terminal-prompt {
+      color: #ffd54f;
+    }
+
+    .p-terminal-response {
+      color: #9fa8da;
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// MOBILE DIALOG STYLING
+// -----------------------------------------------------------------------------
+@media (max-width: 1023px) {
+  :host ::ng-deep {
+    // Ensure dialogs are full screen on mobile
+    .p-dialog {
+      margin: 0;
+      border-radius: 0;
+      
+      @media (max-width: 640px) {
+        width: 100vw !important;
+        height: 100vh !important;
+        max-width: 100vw !important;
+        max-height: 100vh !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+      }
+    }
+    
+    // Ensure dialog mask covers full screen
+    .p-dialog-mask {
+      @media (max-width: 640px) {
+        padding: 0 !important;
+      }
+    }
+    
+    // Ensure dialog content fills full screen
+    .p-dialog-content {
+      @media (max-width: 640px) {
+        height: 100vh !important;
+        border-radius: 0 !important;
+      }
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+// MORE ITEMS LIST STYLING
+// -----------------------------------------------------------------------------
 .more-items-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: 16px;
   padding: 16px;
-}
 
-.more-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  text-align: center;
-  
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-  
-  img {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-  }
-  
-  span {
-    font-size: 12px;
-    font-weight: 500;
-    color: #333;
+  .more-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+      border-color: rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+    
+    img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+    
+    span {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-color);
+      line-height: 1.2;
+    }
   }
 }
