@@ -79,11 +79,11 @@
             </div>
           </div>
 
-          <div class="goal-section" *ngIf="wallet.goalAmount > 0">
+          <div class="goal-section" *ngIf="(wallet.goalAmount ?? 0) > 0">
             <div class="goal-header">
               <span class="label">{{ 'wallet.goal' | translate }}:</span>
               <span class="value" style="color: #1a202c; font-weight: bold;">
-                {{ wallet.goalAmount.toFixed(2) }} {{ wallet.currency }}
+                {{ (wallet.goalAmount ?? 0).toFixed(2) }} {{ wallet.currency }}
               </span>
             </div>
             <div class="progress-container">
@@ -167,6 +167,28 @@
           <span class="balance-value" [style.color]="formatAmount(wallet.balance).color" [style.font-weight]="'bold'">
             {{ formatAmount(wallet.balance).text }} {{ wallet.currency }}
           </span>
+        </div>
+        
+        <!-- Reorder buttons -->
+        <div class="reorder-buttons">
+          <button 
+            class="reorder-btn up-btn" 
+            (click)="moveWalletUp(wallet)"
+            [disabled]="wallets.indexOf(wallet) === 0"
+            [title]="'wallet.move_up' | translate"
+            type="button"
+          >
+            <i class="pi pi-chevron-up"></i>
+          </button>
+          <button 
+            class="reorder-btn down-btn" 
+            (click)="moveWalletDown(wallet)"
+            [disabled]="wallets.indexOf(wallet) === wallets.length - 1"
+            [title]="'wallet.move_down' | translate"
+            type="button"
+          >
+            <i class="pi pi-chevron-down"></i>
+          </button>
         </div>
       </div>
     </div>

@@ -281,10 +281,19 @@
   box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
   border: 1px solid #e2e8f0;
   transition: all 0.2s ease;
+  cursor: pointer;
+  position: relative;
 
   &:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    background: #f8fafc;
+    border-color: #cbd5e1;
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
   }
 
   &.inactive {
@@ -347,16 +356,30 @@
     }
   }
 
-  .wallet-type {
-    display: inline-block;
-    background: #f1f5f9;
-    color: #475569;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    text-transform: capitalize;
-  }
+        .wallet-type {
+        display: inline-block;
+        background: #f1f5f9;
+        color: #475569;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: capitalize;
+      }
+
+      .click-indicator {
+        margin-top: 4px;
+        color: #94a3b8;
+        font-size: 0.75rem;
+        opacity: 0.7;
+        transition: all 0.2s ease;
+
+        .wallet-item:hover & {
+          opacity: 1;
+          color: #3b82f6;
+          transform: translateX(2px);
+        }
+      }
 }
 
 .wallet-item-balance {
@@ -369,6 +392,45 @@
 
     @media (max-width: 480px) {
       font-size: 0.875rem;
+    }
+  }
+}
+
+.reorder-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-left: 8px;
+
+  .reorder-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 24px;
+    border: none;
+    background: #f1f5f9;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #64748b;
+
+    &:hover:not(:disabled) {
+      background: #e2e8f0;
+      color: #475569;
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.95);
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    i {
+      font-size: 0.75rem;
     }
   }
 }

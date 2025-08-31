@@ -72,7 +72,9 @@
       "make_default": "Définir par Défaut",
       "already_default": "Déjà par Défaut"
     },
-    "click_to_view": "Cliquer pour voir"
+    "click_to_view": "Cliquer pour voir",
+    "move_up": "Monter",
+    "move_down": "Descendre"
   },
   "terminal": {
     "welcomeMessage": "Bienvenue sur Pockito (tapez 'help' + entrée pour les commandes)",

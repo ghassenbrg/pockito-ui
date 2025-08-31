@@ -72,7 +72,9 @@
       "make_default": "Make Default",
       "already_default": "Already Default"
     },
-    "click_to_view": "Click to view"
+    "click_to_view": "Click to view",
+    "move_up": "Move Up",
+    "move_down": "Move Down"
   },
   "terminal": {
     "welcomeMessage": "Welcome to Pockito (type 'help' + enter for commands)",
