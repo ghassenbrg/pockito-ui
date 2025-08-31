@@ -1,6 +1,7 @@
 import { TerminalModule, TerminalService } from 'primeng/terminal';
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'pockito-terminal',
@@ -15,7 +16,10 @@ import { Subscription } from 'rxjs';
 export class PockitoTerminalComponent implements OnInit {
   subscription: Subscription | undefined;
 
-  constructor(private terminalService: TerminalService) {}
+  constructor(
+    private terminalService: TerminalService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.subscription = this.terminalService.commandHandler.subscribe(
@@ -41,8 +45,19 @@ export class PockitoTerminalComponent implements OnInit {
         response = Math.floor(Math.random() * 100);
         break;
 
+      case 'navigate': {
+        const route = argsIndex !== -1 ? text.substring(argsIndex + 1).trim() : '';
+        if (route) {
+          this.navigateToRoute(route);
+          response = `Navigating to ${route}...`;
+        } else {
+          response = 'Usage: navigate <route>. Available routes: dashboard, wallets, transactions, subscriptions, budgets, agreements, categories, settings, account';
+        }
+        break;
+      }
+
       case 'help':
-        response = 'Available commands: date, greet, random, help';
+        response = 'Available commands: date, greet, random, navigate, help';
         break;
 
       default:
@@ -52,6 +67,19 @@ export class PockitoTerminalComponent implements OnInit {
 
     if (response) {
       this.terminalService.sendResponse(response as string);
+    }
+  }
+
+  private navigateToRoute(route: string): void {
+    const validRoutes = [
+      'dashboard', 'wallets', 'transactions', 'subscriptions', 
+      'budgets', 'agreements', 'categories', 'settings', 'account'
+    ];
+    
+    if (validRoutes.includes(route)) {
+      this.router.navigate(['/app', route]);
+    } else {
+      this.terminalService.sendResponse(`Invalid route: ${route}. Available routes: ${validRoutes.join(', ')}`);
     }
   }
 
