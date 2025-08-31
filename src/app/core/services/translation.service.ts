@@ -12,7 +12,7 @@ export class TranslationService {
     const browser = (navigator.language || 'en').split('-')[0];
 
     const lang = saved || browser || 'en';
-    this.translate.setDefaultLang('en');
+    this.translate.setFallbackLang('en');
     this.translate.use(lang);
     this.currentLangSubject.next(lang);
   }

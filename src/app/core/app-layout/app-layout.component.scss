@@ -33,7 +33,6 @@
   position: relative;
   width: 100%;
   min-height: 100vh;
-  background-image: url("/assets/images/window.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -293,7 +292,6 @@
     width: 100%;
     overflow: hidden;
     color: var(--text-color);
-    background-image: url("https://primefaces.org/cdn/primeng/images/dock/window.jpg");
     background: rgba(255, 255, 255, 0.1);
     background-repeat: no-repeat;
     background-size: cover;
@@ -310,6 +308,7 @@
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     border-right: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0px;
 
     .dock-container {
       width: 100%;
@@ -320,6 +319,15 @@
       justify-content: flex-start;
       gap: 12px;
       padding: 12px 0;
+
+      background-image: url("/assets/images/window.png");
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      background-position: center;
+      background-attachment: fixed;
+
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
     }
   }
 
@@ -335,8 +343,6 @@
     flex-direction: column;
     height: 100%;
     overflow: hidden;
-    border-top-left-radius: 10px;
-    border-bottom-left-radius: 10px;
     background-color: var(--background-color);
   }
 
