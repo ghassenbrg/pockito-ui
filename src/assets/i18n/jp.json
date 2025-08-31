@@ -1,0 +1,66 @@
+{
+  "appLayout": {
+    "navigation": {
+      "mainNavigation": "メインナビゲーション",
+      "moreOptions": "その他のオプション",
+      "dashboard": "ダッシュボード",
+      "wallets": "ウォレット",
+      "transactions": "取引",
+      "subscriptions": "サブスクリプション",
+      "budgets": "予算",
+      "agreements": "契約",
+      "categories": "カテゴリ",
+      "terminal": "ターミナル",
+      "account": "アカウント",
+      "settings": "設定",
+      "language": "言語",
+      "github": "GitHub",
+      "logout": "ログアウト",
+      "more": "その他"
+    },
+    "mobile": {
+      "closeMenu": "メニューを閉じる",
+      "moreOptionsHeader": "その他のオプション",
+      "openMenu": "メニューを開く",
+      "menuAccessibility": "モバイルナビゲーションメニュー"
+    },
+    "common": {
+      "appName": "Pockito",
+      "loading": "読み込み中...",
+      "error": "エラー",
+      "success": "成功"
+    },
+    "dialogs": {
+      "moreOptions": "その他のオプション",
+      "switchLanguage": "言語を切り替え",
+      "testLanguageSwitcher": "言語切り替えテスト",
+      "close": "閉じる",
+      "cancel": "キャンセル",
+      "confirm": "確認"
+    },
+    "accessibility": {
+      "closeButton": "閉じるボタン",
+      "navigationItem": "ナビゲーション項目",
+      "tooltip": "ツールチップ"
+    }
+  },
+  "terminal": {
+    "welcomeMessage": "Pockitoへようこそ（コマンドは'help' + エンターで入力してください）",
+    "prompt": "pockito $",
+    "commands": {
+      "help": "利用可能なコマンド: date, greet, random, navigate, help",
+      "date": "今日は",
+      "greet": "こんにちは",
+      "random": "ランダムな数",
+      "navigate": "ナビゲーション先",
+      "navigateUsage": "使用方法: navigate <route>. 利用可能なルート: dashboard, wallets, transactions, subscriptions, budgets, agreements, categories, settings, account",
+      "unknownCommand": "不明なコマンド:",
+      "invalidRoute": "無効なルート:",
+      "availableRoutes": "利用可能なルート:"
+    },
+    "accessibility": {
+      "terminalInput": "ターミナル入力",
+      "terminalOutput": "ターミナル出力"
+    }
+  }
+}

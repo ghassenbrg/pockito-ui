@@ -2,12 +2,14 @@ import { TerminalModule, TerminalService } from 'primeng/terminal';
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'pockito-terminal',
   standalone: true,
   imports: [
     TerminalModule,
+    TranslateModule
   ],
   providers: [TerminalService],
   templateUrl: './pockito-terminal.component.html',
@@ -18,13 +20,20 @@ export class PockitoTerminalComponent implements OnInit {
 
   constructor(
     private terminalService: TerminalService,
-    private router: Router
+    private router: Router,
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.subscription = this.terminalService.commandHandler.subscribe(
       (command) => this.commandHandler(command)
     );
+
+    // Subscribe to language changes to refresh terminal responses
+    this.translate.onLangChange.subscribe(() => {
+      // Refresh any cached responses or re-send current state if needed
+      // For now, we'll just ensure the service is ready for new commands
+    });
   }
 
   commandHandler(text: any) {
@@ -34,34 +43,34 @@ export class PockitoTerminalComponent implements OnInit {
 
     switch (command) {
       case 'date':
-        response = 'Today is ' + new Date().toDateString();
+        response = this.translate.instant('terminal.commands.date') + ' ' + new Date().toDateString();
         break;
 
       case 'greet':
-        response = 'Hola ' + text.substring(argsIndex + 1) + '!';
+        response = this.translate.instant('terminal.commands.greet') + ' ' + text.substring(argsIndex + 1) + '!';
         break;
 
       case 'random':
-        response = Math.floor(Math.random() * 100);
+        response = this.translate.instant('terminal.commands.random') + ': ' + Math.floor(Math.random() * 100);
         break;
 
       case 'navigate': {
         const route = argsIndex !== -1 ? text.substring(argsIndex + 1).trim() : '';
         if (route) {
           this.navigateToRoute(route);
-          response = `Navigating to ${route}...`;
+          response = this.translate.instant('terminal.commands.navigate') + ' ' + route + '...';
         } else {
-          response = 'Usage: navigate <route>. Available routes: dashboard, wallets, transactions, subscriptions, budgets, agreements, categories, settings, account';
+          response = this.translate.instant('terminal.commands.navigateUsage');
         }
         break;
       }
 
       case 'help':
-        response = 'Available commands: date, greet, random, navigate, help';
+        response = this.translate.instant('terminal.commands.help');
         break;
 
       default:
-        response = 'Unknown command: ' + command;
+        response = this.translate.instant('terminal.commands.unknownCommand') + ' ' + command;
         break;
     }
 
@@ -79,7 +88,9 @@ export class PockitoTerminalComponent implements OnInit {
     if (validRoutes.includes(route)) {
       this.router.navigate(['/app', route]);
     } else {
-      this.terminalService.sendResponse(`Invalid route: ${route}. Available routes: ${validRoutes.join(', ')}`);
+      const invalidRouteMsg = this.translate.instant('terminal.commands.invalidRoute') + ' ' + route + '. ';
+      const availableRoutesMsg = this.translate.instant('terminal.commands.availableRoutes') + ': ' + validRoutes.join(', ');
+      this.terminalService.sendResponse(invalidRouteMsg + availableRoutesMsg);
     }
   }
 

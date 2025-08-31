@@ -1,0 +1,138 @@
+.language-switcher {
+  padding: 1rem;
+  
+  h3 {
+    margin: 0 0 1.5rem 0;
+    color: var(--text-color);
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-align: center;
+  }
+  
+  .language-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    
+    .language-option {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      border: 2px solid var(--surface-border);
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      
+      &:hover {
+        border-color: var(--primary-color);
+        background-color: var(--surface-hover);
+        transform: translateY(-1px);
+      }
+      
+      &.active {
+        border-color: var(--primary-color);
+        background-color: var(--primary-50);
+        
+        .language-status {
+          opacity: 1;
+        }
+      }
+      
+      &.changing {
+        border-color: var(--primary-color);
+        background-color: var(--primary-100);
+        
+        .language-status {
+          opacity: 1;
+          color: var(--primary-color);
+        }
+      }
+      
+      &.disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+        
+        &:hover {
+          border-color: var(--surface-border);
+          background-color: transparent;
+          transform: none;
+        }
+      }
+      
+      .language-flag {
+        margin-right: 1rem;
+        min-width: 2rem;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        .flag-icon {
+          width: 2rem;
+          height: 1.5rem;
+          object-fit: cover;
+          border-radius: 0.25rem;
+          border: 1px solid var(--surface-border);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+      }
+      
+      .language-name {
+        flex: 1;
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-color);
+      }
+      
+      .language-status {
+        opacity: 0;
+        color: var(--primary-color);
+        font-size: 1.25rem;
+        transition: opacity 0.2s ease;
+      }
+    }
+  }
+  
+  .language-info {
+    text-align: center;
+    padding: 1rem;
+    background-color: var(--surface-100);
+    border-radius: 0.5rem;
+    
+    p {
+      margin: 0;
+      color: var(--text-color-secondary);
+      font-size: 0.875rem;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .language-switcher {
+    padding: 0.75rem;
+    
+    .language-options {
+      gap: 0.5rem;
+      
+      .language-option {
+        padding: 0.75rem;
+        
+        .language-flag {
+          margin-right: 0.75rem;
+          
+          .flag-icon {
+            width: 1.75rem;
+            height: 1.25rem;
+          }
+        }
+        
+        .language-name {
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+}

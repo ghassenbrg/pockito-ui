@@ -10,14 +10,14 @@
   --mobile-bottom-nav-height: 80px;
   --mobile-side-nav-width: 280px;
   --desktop-dock-width: 96px;
-  
+
   // Spacing and sizing
   --transition-duration: 0.3s;
-  
+
   // Shadows
   --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.1);
   --shadow-heavy: 0 8px 32px rgba(0, 0, 0, 0.2);
-  
+
   // Colors
   --background-color: #f9fafb;
   --text-color: #1e293b;
@@ -161,23 +161,23 @@
           text-align: center;
           background: rgba(0, 0, 0, 0.02);
           border: 1px solid rgba(0, 0, 0, 0.05);
-          
+
           &:hover {
             background: rgba(0, 0, 0, 0.05);
             border-color: rgba(0, 0, 0, 0.1);
             transform: translateY(-2px);
           }
-          
+
           &:active {
             transform: translateY(0);
           }
-          
+
           img {
             width: 40px;
             height: 40px;
             object-fit: contain;
           }
-          
+
           span {
             font-size: 12px;
             font-weight: 500;
@@ -210,7 +210,7 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
-  
+
     .mobile-bottom-nav-item {
       display: flex;
       flex-direction: column;
@@ -265,7 +265,7 @@
   display: block;
   min-height: calc(100vh - var(--mobile-bottom-nav-height));
   background-color: var(--background-color);
-  
+
   @media (min-width: 1024px) {
     position: fixed;
     top: 0;
@@ -284,7 +284,7 @@
 // -----------------------------------------------------------------------------
 .desktop-shell {
   display: none;
-  
+
   @media (min-width: 1024px) {
     display: grid;
     grid-template-columns: var(--desktop-dock-width) minmax(0, 1fr);
@@ -345,6 +345,14 @@
     padding: 24px;
     overflow: auto;
     height: 100%;
+  }
+
+  .dock-item-icon {
+    cursor: pointer;
+    }
+
+  .active-dock-item {
+    cursor: default !important;
   }
 }
 
@@ -491,7 +499,7 @@
     .p-dialog {
       margin: 0;
       border-radius: 0;
-      
+
       @media (max-width: 640px) {
         width: 100vw !important;
         height: 100vh !important;
@@ -503,14 +511,14 @@
         bottom: 0 !important;
       }
     }
-    
+
     // Ensure dialog mask covers full screen
     .p-dialog-mask {
       @media (max-width: 640px) {
         padding: 0 !important;
       }
     }
-    
+
     // Ensure dialog content fills full screen
     .p-dialog-content {
       @media (max-width: 640px) {
@@ -542,23 +550,23 @@
     text-align: center;
     background: rgba(0, 0, 0, 0.02);
     border: 1px solid rgba(0, 0, 0, 0.05);
-    
+
     &:hover {
       background: rgba(0, 0, 0, 0.05);
       border-color: rgba(0, 0, 0, 0.1);
       transform: translateY(-2px);
     }
-    
+
     &:active {
       transform: translateY(0);
     }
-    
+
     img {
       width: 40px;
       height: 40px;
       object-fit: contain;
     }
-    
+
     span {
       font-size: 12px;
       font-weight: 500;

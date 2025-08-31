@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -7,27 +8,27 @@ import {
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { PockitoTerminalComponent } from '@core/pockito-terminal/pockito-terminal.component';
+import { TranslateDirective, TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { MenuItem, MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { DockModule } from 'primeng/dock';
-import { GalleriaModule } from 'primeng/galleria';
-import { MenubarModule } from 'primeng/menubar';
 import { TerminalModule, TerminalService } from 'primeng/terminal';
-import { TreeModule } from 'primeng/tree';
 import { filter } from 'rxjs/operators';
+import { LanguageSwitcherComponent } from '../../shared/components/language-switcher/language-switcher.component';
 import { KeycloakService } from './../keycloak.service';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
   imports: [
+    CommonModule,
     DockModule,
-    MenubarModule,
     DialogModule,
-    TreeModule,
     TerminalModule,
-    GalleriaModule,
+    TranslatePipe,
+    TranslateDirective,
     PockitoTerminalComponent,
+    LanguageSwitcherComponent,
   ],
   providers: [MessageService, TerminalService],
   templateUrl: './app-layout.component.html',
@@ -36,6 +37,7 @@ import { KeycloakService } from './../keycloak.service';
 export class AppLayoutComponent implements OnInit {
   displayTerminal: boolean = false;
   displayMore: boolean = false;
+  displaySwitchLanguage: boolean = false;
 
   // Mobile navigation state
   mobileMenuOpen: boolean = false;
@@ -61,7 +63,8 @@ export class AppLayoutComponent implements OnInit {
     private router: Router,
     private KeycloakService: KeycloakService,
     private elementRef: ElementRef,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private translate: TranslateService
   ) {
     // Subscribe to router events to track active route
     this.router.events
@@ -72,11 +75,24 @@ export class AppLayoutComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.initializeMenuItems();
+    
+    // Subscribe to language changes to refresh menu items
+    this.translate.onLangChange.subscribe(() => {
+      this.initializeMenuItems();
+      this.updateActiveRoute(this.router.url);
+    });
+
+    // Set initial active route
+    this.updateActiveRoute(this.router.url);
+  }
+
+  private initializeMenuItems() {
     this.dockItems = [
       {
-        label: 'Dashboard',
+        label: this.translate.instant('appLayout.navigation.dashboard'),
         tooltipOptions: {
-          tooltipLabel: 'Dashboard',
+          tooltipLabel: this.translate.instant('appLayout.navigation.dashboard'),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -88,9 +104,9 @@ export class AppLayoutComponent implements OnInit {
         },
       },
       {
-        label: 'Wallets',
+        label: this.translate.instant('appLayout.navigation.wallets'),
         tooltipOptions: {
-          tooltipLabel: 'Wallets',
+          tooltipLabel: this.translate.instant('appLayout.navigation.wallets'),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -102,9 +118,9 @@ export class AppLayoutComponent implements OnInit {
         },
       },
       {
-        label: 'Transactions',
+        label: this.translate.instant('appLayout.navigation.transactions'),
         tooltipOptions: {
-          tooltipLabel: 'Transactions',
+          tooltipLabel: this.translate.instant('appLayout.navigation.transactions'),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -116,9 +132,9 @@ export class AppLayoutComponent implements OnInit {
         },
       },
       {
-        label: 'Subscriptions',
+        label: this.translate.instant('appLayout.navigation.subscriptions'),
         tooltipOptions: {
-          tooltipLabel: 'Subscriptions',
+          tooltipLabel: this.translate.instant('appLayout.navigation.subscriptions'),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -130,9 +146,9 @@ export class AppLayoutComponent implements OnInit {
         },
       },
       {
-        label: 'Budgets',
+        label: this.translate.instant('appLayout.navigation.budgets'),
         tooltipOptions: {
-          tooltipLabel: 'Budgets',
+          tooltipLabel: this.translate.instant('appLayout.navigation.budgets'),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -144,9 +160,9 @@ export class AppLayoutComponent implements OnInit {
         },
       },
       {
-        label: 'Agreements',
+        label: this.translate.instant('appLayout.navigation.agreements'),
         tooltipOptions: {
-          tooltipLabel: 'Agreements',
+          tooltipLabel: this.translate.instant('appLayout.navigation.agreements'),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -158,9 +174,9 @@ export class AppLayoutComponent implements OnInit {
         },
       },
       {
-        label: 'More',
+        label: this.translate.instant('appLayout.navigation.more'),
         tooltipOptions: {
-          tooltipLabel: 'More',
+          tooltipLabel: this.translate.instant('appLayout.navigation.more'),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -175,9 +191,9 @@ export class AppLayoutComponent implements OnInit {
 
     this.moreItems = [
       {
-        label: 'Categories',
+        label: this.translate.instant('appLayout.navigation.categories'),
         tooltipOptions: {
-          tooltipLabel: 'Categories',
+          tooltipLabel: this.translate.instant('appLayout.navigation.categories'),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -189,9 +205,9 @@ export class AppLayoutComponent implements OnInit {
         },
       },
       {
-        label: 'Terminal',
+        label: this.translate.instant('appLayout.navigation.terminal'),
         tooltipOptions: {
-          tooltipLabel: 'Terminal',
+          tooltipLabel: this.translate.instant('appLayout.navigation.terminal'),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -203,9 +219,9 @@ export class AppLayoutComponent implements OnInit {
         },
       },
       {
-        label: 'Account',
+        label: this.translate.instant('appLayout.navigation.account'),
         tooltipOptions: {
-          tooltipLabel: 'Account',
+          tooltipLabel: this.translate.instant('appLayout.navigation.account'),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -217,9 +233,9 @@ export class AppLayoutComponent implements OnInit {
         },
       },
       {
-        label: 'Settings',
+        label: this.translate.instant('appLayout.navigation.settings'),
         tooltipOptions: {
-          tooltipLabel: 'Settings',
+          tooltipLabel: this.translate.instant('appLayout.navigation.settings'),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -231,9 +247,9 @@ export class AppLayoutComponent implements OnInit {
         },
       },
       {
-        label: 'Language',
+        label: this.translate.instant('appLayout.navigation.language'),
         tooltipOptions: {
-          tooltipLabel: 'Language',
+          tooltipLabel: this.translate.instant('appLayout.navigation.language'),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -241,13 +257,13 @@ export class AppLayoutComponent implements OnInit {
         },
         icon: '/assets/icons/language.png',
         command: () => {
-          this.navigateTo('/app/language');
+          this.displaySwitchLanguage = true;
         },
       },
       {
-        label: 'GitHub',
+        label: this.translate.instant('appLayout.navigation.github'),
         tooltipOptions: {
-          tooltipLabel: 'GitHub',
+          tooltipLabel: this.translate.instant('appLayout.navigation.github'),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -259,9 +275,9 @@ export class AppLayoutComponent implements OnInit {
         },
       },
       {
-        label: 'Logout',
+        label: this.translate.instant('appLayout.navigation.logout'),
         tooltipOptions: {
-          tooltipLabel: 'Logout',
+          tooltipLabel: this.translate.instant('appLayout.navigation.logout'),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -290,13 +306,13 @@ export class AppLayoutComponent implements OnInit {
   // Update active route based on current URL
   private updateActiveRoute(url: string): void {
     if (url.includes('/app/dashboard')) {
-      this.activeRoute = 'Dashboard';
+      this.activeRoute = this.translate.instant('appLayout.navigation.dashboard');
     } else if (url.includes('/app/wallets')) {
-      this.activeRoute = 'Wallets';
+      this.activeRoute = this.translate.instant('appLayout.navigation.wallets');
     } else if (url.includes('/app/transactions')) {
-      this.activeRoute = 'Transactions';
+      this.activeRoute = this.translate.instant('appLayout.navigation.transactions');
     } else if (url.includes('/app/budgets')) {
-      this.activeRoute = 'Budgets';
+      this.activeRoute = this.translate.instant('appLayout.navigation.budgets');
     } else {
       this.activeRoute = '';
     }
@@ -374,7 +390,7 @@ export class AppLayoutComponent implements OnInit {
 
   // Handle mobile bottom navigation clicks
   handleMobileBottomNavClick(item: MenuItem): void {
-    if (item.label === 'More') {
+    if (item.label === this.translate.instant('appLayout.navigation.more')) {
       // Open the more options dialog (same behavior as top bar)
       this.displayMore = true;
     } else {
@@ -414,5 +430,15 @@ export class AppLayoutComponent implements OnInit {
     if (command && typeof command === 'function') {
       command();
     }
+  }
+
+  // Handle language change from language switcher
+  onLanguageChanged(_langCode: string): void {
+    // Close the language switcher dialog
+    this.displaySwitchLanguage = false;
+    
+    // The translation service has already been updated
+    // The menu items will be refreshed automatically via the language change subscription
+    // in ngOnInit()
   }
 }

@@ -1,4 +1,5 @@
 <p-terminal
-welcomeMessage="Welcome to Pockito (type 'help' + enter for commands)"
-prompt="pockito $"
+[welcomeMessage]="'terminal.welcomeMessage' | translate"
+[prompt]="'terminal.prompt' | translate"
+[attr.aria-label]="'terminal.accessibility.terminalInput' | translate"
 />

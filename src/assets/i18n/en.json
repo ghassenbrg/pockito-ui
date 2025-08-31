@@ -1,0 +1,66 @@
+{
+  "appLayout": {
+    "navigation": {
+      "mainNavigation": "Main Navigation",
+      "moreOptions": "More Options",
+      "dashboard": "Dashboard",
+      "wallets": "Wallets",
+      "transactions": "Transactions",
+      "subscriptions": "Subscriptions",
+      "budgets": "Budgets",
+      "agreements": "Agreements",
+      "categories": "Categories",
+      "terminal": "Terminal",
+      "account": "Account",
+      "settings": "Settings",
+      "language": "Language",
+      "github": "GitHub",
+      "logout": "Logout",
+      "more": "More"
+    },
+    "mobile": {
+      "closeMenu": "Close menu",
+      "moreOptionsHeader": "More Options",
+      "openMenu": "Open menu",
+      "menuAccessibility": "Mobile navigation menu"
+    },
+    "common": {
+      "appName": "Pockito",
+      "loading": "Loading...",
+      "error": "Error",
+      "success": "Success"
+    },
+    "dialogs": {
+      "moreOptions": "More Options",
+      "switchLanguage": "Switch Language",
+      "testLanguageSwitcher": "Test language switcher",
+      "close": "Close",
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    },
+    "accessibility": {
+      "closeButton": "Close button",
+      "navigationItem": "Navigation item",
+      "tooltip": "Tooltip"
+    }
+  },
+  "terminal": {
+    "welcomeMessage": "Welcome to Pockito (type 'help' + enter for commands)",
+    "prompt": "pockito $",
+    "commands": {
+      "help": "Available commands: date, greet, random, navigate, help",
+      "date": "Today is",
+      "greet": "Hello",
+      "random": "Random number",
+      "navigate": "Navigating to",
+      "navigateUsage": "Usage: navigate <route>. Available routes: dashboard, wallets, transactions, subscriptions, budgets, agreements, categories, settings, account",
+      "unknownCommand": "Unknown command:",
+      "invalidRoute": "Invalid route:",
+      "availableRoutes": "Available routes:"
+    },
+    "accessibility": {
+      "terminalInput": "Terminal input",
+      "terminalOutput": "Terminal output"
+    }
+  }
+}

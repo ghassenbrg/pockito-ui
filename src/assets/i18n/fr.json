@@ -1,0 +1,66 @@
+{
+  "appLayout": {
+    "navigation": {
+      "mainNavigation": "Navigation Principale",
+      "moreOptions": "Plus d'Options",
+      "dashboard": "Tableau de Bord",
+      "wallets": "Portefeuilles",
+      "transactions": "Transactions",
+      "subscriptions": "Abonnements",
+      "budgets": "Budgets",
+      "agreements": "Accords",
+      "categories": "Catégories",
+      "terminal": "Terminal",
+      "account": "Compte",
+      "settings": "Paramètres",
+      "language": "Langue",
+      "github": "GitHub",
+      "logout": "Déconnexion",
+      "more": "Plus"
+    },
+    "mobile": {
+      "closeMenu": "Fermer le menu",
+      "moreOptionsHeader": "Plus d'Options",
+      "openMenu": "Ouvrir le menu",
+      "menuAccessibility": "Menu de navigation mobile"
+    },
+    "common": {
+      "appName": "Pockito",
+      "loading": "Chargement...",
+      "error": "Erreur",
+      "success": "Succès"
+    },
+    "dialogs": {
+      "moreOptions": "Plus d'Options",
+      "switchLanguage": "Changer de Langue",
+      "testLanguageSwitcher": "Test du sélecteur de langue",
+      "close": "Fermer",
+      "cancel": "Annuler",
+      "confirm": "Confirmer"
+    },
+    "accessibility": {
+      "closeButton": "Bouton de fermeture",
+      "navigationItem": "Élément de navigation",
+      "tooltip": "Info-bulle"
+    }
+  },
+  "terminal": {
+    "welcomeMessage": "Bienvenue dans Pockito (tapez 'help' + entrée pour les commandes)",
+    "prompt": "pockito $",
+    "commands": {
+      "help": "Commandes disponibles: date, greet, random, navigate, help",
+      "date": "Aujourd'hui c'est",
+      "greet": "Bonjour",
+      "random": "Nombre aléatoire",
+      "navigate": "Navigation vers",
+      "navigateUsage": "Usage: navigate <route>. Routes disponibles: dashboard, wallets, transactions, subscriptions, budgets, agreements, categories, settings, account",
+      "unknownCommand": "Commande inconnue:",
+      "invalidRoute": "Route invalide:",
+      "availableRoutes": "Routes disponibles:"
+    },
+    "accessibility": {
+      "terminalInput": "Entrée du terminal",
+      "terminalOutput": "Sortie du terminal"
+    }
+  }
+}

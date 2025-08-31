@@ -1,0 +1,28 @@
+<div class="language-switcher">
+  <h3>{{ 'appLayout.dialogs.switchLanguage' | translate }}</h3>
+  
+  <div class="language-options">
+    <div 
+      *ngFor="let lang of availableLanguages" 
+      class="language-option"
+      [class.active]="isCurrentLanguage(lang.code)"
+      [class.changing]="isChangingLanguage && isCurrentLanguage(lang.code)"
+      [class.disabled]="isChangingLanguage"
+      (click)="!isChangingLanguage && switchLanguage(lang.code)">
+      
+      <div class="language-flag">
+        <img [src]="lang.flag" [alt]="'Flag of ' + lang.name" class="flag-icon" />
+      </div>
+      <div class="language-name">{{ lang.name }}</div>
+      
+      <div class="language-status" *ngIf="isCurrentLanguage(lang.code)">
+        <i class="pi pi-check" *ngIf="!isChangingLanguage"></i>
+        <i class="pi pi-spin pi-spinner" *ngIf="isChangingLanguage"></i>
+      </div>
+    </div>
+  </div>
+  
+  <div class="language-info" *ngIf="false">
+    <p>{{ 'appLayout.dialogs.testLanguageSwitcher' | translate }}</p>
+  </div>
+</div>

@@ -1,47 +1,53 @@
 <!-- APP LAYOUT COMPONENT - MOBILE-FIRST RESPONSIVE DESIGN -->
 <div class="app-shell">
-  
   <!-- MOBILE NAVIGATION COMPONENTS -->
-  
+
   <!-- Mobile Navigation Overlay -->
-  <div class="mobile-nav-overlay" 
-       [class.active]="mobileMenuOpen" 
-       (click)="closeMobileMenu()">
-  </div>
-  
+  <div
+    class="mobile-nav-overlay"
+    [class.active]="mobileMenuOpen"
+    (click)="closeMobileMenu()"
+  ></div>
+
   <!-- Mobile Side Navigation -->
   <nav class="mobile-side-nav" [class.active]="mobileMenuOpen">
     <div class="mobile-nav-header">
       <div class="mobile-nav-logo">
         <img src="/assets/favicon.png" alt="Pockito" width="40" height="40" />
-        <span>Pockito</span>
+        <span>{{ "appLayout.common.appName" | translate }}</span>
       </div>
-      <button class="mobile-nav-close" 
-              (click)="closeMobileMenu()" 
-              aria-label="Close menu">
+      <button
+        class="mobile-nav-close"
+        (click)="closeMobileMenu()"
+        [attr.aria-label]="'appLayout.mobile.closeMenu' | translate"
+      >
         <i class="pi pi-times"></i>
       </button>
     </div>
-    
+
     <div class="mobile-nav-items">
       <div class="mobile-nav-section">
-        <h3>Main Navigation</h3>
+        <h3>{{ "appLayout.navigation.mainNavigation" | translate }}</h3>
         <div class="mobile-nav-grid">
-          <div class="mobile-nav-item" 
-               *ngFor="let item of dockItems" 
-               (click)="handleMobileNavigation(item)">
+          <div
+            class="mobile-nav-item"
+            *ngFor="let item of dockItems"
+            (click)="handleMobileNavigation(item)"
+          >
             <img [src]="item.icon" [alt]="item.label" />
             <span>{{ item.label }}</span>
           </div>
         </div>
       </div>
-      
+
       <div class="mobile-nav-section">
-        <h3>More Options</h3>
+        <h3>{{ "appLayout.navigation.moreOptions" | translate }}</h3>
         <div class="mobile-nav-grid">
-          <div class="mobile-nav-item" 
-               *ngFor="let item of moreItems" 
-               (click)="handleMobileNavigation(item)">
+          <div
+            class="mobile-nav-item"
+            *ngFor="let item of moreItems"
+            (click)="handleMobileNavigation(item)"
+          >
             <img [src]="item.icon" [alt]="item.label" />
             <span>{{ item.label }}</span>
           </div>
@@ -51,16 +57,20 @@
   </nav>
 
   <!-- DESKTOP LAYOUT COMPONENTS -->
-  
+
   <!-- Desktop Layout -->
   <div class="desktop-shell">
     <aside class="dock-col">
       <div class="dock-container">
-        <p-dock [model]="dockItems" 
-                position="left" 
-                class="inline-dock">
+        <p-dock [model]="dockItems" position="top" class="inline-dock">
           <ng-template pTemplate="item" let-item>
-            <img [src]="item.icon" [alt]="item.label" width="100%" />
+            <img
+              class="dock-item-icon"
+              [class.active-dock-item]="isActiveTab(item)"
+              [src]="item.icon"
+              [alt]="item.label"
+              width="100%"
+            />
           </ng-template>
         </p-dock>
       </div>
@@ -78,7 +88,7 @@
   </div>
 
   <!-- MAIN CONTENT AREA -->
-  
+
   <!-- Main Content Area (Responsive) -->
   <main class="main-content-area">
     <section class="app-content">
@@ -87,14 +97,16 @@
   </main>
 
   <!-- MOBILE BOTTOM NAVIGATION -->
-  
+
   <!-- Mobile Bottom Navigation -->
   <nav class="mobile-bottom-nav">
     <div class="mobile-bottom-nav-items">
-      <div class="mobile-bottom-nav-item" 
-           *ngFor="let item of mobileBottomNavItems" 
-           (click)="handleMobileBottomNavClick(item)"
-           [class.active]="isActiveTab(item)">
+      <div
+        class="mobile-bottom-nav-item"
+        *ngFor="let item of mobileBottomNavItems"
+        (click)="handleMobileBottomNavClick(item)"
+        [class.active]="isActiveTab(item)"
+      >
         <img [src]="item.icon" [alt]="item.label" />
         <span>{{ item.label }}</span>
       </div>
@@ -102,7 +114,7 @@
   </nav>
 
   <!-- DIALOG COMPONENTS -->
-  
+
   <!-- Terminal Dialog -->
   <p-dialog
     [maximizable]="true"
@@ -113,7 +125,8 @@
     [resizable]="true"
     [modal]="true"
     [closable]="true"
-    [closeOnEscape]="true">
+    [closeOnEscape]="true"
+  >
     <pockito-terminal></pockito-terminal>
   </p-dialog>
 
@@ -124,17 +137,33 @@
     [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
     [style]="{ width: '30vw' }"
     [modal]="true"
-    header="More Options"
+    [header]="'appLayout.dialogs.moreOptions' | translate"
     [closable]="true"
-    [closeOnEscape]="true">
+    [closeOnEscape]="true"
+  >
     <div class="more-items-list">
-      <div class="more-item" 
-           *ngFor="let item of moreItems" 
-           (click)="commandHandler(item.command)">
+      <div
+        class="more-item"
+        *ngFor="let item of moreItems"
+        (click)="commandHandler(item.command)"
+      >
         <img [src]="item.icon" [alt]="item.label" />
         <span>{{ item.label }}</span>
       </div>
     </div>
   </p-dialog>
 
+  <!-- Switch Language Dialog -->
+  <p-dialog
+    [maximizable]="true"
+    [(visible)]="displaySwitchLanguage"
+    [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
+    [style]="{ width: '30vw' }"
+    [modal]="true"
+    [header]="'appLayout.dialogs.switchLanguage' | translate"
+    [closable]="true"
+    [closeOnEscape]="true"
+  >
+    <app-language-switcher (languageChanged)="onLanguageChanged($event)"></app-language-switcher>
+  </p-dialog>
 </div>

@@ -1,21 +1,23 @@
 import { ApplicationConfig, APP_INITIALIZER } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { routes } from './app.routes';
 import { KeycloakService } from './core/keycloak.service';
 
-// Initialize Keycloak before the application starts
+// ⬇️ v17 API from @ngx-translate/core
+import { provideTranslateService } from '@ngx-translate/core';
+// ⬇️ v17 API from @ngx-translate/http-loader
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+
 function initializeApp(keycloakService: KeycloakService) {
   return async () => {
     try {
-      // Initialize Keycloak with environment configuration
       await keycloakService.init();
-      
       return true;
     } catch (error) {
-      console.error('Application initialization failed:', error);
+      console.error('APP_INITIALIZER: Keycloak init failed', error);
       return false;
     }
   };
@@ -24,15 +26,30 @@ function initializeApp(keycloakService: KeycloakService) {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(),
+    provideHttpClient(withInterceptorsFromDi()),
     provideAnimations(),
-    // Provide services explicitly
+
     KeycloakService,
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,
       deps: [KeycloakService],
-      multi: true
-    }
+      multi: true,
+    },
+
+    // ✅ The important part: configure TranslateService + HTTP loader
+    provideTranslateService({
+      // v17: configure the HTTP loader via its own provider function
+      loader: provideTranslateHttpLoader({
+        prefix: '/assets/i18n/',
+        suffix: '.json',
+        // optional:
+        // enforceLoading: false,
+        // useHttpBackend: false,
+      }),
+      fallbackLang: 'en',
+      lang: 'en',
+      // optional: extend: false, compiler/parser/missingTranslationHandler via provider fns
+    }),
   ],
 };
