@@ -291,12 +291,27 @@ export class AppLayoutComponent implements OnInit {
     ];
 
     // Set mobile bottom navigation items: Dashboard, Wallets, Transactions, Budget, More
+    // Use no-bg icons for mobile navigation
     this.mobileBottomNavItems = [
-      this.dockItems[0], // Dashboard
-      this.dockItems[1], // Wallets
-      this.dockItems[2], // Transactions
-      this.dockItems[4], // Budgets
-      this.dockItems[6], // More
+      {
+        ...this.dockItems[0], // Dashboard
+      },
+      {
+        ...this.dockItems[1], // Wallets
+        icon: '/assets/icons/wallet-no-bg.png'
+      },
+      {
+        ...this.dockItems[2], // Transactions
+        icon: '/assets/icons/transaction-no-bg.png'
+      },
+      {
+        ...this.dockItems[4], // Budgets
+        icon: '/assets/icons/budget-no-bg.png'
+      },
+      {
+        ...this.dockItems[6], // More
+        icon: '/assets/icons/more-no-bg.png'
+      },
     ];
 
     // Set initial active route
