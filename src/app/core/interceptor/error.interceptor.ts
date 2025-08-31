@@ -2,7 +2,7 @@ import { HttpEvent, HttpHandlerFn, HttpRequest, HttpErrorResponse } from '@angul
 import { Observable, catchError, throwError } from 'rxjs';
 import { inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { KeycloakService } from './keycloak.service';
+import { KeycloakService } from './security/keycloak.service';
 import { raise } from '../state/notification/notification.actions';
 
 export function errorInterceptor(

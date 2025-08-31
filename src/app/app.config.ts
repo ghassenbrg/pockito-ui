@@ -4,7 +4,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 import { routes } from './app.routes';
-import { KeycloakService } from './core/keycloak.service';
+import { KeycloakService } from './core/security/keycloak.service';
 
 // ⬇️ v17 API from @ngx-translate/core
 import { provideTranslateService } from '@ngx-translate/core';

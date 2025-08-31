@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { KeycloakService } from './core/keycloak.service';
+import { KeycloakService } from './core/security/keycloak.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ToastModule } from 'primeng/toast';

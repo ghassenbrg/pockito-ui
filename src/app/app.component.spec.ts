@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
-import { KeycloakService } from './core/keycloak.service';
+import { KeycloakService } from './core/security/keycloak.service';
 import { of } from 'rxjs';
 
 describe('AppComponent', () => {

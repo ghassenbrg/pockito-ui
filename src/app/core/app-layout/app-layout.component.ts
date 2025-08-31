@@ -15,7 +15,7 @@ import { DockModule } from 'primeng/dock';
 import { TerminalModule, TerminalService } from 'primeng/terminal';
 import { filter } from 'rxjs/operators';
 import { LanguageSwitcherComponent } from '../../shared/components/language-switcher/language-switcher.component';
-import { KeycloakService } from './../keycloak.service';
+import { KeycloakService } from '../security/keycloak.service';
 
 @Component({
   selector: 'app-layout',

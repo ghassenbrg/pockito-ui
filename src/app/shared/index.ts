@@ -1,1 +1,0 @@
-// No shared components needed for simplified security-only application
