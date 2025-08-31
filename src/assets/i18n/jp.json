@@ -33,7 +33,7 @@
     "dialogs": {
       "moreOptions": "その他のオプション",
       "switchLanguage": "言語を切り替え",
-      "testLanguageSwitcher": "言語切り替えテスト",
+      "testLanguageSwitcher": "言語切り替えのテスト",
       "close": "閉じる",
       "cancel": "キャンセル",
       "confirm": "確認"
@@ -44,6 +44,36 @@
       "tooltip": "ツールチップ"
     }
   },
+  "wallet": {
+    "title": "あなたのウォレット",
+    "new_wallet": "新しいウォレット",
+    "view_mode": {
+      "cards": "カード",
+      "list": "リスト"
+    },
+    "types": {
+      "SAVINGS": "貯蓄",
+      "BANK_ACCOUNT": "銀行口座",
+      "CASH": "現金",
+      "CREDIT_CARD": "クレジットカード",
+      "CUSTOM": "カスタム"
+    },
+    "status": {
+      "active": "アクティブ",
+      "inactive": "非アクティブ",
+      "default": "デフォルト"
+    },
+    "balance": "残高",
+    "goal": "目標",
+    "actions": {
+      "view": "ウォレットを表示",
+      "edit": "ウォレットを編集",
+      "delete": "ウォレットを削除",
+      "make_default": "デフォルトに設定",
+      "already_default": "すでにデフォルト"
+    },
+    "click_to_view": "クリックして表示"
+  },
   "terminal": {
     "welcomeMessage": "Pockitoへようこそ（コマンドは'help' + エンターで入力してください）",
     "prompt": "pockito $",
@@ -51,8 +81,8 @@
       "help": "利用可能なコマンド: date, greet, random, navigate, help",
       "date": "今日は",
       "greet": "こんにちは",
-      "random": "ランダムな数",
-      "navigate": "ナビゲーション先",
+      "random": "ランダムな数字",
+      "navigate": "ナビゲート中",
       "navigateUsage": "使用方法: navigate <route>. 利用可能なルート: dashboard, wallets, transactions, subscriptions, budgets, agreements, categories, settings, account",
       "unknownCommand": "不明なコマンド:",
       "invalidRoute": "無効なルート:",

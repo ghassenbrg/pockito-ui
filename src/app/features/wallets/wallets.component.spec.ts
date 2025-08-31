@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { WalletsComponent } from './wallets.component';
 
@@ -8,7 +11,17 @@ describe('WalletsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [WalletsComponent]
+      imports: [WalletsComponent, HttpClientTestingModule],
+      providers: [
+        provideTranslateService({
+          loader: provideTranslateHttpLoader({
+            prefix: '/assets/i18n/',
+            suffix: '.json',
+          }),
+          fallbackLang: 'en',
+          lang: 'en',
+        }),
+      ]
     })
     .compileComponents();
     

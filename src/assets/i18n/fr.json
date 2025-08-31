@@ -44,8 +44,38 @@
       "tooltip": "Info-bulle"
     }
   },
+  "wallet": {
+    "title": "Vos Portefeuilles",
+    "new_wallet": "Nouveau Portefeuille",
+    "view_mode": {
+      "cards": "Cartes",
+      "list": "Liste"
+    },
+    "types": {
+      "SAVINGS": "Épargne",
+      "BANK_ACCOUNT": "Compte Bancaire",
+      "CASH": "Espèces",
+      "CREDIT_CARD": "Carte de Crédit",
+      "CUSTOM": "Personnalisé"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "default": "Par Défaut"
+    },
+    "balance": "Solde",
+    "goal": "Objectif",
+    "actions": {
+      "view": "Voir le Portefeuille",
+      "edit": "Modifier le Portefeuille",
+      "delete": "Supprimer le Portefeuille",
+      "make_default": "Définir par Défaut",
+      "already_default": "Déjà par Défaut"
+    },
+    "click_to_view": "Cliquer pour voir"
+  },
   "terminal": {
-    "welcomeMessage": "Bienvenue dans Pockito (tapez 'help' + entrée pour les commandes)",
+    "welcomeMessage": "Bienvenue sur Pockito (tapez 'help' + entrée pour les commandes)",
     "prompt": "pockito $",
     "commands": {
       "help": "Commandes disponibles: date, greet, random, navigate, help",

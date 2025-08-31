@@ -44,6 +44,36 @@
       "tooltip": "Tooltip"
     }
   },
+  "wallet": {
+    "title": "Your Wallets",
+    "new_wallet": "New Wallet",
+    "view_mode": {
+      "cards": "Cards",
+      "list": "List"
+    },
+    "types": {
+      "SAVINGS": "Savings",
+      "BANK_ACCOUNT": "Bank Account",
+      "CASH": "Cash",
+      "CREDIT_CARD": "Credit Card",
+      "CUSTOM": "Custom"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "default": "Default"
+    },
+    "balance": "Balance",
+    "goal": "Goal",
+    "actions": {
+      "view": "View Wallet",
+      "edit": "Edit Wallet",
+      "delete": "Delete Wallet",
+      "make_default": "Make Default",
+      "already_default": "Already Default"
+    },
+    "click_to_view": "Click to view"
+  },
   "terminal": {
     "welcomeMessage": "Welcome to Pockito (type 'help' + enter for commands)",
     "prompt": "pockito $",
