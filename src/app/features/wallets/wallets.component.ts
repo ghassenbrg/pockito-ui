@@ -48,9 +48,9 @@ export class WalletsComponent implements OnInit, OnDestroy {
     this.router.navigate(['/app/wallets/new']);
   }
 
-  viewWallet(wallet: Wallet) {
+  viewWallet(_wallet: Wallet) {
     // TODO: Implement wallet view logic
-    console.log('View wallet:', wallet.name);
+    // console.log('View wallet:', wallet.name);
   }
 
   editWallet(wallet: Wallet) {
@@ -62,9 +62,9 @@ export class WalletsComponent implements OnInit, OnDestroy {
     if (confirm(`Are you sure you want to delete ${wallet.name}?`)) {
       const success = this.walletService.deleteWallet(wallet.id);
       if (success) {
-        console.log('Wallet deleted successfully');
+        // console.log('Wallet deleted successfully');
       } else {
-        console.log('Failed to delete wallet');
+        // console.log('Failed to delete wallet');
       }
     }
   }
@@ -72,9 +72,9 @@ export class WalletsComponent implements OnInit, OnDestroy {
   makeDefault(wallet: Wallet) {
     const success = this.walletService.setDefaultWallet(wallet.id);
     if (success) {
-      console.log('Default wallet updated successfully');
+      // console.log('Default wallet updated successfully');
     } else {
-      console.log('Failed to update default wallet');
+      // console.log('Failed to update default wallet');
     }
   }
 

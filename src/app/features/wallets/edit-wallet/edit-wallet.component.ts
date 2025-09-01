@@ -269,7 +269,7 @@ export class EditWalletComponent implements OnInit, OnDestroy {
     this.iconPreviewError = false;
   }
 
-  onIconPreviewError(event: any): void {
+  onIconPreviewError(_event: any): void {
     this.iconPreviewLoaded = false;
     this.iconPreviewError = true;
     console.warn('Failed to load icon preview');

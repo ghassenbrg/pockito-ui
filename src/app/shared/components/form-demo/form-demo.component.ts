@@ -56,7 +56,7 @@ export class FormDemoComponent {
 
   onSubmit(): void {
     if (this.demoForm.valid) {
-      console.log('Form submitted:', this.demoForm.value);
+      // console.log('Form submitted:', this.demoForm.value);
       // Handle form submission
     } else {
       this.markFormGroupTouched();
