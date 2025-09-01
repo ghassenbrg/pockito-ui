@@ -10,4 +10,6 @@ export interface Wallet {
   isDefault: boolean;
   active: boolean;
   order: number;
+  description?: string;
+  color?: string;
 }

@@ -101,7 +101,44 @@ export class WalletService {
     return this.wallets$;
   }
 
+  getWalletById(id: string): Observable<Wallet | undefined> {
+    return new Observable(observer => {
+      this.wallets$.subscribe(wallets => {
+        const wallet = wallets.find(w => w.id === id);
+        observer.next(wallet);
+        observer.complete();
+      });
+    });
+  }
 
+
+
+  createWallet(wallet: Omit<Wallet, 'id' | 'order'>): boolean {
+    const newWallet: Wallet = {
+      ...wallet,
+      id: this.generateId(),
+      order: this.getNextOrder()
+    };
+    
+    const currentWallets = this.walletsSubject.value;
+    const updatedWallets = [...currentWallets, newWallet];
+    this.walletsSubject.next(updatedWallets);
+    this.updateWalletOrders();
+    return true;
+  }
+
+  updateWallet(updatedWallet: Wallet): boolean {
+    const currentWallets = this.walletsSubject.value;
+    const walletIndex = currentWallets.findIndex(w => w.id === updatedWallet.id);
+    
+    if (walletIndex === -1) {
+      return false; // Wallet not found
+    }
+    
+    currentWallets[walletIndex] = updatedWallet;
+    this.walletsSubject.next([...currentWallets]);
+    return true;
+  }
 
   deleteWallet(id: string): boolean {
     const currentWallets = this.walletsSubject.value;
@@ -152,6 +189,15 @@ export class WalletService {
       this.updateWalletOrders();
       this.walletsSubject.next([...currentWallets]);
     }
+  }
+
+  private generateId(): string {
+    return 'wallet-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+  }
+
+  private getNextOrder(): number {
+    const currentWallets = this.walletsSubject.value;
+    return currentWallets.length + 1;
   }
 
   private updateWalletOrders(): void {

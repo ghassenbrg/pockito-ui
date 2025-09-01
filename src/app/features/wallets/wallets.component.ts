@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
@@ -19,7 +20,10 @@ export class WalletsComponent implements OnInit, OnDestroy {
   isMobileView: boolean = false;
   private walletsSubscription: Subscription = new Subscription();
 
-  constructor(private walletService: WalletService) {}
+  constructor(
+    private walletService: WalletService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.checkScreenSize();
@@ -41,8 +45,7 @@ export class WalletsComponent implements OnInit, OnDestroy {
   }
 
   createWallet() {
-    // TODO: Implement wallet creation logic
-    console.log('Create wallet clicked');
+    this.router.navigate(['/app/wallets/new']);
   }
 
   viewWallet(wallet: Wallet) {
@@ -51,8 +54,7 @@ export class WalletsComponent implements OnInit, OnDestroy {
   }
 
   editWallet(wallet: Wallet) {
-    // TODO: Implement wallet edit logic
-    console.log('Edit wallet:', wallet.name);
+    this.router.navigate(['/app/wallets/edit', wallet.id]);
   }
 
   deleteWallet(wallet: Wallet) {
@@ -109,5 +111,10 @@ export class WalletsComponent implements OnInit, OnDestroy {
     } else {
       return { text: '0.00', color: '#1a202c' }; // Black
     }
+  }
+
+  // TrackBy function for performance optimization
+  trackByWalletId(index: number, wallet: Wallet): string {
+    return wallet.id;
   }
 }

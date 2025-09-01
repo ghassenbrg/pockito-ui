@@ -1,0 +1,224 @@
+<div class="form-container">
+  <div class="form-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <i class="pi pi-file-edit"></i>
+      </div>
+      <div class="header-text">
+        <h1 class="form-title">Form Demo</h1>
+        <p class="form-subtitle">Showcasing global form styles and components</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button
+        type="button"
+        pButton
+        label="Back"
+        icon="pi pi-arrow-left"
+        class="p-button-text"
+        (click)="onCancel()"
+      ></button>
+    </div>
+  </div>
+
+  <div class="form-content">
+    <form [formGroup]="demoForm" (ngSubmit)="onSubmit()" class="form">
+      
+      <!-- Basic Information Section -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="pi pi-info-circle"></i>
+          Basic Information
+        </h3>
+        
+        <div class="form-row">
+          <div class="form-field">
+            <label for="title" class="field-label">
+              Title <span class="required">*</span>
+            </label>
+            <input
+              id="title"
+              type="text"
+              pInputText
+              formControlName="title"
+              placeholder="Enter title"
+              [class.invalid]="isFieldInvalid('title')"
+              class="form-input"
+              maxlength="100"
+            />
+            <div *ngIf="isFieldInvalid('title')" class="error-message">
+              {{ getFieldError('title') }}
+            </div>
+            <small class="field-hint">Enter a descriptive title for your item</small>
+          </div>
+
+          <div class="form-field">
+            <label for="category" class="field-label">
+              Category <span class="required">*</span>
+            </label>
+            <p-dropdown
+              id="category"
+              formControlName="category"
+              [options]="categories"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select category"
+              [class.invalid]="isFieldInvalid('category')"
+              class="form-dropdown"
+              [showClear]="false"
+              [filter]="false"
+              appendTo="body"
+              [autoZIndex]="true"
+              [baseZIndex]="9999"
+            ></p-dropdown>
+            <div *ngIf="isFieldInvalid('category')" class="error-message">
+              {{ getFieldError('category') }}
+            </div>
+            <small class="field-hint">Choose the most appropriate category</small>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="priority" class="field-label">
+              Priority <span class="required">*</span>
+            </label>
+            <p-dropdown
+              id="priority"
+              formControlName="priority"
+              [options]="priorities"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select priority"
+              [class.invalid]="isFieldInvalid('priority')"
+              class="form-dropdown"
+              [showClear]="false"
+              [filter]="false"
+              appendTo="body"
+              [autoZIndex]="true"
+              [baseZIndex]="9999"
+            ></p-dropdown>
+            <div *ngIf="isFieldInvalid('priority')" class="error-message">
+              {{ getFieldError('priority') }}
+            </div>
+            <small class="field-hint">Set the priority level for this item</small>
+          </div>
+
+          <div class="form-field">
+            <label for="amount" class="field-label">
+              Amount <span class="required">*</span>
+            </label>
+            <p-inputNumber
+              id="amount"
+              formControlName="amount"
+              placeholder="0.00"
+              [min]="0"
+              [maxFractionDigits]="2"
+              [class.invalid]="isFieldInvalid('amount')"
+              class="form-input-number"
+              mode="currency"
+              currency="USD"
+            ></p-inputNumber>
+            <div *ngIf="isFieldInvalid('amount')" class="error-message">
+              {{ getFieldError('amount') }}
+            </div>
+            <small class="field-hint">Enter the amount in USD</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Additional Information Section -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="pi pi-plus-circle"></i>
+          Additional Information
+        </h3>
+        
+        <div class="form-row single-column">
+          <div class="form-field">
+            <label for="description" class="field-label">
+              Description <span class="optional">(Optional)</span>
+            </label>
+            <textarea
+              id="description"
+              formControlName="description"
+              placeholder="Add detailed description..."
+              class="form-textarea"
+              rows="4"
+              maxlength="500"
+            ></textarea>
+            <small class="field-hint">Provide additional details (max 500 characters)</small>
+            <div *ngIf="demoForm.get('description')?.value" class="field-hint">
+              {{ (demoForm.get('description')?.value?.length || 0) }}/500 characters
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="isUrgent" class="field-label">
+              Urgent
+            </label>
+            <div class="checkbox-container">
+              <p-checkbox
+                id="isUrgent"
+                formControlName="isUrgent"
+                [binary]="true"
+                class="form-checkbox"
+              ></p-checkbox>
+              <label for="isUrgent" class="checkbox-label">Mark as urgent</label>
+            </div>
+            <small class="field-hint">Urgent items will be highlighted</small>
+            <div *ngIf="demoForm.get('isUrgent')?.value" class="warning-message">
+              This item is marked as urgent
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="isPublic" class="field-label">
+              Visibility
+            </label>
+            <div class="checkbox-container">
+              <p-checkbox
+                id="isPublic"
+                formControlName="isPublic"
+                [binary]="true"
+                class="form-checkbox"
+              ></p-checkbox>
+              <label for="isPublic" class="checkbox-label">Make public</label>
+            </div>
+            <small class="field-hint">Public items are visible to everyone</small>
+            <div *ngIf="demoForm.get('isPublic')?.value" class="success-message">
+              This item is public
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <div class="form-actions-left">
+          <button
+            type="button"
+            pButton
+            label="Cancel"
+            icon="pi pi-times"
+            class="p-button-outlined"
+            (click)="onCancel()"
+          ></button>
+        </div>
+        
+        <div class="form-actions-right">
+          <button
+            type="submit"
+            pButton
+            label="Submit"
+            icon="pi pi-check"
+            class="p-button-primary"
+            [disabled]="demoForm.invalid"
+          ></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

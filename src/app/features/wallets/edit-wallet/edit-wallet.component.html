@@ -1,0 +1,306 @@
+<div class="form-container">
+  <div class="form-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <i class="pi pi-wallet"></i>
+      </div>
+      <div class="header-text">
+        <h1 class="form-title">
+          {{ isEditMode ? 'Edit Wallet: ' + editWalletForm.get('name')?.value : 'Create New Wallet' }}
+        </h1>
+        <p class="form-subtitle">
+          {{ isEditMode ? 'Update your wallet information' : 'Set up a new wallet for your finances' }}
+        </p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button
+        type="button"
+        pButton
+        label="Back to Wallets"
+        icon="pi pi-arrow-left"
+        class="p-button-text"
+        (click)="onCancel()"
+        [disabled]="isLoading"
+      ></button>
+    </div>
+  </div>
+
+  <div class="form-content">
+    <form [formGroup]="editWalletForm" (ngSubmit)="onSubmit()" class="form">
+      
+             <!-- Hidden balance field (required by model but calculated automatically) -->
+       <input type="hidden" formControlName="balance" />
+      
+      <!-- Basic Information Section -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="pi pi-info-circle"></i>
+          Basic Information
+        </h3>
+        
+        <div class="form-row">
+          <div class="form-field">
+            <label for="name" class="field-label">
+              Wallet Name <span class="required">*</span>
+            </label>
+            <input
+              id="name"
+              type="text"
+              pInputText
+              formControlName="name"
+              placeholder="Enter wallet name"
+              [class.invalid]="isFieldInvalid('name')"
+              class="form-input"
+              maxlength="50"
+              autocomplete="off"
+            />
+            <div *ngIf="isFieldInvalid('name')" class="error-message">
+              {{ getFieldError('name') }}
+            </div>
+            <small class="field-hint">Choose a descriptive name for easy identification</small>
+          </div>
+
+          <div class="form-field">
+            <label for="type" class="field-label">
+              Wallet Type <span class="required">*</span>
+            </label>
+            <p-dropdown
+              id="type"
+              formControlName="type"
+              [options]="walletTypes"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Select wallet type"
+              [class.invalid]="isFieldInvalid('type')"
+              class="form-dropdown"
+              [showClear]="false"
+              [filter]="false"
+              appendTo="body"
+              [autoZIndex]="true"
+              [baseZIndex]="9999"
+            ></p-dropdown>
+            <div *ngIf="isFieldInvalid('type')" class="error-message">
+              {{ getFieldError('type') }}
+            </div>
+            <small class="field-hint">Select the type that best describes your wallet</small>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="currency" class="field-label">
+              Currency <span class="required">*</span>
+            </label>
+                         <p-dropdown
+               id="currency"
+               formControlName="currency"
+               [options]="currencies"
+               optionLabel="label"
+               optionValue="value"
+               placeholder="Select currency"
+               [class.invalid]="isFieldInvalid('currency')"
+               class="form-dropdown"
+               [showClear]="false"
+               [filter]="false"
+               appendTo="body"
+               [disabled]="isEditMode"
+               [autoZIndex]="true"
+               [baseZIndex]="9999"
+             ></p-dropdown>
+             <div *ngIf="isFieldInvalid('currency')" class="error-message">
+               {{ getFieldError('currency') }}
+             </div>
+             <small class="field-hint">
+               {{ isEditMode ? 'Currency cannot be changed after wallet creation' : 'Choose your preferred currency for transactions' }}
+             </small>
+          </div>
+
+          <div class="form-field">
+            <label for="iconUrl" class="field-label">
+              Icon URL <span class="optional">(Optional)</span>
+            </label>
+            <div class="icon-input-container">
+              <input
+                id="iconUrl"
+                type="url"
+                pInputText
+                formControlName="iconUrl"
+                placeholder="https://example.com/icon.png"
+                class="form-input"
+                (input)="onIconUrlChange()"
+                autocomplete="url"
+              />
+              <div class="icon-preview" *ngIf="editWalletForm.get('iconUrl')?.value">
+                <img
+                  [src]="editWalletForm.get('iconUrl')?.value"
+                  [alt]="'Icon preview'"
+                  class="preview-image"
+                  (error)="onIconPreviewError($event)"
+                  (load)="onIconPreviewLoad()"
+                />
+                <div class="preview-overlay" *ngIf="!iconPreviewLoaded">
+                  <i class="pi pi-spin pi-spinner"></i>
+                </div>
+              </div>
+            </div>
+            <small class="field-hint">URL to a custom wallet icon (PNG, JPG, or SVG recommended)</small>
+            <div *ngIf="iconPreviewError" class="warning-message">
+              Unable to load icon preview. Please check the URL.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial Information Section -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="pi pi-dollar"></i>
+          Financial Information
+        </h3>
+        
+
+
+        <div class="form-row">
+          <div class="form-field">
+            <label for="initialBalance" class="field-label">
+              Initial Amount <span class="required">*</span>
+            </label>
+            <p-inputNumber
+              id="initialBalance"
+              formControlName="initialBalance"
+              placeholder="0.00"
+              [min]="0"
+              [maxFractionDigits]="2"
+              [class.invalid]="isFieldInvalid('initialBalance')"
+              class="form-input-number"
+              mode="currency"
+              [currency]="editWalletForm.get('currency')?.value || 'USD'"
+            ></p-inputNumber>
+            <div *ngIf="isFieldInvalid('initialBalance')" class="error-message">
+              {{ getFieldError('initialBalance') }}
+            </div>
+            <small class="field-hint">Starting amount when creating the wallet</small>
+          </div>
+
+          <div class="form-field">
+            <label for="goalAmount" class="field-label">
+              Goal Amount <span class="optional">(Optional)</span>
+            </label>
+            <p-inputNumber
+              id="goalAmount"
+              formControlName="goalAmount"
+              placeholder="0.00"
+              [min]="0"
+              [maxFractionDigits]="2"
+              class="form-input-number"
+              mode="currency"
+              [currency]="editWalletForm.get('currency')?.value || 'USD'"
+            ></p-inputNumber>
+            <small class="field-hint">Set a savings goal to track progress</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Section -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <i class="pi pi-cog"></i>
+          Settings
+        </h3>
+        
+        <div class="form-row single-column">
+          <div class="form-field">
+            <label for="isDefault" class="field-label">
+              Default Wallet
+            </label>
+            <div class="checkbox-container">
+              <p-checkbox
+                id="isDefault"
+                formControlName="isDefault"
+                [binary]="true"
+                class="form-checkbox"
+              ></p-checkbox>
+              <label for="isDefault" class="checkbox-label">Set as default wallet</label>
+            </div>
+            <small class="field-hint">Default wallet will be used for new transactions</small>
+            <div *ngIf="editWalletForm.get('isDefault')?.value" class="success-message">
+              This wallet is set as your default
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Settings -->
+        <div class="form-row">
+          <div class="form-field">
+            <label for="description" class="field-label">
+              Description <span class="optional">(Optional)</span>
+            </label>
+            <textarea
+              id="description"
+              formControlName="description"
+              placeholder="Add notes about this wallet..."
+              class="form-textarea"
+              rows="3"
+              maxlength="200"
+            ></textarea>
+            <small class="field-hint">Additional details about the wallet (max 200 characters)</small>
+            <div *ngIf="editWalletForm.get('description')?.value" class="field-hint">
+              {{ (editWalletForm.get('description')?.value?.length || 0) }}/200 characters
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="color" class="field-label">
+              Wallet Color <span class="optional">(Optional)</span>
+            </label>
+            <div class="color-picker-container">
+              <input
+                id="color"
+                type="color"
+                formControlName="color"
+                class="form-color-picker"
+                [value]="editWalletForm.get('color')?.value || '#3b82f6'"
+              />
+            </div>
+            <small class="field-hint">Choose a color to personalize your wallet</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <div class="form-actions-left">
+          <button
+            type="button"
+            pButton
+            label="Cancel"
+            icon="pi pi-times"
+            class="p-button-outlined"
+            (click)="onCancel()"
+            [disabled]="isLoading"
+          ></button>
+        </div>
+        
+        <div class="form-actions-right">
+          <button
+            type="submit"
+            pButton
+            [label]="isEditMode ? 'Update Wallet' : 'Create Wallet'"
+            [icon]="isEditMode ? 'pi pi-check' : 'pi pi-plus'"
+            class="p-button-primary"
+            [disabled]="editWalletForm.invalid || isLoading"
+          ></button>
+        </div>
+      </div>
+
+      <!-- Loading Indicator -->
+      <div *ngIf="isLoading" class="loading-overlay">
+        <div class="loading-spinner">
+          <i class="pi pi-spin pi-spinner"></i>
+          <span>{{ isEditMode ? 'Updating wallet...' : 'Creating wallet...' }}</span>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -2,6 +2,9 @@
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
 
+// Import shared form styles
+@import "./app/shared/styles/forms.scss";
+
 /* Safe area utilities for mobile devices */
 :root {
   --safe-area-inset-top: env(safe-area-inset-top);
