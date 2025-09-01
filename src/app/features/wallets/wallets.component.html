@@ -17,212 +17,48 @@
         (click)="createWallet()"
         [label]="'wallet.new_wallet' | translate"
         icon="pi pi-plus"
-        class="p-button-primary"
       ></button>
     </div>
   </div>
 
   <!-- View Switcher -->
-  <div class="view-switcher-container">
-    <div class="view-switcher">
-      <button 
-        class="view-btn" 
-        [class.active]="!isMobileView"
-        (click)="setViewMode(false)"
-        [title]="'wallet.view_mode.cards' | translate"
-      >
-        <i class="pi pi-th-large"></i>
-        <span class="view-label">{{ 'wallet.view_mode.cards' | translate }}</span>
-      </button>
-      <button 
-        class="view-btn" 
-        [class.active]="isMobileView"
-        (click)="setViewMode(true)"
-        [title]="'wallet.view_mode.list' | translate"
-      >
-        <i class="pi pi-list"></i>
-        <span class="view-label">{{ 'wallet.view_mode.list' | translate }}</span>
-      </button>
-    </div>
-  </div>
+  <app-view-switcher
+    [currentView]="currentViewMode"
+    (viewChange)="onViewModeChange($event)"
+  ></app-view-switcher>
 
   <!-- Wallets Content -->
   <div class="wallets-content">
     <!-- Card Mode (Desktop) -->
-    <div class="wallets-grid" [class.hidden]="isMobileView">
-      <div
-        class="wallet-card"
+    <div class="wallets-grid" [class.hidden]="currentViewMode === 'list'">
+      <app-wallet-card
         *ngFor="let wallet of wallets; trackBy: trackByWalletId"
-        [class.inactive]="!wallet.active"
-        [class.default]="wallet.isDefault"
-      >
-        <div class="card-header">
-          <div class="wallet-icon-container">
-            <img
-              [src]="wallet.iconUrl || 'assets/icons/' + wallet.type + '.png'"
-              [alt]="wallet.name"
-              class="wallet-icon"
-              (error)="onImageError($event)"
-            />
-            <div class="icon-overlay" *ngIf="!wallet.active">
-              <i class="pi pi-pause"></i>
-            </div>
-          </div>
-          <div class="wallet-info">
-            <h3 class="wallet-name">{{ wallet.name }}</h3>
-            <span class="wallet-type">{{ 'wallet.types.' + wallet.type.toUpperCase() | translate }}</span>
-          </div>
-          <div class="wallet-status">
-            <span class="status-badge" [class.active]="wallet.active">
-              {{ wallet.active ? ('wallet.status.active' | translate) : ('wallet.status.inactive' | translate) }}
-            </span>
-            <span class="default-badge" *ngIf="wallet.isDefault">
-              <i class="pi pi-star-fill"></i>
-              {{ 'wallet.status.default' | translate }}
-            </span>
-          </div>
-        </div>
-
-        <div class="card-content">
-          <div class="balance-section">
-            <div class="balance-row">
-              <span class="label">{{ 'wallet.balance' | translate }}:</span>
-              <span class="value" [style.color]="formatAmount(wallet.balance).color">
-                {{ formatAmount(wallet.balance).text }} {{ wallet.currency }}
-              </span>
-            </div>
-          </div>
-
-          <div class="goal-section" *ngIf="(wallet.goalAmount ?? 0) > 0">
-            <div class="goal-header">
-              <span class="label">{{ 'wallet.goal' | translate }}:</span>
-              <span class="value">
-                {{ (wallet.goalAmount ?? 0).toFixed(2) }} {{ wallet.currency }}
-              </span>
-            </div>
-            <div class="progress-container">
-              <div class="progress-bar">
-                <div 
-                  class="progress-fill" 
-                  [style.width.%]="getGoalProgress(wallet)"
-                  [class.complete]="getGoalProgress(wallet) >= 100"
-                ></div>
-              </div>
-              <span class="progress-text">{{ getGoalProgress(wallet) }}%</span>
-            </div>
-          </div>
-
-          <div class="wallet-description" *ngIf="wallet.description">
-            <p class="description-text">{{ wallet.description }}</p>
-          </div>
-        </div>
-
-        <div class="card-actions">
-          <button 
-            pButton 
-            class="action-btn view-btn" 
-            (click)="viewWallet(wallet)" 
-            [pTooltip]="'wallet.actions.view' | translate"
-            tooltipPosition="top"
-            icon="pi pi-eye"
-          ></button>
-          <button 
-            pButton 
-            class="action-btn edit-btn" 
-            (click)="editWallet(wallet)" 
-            [pTooltip]="'wallet.actions.edit' | translate"
-            tooltipPosition="top"
-            icon="pi pi-pencil"
-          ></button>
-          <button 
-            pButton 
-            class="action-btn default-btn" 
-            (click)="makeDefault(wallet)" 
-            [disabled]="wallet.isDefault"
-            [pTooltip]="wallet.isDefault ? ('wallet.actions.already_default' | translate) : ('wallet.actions.make_default' | translate)"
-            tooltipPosition="top"
-            icon="pi pi-star"
-          ></button>
-          <button 
-            pButton 
-            class="action-btn delete-btn" 
-            (click)="deleteWallet(wallet)" 
-            [pTooltip]="'wallet.actions.delete' | translate"
-            tooltipPosition="top"
-            icon="pi pi-trash"
-          ></button>
-        </div>
-      </div>
+        [wallet]="wallet"
+        [canMoveUp]="canMoveWalletUp(wallet)"
+        [canMoveDown]="canMoveWalletDown(wallet)"
+        (viewWallet)="onViewWallet($event)"
+        (editWallet)="onEditWallet($event)"
+        (deleteWallet)="onDeleteWallet($event)"
+        (makeDefault)="onMakeDefault($event)"
+        (moveUp)="onMoveUp($event)"
+        (moveDown)="onMoveDown($event)"
+      ></app-wallet-card>
     </div>
 
     <!-- List Mode (Mobile) -->
-    <div class="wallets-list" [class.hidden]="!isMobileView">
-      <div
-        class="wallet-item"
+    <div class="wallets-list" [class.hidden]="currentViewMode === 'cards'">
+      <app-wallet-list-item
         *ngFor="let wallet of wallets; trackBy: trackByWalletId"
-        [class.default]="wallet.isDefault"
-        (click)="viewWallet(wallet)"
-        [title]="('wallet.click_to_view' | translate) + ' ' + wallet.name"
-      >
-        <div class="wallet-item-icon">
-          <img
-            [src]="wallet.iconUrl || 'assets/icons/' + wallet.type + '.png'"
-            [alt]="wallet.name"
-            class="wallet-icon-small"
-            (error)="onImageError($event)"
-          />
-        </div>
-        
-        <div class="wallet-item-info">
-          <h3 class="wallet-name">{{ wallet.name }}</h3>
-          <div class="wallet-meta">
-            <span class="default-indicator" *ngIf="wallet.isDefault">
-              <i class="pi pi-star-fill"></i>
-            </span>
-          </div>
-          <div class="wallet-description-mobile" *ngIf="wallet.description">
-            {{ wallet.description }}
-          </div>
-        </div>
-        
-        <div class="wallet-item-balance">
-          <span class="balance-value" [style.color]="formatAmount(wallet.balance).color">
-            {{ formatAmount(wallet.balance).text }} {{ wallet.currency }}
-          </span>
-          <div class="goal-progress-mobile" *ngIf="(wallet.goalAmount ?? 0) > 0">
-            <div class="progress-bar">
-              <div 
-                class="progress-fill" 
-                [style.width.%]="getGoalProgress(wallet)"
-                [class.complete]="getGoalProgress(wallet) >= 100"
-              ></div>
-            </div>
-            <span class="progress-text">{{ getGoalProgress(wallet) }}%</span>
-          </div>
-        </div>
-        
-        <!-- Reorder buttons -->
-        <div class="reorder-buttons">
-          <button 
-            class="reorder-btn up-btn" 
-            (click)="moveWalletUp(wallet)"
-            [disabled]="wallets.indexOf(wallet) === 0"
-            [title]="'wallet.move_up' | translate"
-            type="button"
-          >
-            <i class="pi pi-chevron-up"></i>
-          </button>
-          <button 
-            class="reorder-btn down-btn" 
-            (click)="moveWalletDown(wallet)"
-            [disabled]="wallets.indexOf(wallet) === wallets.length - 1"
-            [title]="'wallet.move_down' | translate"
-            type="button"
-          >
-            <i class="pi pi-chevron-down"></i>
-          </button>
-        </div>
-      </div>
+        [wallet]="wallet"
+        [canMoveUp]="canMoveWalletUp(wallet)"
+        [canMoveDown]="canMoveWalletDown(wallet)"
+        (viewWallet)="onViewWallet($event)"
+        (editWallet)="onEditWallet($event)"
+        (deleteWallet)="onDeleteWallet($event)"
+        (makeDefault)="onMakeDefault($event)"
+        (moveUp)="onMoveUp($event)"
+        (moveDown)="onMoveDown($event)"
+      ></app-wallet-list-item>
     </div>
 
     <!-- Empty State -->

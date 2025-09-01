@@ -1,0 +1,324 @@
+.wallet-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  &.inactive {
+    opacity: 0.6;
+    background: #f8f9fa;
+    
+    .wallet-icon-container::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+  }
+
+
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    gap: 12px;
+
+    .wallet-icon-container {
+      position: relative;
+      flex-shrink: 0;
+
+      .wallet-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 2px solid #e5e7eb;
+      }
+
+      .icon-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+      }
+    }
+
+    .wallet-info {
+      flex: 1;
+      min-width: 0;
+
+      .wallet-name {
+        margin: 0 0 4px 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #1f2937;
+        line-height: 1.3;
+      }
+
+      .wallet-type {
+        font-size: 14px;
+        color: #6b7280;
+        text-transform: capitalize;
+      }
+    }
+
+    .wallet-status {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      align-items: flex-end;
+
+      .status-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+
+        &.active {
+          background: #dcfce7;
+          color: #166534;
+        }
+
+        &:not(.active) {
+          background: #fef2f2;
+          color: #dc2626;
+        }
+      }
+
+      .default-badge {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        background: #fef3c7;
+        color: #92400e;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+
+        i {
+          color: #fbbf24;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+
+  .card-content {
+    margin-bottom: 20px;
+
+    .balance-section {
+      margin-bottom: 16px;
+
+      .balance-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+
+        .label {
+          font-size: 14px;
+          color: #6b7280;
+          font-weight: 500;
+        }
+
+        .value {
+          font-size: 20px;
+          font-weight: 700;
+          font-family: 'Monaco', 'Menlo', monospace;
+        }
+      }
+    }
+
+    .goal-section {
+      margin-bottom: 16px;
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+
+      .goal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+
+        .label {
+          font-size: 14px;
+          color: #6b7280;
+          font-weight: 500;
+        }
+
+        .value {
+          font-size: 16px;
+          font-weight: 600;
+          color: #1f2937;
+        }
+      }
+
+      .progress-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .progress-bar {
+          flex: 1;
+          height: 8px;
+          background: #e2e8f0;
+          border-radius: 4px;
+          overflow: hidden;
+
+          .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+
+            &.complete {
+              background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            }
+          }
+        }
+
+        .progress-text {
+          font-size: 14px;
+          font-weight: 600;
+          color: #374151;
+          min-width: 40px;
+          text-align: right;
+        }
+      }
+    }
+
+    .wallet-description {
+      .description-text {
+        margin: 0;
+        font-size: 14px;
+        color: #6b7280;
+        line-height: 1.5;
+        font-style: italic;
+      }
+    }
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+
+                 .action-btn {
+          width: 40px;
+          height: 40px;
+          border-radius: 10px;
+          border: none;
+          background: white;
+          color: #6b7280;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+          border: 1px solid #e2e8f0;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            color: #374151;
+          }
+
+          &:active {
+            transform: translateY(0);
+          }
+
+          &.view-btn:hover {
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-color: #93c5fd;
+          }
+
+          &.edit-btn:hover {
+            background: #fef3c7;
+            color: #d97706;
+            border-color: #fed7aa;
+          }
+
+          &.default-btn:hover {
+            background: #fef3c7;
+            color: #d97706;
+            border-color: #fed7aa;
+
+            &:disabled {
+              background: #f3f4f6;
+              color: #9ca3af;
+              border-color: #d1d5db;
+              cursor: not-allowed;
+            }
+          }
+
+          &.delete-btn:hover {
+            background: #fee2e2;
+            color: #dc2626;
+            border-color: #fca5a5;
+          }
+        }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .wallet-card {
+    padding: 16px;
+
+    .card-header {
+      .wallet-icon-container .wallet-icon {
+        width: 40px;
+        height: 40px;
+      }
+
+      .wallet-info .wallet-name {
+        font-size: 16px;
+      }
+    }
+
+    .card-content .balance-section .balance-row .value {
+      font-size: 18px;
+    }
+
+    .card-actions {
+      gap: 6px;
+
+      .action-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+      }
+    }
+  }
+}

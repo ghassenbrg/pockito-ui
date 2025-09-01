@@ -1,0 +1,101 @@
+<div
+  class="wallet-card"
+  [class.inactive]="!isWalletActive()"
+>
+  <div class="card-header">
+    <div class="wallet-icon-container">
+      <img
+        [src]="getWalletIconUrl()"
+        [alt]="wallet.name"
+        class="wallet-icon"
+        (error)="onImageError($event)"
+      />
+      <div class="icon-overlay" *ngIf="!isWalletActive()">
+        <i class="pi pi-pause"></i>
+      </div>
+    </div>
+    <div class="wallet-info">
+      <h3 class="wallet-name">{{ wallet.name }}</h3>
+      <span class="wallet-type">{{ 'wallet.types.' + wallet.type.toUpperCase() | translate }}</span>
+    </div>
+    <div class="wallet-status">
+      <span class="status-badge" [class.active]="isWalletActive()">
+        {{ isWalletActive() ? ('wallet.status.active' | translate) : ('wallet.status.inactive' | translate) }}
+      </span>
+      <span class="default-badge" *ngIf="isWalletDefault()">
+        <i class="pi pi-star-fill"></i>
+        {{ 'wallet.status.default' | translate }}
+      </span>
+    </div>
+  </div>
+
+  <div class="card-content">
+    <div class="balance-section">
+      <div class="balance-row">
+        <span class="label">{{ 'wallet.balance' | translate }}:</span>
+        <span class="value" [style.color]="formatAmount(wallet.balance).color">
+          {{ formatAmount(wallet.balance).text }} {{ wallet.currency }}
+        </span>
+      </div>
+    </div>
+
+    <div class="goal-section" *ngIf="getGoalProgress().hasGoal">
+      <div class="goal-header">
+        <span class="label">{{ 'wallet.goal' | translate }}:</span>
+        <span class="value">
+          {{ (wallet.goalAmount ?? 0).toFixed(2) }} {{ wallet.currency }}
+        </span>
+      </div>
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div 
+            class="progress-fill" 
+            [style.width.%]="getGoalProgress().progress"
+            [class.complete]="getGoalProgress().isComplete"
+          ></div>
+        </div>
+        <span class="progress-text">{{ getGoalProgress().progress }}%</span>
+      </div>
+    </div>
+
+    <div class="wallet-description" *ngIf="wallet.description">
+      <p class="description-text">{{ wallet.description }}</p>
+    </div>
+  </div>
+
+  <div class="card-actions">
+    <button 
+      pButton 
+      class="action-btn view-btn" 
+      (click)="onViewWallet()" 
+      [pTooltip]="'wallet.actions.view' | translate"
+      tooltipPosition="top"
+      icon="pi pi-eye"
+    ></button>
+    <button 
+      pButton 
+      class="action-btn edit-btn" 
+      (click)="onEditWallet()" 
+      [pTooltip]="'wallet.actions.edit' | translate"
+      tooltipPosition="top"
+      icon="pi pi-pencil"
+    ></button>
+    <button 
+      pButton 
+      class="action-btn default-btn" 
+      (click)="onMakeDefault()" 
+      [disabled]="isWalletDefault()"
+      [pTooltip]="isWalletDefault() ? ('wallet.actions.already_default' | translate) : ('wallet.actions.make_default' | translate)"
+      tooltipPosition="top"
+      icon="pi pi-star"
+    ></button>
+    <button 
+      pButton 
+      class="action-btn delete-btn" 
+      (click)="onDeleteWallet()" 
+      [pTooltip]="'wallet.actions.delete' | translate"
+      tooltipPosition="top"
+      icon="pi pi-trash"
+    ></button>
+  </div>
+</div>

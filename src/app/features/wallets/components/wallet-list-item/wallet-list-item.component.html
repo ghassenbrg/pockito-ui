@@ -1,0 +1,64 @@
+<div
+  class="wallet-item"
+  (click)="onViewWallet()"
+  [title]="('wallet.click_to_view' | translate) + ' ' + wallet.name"
+>
+  <div class="wallet-item-icon">
+    <img
+      [src]="getWalletIconUrl()"
+      [alt]="wallet.name"
+      class="wallet-icon-small"
+      (error)="onImageError($event)"
+    />
+  </div>
+  
+  <div class="wallet-item-info">
+    <h3 class="wallet-name">{{ wallet.name }}</h3>
+    <div class="wallet-meta">
+      <span class="default-indicator" *ngIf="isWalletDefault()">
+        <i class="pi pi-star-fill"></i>
+      </span>
+    </div>
+    <div class="wallet-description-mobile" *ngIf="wallet.description">
+      {{ wallet.description }}
+    </div>
+  </div>
+  
+  <div class="wallet-item-balance">
+    <span class="balance-value" [style.color]="formatAmount(wallet.balance).color">
+      {{ formatAmount(wallet.balance).text }} {{ wallet.currency }}
+    </span>
+    <div class="goal-progress-mobile" *ngIf="getGoalProgress().hasGoal">
+      <div class="progress-bar">
+        <div 
+          class="progress-fill" 
+          [style.width.%]="getGoalProgress().progress"
+          [class.complete]="getGoalProgress().isComplete"
+        ></div>
+      </div>
+      <span class="progress-text">{{ getGoalProgress().progress }}%</span>
+    </div>
+  </div>
+  
+  <!-- Reorder buttons -->
+  <div class="reorder-buttons">
+    <button 
+      class="reorder-btn up-btn" 
+      (click)="onMoveUp()"
+      [disabled]="!canMoveUp"
+      [title]="'wallet.move_up' | translate"
+      type="button"
+    >
+      <i class="pi pi-chevron-up"></i>
+    </button>
+    <button 
+      class="reorder-btn down-btn" 
+      (click)="onMoveDown()"
+      [disabled]="!canMoveDown"
+      [title]="'wallet.move_down' | translate"
+      type="button"
+    >
+      <i class="pi pi-chevron-down"></i>
+    </button>
+  </div>
+</div>

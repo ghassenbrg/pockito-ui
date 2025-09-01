@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -6,111 +6,175 @@ import { TooltipModule } from 'primeng/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { Wallet } from '../../api/model/wallet.model';
-import { WalletService } from '../../api/services/wallet.service';
+import { WalletCardComponent } from './components/wallet-card/wallet-card.component';
+import { WalletListItemComponent } from './components/wallet-list-item/wallet-list-item.component';
+import { ViewSwitcherComponent, ViewMode } from './components/view-switcher/view-switcher.component';
+import { WalletStateService } from './services/wallet-state.service';
+import { WalletActionsService } from './services/wallet-actions.service';
+import { ResponsiveService } from '@core/services/responsive.service';
 
 @Component({
   selector: 'app-wallets',
   standalone: true,
-  imports: [CommonModule, ButtonModule, TooltipModule, TranslateModule],
+  imports: [
+    CommonModule, 
+    ButtonModule, 
+    TooltipModule, 
+    TranslateModule,
+    WalletCardComponent,
+    WalletListItemComponent,
+    ViewSwitcherComponent
+  ],
   templateUrl: './wallets.component.html',
   styleUrl: './wallets.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WalletsComponent implements OnInit, OnDestroy {
   wallets: Wallet[] = [];
   isMobileView: boolean = false;
-  private walletsSubscription: Subscription = new Subscription();
+  currentViewMode: ViewMode = 'cards';
+  
+  private subscriptions = new Subscription();
 
   constructor(
-    private walletService: WalletService,
+    private walletStateService: WalletStateService,
+    private walletActionsService: WalletActionsService,
+    private responsiveService: ResponsiveService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.checkScreenSize();
-    this.loadWallets();
-    window.addEventListener('resize', () => this.checkScreenSize());
+    this.initializeComponent();
+    this.setupSubscriptions();
   }
 
   ngOnDestroy(): void {
-    this.walletsSubscription.unsubscribe();
-    window.removeEventListener('resize', () => this.checkScreenSize());
+    this.subscriptions.unsubscribe();
   }
 
-  private checkScreenSize() {
-    this.isMobileView = window.innerWidth <= 768;
+  private initializeComponent(): void {
+    this.checkScreenSize();
+    this.loadWallets();
   }
 
-  setViewMode(isMobile: boolean) {
-    this.isMobileView = isMobile;
-  }
-
-  createWallet() {
-    this.router.navigate(['/app/wallets/new']);
-  }
-
-  viewWallet(_wallet: Wallet) {
-    // TODO: Implement wallet view logic
-    // console.log('View wallet:', wallet.name);
-  }
-
-  editWallet(wallet: Wallet) {
-    this.router.navigate(['/app/wallets/edit', wallet.id]);
-  }
-
-  deleteWallet(wallet: Wallet) {
-    // TODO: Implement wallet deletion logic
-    if (confirm(`Are you sure you want to delete ${wallet.name}?`)) {
-      const success = this.walletService.deleteWallet(wallet.id);
-      if (success) {
-        // console.log('Wallet deleted successfully');
-      } else {
-        // console.log('Failed to delete wallet');
-      }
-    }
-  }
-
-  makeDefault(wallet: Wallet) {
-    const success = this.walletService.setDefaultWallet(wallet.id);
-    if (success) {
-      // console.log('Default wallet updated successfully');
-    } else {
-      // console.log('Failed to update default wallet');
-    }
-  }
-
-  loadWallets(): void {
-    this.walletsSubscription = this.walletService.getAllWallets().subscribe(
-      (wallets: Wallet[]) => {
+  private setupSubscriptions(): void {
+    // Subscribe to wallet state changes
+    this.subscriptions.add(
+      this.walletStateService.wallets$.subscribe(wallets => {
         this.wallets = wallets;
-      }
+      })
+    );
+
+    // Subscribe to view mode changes
+    this.subscriptions.add(
+      this.walletStateService.viewMode$.subscribe(viewMode => {
+        this.currentViewMode = viewMode;
+      })
+    );
+
+    // Subscribe to responsive service
+    this.subscriptions.add(
+      this.responsiveService.screenSize$.subscribe(screenSize => {
+        this.isMobileView = screenSize.isMobile;
+        // Auto-switch to list view on mobile if currently in cards view
+        if (this.isMobileView && this.currentViewMode === 'cards') {
+          this.setViewMode('list');
+        }
+      })
     );
   }
 
-  getGoalProgress(wallet: Wallet): number {
-    return this.walletService.getGoalProgress(wallet);
+  private checkScreenSize(): void {
+    this.isMobileView = this.responsiveService.isMobileView();
   }
 
-  onImageError(event: any): void {
-    event.target.src = 'assets/icons/wallet.png';
+  private loadWallets(): void {
+    // Wallets are automatically loaded by the state service
+    // This method is kept for backward compatibility
   }
 
-  // Reordering methods
+  setViewMode(viewMode: ViewMode): void {
+    this.walletStateService.setViewMode(viewMode);
+  }
+
+  createWallet(): void {
+    this.walletActionsService.navigateToCreateWallet();
+  }
+
+  viewWallet(wallet: Wallet): void {
+    this.walletActionsService.navigateToWalletView(wallet.id);
+  }
+
+  editWallet(wallet: Wallet): void {
+    this.walletActionsService.navigateToEditWallet(wallet.id);
+  }
+
+  deleteWallet(wallet: Wallet): void {
+    const success = this.walletActionsService.deleteWallet(wallet);
+    if (success) {
+      // Refresh wallets after deletion
+      this.walletStateService.refreshWallets();
+    }
+  }
+
+  makeDefault(wallet: Wallet): void {
+    const success = this.walletActionsService.setDefaultWallet(wallet);
+    if (success) {
+      // Update state after setting default
+      this.walletStateService.setDefaultWallet(wallet.id);
+    }
+  }
+
   moveWalletUp(wallet: Wallet): void {
-    this.walletService.moveWalletUp(wallet);
+    this.walletActionsService.moveWalletUp(wallet);
+    // Update state after moving
+    this.walletStateService.moveWalletUp(wallet);
   }
 
   moveWalletDown(wallet: Wallet): void {
-    this.walletService.moveWalletDown(wallet);
+    this.walletActionsService.moveWalletDown(wallet);
+    // Update state after moving
+    this.walletStateService.moveWalletDown(wallet);
   }
 
-  formatAmount(amount: number): { text: string; color: string } {
-    if (amount > 0) {
-      return { text: `+${amount.toFixed(2)}`, color: '#10b981' }; // Green
-    } else if (amount < 0) {
-      return { text: `${amount.toFixed(2)}`, color: '#dc2626' }; // Red
-    } else {
-      return { text: '0.00', color: '#1a202c' }; // Black
-    }
+  // Event handlers for child components
+  onViewWallet(wallet: Wallet): void {
+    this.viewWallet(wallet);
+  }
+
+  onEditWallet(wallet: Wallet): void {
+    this.editWallet(wallet);
+  }
+
+  onDeleteWallet(wallet: Wallet): void {
+    this.deleteWallet(wallet);
+  }
+
+  onMakeDefault(wallet: Wallet): void {
+    this.makeDefault(wallet);
+  }
+
+  onMoveUp(wallet: Wallet): void {
+    this.moveWalletUp(wallet);
+  }
+
+  onMoveDown(wallet: Wallet): void {
+    this.moveWalletDown(wallet);
+  }
+
+  onViewModeChange(viewMode: ViewMode): void {
+    this.setViewMode(viewMode);
+  }
+
+  // Utility methods
+  canMoveWalletUp(wallet: Wallet): boolean {
+    const walletIndex = this.wallets.findIndex(w => w.id === wallet.id);
+    return walletIndex > 0;
+  }
+
+  canMoveWalletDown(wallet: Wallet): boolean {
+    const walletIndex = this.wallets.findIndex(w => w.id === wallet.id);
+    return walletIndex < this.wallets.length - 1;
   }
 
   // TrackBy function for performance optimization

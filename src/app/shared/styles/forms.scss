@@ -23,18 +23,13 @@
 .form-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 30px;
+  align-items: center;
+  margin-bottom: 32px;
   padding: 24px;
-  background: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e2e8f0;
-  transition: all 0.2s ease;
-
-  &:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  }
+  color: white;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -54,50 +49,28 @@
     }
 
     .header-icon {
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      border-radius: 16px;
+      width: 48px;
+      height: 48px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      box-shadow: none;
       position: relative;
       overflow: hidden;
 
-      &::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-        transform: rotate(45deg);
-        transition: transform 0.6s ease;
-      }
-
-      &:hover::before {
-        transform: rotate(45deg) translate(50%, 50%);
-      }
-
       i {
-        font-size: 2rem;
+        font-size: 24px;
         color: white;
-        z-index: 1;
-        transition: transform 0.2s ease;
-      }
-
-      &:hover i {
-        transform: scale(1.1);
       }
 
       @media (max-width: 480px) {
-        width: 50px;
-        height: 50px;
+        width: 40px;
+        height: 40px;
 
         i {
-          font-size: 1.5rem;
+          font-size: 1.2rem;
         }
       }
     }
@@ -106,7 +79,7 @@
       .form-title {
         font-size: 2rem;
         font-weight: 700;
-        color: #1a202c;
+        color: white;
         margin: 0 0 8px 0;
         line-height: 1.2;
 
@@ -121,7 +94,7 @@
 
       .form-subtitle {
         font-size: 1.1rem;
-        color: #718096;
+        color: rgba(255, 255, 255, 0.9);
         margin: 0;
         font-weight: 400;
         line-height: 1.4;
@@ -135,19 +108,18 @@
 
   .header-actions {
     .p-button-text {
-      color: #64748b;
-      border: 1px solid #e2e8f0;
-      background: white;
-      border-radius: 8px;
-      padding: 8px 16px;
-      font-weight: 500;
-      transition: all 0.2s ease;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 12px;
+      transition: all 0.3s ease;
 
       &:hover {
-        background: #f8fafc;
-        border-color: #cbd5e1;
-        color: #475569;
-        // transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
       }
 
       &:disabled {
@@ -689,8 +661,10 @@
 
       @media (max-width: 768px) {
         flex-direction: column-reverse;
-        gap: 16px;
+        gap: 20px;
         align-items: stretch;
+        padding: 20px 0;
+        margin-top: 20px;
       }
 
       .form-actions-left {
@@ -704,6 +678,14 @@
           font-size: 1rem;
           transition: all 0.2s ease;
           min-width: 120px;
+
+          @media (max-width: 768px) {
+            width: 100%;
+            min-width: unset;
+            height: 56px;
+            font-size: 1.1rem;
+            font-weight: 700;
+          }
 
           &:hover:not(:disabled) {
             background: #f8fafc;
@@ -735,6 +717,15 @@
           box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
           position: relative;
           overflow: hidden;
+
+          @media (max-width: 768px) {
+            width: 100%;
+            min-width: unset;
+            height: 56px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 16px 24px;
+          }
 
           &::before {
             content: '';
