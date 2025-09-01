@@ -46,6 +46,7 @@
   },
   "wallet": {
     "title": "Your Wallets",
+    "subtitle": "Manage your financial wallets and track your goals",
     "new_wallet": "New Wallet",
     "view_mode": {
       "cards": "Cards",
@@ -74,7 +75,76 @@
     },
     "click_to_view": "Click to view",
     "move_up": "Move Up",
-    "move_down": "Move Down"
+    "move_down": "Move Down",
+    "empty_state": {
+      "title": "No wallets yet",
+      "description": "Create your first wallet to start managing your finances"
+    }
+  },
+  "editWallet": {
+    "create": {
+      "title": "Create New Wallet",
+      "subtitle": "Set up a new wallet for your finances"
+    },
+    "edit": {
+      "title": "Edit Wallet: ",
+      "subtitle": "Update your wallet information"
+    },
+    "back_to_wallets": "Back to Wallets",
+    "sections": {
+      "basic_info": "Basic Information",
+      "financial_info": "Financial Information",
+      "settings": "Settings"
+    },
+    "fields": {
+      "wallet_name": "Wallet Name",
+      "wallet_type": "Wallet Type",
+      "currency": "Currency",
+      "icon_url": "Icon URL",
+      "initial_amount": "Initial Amount",
+      "goal_amount": "Goal Amount",
+      "default_wallet": "Default Wallet",
+      "description": "Description",
+      "wallet_color": "Wallet Color"
+    },
+    "placeholders": {
+      "enter_wallet_name": "Enter wallet name",
+      "select_wallet_type": "Select wallet type",
+      "select_currency": "Select currency",
+      "icon_url_placeholder": "https://example.com/icon.png",
+      "description_placeholder": "Add notes about this wallet..."
+    },
+    "hints": {
+      "wallet_name": "Choose a descriptive name for easy identification",
+      "wallet_type": "Select the type that best describes your wallet",
+      "currency_create": "Choose your preferred currency for transactions",
+      "currency_edit": "Currency cannot be changed after wallet creation",
+      "icon_url": "URL to a custom wallet icon (PNG, JPG, or SVG recommended)",
+      "initial_amount": "Starting amount when creating the wallet",
+      "goal_amount": "Set a savings goal to track progress",
+      "default_wallet": "Default wallet will be used for new transactions",
+      "description": "Additional details about the wallet (max 200 characters)",
+      "wallet_color": "Choose a color to personalize your wallet"
+    },
+    "labels": {
+      "set_as_default": "Set as default wallet",
+      "characters": "characters"
+    },
+    "messages": {
+      "icon_preview_error": "Unable to load icon preview. Please check the URL.",
+      "default_wallet_set": "This wallet is set as your default",
+      "updating_wallet": "Updating wallet...",
+      "creating_wallet": "Creating wallet..."
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "create_wallet": "Create Wallet",
+      "update_wallet": "Update Wallet"
+    },
+    "validation": {
+      "required": "Required",
+      "optional": "Optional"
+    }
   },
   "terminal": {
     "welcomeMessage": "Welcome to Pockito (type 'help' + enter for commands)",

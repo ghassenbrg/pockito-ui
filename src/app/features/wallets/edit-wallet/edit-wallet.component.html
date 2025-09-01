@@ -6,10 +6,10 @@
       </div>
       <div class="header-text">
         <h1 class="form-title">
-          {{ isEditMode ? 'Edit Wallet: ' + editWalletForm.get('name')?.value : 'Create New Wallet' }}
+          {{ isEditMode ? ('editWallet.edit.title' | translate) + editWalletForm.get('name')?.value : ('editWallet.create.title' | translate) }}
         </h1>
         <p class="form-subtitle">
-          {{ isEditMode ? 'Update your wallet information' : 'Set up a new wallet for your finances' }}
+          {{ isEditMode ? ('editWallet.edit.subtitle' | translate) : ('editWallet.create.subtitle' | translate) }}
         </p>
       </div>
     </div>
@@ -17,7 +17,7 @@
       <button
         type="button"
         pButton
-        label="Back to Wallets"
+        [label]="'editWallet.back_to_wallets' | translate"
         icon="pi pi-arrow-left"
         class="p-button-text"
         (click)="onCancel()"
@@ -36,20 +36,20 @@
       <div class="form-section">
         <h3 class="section-title">
           <i class="pi pi-info-circle"></i>
-          Basic Information
+          {{ 'editWallet.sections.basic_info' | translate }}
         </h3>
         
         <div class="form-row">
           <div class="form-field">
             <label for="name" class="field-label">
-              Wallet Name <span class="required">*</span>
+              {{ 'editWallet.fields.wallet_name' | translate }} <span class="required">*</span>
             </label>
             <input
               id="name"
               type="text"
               pInputText
               formControlName="name"
-              placeholder="Enter wallet name"
+              [placeholder]="'editWallet.placeholders.enter_wallet_name' | translate"
               [class.invalid]="isFieldInvalid('name')"
               class="form-input"
               maxlength="50"
@@ -58,12 +58,12 @@
             <div *ngIf="isFieldInvalid('name')" class="error-message">
               {{ getFieldError('name') }}
             </div>
-            <small class="field-hint">Choose a descriptive name for easy identification</small>
+            <small class="field-hint">{{ 'editWallet.hints.wallet_name' | translate }}</small>
           </div>
 
           <div class="form-field">
             <label for="type" class="field-label">
-              Wallet Type <span class="required">*</span>
+              {{ 'editWallet.fields.wallet_type' | translate }} <span class="required">*</span>
             </label>
             <p-dropdown
               id="type"
@@ -71,7 +71,7 @@
               [options]="walletTypes"
               optionLabel="label"
               optionValue="value"
-              placeholder="Select wallet type"
+              [placeholder]="'editWallet.placeholders.select_wallet_type' | translate"
               [class.invalid]="isFieldInvalid('type')"
               class="form-dropdown"
               [showClear]="false"
@@ -83,14 +83,14 @@
             <div *ngIf="isFieldInvalid('type')" class="error-message">
               {{ getFieldError('type') }}
             </div>
-            <small class="field-hint">Select the type that best describes your wallet</small>
+            <small class="field-hint">{{ 'editWallet.hints.wallet_type' | translate }}</small>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-field">
             <label for="currency" class="field-label">
-              Currency <span class="required">*</span>
+              {{ 'editWallet.fields.currency' | translate }} <span class="required">*</span>
             </label>
                          <p-dropdown
                id="currency"
@@ -98,7 +98,7 @@
                [options]="currencies"
                optionLabel="label"
                optionValue="value"
-               placeholder="Select currency"
+               [placeholder]="'editWallet.placeholders.select_currency' | translate"
                [class.invalid]="isFieldInvalid('currency')"
                class="form-dropdown"
                [showClear]="false"
@@ -112,13 +112,13 @@
                {{ getFieldError('currency') }}
              </div>
              <small class="field-hint">
-               {{ isEditMode ? 'Currency cannot be changed after wallet creation' : 'Choose your preferred currency for transactions' }}
+               {{ isEditMode ? ('editWallet.hints.currency_edit' | translate) : ('editWallet.hints.currency_create' | translate) }}
              </small>
           </div>
 
           <div class="form-field">
             <label for="iconUrl" class="field-label">
-              Icon URL <span class="optional">(Optional)</span>
+              {{ 'editWallet.fields.icon_url' | translate }} <span class="optional">({{ 'editWallet.validation.optional' | translate }})</span>
             </label>
             <div class="icon-input-container">
               <input
@@ -126,7 +126,7 @@
                 type="url"
                 pInputText
                 formControlName="iconUrl"
-                placeholder="https://example.com/icon.png"
+                [placeholder]="'editWallet.placeholders.icon_url_placeholder' | translate"
                 class="form-input"
                 (input)="onIconUrlChange()"
                 autocomplete="url"
@@ -144,9 +144,9 @@
                 </div>
               </div>
             </div>
-            <small class="field-hint">URL to a custom wallet icon (PNG, JPG, or SVG recommended)</small>
+            <small class="field-hint">{{ 'editWallet.hints.icon_url' | translate }}</small>
             <div *ngIf="iconPreviewError" class="warning-message">
-              Unable to load icon preview. Please check the URL.
+              {{ 'editWallet.messages.icon_preview_error' | translate }}
             </div>
           </div>
         </div>
@@ -156,7 +156,7 @@
       <div class="form-section">
         <h3 class="section-title">
           <i class="pi pi-dollar"></i>
-          Financial Information
+          {{ 'editWallet.sections.financial_info' | translate }}
         </h3>
         
 
@@ -164,7 +164,7 @@
         <div class="form-row">
           <div class="form-field">
             <label for="initialBalance" class="field-label">
-              Initial Amount <span class="required">*</span>
+              {{ 'editWallet.fields.initial_amount' | translate }} <span class="required">*</span>
             </label>
             <p-inputNumber
               id="initialBalance"
@@ -180,12 +180,12 @@
             <div *ngIf="isFieldInvalid('initialBalance')" class="error-message">
               {{ getFieldError('initialBalance') }}
             </div>
-            <small class="field-hint">Starting amount when creating the wallet</small>
+            <small class="field-hint">{{ 'editWallet.hints.initial_amount' | translate }}</small>
           </div>
 
           <div class="form-field">
             <label for="goalAmount" class="field-label">
-              Goal Amount <span class="optional">(Optional)</span>
+              {{ 'editWallet.fields.goal_amount' | translate }} <span class="optional">({{ 'editWallet.validation.optional' | translate }})</span>
             </label>
             <p-inputNumber
               id="goalAmount"
@@ -197,7 +197,7 @@
               mode="currency"
               [currency]="editWalletForm.get('currency')?.value || 'USD'"
             ></p-inputNumber>
-            <small class="field-hint">Set a savings goal to track progress</small>
+            <small class="field-hint">{{ 'editWallet.hints.goal_amount' | translate }}</small>
           </div>
         </div>
       </div>
@@ -206,13 +206,13 @@
       <div class="form-section">
         <h3 class="section-title">
           <i class="pi pi-cog"></i>
-          Settings
+          {{ 'editWallet.sections.settings' | translate }}
         </h3>
         
         <div class="form-row single-column">
           <div class="form-field">
             <label for="isDefault" class="field-label">
-              Default Wallet
+              {{ 'editWallet.fields.default_wallet' | translate }}
             </label>
             <div class="checkbox-container">
               <p-checkbox
@@ -221,11 +221,11 @@
                 [binary]="true"
                 class="form-checkbox"
               ></p-checkbox>
-              <label for="isDefault" class="checkbox-label">Set as default wallet</label>
+              <label for="isDefault" class="checkbox-label">{{ 'editWallet.labels.set_as_default' | translate }}</label>
             </div>
-            <small class="field-hint">Default wallet will be used for new transactions</small>
+            <small class="field-hint">{{ 'editWallet.hints.default_wallet' | translate }}</small>
             <div *ngIf="editWalletForm.get('isDefault')?.value" class="success-message">
-              This wallet is set as your default
+              {{ 'editWallet.messages.default_wallet_set' | translate }}
             </div>
           </div>
         </div>
@@ -234,25 +234,25 @@
         <div class="form-row">
           <div class="form-field">
             <label for="description" class="field-label">
-              Description <span class="optional">(Optional)</span>
+              {{ 'editWallet.fields.description' | translate }} <span class="optional">({{ 'editWallet.validation.optional' | translate }})</span>
             </label>
             <textarea
               id="description"
               formControlName="description"
-              placeholder="Add notes about this wallet..."
+                              [placeholder]="'editWallet.placeholders.description_placeholder' | translate"
               class="form-textarea"
               rows="3"
               maxlength="200"
             ></textarea>
-            <small class="field-hint">Additional details about the wallet (max 200 characters)</small>
+            <small class="field-hint">{{ 'editWallet.hints.description' | translate }}</small>
             <div *ngIf="editWalletForm.get('description')?.value" class="field-hint">
-              {{ (editWalletForm.get('description')?.value?.length || 0) }}/200 characters
+              {{ (editWalletForm.get('description')?.value?.length || 0) }}/200 {{ 'editWallet.labels.characters' | translate }}
             </div>
           </div>
 
           <div class="form-field">
             <label for="color" class="field-label">
-              Wallet Color <span class="optional">(Optional)</span>
+              {{ 'editWallet.fields.wallet_color' | translate }} <span class="optional">({{ 'editWallet.validation.optional' | translate }})</span>
             </label>
             <div class="color-picker-container">
               <input
@@ -263,7 +263,7 @@
                 [value]="editWalletForm.get('color')?.value || '#3b82f6'"
               />
             </div>
-            <small class="field-hint">Choose a color to personalize your wallet</small>
+            <small class="field-hint">{{ 'editWallet.hints.wallet_color' | translate }}</small>
           </div>
         </div>
       </div>
@@ -274,7 +274,7 @@
           <button
             type="button"
             pButton
-            label="Cancel"
+            [label]="'editWallet.buttons.cancel' | translate"
             icon="pi pi-times"
             class="p-button-outlined"
             (click)="onCancel()"
@@ -286,7 +286,7 @@
           <button
             type="submit"
             pButton
-            [label]="isEditMode ? 'Update Wallet' : 'Create Wallet'"
+            [label]="isEditMode ? ('editWallet.buttons.update_wallet' | translate) : ('editWallet.buttons.create_wallet' | translate)"
             [icon]="isEditMode ? 'pi pi-check' : 'pi pi-plus'"
             class="p-button-primary"
             [disabled]="editWalletForm.invalid || isLoading"
@@ -298,7 +298,7 @@
       <div *ngIf="isLoading" class="loading-overlay">
         <div class="loading-spinner">
           <i class="pi pi-spin pi-spinner"></i>
-          <span>{{ isEditMode ? 'Updating wallet...' : 'Creating wallet...' }}</span>
+          <span>{{ isEditMode ? ('editWallet.messages.updating_wallet' | translate) : ('editWallet.messages.creating_wallet' | translate) }}</span>
         </div>
       </div>
     </form>

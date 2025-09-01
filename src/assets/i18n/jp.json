@@ -46,6 +46,7 @@
   },
   "wallet": {
     "title": "あなたのウォレット",
+    "subtitle": "財務ウォレットを管理し、目標を追跡しましょう",
     "new_wallet": "新しいウォレット",
     "view_mode": {
       "cards": "カード",
@@ -74,7 +75,76 @@
     },
     "click_to_view": "クリックして表示",
     "move_up": "上に移動",
-    "move_down": "下に移動"
+    "move_down": "下に移動",
+    "empty_state": {
+      "title": "まだウォレットがありません",
+      "description": "最初のウォレットを作成して、財務管理を始めましょう"
+    }
+  },
+  "editWallet": {
+    "create": {
+      "title": "新しいウォレットを作成",
+      "subtitle": "財務用の新しいウォレットを設定します"
+    },
+    "edit": {
+      "title": "ウォレットを編集: ",
+      "subtitle": "ウォレット情報を更新します"
+    },
+    "back_to_wallets": "ウォレットに戻る",
+    "sections": {
+      "basic_info": "基本情報",
+      "financial_info": "財務情報",
+      "settings": "設定"
+    },
+    "fields": {
+      "wallet_name": "ウォレット名",
+      "wallet_type": "ウォレットタイプ",
+      "currency": "通貨",
+      "icon_url": "アイコンURL",
+      "initial_amount": "初期金額",
+      "goal_amount": "目標金額",
+      "default_wallet": "デフォルトウォレット",
+      "description": "説明",
+      "wallet_color": "ウォレットの色"
+    },
+    "placeholders": {
+      "enter_wallet_name": "ウォレット名を入力",
+      "select_wallet_type": "ウォレットタイプを選択",
+      "select_currency": "通貨を選択",
+      "icon_url_placeholder": "https://example.com/icon.png",
+      "description_placeholder": "このウォレットについてのメモを追加..."
+    },
+    "hints": {
+      "wallet_name": "簡単に識別できる説明的な名前を選択してください",
+      "wallet_type": "ウォレットを最もよく説明するタイプを選択してください",
+      "currency_create": "取引に使用する通貨を選択してください",
+      "currency_edit": "ウォレット作成後は通貨を変更できません",
+      "icon_url": "カスタムウォレットアイコンのURL（PNG、JPG、またはSVGを推奨）",
+      "initial_amount": "ウォレット作成時の開始金額",
+      "goal_amount": "進捗を追跡するための貯蓄目標を設定してください",
+      "default_wallet": "デフォルトウォレットは新しい取引に使用されます",
+      "description": "ウォレットに関する追加の詳細（最大200文字）",
+      "wallet_color": "ウォレットをパーソナライズする色を選択してください"
+    },
+    "labels": {
+      "set_as_default": "デフォルトウォレットとして設定",
+      "characters": "文字"
+    },
+    "messages": {
+      "icon_preview_error": "アイコンプレビューを読み込めません。URLを確認してください。",
+      "default_wallet_set": "このウォレットはデフォルトに設定されています",
+      "updating_wallet": "ウォレットを更新中...",
+      "creating_wallet": "ウォレットを作成中..."
+    },
+    "buttons": {
+      "cancel": "キャンセル",
+      "create_wallet": "ウォレットを作成",
+      "update_wallet": "ウォレットを更新"
+    },
+    "validation": {
+      "required": "必須",
+      "optional": "オプション"
+    }
   },
   "terminal": {
     "welcomeMessage": "Pockitoへようこそ（コマンドは'help' + エンターで入力してください）",

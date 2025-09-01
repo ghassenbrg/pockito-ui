@@ -46,6 +46,7 @@
   },
   "wallet": {
     "title": "Vos Portefeuilles",
+    "subtitle": "Gérez vos portefeuilles financiers et suivez vos objectifs",
     "new_wallet": "Nouveau Portefeuille",
     "view_mode": {
       "cards": "Cartes",
@@ -74,7 +75,76 @@
     },
     "click_to_view": "Cliquer pour voir",
     "move_up": "Monter",
-    "move_down": "Descendre"
+    "move_down": "Descendre",
+    "empty_state": {
+      "title": "Aucun portefeuille pour le moment",
+      "description": "Créez votre premier portefeuille pour commencer à gérer vos finances"
+    }
+  },
+  "editWallet": {
+    "create": {
+      "title": "Créer un Nouveau Portefeuille",
+      "subtitle": "Configurez un nouveau portefeuille pour vos finances"
+    },
+    "edit": {
+      "title": "Modifier le Portefeuille : ",
+      "subtitle": "Mettez à jour les informations de votre portefeuille"
+    },
+    "back_to_wallets": "Retour aux Portefeuilles",
+    "sections": {
+      "basic_info": "Informations de Base",
+      "financial_info": "Informations Financières",
+      "settings": "Paramètres"
+    },
+    "fields": {
+      "wallet_name": "Nom du Portefeuille",
+      "wallet_type": "Type de Portefeuille",
+      "currency": "Devise",
+      "icon_url": "URL de l'Icône",
+      "initial_amount": "Montant Initial",
+      "goal_amount": "Montant Objectif",
+      "default_wallet": "Portefeuille par Défaut",
+      "description": "Description",
+      "wallet_color": "Couleur du Portefeuille"
+    },
+    "placeholders": {
+      "enter_wallet_name": "Entrez le nom du portefeuille",
+      "select_wallet_type": "Sélectionnez le type de portefeuille",
+      "select_currency": "Sélectionnez la devise",
+      "icon_url_placeholder": "https://exemple.com/icone.png",
+      "description_placeholder": "Ajoutez des notes sur ce portefeuille..."
+    },
+    "hints": {
+      "wallet_name": "Choisissez un nom descriptif pour une identification facile",
+      "wallet_type": "Sélectionnez le type qui décrit le mieux votre portefeuille",
+      "currency_create": "Choisissez votre devise préférée pour les transactions",
+      "currency_edit": "La devise ne peut pas être modifiée après la création du portefeuille",
+      "icon_url": "URL vers une icône personnalisée du portefeuille (PNG, JPG ou SVG recommandé)",
+      "initial_amount": "Montant de départ lors de la création du portefeuille",
+      "goal_amount": "Définissez un objectif d'épargne pour suivre les progrès",
+      "default_wallet": "Le portefeuille par défaut sera utilisé pour les nouvelles transactions",
+      "description": "Détails supplémentaires sur le portefeuille (max 200 caractères)",
+      "wallet_color": "Choisissez une couleur pour personnaliser votre portefeuille"
+    },
+    "labels": {
+      "set_as_default": "Définir comme portefeuille par défaut",
+      "characters": "caractères"
+    },
+    "messages": {
+      "icon_preview_error": "Impossible de charger l'aperçu de l'icône. Veuillez vérifier l'URL.",
+      "default_wallet_set": "Ce portefeuille est défini comme portefeuille par défaut",
+      "updating_wallet": "Mise à jour du portefeuille...",
+      "creating_wallet": "Création du portefeuille..."
+    },
+    "buttons": {
+      "cancel": "Annuler",
+      "create_wallet": "Créer le Portefeuille",
+      "update_wallet": "Mettre à Jour le Portefeuille"
+    },
+    "validation": {
+      "required": "Requis",
+      "optional": "Optionnel"
+    }
   },
   "terminal": {
     "welcomeMessage": "Bienvenue sur Pockito (tapez 'help' + entrée pour les commandes)",
