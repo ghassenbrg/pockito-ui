@@ -5,7 +5,6 @@ import { TooltipModule } from 'primeng/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { Wallet } from '@api/model/wallet.model';
 import { WalletDisplayService } from '../../services/wallet-display.service';
-import { WalletActionsService } from '../../services/wallet-actions.service';
 import { WalletGoalProgress, FormattedAmount } from '../../models/wallet.types';
 
 @Component({
@@ -30,7 +29,6 @@ export class WalletListItemComponent {
 
   constructor(
     private walletDisplayService: WalletDisplayService,
-    private walletActionsService: WalletActionsService
   ) {}
 
   getWalletIconUrl(): string {
@@ -51,10 +49,6 @@ export class WalletListItemComponent {
 
   isWalletDefault(): boolean {
     return this.walletDisplayService.isWalletDefault(this.wallet);
-  }
-
-  getWalletActions() {
-    return this.walletActionsService.getWalletActions(this.wallet);
   }
 
   onImageError(event: any): void {

@@ -23,19 +23,19 @@
 
   <!-- View Switcher -->
   <app-view-switcher
-    [currentView]="currentViewMode"
+    [currentView]="(currentViewMode$ | async) || 'cards'"
     (viewChange)="onViewModeChange($event)"
   ></app-view-switcher>
 
   <!-- Wallets Content -->
   <div class="wallets-content">
     <!-- Card Mode (Desktop) -->
-    <div class="wallets-grid" [class.hidden]="currentViewMode === 'list'">
+    <div class="wallets-grid" [class.hidden]="(currentViewMode$ | async) === 'list'">
       <app-wallet-card
-        *ngFor="let wallet of wallets; trackBy: trackByWalletId"
+        *ngFor="let wallet of wallets$ | async; trackBy: trackByWalletId"
         [wallet]="wallet"
-        [canMoveUp]="canMoveWalletUp(wallet)"
-        [canMoveDown]="canMoveWalletDown(wallet)"
+        [canMoveUp]="(walletFacade.canMoveWalletUp(wallet.id!) | async) || false"
+        [canMoveDown]="(walletFacade.canMoveWalletDown(wallet.id!) | async) || false"
         (viewWallet)="onViewWallet($event)"
         (editWallet)="onEditWallet($event)"
         (deleteWallet)="onDeleteWallet($event)"
@@ -46,12 +46,12 @@
     </div>
 
     <!-- List Mode (Mobile) -->
-    <div class="wallets-list" [class.hidden]="currentViewMode === 'cards'">
+    <div class="wallets-list" [class.hidden]="(currentViewMode$ | async) === 'cards'">
       <app-wallet-list-item
-        *ngFor="let wallet of wallets; trackBy: trackByWalletId"
+        *ngFor="let wallet of wallets$ | async; trackBy: trackByWalletId"
         [wallet]="wallet"
-        [canMoveUp]="canMoveWalletUp(wallet)"
-        [canMoveDown]="canMoveWalletDown(wallet)"
+        [canMoveUp]="(walletFacade.canMoveWalletUp(wallet.id!) | async) || false"
+        [canMoveDown]="(walletFacade.canMoveWalletDown(wallet.id!) | async) || false"
         (viewWallet)="onViewWallet($event)"
         (editWallet)="onEditWallet($event)"
         (deleteWallet)="onDeleteWallet($event)"
@@ -62,7 +62,7 @@
     </div>
 
     <!-- Empty State -->
-    <div class="empty-state" *ngIf="wallets.length === 0">
+    <div class="empty-state" *ngIf="(wallets$ | async)?.length === 0">
       <div class="empty-icon">
         <i class="pi pi-wallet"></i>
       </div>

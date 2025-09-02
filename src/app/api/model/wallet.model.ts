@@ -2,7 +2,7 @@ import { Currency } from './common.model';
 
 export interface WalletDto {
   id?: string;
-  username: string;
+  username?: string;
   name: string;
   initialBalance: number;
   balance?: number;

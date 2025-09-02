@@ -6,10 +6,10 @@
       </div>
       <div class="header-text">
         <h1 class="form-title">
-          {{ isEditMode ? ('editWallet.edit.title' | translate) + editWalletForm.get('name')?.value : ('editWallet.create.title' | translate) }}
+          {{ (isEditMode$ | async) ? ('editWallet.edit.title' | translate) + (editWalletForm.get('name')?.value || '') : ('editWallet.create.title' | translate) }}
         </h1>
         <p class="form-subtitle">
-          {{ isEditMode ? ('editWallet.edit.subtitle' | translate) : ('editWallet.create.subtitle' | translate) }}
+          {{ (isEditMode$ | async) ? ('editWallet.edit.subtitle' | translate) : ('editWallet.create.subtitle' | translate) }}
         </p>
       </div>
     </div>
@@ -77,8 +77,7 @@
               [showClear]="false"
               [filter]="false"
               appendTo="body"
-              [autoZIndex]="true"
-              [baseZIndex]="9999"
+              [overlayOptions]="{ autoZIndex: true }"
             ></p-dropdown>
             <div *ngIf="isFieldInvalid('type')" class="error-message">
               {{ getFieldError('type') }}
@@ -104,16 +103,14 @@
                [showClear]="false"
                [filter]="false"
                appendTo="body"
-               [readonly]="isEditMode"
-               [disabled]="isEditMode"
-               [autoZIndex]="true"
-               [baseZIndex]="9999"
+               [readonly]="(isEditMode$ | async)"
+               [overlayOptions]="{ autoZIndex: true }"
              ></p-dropdown>
              <div *ngIf="isFieldInvalid('currency')" class="error-message">
                {{ getFieldError('currency') }}
              </div>
              <small class="field-hint">
-               {{ isEditMode ? ('editWallet.hints.currency_edit' | translate) : ('editWallet.hints.currency_create' | translate) }}
+               {{ (isEditMode$ | async) ? ('editWallet.hints.currency_edit' | translate) : ('editWallet.hints.currency_create' | translate) }}
              </small>
           </div>
 
@@ -297,8 +294,8 @@
           <button
             type="submit"
             pButton
-            [label]="isEditMode ? ('editWallet.buttons.update_wallet' | translate) : ('editWallet.buttons.create_wallet' | translate)"
-            [icon]="isEditMode ? 'pi pi-check' : 'pi pi-plus'"
+            [label]="(isEditMode$ | async) ? ('editWallet.buttons.update_wallet' | translate) : ('editWallet.buttons.create_wallet' | translate)"
+            [icon]="(isEditMode$ | async) ? 'pi pi-check' : 'pi pi-plus'"
             class="p-button-primary"
             [disabled]="editWalletForm.invalid || (loading$ | async)?.isLoading"
           ></button>

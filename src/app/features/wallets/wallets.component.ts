@@ -5,12 +5,12 @@ import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Wallet } from '@api/model/wallet.model';
 import { WalletCardComponent } from './components/wallet-card/wallet-card.component';
 import { WalletListItemComponent } from './components/wallet-list-item/wallet-list-item.component';
 import { ViewSwitcherComponent, ViewMode } from './components/view-switcher/view-switcher.component';
-import { WalletStateService } from './services/wallet-state.service';
-import { WalletActionsService } from './services/wallet-actions.service';
+import { WalletFacade } from './services/wallet.facade';
 import { ResponsiveService } from '@core/services/responsive.service';
 
 @Component({
@@ -30,15 +30,17 @@ import { ResponsiveService } from '@core/services/responsive.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WalletsComponent implements OnInit, OnDestroy {
-  wallets: Wallet[] = [];
-  isMobileView: boolean = false;
-  currentViewMode: ViewMode = 'cards';
+  // Use observables directly instead of component properties
+  wallets$ = this.walletFacade.wallets$;
+  isMobileView$ = this.responsiveService.screenSize$.pipe(
+    map(screenSize => screenSize.isMobile)
+  );
+  currentViewMode$ = this.walletFacade.viewMode$;
   
   private subscriptions = new Subscription();
 
   constructor(
-    private walletStateService: WalletStateService,
-    private walletActionsService: WalletActionsService,
+    public walletFacade: WalletFacade,
     private responsiveService: ResponsiveService,
     private router: Router
   ) {}
@@ -53,102 +55,68 @@ export class WalletsComponent implements OnInit, OnDestroy {
   }
 
   private initializeComponent(): void {
-    this.checkScreenSize();
     this.loadWallets();
   }
 
   private setupSubscriptions(): void {
-    // Subscribe to wallet state changes
+    // Subscribe to responsive service for auto-switching view mode on mobile
     this.subscriptions.add(
-      this.walletStateService.wallets$.subscribe(wallets => {
-        this.wallets = wallets;
-      })
-    );
-
-    // Subscribe to view mode changes
-    this.subscriptions.add(
-      this.walletStateService.viewMode$.subscribe(viewMode => {
-        this.currentViewMode = viewMode;
-      })
-    );
-
-    // Subscribe to responsive service
-    this.subscriptions.add(
-      this.responsiveService.screenSize$.subscribe(screenSize => {
-        this.isMobileView = screenSize.isMobile;
+      this.responsiveService.screenSize$.pipe(
+        map(screenSize => screenSize.isMobile)
+      ).subscribe(isMobile => {
         // Auto-switch to list view on mobile if currently in cards view
-        if (this.isMobileView && this.currentViewMode === 'cards') {
-          this.setViewMode('list');
+        if (isMobile) {
+          this.walletFacade.viewMode$.pipe(
+            map(viewMode => viewMode === 'cards')
+          ).subscribe(isCardsView => {
+            if (isCardsView) {
+              this.setViewMode('list');
+            }
+          });
         }
       })
     );
   }
 
-  private checkScreenSize(): void {
-    this.isMobileView = this.responsiveService.isMobileView();
-  }
-
   private loadWallets(): void {
-    // Wallets are automatically loaded by the state service
-    // This method is kept for backward compatibility
+    // Wallets are automatically loaded by the NgRx store
+    this.walletFacade.loadWallets();
   }
 
   setViewMode(viewMode: ViewMode): void {
-    this.walletStateService.setViewMode(viewMode);
+    this.walletFacade.setViewMode(viewMode);
   }
 
   createWallet(): void {
-    this.walletActionsService.navigateToCreateWallet();
+    this.walletFacade.navigateToCreateWallet();
   }
 
   viewWallet(wallet: Wallet): void {
     if (wallet.id) {
-      this.walletActionsService.navigateToWalletView(wallet.id);
+      this.walletFacade.navigateToWalletView(wallet.id);
     }
   }
 
   editWallet(wallet: Wallet): void {
     if (wallet.id) {
-      this.walletActionsService.navigateToEditWallet(wallet.id);
+      this.walletFacade.navigateToEditWallet(wallet.id);
     }
   }
 
   deleteWallet(wallet: Wallet): void {
-    this.walletActionsService.deleteWallet(wallet).subscribe({
-      next: () => {
-        // Refresh wallets after deletion
-        this.walletStateService.refreshWallets();
-      },
-      error: (error) => {
-        console.error('Failed to delete wallet:', error);
-      }
-    });
+    this.walletFacade.deleteWallet(wallet);
   }
 
   makeDefault(wallet: Wallet): void {
-    this.walletActionsService.setDefaultWallet(wallet).subscribe({
-      next: () => {
-        // Update state after setting default
-        if (wallet.id) {
-          this.walletStateService.setDefaultWallet(wallet.id);
-        }
-      },
-      error: (error) => {
-        console.error('Failed to set default wallet:', error);
-      }
-    });
+    this.walletFacade.setDefaultWallet(wallet);
   }
 
   moveWalletUp(wallet: Wallet): void {
-    this.walletActionsService.moveWalletUp(wallet);
-    // Update state after moving
-    this.walletStateService.moveWalletUp(wallet);
+    this.walletFacade.moveWalletUp(wallet);
   }
 
   moveWalletDown(wallet: Wallet): void {
-    this.walletActionsService.moveWalletDown(wallet);
-    // Update state after moving
-    this.walletStateService.moveWalletDown(wallet);
+    this.walletFacade.moveWalletDown(wallet);
   }
 
   // Event handlers for child components
@@ -178,17 +146,6 @@ export class WalletsComponent implements OnInit, OnDestroy {
 
   onViewModeChange(viewMode: ViewMode): void {
     this.setViewMode(viewMode);
-  }
-
-  // Utility methods
-  canMoveWalletUp(wallet: Wallet): boolean {
-    const walletIndex = this.wallets.findIndex(w => w.id === wallet.id);
-    return walletIndex > 0;
-  }
-
-  canMoveWalletDown(wallet: Wallet): boolean {
-    const walletIndex = this.wallets.findIndex(w => w.id === wallet.id);
-    return walletIndex < this.wallets.length - 1;
   }
 
   // TrackBy function for performance optimization

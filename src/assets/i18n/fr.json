@@ -195,6 +195,7 @@
       "general": "Une erreur s'est produite",
       "authentication": "Erreur d'Authentification",
       "accessDenied": "Accès Refusé",
+      "forbidden": "Interdit",
       "notFound": "Non Trouvé",
       "serverError": "Erreur Serveur",
       "requestError": "Erreur de Demande",
@@ -228,7 +229,7 @@
       "resourceNotFound": "La ressource demandée n'a pas été trouvée.",
       "internalServerError": "Une erreur interne du serveur s'est produite. Veuillez réessayer plus tard.",
       "serverErrorOccurred": "Une erreur serveur s'est produite ({status}). Veuillez réessayer plus tard.",
-      "requestFailed": "La demande a échoué ({status}). Veuillez vérifier votre saisie et réessayer.",
+      "requestFailed": "La demande a échoué ({status}). {errorMessage, select, undefined {Veuillez vérifier votre saisie et réessayer.} other {{errorMessage}}}",
       "networkErrorOccurred": "Une erreur réseau s'est produite. Veuillez vérifier votre connexion et réessayer."
     }
   },

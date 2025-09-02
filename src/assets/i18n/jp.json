@@ -195,6 +195,7 @@
       "general": "エラーが発生しました",
       "authentication": "認証エラー",
       "accessDenied": "アクセス拒否",
+      "forbidden": "禁止",
       "notFound": "見つかりません",
       "serverError": "サーバーエラー",
       "requestError": "リクエストエラー",
@@ -228,7 +229,7 @@
       "resourceNotFound": "要求されたリソースが見つかりません。",
       "internalServerError": "内部サーバーエラーが発生しました。後でもう一度お試しください。",
       "serverErrorOccurred": "サーバーエラーが発生しました（{status}）。後でもう一度お試しください。",
-      "requestFailed": "リクエストが失敗しました（{status}）。入力を確認して再試行してください。",
+      "requestFailed": "リクエストが失敗しました（{status}）。{errorMessage, select, undefined {入力を確認して再試行してください。} other {{errorMessage}}}",
       "networkErrorOccurred": "ネットワークエラーが発生しました。接続を確認して再試行してください。"
     }
   },

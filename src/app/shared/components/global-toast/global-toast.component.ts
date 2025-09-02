@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-global-toast',
   standalone: true,
   imports: [ToastModule],
-  providers: [MessageService],
   template: `
     <p-toast
       position="top-right"

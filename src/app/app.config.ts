@@ -2,12 +2,17 @@ import { ApplicationConfig, APP_INITIALIZER } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideStore } from '@ngrx/store';
+import { provideEffects } from '@ngrx/effects';
+import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { MessageService } from 'primeng/api';
 
 import { routes } from './app.routes';
 import { KeycloakService } from './core/security/keycloak.service';
 import { tokenInterceptor } from './core/interceptor/token.interceptor';
 import { errorInterceptor } from './core/interceptor/error.interceptor';
+import { walletReducer } from './features/wallets/store/wallet.reducer';
+import { WalletEffects } from './features/wallets/store/wallet.effects';
 
 // ⬇️ v17 API from @ngx-translate/core
 import { provideTranslateService } from '@ngx-translate/core';
@@ -56,9 +61,19 @@ export const appConfig: ApplicationConfig = {
         // enforceLoading: false,
         // useHttpBackend: false,
       }),
-      fallbackLang: 'en',
-      lang: 'en',
-      // optional: extend: false, compiler/parser/missingTranslationHandler via provider fns
+    }),
+
+    // NgRx Store Configuration
+    provideStore({
+      wallet: walletReducer
+    }),
+    provideEffects([WalletEffects]),
+    provideStoreDevtools({
+      maxAge: 25,
+      logOnly: false,
+      autoPause: true,
+      trace: false,
+      traceLimit: 75,
     }),
   ],
 };

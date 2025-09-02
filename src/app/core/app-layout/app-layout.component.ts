@@ -3,27 +3,27 @@ import {
   Component,
   ElementRef,
   HostListener,
+  OnDestroy,
   OnInit,
   Renderer2,
-  OnDestroy,
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { UserDto } from '@api/model/user.model';
+import { UserService } from '@api/services/user.service';
 import { PockitoTerminalComponent } from '@core/pockito-terminal/pockito-terminal.component';
-import { TranslateDirective, TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { KeycloakService } from '@core/security/keycloak.service';
+import { ResponsiveService } from '@core/services/responsive.service';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { GlobalToastComponent } from '@shared/components/global-toast/global-toast.component';
+import { LanguageSwitcherComponent } from '@shared/components/language-switcher/language-switcher.component';
+import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
+import { LoadingService } from '@shared/services/loading.service';
 import { MenuItem, MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { DockModule } from 'primeng/dock';
 import { TerminalModule, TerminalService } from 'primeng/terminal';
-import { filter } from 'rxjs/operators';
-import { LanguageSwitcherComponent } from '@shared/components/language-switcher/language-switcher.component';
-import { GlobalToastComponent } from '@shared/components/global-toast/global-toast.component';
-import { KeycloakService } from '@core/security/keycloak.service';
-import { ResponsiveService } from '@core/services/responsive.service';
 import { Subscription } from 'rxjs';
-import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
-import { LoadingService } from '@shared/services/loading.service';
-import { UserService } from '@api/services/user.service';
-import { UserDto } from '@api/model/user.model';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-layout',
@@ -34,7 +34,6 @@ import { UserDto } from '@api/model/user.model';
     DialogModule,
     TerminalModule,
     TranslatePipe,
-    TranslateDirective,
     PockitoTerminalComponent,
     LanguageSwitcherComponent,
     GlobalToastComponent,
@@ -77,7 +76,6 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
   loading$ = this.loadingService.loading$;
 
   constructor(
-    private messageService: MessageService,
     private router: Router,
     private KeycloakService: KeycloakService,
     private elementRef: ElementRef,
@@ -98,9 +96,9 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // Get current user info
     this.loadCurrentUser();
-    
+
     this.initializeMenuItems();
-    
+
     // Subscribe to language changes to refresh menu items
     this.translate.onLangChange.subscribe(() => {
       this.initializeMenuItems();
@@ -108,9 +106,11 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
     });
 
     // Subscribe to screen size changes to refresh menu items
-    this.responsiveSubscription = this.responsiveService.screenSize$.subscribe(() => {
-      this.initializeMenuItems();
-    });
+    this.responsiveSubscription = this.responsiveService.screenSize$.subscribe(
+      () => {
+        this.initializeMenuItems();
+      }
+    );
 
     // Set initial active route
     this.updateActiveRoute(this.router.url);
@@ -127,7 +127,9 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
       {
         label: this.translate.instant('appLayout.navigation.dashboard'),
         tooltipOptions: {
-          tooltipLabel: this.translate.instant('appLayout.navigation.dashboard'),
+          tooltipLabel: this.translate.instant(
+            'appLayout.navigation.dashboard'
+          ),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -155,7 +157,9 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
       {
         label: this.translate.instant('appLayout.navigation.transactions'),
         tooltipOptions: {
-          tooltipLabel: this.translate.instant('appLayout.navigation.transactions'),
+          tooltipLabel: this.translate.instant(
+            'appLayout.navigation.transactions'
+          ),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -169,7 +173,9 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
       {
         label: this.translate.instant('appLayout.navigation.subscriptions'),
         tooltipOptions: {
-          tooltipLabel: this.translate.instant('appLayout.navigation.subscriptions'),
+          tooltipLabel: this.translate.instant(
+            'appLayout.navigation.subscriptions'
+          ),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -197,7 +203,9 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
       {
         label: this.translate.instant('appLayout.navigation.agreements'),
         tooltipOptions: {
-          tooltipLabel: this.translate.instant('appLayout.navigation.agreements'),
+          tooltipLabel: this.translate.instant(
+            'appLayout.navigation.agreements'
+          ),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -228,7 +236,9 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
       {
         label: this.translate.instant('appLayout.navigation.categories'),
         tooltipOptions: {
-          tooltipLabel: this.translate.instant('appLayout.navigation.categories'),
+          tooltipLabel: this.translate.instant(
+            'appLayout.navigation.categories'
+          ),
           tooltipPosition: 'top',
           positionTop: -15,
           positionLeft: 15,
@@ -326,19 +336,22 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
     ];
 
     // Add mobile-specific items to moreItems when in mobile mode
-    if (this.responsiveService.isTabletView() || this.responsiveService.isMobileView()) {
+    if (
+      this.responsiveService.isTabletView() ||
+      this.responsiveService.isMobileView()
+    ) {
       // Add subscriptions (dockItems[3]) and agreements (dockItems[5]) to moreItems
       if (this.dockItems && this.dockItems.length >= 6) {
         // Insert subscriptions at the beginning
         this.moreItems.unshift({
           ...this.dockItems[3], // Subscriptions
-          icon: '/assets/icons/subscription-no-bg.png'
+          icon: '/assets/icons/subscription-no-bg.png',
         });
-        
+
         // Insert agreements after subscriptions
         this.moreItems.splice(2, 0, {
           ...this.dockItems[5], // Agreements
-          icon: '/assets/icons/agreement-no-bg.png'
+          icon: '/assets/icons/agreement-no-bg.png',
         });
       }
     }
@@ -351,19 +364,19 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
       },
       {
         ...this.dockItems[1], // Wallets
-        icon: '/assets/icons/wallet-no-bg.png'
+        icon: '/assets/icons/wallet-no-bg.png',
       },
       {
         ...this.dockItems[2], // Transactions
-        icon: '/assets/icons/transaction-no-bg.png'
+        icon: '/assets/icons/transaction-no-bg.png',
       },
       {
         ...this.dockItems[4], // Budgets
-        icon: '/assets/icons/budget-no-bg.png'
+        icon: '/assets/icons/budget-no-bg.png',
       },
       {
         ...this.dockItems[6], // More
-        icon: '/assets/icons/more-no-bg.png'
+        icon: '/assets/icons/more-no-bg.png',
       },
     ];
 
@@ -378,23 +391,26 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
     this.userService.getOrCreateCurrentUser().subscribe({
       next: (user: UserDto) => {
         this.currentUser = user;
-        console.log('Current user loaded:', user);
       },
       error: (error) => {
         console.error('Failed to load current user:', error);
         // Don't throw error here as it's not critical for the app to function
-      }
+      },
     });
   }
 
   // Update active route based on current URL
   private updateActiveRoute(url: string): void {
     if (url.includes('/app/dashboard')) {
-      this.activeRoute = this.translate.instant('appLayout.navigation.dashboard');
+      this.activeRoute = this.translate.instant(
+        'appLayout.navigation.dashboard'
+      );
     } else if (url.includes('/app/wallets')) {
       this.activeRoute = this.translate.instant('appLayout.navigation.wallets');
     } else if (url.includes('/app/transactions')) {
-      this.activeRoute = this.translate.instant('appLayout.navigation.transactions');
+      this.activeRoute = this.translate.instant(
+        'appLayout.navigation.transactions'
+      );
     } else if (url.includes('/app/budgets')) {
       this.activeRoute = this.translate.instant('appLayout.navigation.budgets');
     } else {
@@ -520,7 +536,7 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
   onLanguageChanged(_langCode: string): void {
     // Close the language switcher dialog
     this.displaySwitchLanguage = false;
-    
+
     // The translation service has already been updated
     // The menu items will be refreshed automatically via the language change subscription
     // in ngOnInit()

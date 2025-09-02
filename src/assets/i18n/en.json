@@ -59,6 +59,7 @@
       "general": "An error occurred",
       "authentication": "Authentication Error",
       "accessDenied": "Access Denied",
+      "forbidden": "Forbidden",
       "notFound": "Not Found",
       "serverError": "Server Error",
       "requestError": "Request Error",
@@ -92,7 +93,7 @@
       "resourceNotFound": "The requested resource was not found.",
       "internalServerError": "An internal server error occurred. Please try again later.",
       "serverErrorOccurred": "Server error occurred ({status}). Please try again later.",
-      "requestFailed": "Request failed ({status}). Please check your input and try again.",
+      "requestFailed": "Request failed ({status}). {errorMessage, select, undefined {Please check your input and try again.} other {{errorMessage}}}",
       "networkErrorOccurred": "A network error occurred. Please check your connection and try again."
     }
   },
