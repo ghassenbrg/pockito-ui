@@ -111,8 +111,10 @@
       "enter_wallet_name": "ウォレット名を入力",
       "select_wallet_type": "ウォレットタイプを選択",
       "select_currency": "通貨を選択",
-      "icon_url_placeholder": "https://example.com/icon.png",
-      "description_placeholder": "このウォレットについてのメモを追加..."
+      "icon_url_placeholder": "https://exemple.com/icone.png",
+      "description_placeholder": "このウォレットについてのメモを追加...",
+      "amount_placeholder": "0.00",
+      "hex_color": "#3b82f6"
     },
     "hints": {
       "wallet_name": "簡単に識別できる説明的な名前を選択してください",
@@ -144,6 +146,19 @@
     "validation": {
       "required": "必須",
       "optional": "オプション"
+    },
+    "walletTypes": {
+      "BANK_ACCOUNT": "銀行口座",
+      "CASH": "現金",
+      "CREDIT_CARD": "クレジットカード",
+      "SAVINGS": "貯蓄",
+      "CUSTOM": "カスタム"
+    },
+    "currencies": {
+      "TND": "TND (チュニジア・ディナール)",
+      "EUR": "EUR (ユーロ)",
+      "USD": "USD (米ドル)",
+      "JPY": "JPY (日本円)"
     }
   },
   "terminal": {
@@ -163,6 +178,110 @@
     "accessibility": {
       "terminalInput": "ターミナル入力",
       "terminalOutput": "ターミナル出力"
+    }
+  },
+  "toast": {
+    "success": {
+      "walletCreated": "ウォレットが作成されました",
+      "walletUpdated": "ウォレットが更新されました",
+      "walletDeleted": "ウォレットが削除されました",
+      "defaultWalletSet": "デフォルトウォレットが設定されました",
+      "walletsReordered": "ウォレットの順序が更新されました",
+      "currencyUpdated": "通貨が更新されました",
+      "countryUpdated": "国が更新されました",
+      "welcomeBack": "おかえりなさい"
+    },
+    "error": {
+      "general": "エラーが発生しました",
+      "authentication": "認証エラー",
+      "accessDenied": "アクセス拒否",
+      "notFound": "見つかりません",
+      "serverError": "サーバーエラー",
+      "requestError": "リクエストエラー",
+      "networkError": "ネットワークエラー",
+      "failedToLoadWallets": "ウォレットの読み込みに失敗しました",
+      "failedToLoadWallet": "ウォレットの読み込みに失敗しました",
+      "failedToCreateWallet": "ウォレットの作成に失敗しました",
+      "failedToUpdateWallet": "ウォレットの更新に失敗しました",
+      "failedToDeleteWallet": "ウォレットの削除に失敗しました",
+      "failedToSetDefaultWallet": "デフォルトウォレットの設定に失敗しました",
+      "failedToReorderWallets": "ウォレットの順序変更に失敗しました",
+      "failedToLoadWalletsByType": "タイプ別ウォレットの読み込みに失敗しました",
+      "failedToLoadDefaultWallet": "デフォルトウォレットの読み込みに失敗しました",
+      "failedToAuthenticateUser": "ユーザー認証に失敗しました",
+      "failedToLoadUserProfile": "ユーザープロファイルの読み込みに失敗しました",
+      "failedToCheckUserExistence": "ユーザー存在確認に失敗しました",
+      "failedToUpdateCurrency": "通貨の更新に失敗しました",
+      "failedToUpdateCountry": "国の更新に失敗しました"
+    },
+    "messages": {
+      "walletCreatedSuccessfully": "ウォレットが正常に作成されました",
+      "walletUpdatedSuccessfully": "ウォレットが正常に更新されました",
+      "walletDeletedSuccessfully": "ウォレットが正常に削除されました",
+      "defaultWalletUpdated": "デフォルトウォレットが更新されました",
+      "walletOrderUpdated": "ウォレットの順序が更新されました",
+      "defaultCurrencyChanged": "デフォルト通貨が{currency}に変更されました",
+      "countryChanged": "国が{country}に変更されました",
+      "helloUser": "こんにちは、{username}さん！",
+      "sessionExpired": "セッションが期限切れです。再度ログインしてください。",
+      "noPermission": "このアクションを実行する権限がありません。",
+      "resourceNotFound": "要求されたリソースが見つかりません。",
+      "internalServerError": "内部サーバーエラーが発生しました。後でもう一度お試しください。",
+      "serverErrorOccurred": "サーバーエラーが発生しました（{status}）。後でもう一度お試しください。",
+      "requestFailed": "リクエストが失敗しました（{status}）。入力を確認して再試行してください。",
+      "networkErrorOccurred": "ネットワークエラーが発生しました。接続を確認して再試行してください。"
+    }
+  },
+  "form": {
+    "validation": {
+      "required": "このフィールドは必須です",
+      "minLength": "最小長は{min}文字です",
+      "maxLength": "最大長は{max}文字です",
+      "email": "有効なメールアドレスを入力してください",
+      "pattern": "有効な値を入力してください",
+      "min": "値は{min}以上である必要があります",
+      "max": "値は{max}以下である必要があります",
+      "invalidFormat": "無効な形式です",
+      "passwordMismatch": "パスワードが一致しません",
+      "uniqueValue": "この値は一意である必要があります"
+    },
+    "messages": {
+      "saving": "保存中...",
+      "saved": "正常に保存されました",
+      "savingFailed": "保存に失敗しました",
+      "loading": "読み込み中...",
+      "loadingFailed": "読み込みに失敗しました",
+      "deleting": "削除中...",
+      "deleted": "正常に削除されました",
+      "deletionFailed": "削除に失敗しました",
+      "updating": "更新中...",
+      "updated": "正常に更新されました",
+      "updateFailed": "更新に失敗しました",
+      "creating": "作成中...",
+      "created": "正常に作成されました",
+      "creationFailed": "作成に失敗しました"
+    },
+    "confirmations": {
+      "deleteTitle": "削除の確認",
+      "deleteMessage": "このアイテムを削除してもよろしいですか？この操作は元に戻せません。",
+      "unsavedChangesTitle": "未保存の変更",
+      "unsavedChangesMessage": "未保存の変更があります。本当に離れますか？",
+      "discardChanges": "変更を破棄",
+      "saveChanges": "変更を保存",
+      "cancel": "キャンセル",
+      "confirm": "確認",
+      "yes": "はい",
+      "no": "いいえ"
+    },
+    "errors": {
+      "fieldRequired": "このフィールドは必須です",
+      "minLength": "最小長は{min}文字です",
+      "maxLength": "最大長は{max}文字です",
+      "minValue": "値は{min}以上である必要があります",
+      "maxValue": "値は{max}以下である必要があります",
+      "invalidFormat": "無効な形式です",
+      "invalidUrl": "有効なURLを入力してください",
+      "invalidEmail": "有効なメールアドレスを入力してください"
     }
   }
 }

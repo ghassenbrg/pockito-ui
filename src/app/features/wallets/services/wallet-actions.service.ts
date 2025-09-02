@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Wallet } from '../../../api/model/wallet.model';
+import { Wallet, WalletDto } from '../../../api/model/wallet.model';
 import { WalletService } from '../../../api/services/wallet.service';
 import { WalletFormData } from '../models/wallet.types';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +14,9 @@ export class WalletActionsService {
     private router: Router
   ) {}
 
-  createWallet(walletData: WalletFormData): boolean {
-    const walletToCreate = {
+  createWallet(walletData: WalletFormData): Observable<WalletDto> {
+    const walletToCreate: WalletDto = {
+      username: 'current-user', // TODO: Get from auth service
       name: walletData.name!,
       initialBalance: 0, // Default value, will be calculated from transactions
       balance: 0, // Default value, will be calculated from transactions
@@ -26,40 +28,31 @@ export class WalletActionsService {
       iconUrl: walletData.iconUrl,
       description: walletData.description,
       color: walletData.color,
-      order: 0
+      orderPosition: 0
     };
 
-    const success = this.walletService.createWallet(walletToCreate);
-    if (success) {
-      this.navigateToWallets();
-      return true;
-    }
-    return false;
+    return this.walletService.createWallet(walletToCreate);
   }
 
-  updateWallet(existingWallet: Wallet, walletData: WalletFormData): boolean {
-    const updatedWallet: Wallet = {
-      ...existingWallet,
+  updateWallet(walletId: string, walletData: WalletFormData): Observable<WalletDto> {
+    const updatedWallet: Partial<WalletDto> = {
       ...walletData
     };
     
-    const success = this.walletService.updateWallet(updatedWallet);
-    if (success) {
-      this.navigateToWallets();
-      return true;
-    }
-    return false;
+    return this.walletService.updateWallet(walletId, updatedWallet as WalletDto);
   }
 
-  deleteWallet(wallet: Wallet): boolean {
+  deleteWallet(wallet: Wallet): Observable<void> {
     if (this.confirmDeletion(wallet.name)) {
-      const success = this.walletService.deleteWallet(wallet.id);
-      return success;
+      return this.walletService.deleteWallet(wallet.id!);
     }
-    return false;
+    throw new Error('Deletion cancelled');
   }
 
-  setDefaultWallet(wallet: Wallet): boolean {
+  setDefaultWallet(wallet: Wallet): Observable<WalletDto> {
+    if (!wallet.id) {
+      throw new Error('Wallet ID is required');
+    }
     return this.walletService.setDefaultWallet(wallet.id);
   }
 
@@ -95,17 +88,17 @@ export class WalletActionsService {
   canDeleteWallet(wallet: Wallet): boolean {
     // Add business logic for when a wallet can be deleted
     // For example, wallets with transactions might not be deletable
-    return wallet.active; // Simple example - can be enhanced
+    return wallet.active ?? true; // Simple example - can be enhanced
   }
 
   canEditWallet(wallet: Wallet): boolean {
     // Add business logic for when a wallet can be edited
-    return wallet.active; // Simple example - can be enhanced
+    return wallet.active ?? true; // Simple example - can be enhanced
   }
 
   canSetDefaultWallet(wallet: Wallet): boolean {
     // Add business logic for when a wallet can be set as default
-    return wallet.active && !wallet.isDefault;
+    return (wallet.active ?? true) && !wallet.isDefault;
   }
 
   getWalletActions(wallet: Wallet): {

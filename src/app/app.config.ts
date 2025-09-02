@@ -1,10 +1,13 @@
 import { ApplicationConfig, APP_INITIALIZER } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { MessageService } from 'primeng/api';
 
 import { routes } from './app.routes';
 import { KeycloakService } from './core/security/keycloak.service';
+import { tokenInterceptor } from './core/interceptor/token.interceptor';
+import { errorInterceptor } from './core/interceptor/error.interceptor';
 
 // ⬇️ v17 API from @ngx-translate/core
 import { provideTranslateService } from '@ngx-translate/core';
@@ -26,8 +29,14 @@ function initializeApp(keycloakService: KeycloakService) {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
-    provideHttpClient(withInterceptorsFromDi()),
+    provideHttpClient(
+      withInterceptors([
+        tokenInterceptor,
+        errorInterceptor
+      ])
+    ),
     provideAnimations(),
+    MessageService,
 
     KeycloakService,
     {

@@ -2,27 +2,90 @@ import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WalletType, Currency, WalletTypeOption, CurrencyOption, WalletFormData } from '../models/wallet.types';
 import { Wallet } from '../../../api/model/wallet.model';
+import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WalletFormService {
-  readonly walletTypes: WalletTypeOption[] = [
-    { label: 'Bank Account', value: WalletType.BANK_ACCOUNT },
-    { label: 'Cash', value: WalletType.CASH },
-    { label: 'Credit Card', value: WalletType.CREDIT_CARD },
-    { label: 'Savings', value: WalletType.SAVINGS },
-    { label: 'Custom', value: WalletType.CUSTOM }
-  ];
+  private walletTypesSubject = new BehaviorSubject<WalletTypeOption[]>([]);
+  private currenciesSubject = new BehaviorSubject<CurrencyOption[]>([]);
+  
+  walletTypes$ = this.walletTypesSubject.asObservable();
+  currencies$ = this.currenciesSubject.asObservable();
 
-  readonly currencies: CurrencyOption[] = [
-    { label: 'TND (Tunisian Dinar)', value: Currency.TND },
-    { label: 'EUR (Euro)', value: Currency.EUR },
-    { label: 'USD (US Dollar)', value: Currency.USD },
-    { label: 'JPY (Japanese Yen)', value: Currency.JPY }
-  ];
+  constructor(
+    private fb: FormBuilder,
+    private translateService: TranslateService
+  ) {
+    this.initializeOptions();
+    this.subscribeToLanguageChanges();
+  }
 
-  constructor(private fb: FormBuilder) {}
+  private initializeOptions(): void {
+    this.loadTranslations();
+  }
+
+  private subscribeToLanguageChanges(): void {
+    // Subscribe to language changes to reload translations
+    this.translateService.onLangChange.subscribe(() => {
+      this.loadTranslations();
+    });
+  }
+
+  private loadTranslations(): void {
+    // Load wallet type translations
+    const walletTypeKeys = [
+      { key: 'editWallet.walletTypes.BANK_ACCOUNT', value: WalletType.BANK_ACCOUNT },
+      { key: 'editWallet.walletTypes.CASH', value: WalletType.CASH },
+      { key: 'editWallet.walletTypes.CREDIT_CARD', value: WalletType.CREDIT_CARD },
+      { key: 'editWallet.walletTypes.SAVINGS', value: WalletType.SAVINGS },
+      { key: 'editWallet.walletTypes.CUSTOM', value: WalletType.CUSTOM }
+    ];
+
+    const walletTypes: WalletTypeOption[] = [];
+    walletTypeKeys.forEach(({ key, value }) => {
+      this.translateService.get(key).subscribe(label => {
+        const existingIndex = walletTypes.findIndex(t => t.value === value);
+        if (existingIndex >= 0) {
+          walletTypes[existingIndex].label = label;
+        } else {
+          walletTypes.push({ label, value });
+        }
+        
+        // Update the subject when all translations are loaded
+        if (walletTypes.length === walletTypeKeys.length) {
+          this.walletTypesSubject.next([...walletTypes]);
+        }
+      });
+    });
+
+    // Load currency translations
+    const currencyKeys = [
+      { key: 'editWallet.currencies.TND', value: Currency.TND },
+      { key: 'editWallet.currencies.EUR', value: Currency.EUR },
+      { key: 'editWallet.currencies.USD', value: Currency.USD },
+      { key: 'editWallet.currencies.JPY', value: Currency.JPY }
+    ];
+
+    const currencies: CurrencyOption[] = [];
+    currencyKeys.forEach(({ key, value }) => {
+      this.translateService.get(key).subscribe(label => {
+        const existingIndex = currencies.findIndex(c => c.value === value);
+        if (existingIndex >= 0) {
+          currencies[existingIndex].label = label;
+        } else {
+          currencies.push({ label, value });
+        }
+        
+        // Update the subject when all translations are loaded
+        if (currencies.length === currencyKeys.length) {
+          this.currenciesSubject.next([...currencies]);
+        }
+      });
+    });
+  }
 
   createForm(): FormGroup {
     return this.fb.group({
@@ -93,16 +156,16 @@ export class WalletFormService {
     const field = form.get(fieldName);
     if (field && field.touched && field.errors) {
       if (field.errors['required']) {
-        return 'This field is required';
+        return this.translateService.instant('form.errors.fieldRequired');
       }
       if (field.errors['minlength']) {
-        return `Minimum length is ${field.errors['minlength'].requiredLength} characters`;
+        return this.translateService.instant('form.errors.minLength', { min: field.errors['minlength'].requiredLength });
       }
       if (field.errors['maxlength']) {
-        return `Maximum length is ${field.errors['maxlength'].requiredLength} characters`;
+        return this.translateService.instant('form.errors.maxLength', { max: field.errors['maxlength'].requiredLength });
       }
       if (field.errors['min']) {
-        return `Minimum value is ${field.errors['min'].min}`;
+        return this.translateService.instant('form.errors.minValue', { min: field.errors['min'].min });
       }
     }
     return '';

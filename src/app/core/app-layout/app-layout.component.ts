@@ -5,6 +5,7 @@ import {
   HostListener,
   OnInit,
   Renderer2,
+  OnDestroy,
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { PockitoTerminalComponent } from '@core/pockito-terminal/pockito-terminal.component';
@@ -15,7 +16,12 @@ import { DockModule } from 'primeng/dock';
 import { TerminalModule, TerminalService } from 'primeng/terminal';
 import { filter } from 'rxjs/operators';
 import { LanguageSwitcherComponent } from '../../shared/components/language-switcher/language-switcher.component';
+import { GlobalToastComponent } from '../../shared/components/global-toast/global-toast.component';
 import { KeycloakService } from '../security/keycloak.service';
+import { ResponsiveService } from '../services/responsive.service';
+import { Subscription } from 'rxjs';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
+import { LoadingService } from '../../shared/services/loading.service';
 
 @Component({
   selector: 'app-layout',
@@ -29,12 +35,14 @@ import { KeycloakService } from '../security/keycloak.service';
     TranslateDirective,
     PockitoTerminalComponent,
     LanguageSwitcherComponent,
+    GlobalToastComponent,
+    LoadingSpinnerComponent,
   ],
   providers: [MessageService, TerminalService],
   templateUrl: './app-layout.component.html',
   styleUrls: ['./app-layout.component.scss'],
 })
-export class AppLayoutComponent implements OnInit {
+export class AppLayoutComponent implements OnInit, OnDestroy {
   displayTerminal: boolean = false;
   displayMore: boolean = false;
   displaySwitchLanguage: boolean = false;
@@ -58,13 +66,20 @@ export class AppLayoutComponent implements OnInit {
   // Active route tracking
   activeRoute: string = '';
 
+  private responsiveSubscription!: Subscription;
+
+  // Loading state observable
+  loading$ = this.loadingService.loading$;
+
   constructor(
     private messageService: MessageService,
     private router: Router,
     private KeycloakService: KeycloakService,
     private elementRef: ElementRef,
     private renderer: Renderer2,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private responsiveService: ResponsiveService,
+    private loadingService: LoadingService
   ) {
     // Subscribe to router events to track active route
     this.router.events
@@ -83,8 +98,19 @@ export class AppLayoutComponent implements OnInit {
       this.updateActiveRoute(this.router.url);
     });
 
+    // Subscribe to screen size changes to refresh menu items
+    this.responsiveSubscription = this.responsiveService.screenSize$.subscribe(() => {
+      this.initializeMenuItems();
+    });
+
     // Set initial active route
     this.updateActiveRoute(this.router.url);
+  }
+
+  ngOnDestroy() {
+    if (this.responsiveSubscription) {
+      this.responsiveSubscription.unsubscribe();
+    }
   }
 
   private initializeMenuItems() {
@@ -289,6 +315,24 @@ export class AppLayoutComponent implements OnInit {
         },
       },
     ];
+
+    // Add mobile-specific items to moreItems when in mobile mode
+    if (this.responsiveService.isTabletView() || this.responsiveService.isMobileView()) {
+      // Add subscriptions (dockItems[3]) and agreements (dockItems[5]) to moreItems
+      if (this.dockItems && this.dockItems.length >= 6) {
+        // Insert subscriptions at the beginning
+        this.moreItems.unshift({
+          ...this.dockItems[3], // Subscriptions
+          icon: '/assets/icons/subscription-no-bg.png'
+        });
+        
+        // Insert agreements after subscriptions
+        this.moreItems.splice(2, 0, {
+          ...this.dockItems[5], // Agreements
+          icon: '/assets/icons/agreement-no-bg.png'
+        });
+      }
+    }
 
     // Set mobile bottom navigation items: Dashboard, Wallets, Transactions, Budget, More
     // Use no-bg icons for mobile navigation

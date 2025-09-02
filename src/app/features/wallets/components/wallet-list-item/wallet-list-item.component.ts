@@ -41,7 +41,7 @@ export class WalletListItemComponent {
     return this.walletDisplayService.getGoalProgress(this.wallet);
   }
 
-  formatAmount(amount: number): FormattedAmount {
+  formatAmount(amount: number | undefined): FormattedAmount {
     return this.walletDisplayService.formatAmount(amount);
   }
 
@@ -87,6 +87,6 @@ export class WalletListItemComponent {
 
   // TrackBy function for performance optimization
   trackByWalletId(index: number, wallet: Wallet): string {
-    return wallet.id;
+    return wallet.id ?? '';
   }
 }

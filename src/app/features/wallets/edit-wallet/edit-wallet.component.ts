@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -10,10 +10,12 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { TooltipModule } from 'primeng/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { Wallet } from '../../../api/model/wallet.model';
 import { WalletFormService } from '../services/wallet-form.service';
 import { WalletActionsService } from '../services/wallet-actions.service';
 import { WalletStateService } from '../services/wallet-state.service';
+import { LoadingService } from '../../../shared/services/loading.service';
 
 @Component({
   selector: 'app-edit-wallet',
@@ -30,18 +32,19 @@ import { WalletStateService } from '../services/wallet-state.service';
     TranslateModule
   ],
   templateUrl: './edit-wallet.component.html',
-  styleUrl: './edit-wallet.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./edit-wallet.component.scss']
 })
 export class EditWalletComponent implements OnInit, OnDestroy {
   editWalletForm!: FormGroup;
   wallet: Wallet | null = null;
   isEditMode: boolean = false;
-  isLoading: boolean = false;
   
   // Icon preview properties
   iconPreviewLoaded: boolean = false;
   iconPreviewError: boolean = false;
+
+  // Loading state from global service
+  loading$ = this.loadingService.loading$;
 
   private routeSubscription: Subscription = new Subscription();
 
@@ -51,7 +54,8 @@ export class EditWalletComponent implements OnInit, OnDestroy {
     private walletActionsService: WalletActionsService,
     private walletStateService: WalletStateService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private loadingService: LoadingService
   ) {}
 
   ngOnInit(): void {
@@ -81,7 +85,7 @@ export class EditWalletComponent implements OnInit, OnDestroy {
   }
 
   private loadExistingWallet(walletId: string): void {
-    this.isLoading = true;
+    this.loadingService.show('Loading wallet...');
     this.walletStateService.getWalletById(walletId);
     
     // Subscribe to wallet changes
@@ -91,7 +95,7 @@ export class EditWalletComponent implements OnInit, OnDestroy {
         if (wallet) {
           this.wallet = wallet;
           this.walletFormService.populateForm(this.editWalletForm, wallet);
-          this.isLoading = false;
+          this.loadingService.hide();
         }
       })
     );
@@ -103,7 +107,6 @@ export class EditWalletComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     if (this.editWalletForm.valid) {
-      this.isLoading = true;
       const walletData = this.walletFormService.getFormData(this.editWalletForm);
 
       if (this.isEditMode && this.wallet) {
@@ -119,27 +122,33 @@ export class EditWalletComponent implements OnInit, OnDestroy {
   }
 
   private updateWallet(walletData: any): void {
-    if (this.wallet) {
-      const success = this.walletActionsService.updateWallet(this.wallet, walletData);
-      if (success) {
-        this.isLoading = false;
-        this.router.navigate(['/app/wallets']);
-      } else {
-        this.isLoading = false;
-        console.error('Failed to update wallet');
-      }
+    if (this.wallet?.id) {
+      this.loadingService.show('Updating wallet...');
+      this.walletActionsService.updateWallet(this.wallet.id, walletData).pipe(
+        finalize(() => this.loadingService.hide())
+      ).subscribe({
+        next: () => {
+          this.router.navigate(['/app/wallets']);
+        },
+        error: (error) => {
+          console.error('Failed to update wallet:', error);
+        }
+      });
     }
   }
 
   private createWallet(walletData: any): void {
-    const success = this.walletActionsService.createWallet(walletData);
-    if (success) {
-      this.isLoading = false;
-      this.router.navigate(['/app/wallets']);
-    } else {
-      this.isLoading = false;
-      console.error('Failed to create wallet');
-    }
+    this.loadingService.show('Creating wallet...');
+    this.walletActionsService.createWallet(walletData).pipe(
+      finalize(() => this.loadingService.hide())
+    ).subscribe({
+      next: () => {
+        this.router.navigate(['/app/wallets']);
+      },
+      error: (error) => {
+        console.error('Failed to create wallet:', error);
+      }
+    });
   }
 
   onCancel(): void {
@@ -166,9 +175,21 @@ export class EditWalletComponent implements OnInit, OnDestroy {
   }
 
   onIconPreviewError(_event: any): void {
-    this.iconPreviewLoaded = false;
     this.iconPreviewError = true;
-    console.warn('Failed to load icon preview');
+    this.iconPreviewLoaded = false;
+  }
+
+  onColorChange(event: any): void {
+    const color = event.target.value;
+    this.editWalletForm.patchValue({ color });
+  }
+
+  onHexInputChange(event: any): void {
+    const hexValue = event.target.value;
+    // Validate hex format
+    if (/^#[0-9A-Fa-f]{6}$/.test(hexValue)) {
+      this.editWalletForm.patchValue({ color: hexValue });
+    }
   }
 
   // Goal progress calculation
@@ -179,12 +200,7 @@ export class EditWalletComponent implements OnInit, OnDestroy {
     return this.walletFormService.calculateGoalProgress(goalAmount, balance);
   }
 
-  // Getters for template
-  get walletTypes() {
-    return this.walletFormService.walletTypes;
-  }
-
-  get currencies() {
-    return this.walletFormService.currencies;
-  }
+  // Form options from service
+  walletTypes$ = this.walletFormService.walletTypes$;
+  currencies$ = this.walletFormService.currencies$;
 }

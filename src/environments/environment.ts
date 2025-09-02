@@ -10,7 +10,7 @@ export const environment = {
   
   // API Configuration
   api: {
-    baseUrl: 'http://localhost:8080/api'
+    baseUrl: '/api'
   },
   
   // Application Configuration

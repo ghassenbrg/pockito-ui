@@ -21,7 +21,7 @@
         icon="pi pi-arrow-left"
         class="p-button-text"
         (click)="onCancel()"
-        [disabled]="isLoading"
+        [disabled]="(loading$ | async)?.isLoading"
       ></button>
     </div>
   </div>
@@ -68,7 +68,7 @@
             <p-dropdown
               id="type"
               formControlName="type"
-              [options]="walletTypes"
+              [options]="(walletTypes$ | async) || []"
               optionLabel="label"
               optionValue="value"
               [placeholder]="'editWallet.placeholders.select_wallet_type' | translate"
@@ -95,7 +95,7 @@
                          <p-dropdown
                id="currency"
                formControlName="currency"
-               [options]="currencies"
+               [options]="(currencies$ | async) || []"
                optionLabel="label"
                optionValue="value"
                [placeholder]="'editWallet.placeholders.select_currency' | translate"
@@ -104,6 +104,7 @@
                [showClear]="false"
                [filter]="false"
                appendTo="body"
+               [readonly]="isEditMode"
                [disabled]="isEditMode"
                [autoZIndex]="true"
                [baseZIndex]="9999"
@@ -169,7 +170,7 @@
             <p-inputNumber
               id="initialBalance"
               formControlName="initialBalance"
-              placeholder="0.00"
+              [placeholder]="'editWallet.placeholders.amount_placeholder' | translate"
               [min]="0"
               [maxFractionDigits]="2"
               [class.invalid]="isFieldInvalid('initialBalance')"
@@ -190,7 +191,7 @@
             <p-inputNumber
               id="goalAmount"
               formControlName="goalAmount"
-              placeholder="0.00"
+              [placeholder]="'editWallet.placeholders.amount_placeholder' | translate"
               [min]="0"
               [maxFractionDigits]="2"
               class="form-input-number"
@@ -261,6 +262,16 @@
                 formControlName="color"
                 class="form-color-picker"
                 [value]="editWalletForm.get('color')?.value || '#3b82f6'"
+                (input)="onColorChange($event)"
+              />
+              <input
+                type="text"
+                class="form-hex-input"
+                [placeholder]="'editWallet.placeholders.hex_color' | translate"
+                [value]="editWalletForm.get('color')?.value || '#3b82f6'"
+                (input)="onHexInputChange($event)"
+                maxlength="7"
+                pattern="^#[0-9A-Fa-f]{6}$"
               />
             </div>
             <small class="field-hint">{{ 'editWallet.hints.wallet_color' | translate }}</small>
@@ -278,7 +289,7 @@
             icon="pi pi-times"
             class="p-button-outlined"
             (click)="onCancel()"
-            [disabled]="isLoading"
+            [disabled]="(loading$ | async)?.isLoading"
           ></button>
         </div>
         
@@ -289,16 +300,8 @@
             [label]="isEditMode ? ('editWallet.buttons.update_wallet' | translate) : ('editWallet.buttons.create_wallet' | translate)"
             [icon]="isEditMode ? 'pi pi-check' : 'pi pi-plus'"
             class="p-button-primary"
-            [disabled]="editWalletForm.invalid || isLoading"
+            [disabled]="editWalletForm.invalid || (loading$ | async)?.isLoading"
           ></button>
-        </div>
-      </div>
-
-      <!-- Loading Indicator -->
-      <div *ngIf="isLoading" class="loading-overlay">
-        <div class="loading-spinner">
-          <i class="pi pi-spin pi-spinner"></i>
-          <span>{{ isEditMode ? ('editWallet.messages.updating_wallet' | translate) : ('editWallet.messages.creating_wallet' | translate) }}</span>
         </div>
       </div>
     </form>

@@ -102,27 +102,41 @@ export class WalletsComponent implements OnInit, OnDestroy {
   }
 
   viewWallet(wallet: Wallet): void {
-    this.walletActionsService.navigateToWalletView(wallet.id);
+    if (wallet.id) {
+      this.walletActionsService.navigateToWalletView(wallet.id);
+    }
   }
 
   editWallet(wallet: Wallet): void {
-    this.walletActionsService.navigateToEditWallet(wallet.id);
+    if (wallet.id) {
+      this.walletActionsService.navigateToEditWallet(wallet.id);
+    }
   }
 
   deleteWallet(wallet: Wallet): void {
-    const success = this.walletActionsService.deleteWallet(wallet);
-    if (success) {
-      // Refresh wallets after deletion
-      this.walletStateService.refreshWallets();
-    }
+    this.walletActionsService.deleteWallet(wallet).subscribe({
+      next: () => {
+        // Refresh wallets after deletion
+        this.walletStateService.refreshWallets();
+      },
+      error: (error) => {
+        console.error('Failed to delete wallet:', error);
+      }
+    });
   }
 
   makeDefault(wallet: Wallet): void {
-    const success = this.walletActionsService.setDefaultWallet(wallet);
-    if (success) {
-      // Update state after setting default
-      this.walletStateService.setDefaultWallet(wallet.id);
-    }
+    this.walletActionsService.setDefaultWallet(wallet).subscribe({
+      next: () => {
+        // Update state after setting default
+        if (wallet.id) {
+          this.walletStateService.setDefaultWallet(wallet.id);
+        }
+      },
+      error: (error) => {
+        console.error('Failed to set default wallet:', error);
+      }
+    });
   }
 
   moveWalletUp(wallet: Wallet): void {
@@ -179,6 +193,6 @@ export class WalletsComponent implements OnInit, OnDestroy {
 
   // TrackBy function for performance optimization
   trackByWalletId(index: number, wallet: Wallet): string {
-    return wallet.id;
+    return wallet.id ?? '';
   }
 }

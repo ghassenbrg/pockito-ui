@@ -6,13 +6,15 @@ import { WalletGoalProgress, FormattedAmount } from '../models/wallet.types';
   providedIn: 'root'
 })
 export class WalletDisplayService {
-  formatAmount(amount: number): FormattedAmount {
+  formatAmount(amount: number | undefined): FormattedAmount {
+    if (!amount || amount === 0) {
+      return { text: '0.00', color: '#1a202c' }; // Black
+    }
+    
     if (amount > 0) {
       return { text: `+${amount.toFixed(2)}`, color: '#10b981' }; // Green
-    } else if (amount < 0) {
-      return { text: `${amount.toFixed(2)}`, color: '#dc2626' }; // Red
     } else {
-      return { text: '0.00', color: '#1a202c' }; // Black
+      return { text: `${amount.toFixed(2)}`, color: '#dc2626' }; // Red
     }
   }
 
@@ -24,7 +26,8 @@ export class WalletDisplayService {
       return { hasGoal: false, progress: 0, isComplete: false };
     }
     
-    const progress = Math.min((wallet.balance / goalAmount) * 100, 100);
+    const balance = wallet.balance ?? 0;
+    const progress = Math.min((balance / goalAmount) * 100, 100);
     const isComplete = progress >= 100;
     
     return {
@@ -62,7 +65,7 @@ export class WalletDisplayService {
   }
 
   isWalletActive(wallet: Wallet): boolean {
-    return wallet.active;
+    return wallet.active ?? true;
   }
 
   isWalletDefault(wallet: Wallet): boolean {
@@ -84,11 +87,11 @@ export class WalletDisplayService {
   }
 
   sortWalletsByOrder(wallets: Wallet[]): Wallet[] {
-    return [...wallets].sort((a, b) => a.order - b.order);
+    return [...wallets].sort((a, b) => (a.orderPosition ?? 0) - (b.orderPosition ?? 0));
   }
 
   getActiveWallets(wallets: Wallet[]): Wallet[] {
-    return wallets.filter(wallet => wallet.active);
+    return wallets.filter(wallet => wallet.active ?? true);
   }
 
   getDefaultWallet(wallets: Wallet[]): Wallet | undefined {
@@ -104,7 +107,7 @@ export class WalletDisplayService {
     
     wallets.forEach(wallet => {
       if (!currency || wallet.currency === currency) {
-        total += wallet.balance;
+        total += wallet.balance ?? 0;
       }
     });
     

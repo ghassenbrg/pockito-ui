@@ -149,7 +149,7 @@ export class WalletStateService {
 
   private updateWalletOrders(wallets: Wallet[]): void {
     wallets.forEach((wallet, index) => {
-      wallet.order = index + 1;
+      wallet.orderPosition = index + 1;
     });
   }
 

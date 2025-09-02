@@ -1,15 +1,32 @@
-export interface Wallet {
-  id: string;
+import { Currency } from './common.model';
+
+export interface WalletDto {
+  id?: string;
+  username: string;
   name: string;
   initialBalance: number;
-  balance: number;
-  currency: string;
+  balance?: number;
+  currency: Currency;
   iconUrl?: string;
   goalAmount?: number;
-  type: string;
+  type: WalletType;
   isDefault: boolean;
-  active: boolean;
-  order: number;
+  orderPosition: number;
   description?: string;
   color?: string;
+  active?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
+  updatedBy?: string;
+}
+
+// Backward compatibility alias
+export type Wallet = WalletDto;
+
+// Updated to match OpenAPI specification exactly
+export type WalletType = 'BANK_ACCOUNT' | 'CASH' | 'CREDIT_CARD' | 'SAVINGS' | 'CUSTOM';
+
+export interface ReorderWalletsRequest {
+  walletIds: string[];
 }

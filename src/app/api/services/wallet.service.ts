@@ -1,107 +1,216 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Wallet } from '../model/wallet.model';
+import { WalletDto, WalletType } from '../model/wallet.model';
+import { environment } from '../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+import { catchError, tap } from 'rxjs/operators';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WalletService {
-  private walletsSubject = new BehaviorSubject<Wallet[]>([]);
+  private readonly baseUrl = `${environment.api.baseUrl}/wallets`;
+
+  private walletsSubject = new BehaviorSubject<WalletDto[]>([]);
   public wallets$ = this.walletsSubject.asObservable();
 
-  private mockWallets: Wallet[] = [
-    {
-      id: 'b2c3d4e5-f678-9012-abcd-ef2345678901',
-      name: 'Checking Account',
-      initialBalance: 500,
-      balance: 350,
-      currency: 'TND',
-      goalAmount: 0,
-      type: 'BANK_ACCOUNT',
-      isDefault: false,
-      active: true,
-      order: 2,
-    },
-    {
-      id: 'c3d4e5f6-7890-1234-abcd-ef3456789012',
-      name: 'Cash Wallet',
-      initialBalance: 200,
-      balance: 50,
-      currency: 'EUR',
-      goalAmount: 0,
-      type: 'CASH',
-      isDefault: false,
-      active: true,
-      order: 3,
-    },
-    {
-      id: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-      name: 'Personal Savings',
-      initialBalance: 1000,
-      balance: 1200,
-      currency: 'EUR',
-      goalAmount: 5000,
-      type: 'SAVINGS',
-      isDefault: true,
-      active: true,
-      order: 1,
-    },
-    {
-      id: 'd4e5f678-9012-3456-abcd-ef4567890123',
-      name: 'Credit Card',
-      initialBalance: 0,
-      balance: -300,
-      currency: 'JPY',
-      goalAmount: 0,
-      type: 'CREDIT_CARD',
-      isDefault: false,
-      active: true,
-      order: 4,
-    },
-    {
-      id: 'e5f67890-1234-5678-abcd-ef5678901234',
-      name: 'BNP Paribas',
-      initialBalance: 0,
-      balance: 3000,
-      currency: 'EUR',
-      iconUrl:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT42lVhmZycuWMxA0-9Dhx3Vi3-B9YVDPZAjA&s',
-      goalAmount: 2000,
-      type: 'CUSTOM',
-      isDefault: false,
-      active: true,
-      order: 5,
-    },
-    {
-      id: 'f6f78901-2345-6789-abcd-ef6789012345',
-      name: 'Vacation Fund',
-      initialBalance: 0,
-      balance: 0,
-      currency: 'EUR',
-      goalAmount: 2000,
-      type: 'CUSTOM',
-      isDefault: false,
-      active: false,
-      order: 6,
-    },
-  ];
+  constructor(
+    private http: HttpClient,
+    private toastService: ToastService
+  ) {}
 
-  constructor() {
-    this.initializeWallets();
+  // API Methods (following OpenAPI specification)
+  
+  /**
+   * Get user wallets
+   */
+  getUserWallets(): Observable<WalletDto[]> {
+    return this.http.get<WalletDto[]>(`${this.baseUrl}`).pipe(
+      tap(wallets => this.walletsSubject.next(wallets)),
+      catchError(error => {
+        console.error('Error fetching wallets:', error);
+        this.toastService.showHttpError(error, 'failedToLoadWallets');
+        throw error; // Re-throw error for component handling
+      })
+    );
   }
 
-  private initializeWallets(): void {
-    // Sort wallets by order
-    const sortedWallets = [...this.mockWallets].sort((a, b) => a.order - b.order);
-    this.walletsSubject.next(sortedWallets);
+  /**
+   * Get wallet by ID
+   */
+  getWallet(walletId: string): Observable<WalletDto> {
+    return this.http.get<WalletDto>(`${this.baseUrl}/${walletId}`).pipe(
+      catchError(error => {
+        console.error(`Error fetching wallet ${walletId}:`, error);
+        this.toastService.showHttpError(error, 'failedToLoadWallet');
+        throw error; // Re-throw error for component handling
+      })
+    );
   }
 
-  // CRUD Operations
-  getAllWallets(): Observable<Wallet[]> {
+  /**
+   * Create wallet
+   */
+  createWallet(wallet: WalletDto): Observable<WalletDto> {
+    return this.http.post<WalletDto>(`${this.baseUrl}`, wallet).pipe(
+      tap(newWallet => {
+        const currentWallets = this.walletsSubject.value;
+        const updatedWallets = [...currentWallets, newWallet];
+        this.walletsSubject.next(updatedWallets);
+        this.updateWalletOrderPositions();
+        this.toastService.showSuccess('walletCreated');
+      }),
+      catchError(error => {
+        console.error('Error creating wallet:', error);
+        this.toastService.showHttpError(error, 'failedToCreateWallet');
+        throw error; // Re-throw error for component handling
+      })
+    );
+  }
+
+  /**
+   * Update wallet
+   */
+  updateWallet(walletId: string, wallet: WalletDto): Observable<WalletDto> {
+    return this.http.put<WalletDto>(`${this.baseUrl}/${walletId}`, wallet).pipe(
+      tap(updatedWallet => {
+        const currentWallets = this.walletsSubject.value;
+        const walletIndex = currentWallets.findIndex(w => w.id === walletId);
+        
+        if (walletIndex !== -1) {
+          currentWallets[walletIndex] = updatedWallet;
+          this.walletsSubject.next([...currentWallets]);
+        }
+        this.toastService.showSuccess('walletUpdated');
+      }),
+      catchError(error => {
+        console.error(`Error updating wallet ${walletId}:`, error);
+        this.toastService.showHttpError(error, 'failedToUpdateWallet');
+        throw error; // Re-throw error for component handling
+      })
+    );
+  }
+
+  /**
+   * Delete wallet
+   */
+  deleteWallet(walletId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${walletId}`).pipe(
+      tap(() => {
+        const currentWallets = this.walletsSubject.value;
+        const filteredWallets = currentWallets.filter(wallet => wallet.id !== walletId);
+        this.walletsSubject.next(filteredWallets);
+        this.updateWalletOrderPositions();
+        this.toastService.showSuccess('walletDeleted');
+      }),
+      catchError(error => {
+        console.error(`Error deleting wallet ${walletId}:`, error);
+        this.toastService.showHttpError(error, 'failedToDeleteWallet');
+        throw error; // Re-throw error for component handling
+      })
+    );
+  }
+
+  /**
+   * Set default wallet
+   */
+  setDefaultWallet(walletId: string): Observable<WalletDto> {
+    return this.http.post<WalletDto>(`${this.baseUrl}/${walletId}/set-default`, {}).pipe(
+      tap(() => {
+        const currentWallets = this.walletsSubject.value;
+        
+        // Remove default from all wallets
+        currentWallets.forEach(wallet => {
+          wallet.isDefault = false;
+        });
+        
+        // Set the specified wallet as default
+        const targetWallet = currentWallets.find(wallet => wallet.id === walletId);
+        if (targetWallet) {
+          targetWallet.isDefault = true;
+          this.walletsSubject.next([...currentWallets]);
+        }
+        this.toastService.showSuccess('defaultWalletSet');
+      }),
+      catchError(error => {
+        console.error(`Error setting default wallet ${walletId}:`, error);
+        this.toastService.showHttpError(error, 'failedToSetDefaultWallet');
+        throw error; // Re-throw error for component handling
+      })
+    );
+  }
+
+  /**
+   * Reorder wallets
+   */
+  reorderWallets(walletIds: string[]): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/reorder`, { walletIds }).pipe(
+      tap(() => {
+        const currentWallets = this.walletsSubject.value;
+        const reorderedWallets: WalletDto[] = [];
+        
+        // Reorder based on the provided order
+        walletIds.forEach((id, index) => {
+          const wallet = currentWallets.find(w => w.id === id);
+          if (wallet) {
+            wallet.orderPosition = index + 1;
+            reorderedWallets.push(wallet);
+          }
+        });
+        
+        // Add any remaining wallets
+        currentWallets.forEach(wallet => {
+          if (!walletIds.includes(wallet.id!)) {
+            wallet.orderPosition = reorderedWallets.length + 1;
+            reorderedWallets.push(wallet);
+          }
+        });
+        
+        this.walletsSubject.next(reorderedWallets);
+        this.toastService.showSuccess('walletsReordered');
+      }),
+      catchError(error => {
+        console.error('Error reordering wallets:', error);
+        this.toastService.showHttpError(error, 'failedToReorderWallets');
+        throw error; // Re-throw error for component handling
+      })
+    );
+  }
+
+  /**
+   * Get wallets by type
+   */
+  getWalletsByType(type: WalletType): Observable<WalletDto[]> {
+    return this.http.get<WalletDto[]>(`${this.baseUrl}/type/${type}`).pipe(
+      catchError(error => {
+        console.error(`Error fetching wallets by type ${type}:`, error);
+        this.toastService.showHttpError(error, 'failedToLoadWalletsByType');
+        throw error; // Re-throw error for component handling
+      })
+    );
+  }
+
+  /**
+   * Get default wallet
+   */
+  getDefaultWallet(): Observable<WalletDto> {
+    return this.http.get<WalletDto>(`${this.baseUrl}/default`).pipe(
+      catchError(error => {
+        console.error('Error fetching default wallet:', error);
+        this.toastService.showHttpError(error, 'failedToLoadDefaultWallet');
+        throw error; // Re-throw error for component handling
+      })
+    );
+  }
+
+  // Legacy methods for backward compatibility
+  
+  getAllWallets(): Observable<WalletDto[]> {
     return this.wallets$;
   }
 
-  getWalletById(id: string): Observable<Wallet | undefined> {
+  getWalletById(id: string): Observable<WalletDto | undefined> {
     return new Observable(observer => {
       this.wallets$.subscribe(wallets => {
         const wallet = wallets.find(w => w.id === id);
@@ -111,55 +220,13 @@ export class WalletService {
     });
   }
 
-
-
-  createWallet(wallet: Omit<Wallet, 'id' | 'order'>): boolean {
-    const newWallet: Wallet = {
-      ...wallet,
-      id: this.generateId(),
-      order: this.getNextOrder()
-    };
-    
-    const currentWallets = this.walletsSubject.value;
-    const updatedWallets = [...currentWallets, newWallet];
-    this.walletsSubject.next(updatedWallets);
-    this.updateWalletOrders();
-    return true;
-  }
-
-  updateWallet(updatedWallet: Wallet): boolean {
-    const currentWallets = this.walletsSubject.value;
-    const walletIndex = currentWallets.findIndex(w => w.id === updatedWallet.id);
-    
-    if (walletIndex === -1) {
-      return false; // Wallet not found
-    }
-    
-    currentWallets[walletIndex] = updatedWallet;
-    this.walletsSubject.next([...currentWallets]);
-    return true;
-  }
-
-  deleteWallet(id: string): boolean {
-    const currentWallets = this.walletsSubject.value;
-    const filteredWallets = currentWallets.filter(wallet => wallet.id !== id);
-    
-    if (filteredWallets.length === currentWallets.length) {
-      return false; // Wallet not found
-    }
-    
-    this.walletsSubject.next(filteredWallets);
-    this.updateWalletOrders();
-    return true;
-  }
-
-  getGoalProgress(wallet: Wallet): number {
+  getGoalProgress(wallet: WalletDto): number {
     if ((wallet.goalAmount ?? 0) <= 0) return 0;
-    return Math.min((wallet.balance / (wallet.goalAmount ?? 1)) * 100, 100);
+    return Math.min((wallet.balance! / (wallet.goalAmount ?? 1)) * 100, 100);
   }
 
   // Reordering Methods
-  moveWalletUp(wallet: Wallet): void {
+  moveWalletUp(wallet: WalletDto): void {
     const currentWallets = this.walletsSubject.value;
     const currentIndex = currentWallets.findIndex(w => w.id === wallet.id);
     
@@ -169,13 +236,13 @@ export class WalletService {
       currentWallets[currentIndex] = currentWallets[currentIndex - 1];
       currentWallets[currentIndex - 1] = temp;
       
-      // Update order values
-      this.updateWalletOrders();
+      // Update orderPosition values
+      this.updateWalletOrderPositions();
       this.walletsSubject.next([...currentWallets]);
     }
   }
 
-  moveWalletDown(wallet: Wallet): void {
+  moveWalletDown(wallet: WalletDto): void {
     const currentWallets = this.walletsSubject.value;
     const currentIndex = currentWallets.findIndex(w => w.id === wallet.id);
     
@@ -185,47 +252,21 @@ export class WalletService {
       currentWallets[currentIndex] = currentWallets[currentIndex + 1];
       currentWallets[currentIndex + 1] = temp;
       
-      // Update order values
-      this.updateWalletOrders();
+      // Update orderPosition values
+      this.updateWalletOrderPositions();
       this.walletsSubject.next([...currentWallets]);
     }
   }
 
-  private generateId(): string {
-    return 'wallet-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-  }
-
-  private getNextOrder(): number {
+  private getNextOrderPosition(): number {
     const currentWallets = this.walletsSubject.value;
     return currentWallets.length + 1;
   }
 
-  private updateWalletOrders(): void {
+  private updateWalletOrderPositions(): void {
     const currentWallets = this.walletsSubject.value;
     currentWallets.forEach((wallet, index) => {
-      wallet.order = index + 1;
+      wallet.orderPosition = index + 1;
     });
   }
-
-  // Default wallet management
-  setDefaultWallet(id: string): boolean {
-    const currentWallets = this.walletsSubject.value;
-    
-    // Remove default from all wallets
-    currentWallets.forEach(wallet => {
-      wallet.isDefault = false;
-    });
-    
-    // Set the specified wallet as default
-    const targetWallet = currentWallets.find(wallet => wallet.id === id);
-    if (targetWallet) {
-      targetWallet.isDefault = true;
-      this.walletsSubject.next([...currentWallets]);
-      return true;
-    }
-    
-    return false;
-  }
-
-
 }
