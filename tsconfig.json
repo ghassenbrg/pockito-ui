@@ -22,7 +22,11 @@
       "@shared/*": ["src/app/shared/*"],
       "@state/*": ["src/app/state/*"],
       "@core/*": ["src/app/core/*"],
-      "@features/*": ["src/app/features/*"]
+      "@features/*": ["src/app/features/*"],
+      "@api/*": ["src/app/api/*"],
+      "@assets/*": ["src/assets/*"],
+      "@environments/*": ["src/environments/*"],
+      "@app/*": ["src/app/*"]
     },
     "lib": [
       "ES2022",

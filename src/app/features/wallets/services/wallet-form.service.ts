@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WalletType, Currency, WalletTypeOption, CurrencyOption, WalletFormData } from '../models/wallet.types';
-import { Wallet } from '../../../api/model/wallet.model';
+import { Wallet } from '@api/model/wallet.model';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 

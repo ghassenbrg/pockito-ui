@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { WalletDto, WalletType } from '../model/wallet.model';
-import { environment } from '../../../environments/environment';
+import { WalletDto, WalletType } from '@api/model/wallet.model';
+import { environment } from '@environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
-import { ToastService } from '../../shared/services/toast.service';
+import { ToastService } from '@shared/services/toast.service';
 
 @Injectable({
   providedIn: 'root'

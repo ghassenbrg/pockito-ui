@@ -1,8 +1,8 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
-import { TranslationService } from '../../../core/services/translation.service';
+import { TranslationService } from '@core/services/translation.service';
 
 @Component({
   selector: 'app-language-switcher',

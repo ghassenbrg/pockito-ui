@@ -15,13 +15,15 @@ import { DialogModule } from 'primeng/dialog';
 import { DockModule } from 'primeng/dock';
 import { TerminalModule, TerminalService } from 'primeng/terminal';
 import { filter } from 'rxjs/operators';
-import { LanguageSwitcherComponent } from '../../shared/components/language-switcher/language-switcher.component';
-import { GlobalToastComponent } from '../../shared/components/global-toast/global-toast.component';
-import { KeycloakService } from '../security/keycloak.service';
-import { ResponsiveService } from '../services/responsive.service';
+import { LanguageSwitcherComponent } from '@shared/components/language-switcher/language-switcher.component';
+import { GlobalToastComponent } from '@shared/components/global-toast/global-toast.component';
+import { KeycloakService } from '@core/security/keycloak.service';
+import { ResponsiveService } from '@core/services/responsive.service';
 import { Subscription } from 'rxjs';
-import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
-import { LoadingService } from '../../shared/services/loading.service';
+import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
+import { LoadingService } from '@shared/services/loading.service';
+import { UserService } from '@api/services/user.service';
+import { UserDto } from '@api/model/user.model';
 
 @Component({
   selector: 'app-layout',
@@ -66,6 +68,9 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
   // Active route tracking
   activeRoute: string = '';
 
+  // Current user info
+  currentUser: UserDto | null = null;
+
   private responsiveSubscription!: Subscription;
 
   // Loading state observable
@@ -79,7 +84,8 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private translate: TranslateService,
     private responsiveService: ResponsiveService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private userService: UserService
   ) {
     // Subscribe to router events to track active route
     this.router.events
@@ -90,6 +96,9 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    // Get current user info
+    this.loadCurrentUser();
+    
     this.initializeMenuItems();
     
     // Subscribe to language changes to refresh menu items
@@ -360,6 +369,22 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
 
     // Set initial active route
     this.updateActiveRoute(this.router.url);
+  }
+
+  /**
+   * Load current user information from the /me endpoint
+   */
+  private loadCurrentUser(): void {
+    this.userService.getOrCreateCurrentUser().subscribe({
+      next: (user: UserDto) => {
+        this.currentUser = user;
+        console.log('Current user loaded:', user);
+      },
+      error: (error) => {
+        console.error('Failed to load current user:', error);
+        // Don't throw error here as it's not critical for the app to function
+      }
+    });
   }
 
   // Update active route based on current URL

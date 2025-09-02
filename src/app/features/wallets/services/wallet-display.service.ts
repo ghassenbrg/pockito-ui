@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Wallet } from '../../../api/model/wallet.model';
+import { Wallet } from '@api/model/wallet.model';
 import { WalletGoalProgress, FormattedAmount } from '../models/wallet.types';
 
 @Injectable({

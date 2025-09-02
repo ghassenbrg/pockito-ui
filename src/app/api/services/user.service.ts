@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { UserDto } from '../model/user.model';
-import { Currency, Country } from '../model/common.model';
-import { environment } from '../../../environments/environment';
+import { UserDto } from '@api/model/user.model';
+import { Currency, Country } from '@api/model/common.model';
+import { environment } from '@environments/environment';
 import { catchError, tap } from 'rxjs/operators';
-import { ToastService } from '../../shared/services/toast.service';
+import { ToastService } from '@shared/services/toast.service';
 
 @Injectable({
   providedIn: 'root'

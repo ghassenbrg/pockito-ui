@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map } from 'rxjs';
-import { Wallet } from '../../../api/model/wallet.model';
-import { WalletService } from '../../../api/services/wallet.service';
+import { Wallet } from '@api/model/wallet.model';
+import { WalletService } from '@api/services/wallet.service';
 import { WalletDisplayService } from './wallet-display.service';
 
 export interface WalletState {

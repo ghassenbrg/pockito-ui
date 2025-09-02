@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { Wallet } from '../../../../api/model/wallet.model';
+import { Wallet } from '@api/model/wallet.model';
 import { WalletDisplayService } from '../../services/wallet-display.service';
 import { WalletActionsService } from '../../services/wallet-actions.service';
 import { WalletGoalProgress, FormattedAmount } from '../../models/wallet.types';

@@ -5,7 +5,7 @@ import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { Wallet } from '../../api/model/wallet.model';
+import { Wallet } from '@api/model/wallet.model';
 import { WalletCardComponent } from './components/wallet-card/wallet-card.component';
 import { WalletListItemComponent } from './components/wallet-list-item/wallet-list-item.component';
 import { ViewSwitcherComponent, ViewMode } from './components/view-switcher/view-switcher.component';

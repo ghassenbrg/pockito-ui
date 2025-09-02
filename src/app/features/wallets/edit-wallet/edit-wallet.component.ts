@@ -1,21 +1,24 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { DropdownModule } from 'primeng/dropdown';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
-import { DropdownModule } from 'primeng/dropdown';
+import { CalendarModule } from 'primeng/calendar';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TooltipModule } from 'primeng/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-import { Wallet } from '../../../api/model/wallet.model';
+import { Wallet } from '@api/model/wallet.model';
 import { WalletFormService } from '../services/wallet-form.service';
 import { WalletActionsService } from '../services/wallet-actions.service';
 import { WalletStateService } from '../services/wallet-state.service';
-import { LoadingService } from '../../../shared/services/loading.service';
+import { LoadingService } from '@shared/services/loading.service';
+import { ToastService } from '@shared/services/toast.service';
+import { Subscription } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-edit-wallet',
@@ -55,7 +58,8 @@ export class EditWalletComponent implements OnInit, OnDestroy {
     private walletStateService: WalletStateService,
     private route: ActivatedRoute,
     private router: Router,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -118,6 +122,7 @@ export class EditWalletComponent implements OnInit, OnDestroy {
       }
     } else {
       this.walletFormService.markFormGroupTouched(this.editWalletForm);
+      this.toastService.showError('Please fix the form errors before submitting');
     }
   }
 

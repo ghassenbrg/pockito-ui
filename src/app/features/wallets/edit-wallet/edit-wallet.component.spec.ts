@@ -1,12 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { of } from 'rxjs';
-import { By } from '@angular/platform-browser';
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { EditWalletComponent } from './edit-wallet.component';
-import { WalletService } from '../../../api/services/wallet.service';
-import { Wallet } from '../../../api/model/wallet.model';
+import { RouterTestingModule } from '@angular/router/testing';
+import { TranslateModule } from '@ngx-translate/core';
+import { ToastService } from '@shared/services/toast.service';
+import { LoadingService } from '@shared/services/loading.service';
+import { WalletService } from '@api/services/wallet.service';
+import { Wallet } from '@api/model/wallet.model';
 
 describe('EditWalletComponent', () => {
   let component: EditWalletComponent;

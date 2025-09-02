@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Wallet, WalletDto } from '../../../api/model/wallet.model';
-import { WalletService } from '../../../api/services/wallet.service';
+import { Wallet, WalletDto } from '@api/model/wallet.model';
+import { WalletService } from '@api/services/wallet.service';
 import { WalletFormData } from '../models/wallet.types';
 import { Observable } from 'rxjs';
 
