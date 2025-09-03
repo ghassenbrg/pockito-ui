@@ -1,16 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WalletType, Currency, WalletTypeOption, CurrencyOption, WalletFormData } from '../models/wallet.types';
 import { Wallet } from '@api/model/wallet.model';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription, forkJoin } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
-export class WalletFormService {
+export class WalletFormService implements OnDestroy {
   private walletTypesSubject = new BehaviorSubject<WalletTypeOption[]>([]);
   private currenciesSubject = new BehaviorSubject<CurrencyOption[]>([]);
+  private languageSubscription: Subscription = new Subscription();
   
   walletTypes$ = this.walletTypesSubject.asObservable();
   currencies$ = this.currenciesSubject.asObservable();
@@ -23,13 +24,17 @@ export class WalletFormService {
     this.subscribeToLanguageChanges();
   }
 
+  ngOnDestroy(): void {
+    this.languageSubscription.unsubscribe();
+  }
+
   private initializeOptions(): void {
     this.loadTranslations();
   }
 
   private subscribeToLanguageChanges(): void {
     // Subscribe to language changes to reload translations
-    this.translateService.onLangChange.subscribe(() => {
+    this.languageSubscription = this.translateService.onLangChange.subscribe(() => {
       this.loadTranslations();
     });
   }
@@ -44,23 +49,6 @@ export class WalletFormService {
       { key: 'editWallet.walletTypes.CUSTOM', value: WalletType.CUSTOM }
     ];
 
-    const walletTypes: WalletTypeOption[] = [];
-    walletTypeKeys.forEach(({ key, value }) => {
-      this.translateService.get(key).subscribe(label => {
-        const existingIndex = walletTypes.findIndex(t => t.value === value);
-        if (existingIndex >= 0) {
-          walletTypes[existingIndex].label = label;
-        } else {
-          walletTypes.push({ label, value });
-        }
-        
-        // Update the subject when all translations are loaded
-        if (walletTypes.length === walletTypeKeys.length) {
-          this.walletTypesSubject.next([...walletTypes]);
-        }
-      });
-    });
-
     // Load currency translations
     const currencyKeys = [
       { key: 'editWallet.currencies.TND', value: Currency.TND },
@@ -69,21 +57,31 @@ export class WalletFormService {
       { key: 'editWallet.currencies.JPY', value: Currency.JPY }
     ];
 
-    const currencies: CurrencyOption[] = [];
-    currencyKeys.forEach(({ key, value }) => {
-      this.translateService.get(key).subscribe(label => {
-        const existingIndex = currencies.findIndex(c => c.value === value);
-        if (existingIndex >= 0) {
-          currencies[existingIndex].label = label;
-        } else {
-          currencies.push({ label, value });
-        }
-        
-        // Update the subject when all translations are loaded
-        if (currencies.length === currencyKeys.length) {
-          this.currenciesSubject.next([...currencies]);
-        }
-      });
+    // Use forkJoin to load all translations at once
+    const walletTypeTranslations$ = forkJoin(
+      walletTypeKeys.map(({ key }) => this.translateService.get(key))
+    );
+
+    const currencyTranslations$ = forkJoin(
+      currencyKeys.map(({ key }) => this.translateService.get(key))
+    );
+
+    // Load wallet types
+    walletTypeTranslations$.subscribe(labels => {
+      const walletTypes: WalletTypeOption[] = walletTypeKeys.map(({ value }, index) => ({
+        label: labels[index],
+        value
+      }));
+      this.walletTypesSubject.next(walletTypes);
+    });
+
+    // Load currencies
+    currencyTranslations$.subscribe(labels => {
+      const currencies: CurrencyOption[] = currencyKeys.map(({ value }, index) => ({
+        label: labels[index],
+        value
+      }));
+      this.currenciesSubject.next(currencies);
     });
   }
 
@@ -140,7 +138,6 @@ export class WalletFormService {
     return {
       name: formValue.name,
       initialBalance: formValue.initialBalance,
-      balance: formValue.balance,
       currency: formValue.currency,
       type: formValue.type,
       goalAmount: formValue.goalAmount !== null && formValue.goalAmount !== undefined ? formValue.goalAmount : undefined,

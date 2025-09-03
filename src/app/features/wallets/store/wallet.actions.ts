@@ -1,5 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { Wallet, WalletDto } from '@api/model/wallet.model';
+import { ViewMode } from '../models/wallet.types';
 
 // Load Wallets
 export const loadWallets = createAction('[Wallet] Load Wallets');
@@ -117,7 +118,7 @@ export const setSelectedWallet = createAction(
 
 export const setViewMode = createAction(
   '[Wallet] Set View Mode',
-  props<{ viewMode: 'cards' | 'list' }>()
+  props<{ viewMode: ViewMode }>()
 );
 
 // Enhanced error handling actions

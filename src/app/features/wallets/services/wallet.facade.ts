@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Wallet, WalletDto } from '@api/model/wallet.model';
-import { WalletFormData } from '../models/wallet.types';
+import { WalletFormData, ViewMode } from '../models/wallet.types';
 import * as WalletActions from '../store/wallet.actions';
 import * as WalletSelectors from '../store/wallet.selectors';
 
@@ -67,8 +67,7 @@ export class WalletFacade {
   createWallet(walletData: WalletFormData): void {
     const walletToCreate: WalletDto = {
       name: walletData.name!,
-      initialBalance: 0,
-      balance: 0,
+      initialBalance: walletData.initialBalance,
       currency: walletData.currency!,
       type: walletData.type!,
       goalAmount: walletData.goalAmount,
@@ -106,7 +105,7 @@ export class WalletFacade {
     this.store.dispatch(WalletActions.setSelectedWallet({ wallet }));
   }
 
-  setViewMode(viewMode: 'cards' | 'list'): void {
+  setViewMode(viewMode: ViewMode): void {
     this.store.dispatch(WalletActions.setViewMode({ viewMode }));
   }
 

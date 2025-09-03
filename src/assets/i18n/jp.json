@@ -212,12 +212,14 @@
       "failedToUpdateCountry": "国の更新に失敗しました"
     },
     "messages": {
+      "walletCreated": "ウォレットが正常に作成されました",
       "walletCreatedSuccessfully": "ウォレットが正常に作成されました",
       "walletUpdated": "ウォレットが正常に更新されました",
       "walletUpdatedSuccessfully": "ウォレットが正常に更新されました",
       "walletDeletedSuccessfully": "ウォレットが正常に削除されました",
       "defaultWalletUpdated": "デフォルトウォレットが更新されました",
       "walletOrderUpdated": "ウォレットの順序が更新されました",
+      "walletsReordered": "ウォレットが正常に再配置されました",
       "defaultCurrencyChanged": "デフォルト通貨が{{currency}}に変更されました",
       "countryChanged": "国が{{country}}に変更されました",
       "helloUser": "こんにちは、{{username}}さん！",

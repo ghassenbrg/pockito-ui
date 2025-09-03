@@ -130,9 +130,7 @@ export class EditWalletComponent implements OnInit, OnDestroy {
         });
     } else {
       this.walletFormService.markFormGroupTouched(this.editWalletForm);
-      this.toastService.showError(
-        'Please fix the form errors before submitting'
-      );
+      this.toastService.showError('formErrors');
     }
   }
 

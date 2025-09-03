@@ -103,7 +103,7 @@
                [showClear]="false"
                [filter]="false"
                appendTo="body"
-               [readonly]="(isEditMode$ | async)"
+               [readonly]="(isEditMode$ | async) || false"
                [overlayOptions]="{ autoZIndex: true }"
              ></p-dropdown>
              <div *ngIf="isFieldInvalid('currency')" class="error-message">

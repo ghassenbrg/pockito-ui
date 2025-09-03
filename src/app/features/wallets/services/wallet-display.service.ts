@@ -6,16 +6,31 @@ import { WalletGoalProgress, FormattedAmount } from '../models/wallet.types';
   providedIn: 'root'
 })
 export class WalletDisplayService {
+  // Memoization cache for expensive operations
+  private amountFormatCache = new Map<number, FormattedAmount>();
+  private goalProgressCache = new Map<string, WalletGoalProgress>();
+  private typeLabelCache = new Map<string, string>();
+  private currencyLabelCache = new Map<string, string>();
   formatAmount(amount: number | undefined): FormattedAmount {
     if (!amount || amount === 0) {
       return { text: '0.00', color: '#1a202c' }; // Black
     }
     
-    if (amount > 0) {
-      return { text: `+${amount.toFixed(2)}`, color: '#10b981' }; // Green
-    } else {
-      return { text: `${amount.toFixed(2)}`, color: '#dc2626' }; // Red
+    // Check cache first
+    if (this.amountFormatCache.has(amount)) {
+      return this.amountFormatCache.get(amount)!;
     }
+    
+    let result: FormattedAmount;
+    if (amount > 0) {
+      result = { text: `+${amount.toFixed(2)}`, color: '#10b981' }; // Green
+    } else {
+      result = { text: `${amount.toFixed(2)}`, color: '#dc2626' }; // Red
+    }
+    
+    // Cache the result
+    this.amountFormatCache.set(amount, result);
+    return result;
   }
 
   getGoalProgress(wallet: Wallet): WalletGoalProgress {
@@ -26,15 +41,27 @@ export class WalletDisplayService {
       return { hasGoal: false, progress: 0, isComplete: false };
     }
     
+    // Create cache key from wallet properties
+    const cacheKey = `${wallet.id}-${wallet.balance}-${goalAmount}`;
+    
+    // Check cache first
+    if (this.goalProgressCache.has(cacheKey)) {
+      return this.goalProgressCache.get(cacheKey)!;
+    }
+    
     const balance = wallet.balance ?? 0;
     const progress = Math.min((balance / goalAmount) * 100, 100);
     const isComplete = progress >= 100;
     
-    return {
+    const result = {
       hasGoal: true,
       progress: Math.round(progress),
       isComplete
     };
+    
+    // Cache the result
+    this.goalProgressCache.set(cacheKey, result);
+    return result;
   }
 
   getWalletIconUrl(wallet: Wallet): string {
@@ -42,6 +69,11 @@ export class WalletDisplayService {
   }
 
   getWalletTypeLabel(type: string): string {
+    // Check cache first
+    if (this.typeLabelCache.has(type)) {
+      return this.typeLabelCache.get(type)!;
+    }
+    
     const typeLabels: Record<string, string> = {
       'BANK_ACCOUNT': 'Bank Account',
       'CASH': 'Cash',
@@ -50,10 +82,19 @@ export class WalletDisplayService {
       'CUSTOM': 'Custom'
     };
     
-    return typeLabels[type] || type;
+    const result = typeLabels[type] || type;
+    
+    // Cache the result
+    this.typeLabelCache.set(type, result);
+    return result;
   }
 
   getCurrencyLabel(currency: string): string {
+    // Check cache first
+    if (this.currencyLabelCache.has(currency)) {
+      return this.currencyLabelCache.get(currency)!;
+    }
+    
     const currencyLabels: Record<string, string> = {
       'TND': 'TND (Tunisian Dinar)',
       'EUR': 'EUR (Euro)',
@@ -61,7 +102,11 @@ export class WalletDisplayService {
       'JPY': 'JPY (Japanese Yen)'
     };
     
-    return currencyLabels[currency] || currency;
+    const result = currencyLabels[currency] || currency;
+    
+    // Cache the result
+    this.currencyLabelCache.set(currency, result);
+    return result;
   }
 
   isWalletActive(wallet: Wallet): boolean {
@@ -112,5 +157,22 @@ export class WalletDisplayService {
     });
     
     return total;
+  }
+
+  // Cache management methods
+  clearCache(): void {
+    this.amountFormatCache.clear();
+    this.goalProgressCache.clear();
+    this.typeLabelCache.clear();
+    this.currencyLabelCache.clear();
+  }
+
+  clearWalletCache(walletId: string): void {
+    // Clear goal progress cache for specific wallet
+    for (const key of this.goalProgressCache.keys()) {
+      if (key.startsWith(walletId)) {
+        this.goalProgressCache.delete(key);
+      }
+    }
   }
 }

@@ -212,12 +212,14 @@
       "failedToUpdateCountry": "Failed to update country"
     },
     "messages": {
+      "walletCreated": "Wallet has been created successfully",
       "walletCreatedSuccessfully": "Wallet has been created successfully",
       "walletUpdated": "Wallet has been updated successfully",
       "walletUpdatedSuccessfully": "Wallet has been updated successfully",
       "walletDeletedSuccessfully": "Wallet has been deleted successfully",
       "defaultWalletUpdated": "Default wallet has been updated",
       "walletOrderUpdated": "Wallet order has been updated",
+      "walletsReordered": "Wallets have been reordered successfully",
       "defaultCurrencyChanged": "Default currency changed to {{currency}}",
       "countryChanged": "Country changed to {{country}}",
       "helloUser": "Hello {{username}}!",

@@ -120,8 +120,7 @@ export class WalletEffects {
             // Use reorderWallets API to update the order
             const walletIds = newOrder.map(w => w.id!);
             return this.walletService.reorderWallets(walletIds).pipe(
-              switchMap(() => this.walletService.getUserWallets()),
-              map(wallets => WalletActions.moveWalletUpSuccess({ wallets })),
+              map(() => WalletActions.moveWalletUpSuccess({ wallets: newOrder })),
               catchError(error => of(WalletActions.moveWalletUpFailure({ 
                 error: error.message || 'Failed to move wallet up' 
               })))
@@ -156,8 +155,7 @@ export class WalletEffects {
             // Use reorderWallets API to update the order
             const walletIds = newOrder.map(w => w.id!);
             return this.walletService.reorderWallets(walletIds).pipe(
-              switchMap(() => this.walletService.getUserWallets()),
-              map(wallets => WalletActions.moveWalletDownSuccess({ wallets })),
+              map(() => WalletActions.moveWalletDownSuccess({ wallets: newOrder })),
               catchError(error => of(WalletActions.moveWalletDownFailure({ 
                 error: error.message || 'Failed to move wallet down' 
               })))

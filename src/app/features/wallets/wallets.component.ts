@@ -9,7 +9,8 @@ import { map } from 'rxjs/operators';
 import { Wallet } from '@api/model/wallet.model';
 import { WalletCardComponent } from './components/wallet-card/wallet-card.component';
 import { WalletListItemComponent } from './components/wallet-list-item/wallet-list-item.component';
-import { ViewSwitcherComponent, ViewMode } from './components/view-switcher/view-switcher.component';
+import { ViewSwitcherComponent } from './components/view-switcher/view-switcher.component';
+import { ViewMode } from './models/wallet.types';
 import { WalletFacade } from './services/wallet.facade';
 import { ResponsiveService } from '@core/services/responsive.service';
 
@@ -66,13 +67,15 @@ export class WalletsComponent implements OnInit, OnDestroy {
       ).subscribe(isMobile => {
         // Auto-switch to list view on mobile if currently in cards view
         if (isMobile) {
-          this.walletFacade.viewMode$.pipe(
-            map(viewMode => viewMode === 'cards')
-          ).subscribe(isCardsView => {
-            if (isCardsView) {
-              this.setViewMode('list');
-            }
-          });
+          this.subscriptions.add(
+            this.walletFacade.viewMode$.pipe(
+              map(viewMode => viewMode === 'cards')
+            ).subscribe(isCardsView => {
+              if (isCardsView) {
+                this.setViewMode('list');
+              }
+            })
+          );
         }
       })
     );

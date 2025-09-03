@@ -212,12 +212,14 @@
       "failedToUpdateCountry": "Échec de la mise à jour du pays"
     },
     "messages": {
+      "walletCreated": "Le portefeuille a été créé avec succès",
       "walletCreatedSuccessfully": "Le portefeuille a été créé avec succès",
       "walletUpdated": "Le portefeuille a été mis à jour avec succès",
       "walletUpdatedSuccessfully": "Le portefeuille a été mis à jour avec succès",
       "walletDeletedSuccessfully": "Le portefeuille a été supprimé avec succès",
       "defaultWalletUpdated": "Le portefeuille par défaut a été mis à jour",
       "walletOrderUpdated": "L'ordre des portefeuilles a été mis à jour",
+      "walletsReordered": "Les portefeuilles ont été réorganisés avec succès",
       "defaultCurrencyChanged": "La devise par défaut a été changée en {{currency}}",
       "countryChanged": "Le pays a été changé en {{country}}",
       "helloUser": "Bonjour {{username}} !",

@@ -1,9 +1,10 @@
 import { Wallet } from '@api/model/wallet.model';
+import { ViewMode } from '../models/wallet.types';
 
 export interface WalletState {
   wallets: Wallet[];
   selectedWallet: Wallet | null;
-  viewMode: 'cards' | 'list';
+  viewMode: ViewMode;
   
   // Global loading state
   isLoading: boolean;

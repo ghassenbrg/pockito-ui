@@ -1,3 +1,5 @@
+import { Wallet } from "@api/model";
+
 export enum WalletType {
   BANK_ACCOUNT = 'BANK_ACCOUNT',
   CASH = 'CASH',
@@ -26,7 +28,6 @@ export interface CurrencyOption {
 export interface WalletFormData {
   name: string;
   initialBalance: number;
-  balance: number;
   currency: Currency;
   type: WalletType;
   goalAmount?: number;
@@ -61,4 +62,31 @@ export interface WalletGoalProgress {
 export interface FormattedAmount {
   text: string;
   color: string;
+}
+
+// Enhanced type definitions for better type safety
+export type ViewMode = 'cards' | 'list';
+
+export interface WalletOperationState {
+  isLoading: boolean;
+  error: string | null;
+  hasError: boolean;
+}
+
+export interface WalletCacheKey {
+  walletId: string;
+  balance: number;
+  goalAmount: number;
+}
+
+export interface WalletSortOptions {
+  field: keyof Wallet;
+  direction: 'asc' | 'desc';
+}
+
+export interface WalletFilterOptions {
+  type?: WalletType;
+  currency?: Currency;
+  active?: boolean;
+  hasGoal?: boolean;
 }

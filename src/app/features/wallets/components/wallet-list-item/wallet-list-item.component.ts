@@ -1,5 +1,5 @@
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
@@ -15,7 +15,7 @@ import { WalletGoalProgress, FormattedAmount } from '../../models/wallet.types';
   styleUrl: './wallet-list-item.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WalletListItemComponent {
+export class WalletListItemComponent implements OnChanges {
   @Input() wallet!: Wallet;
   @Input() canMoveUp: boolean = false;
   @Input() canMoveDown: boolean = false;
@@ -27,20 +27,44 @@ export class WalletListItemComponent {
   @Output() moveUp = new EventEmitter<Wallet>();
   @Output() moveDown = new EventEmitter<Wallet>();
 
+  // Memoized getters for better performance
+  private _walletIconUrl: string | null = null;
+  private _goalProgress: WalletGoalProgress | null = null;
+  private _walletTypeLabel: string | null = null;
+
   constructor(
-    private walletDisplayService: WalletDisplayService,
+    private walletDisplayService: WalletDisplayService
   ) {}
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['wallet']) {
+      this.clearMemoizedValues();
+    }
+  }
+
   getWalletIconUrl(): string {
-    return this.walletDisplayService.getWalletIconUrl(this.wallet);
+    if (!this._walletIconUrl) {
+      this._walletIconUrl = this.walletDisplayService.getWalletIconUrl(this.wallet);
+    }
+    return this._walletIconUrl;
   }
 
   getGoalProgress(): WalletGoalProgress {
-    return this.walletDisplayService.getGoalProgress(this.wallet);
+    if (!this._goalProgress) {
+      this._goalProgress = this.walletDisplayService.getGoalProgress(this.wallet);
+    }
+    return this._goalProgress;
   }
 
   formatAmount(amount: number | undefined): FormattedAmount {
     return this.walletDisplayService.formatAmount(amount);
+  }
+
+  getWalletTypeLabel(): string {
+    if (!this._walletTypeLabel) {
+      this._walletTypeLabel = this.walletDisplayService.getWalletTypeLabel(this.wallet.type);
+    }
+    return this._walletTypeLabel;
   }
 
   isWalletActive(): boolean {
@@ -55,6 +79,7 @@ export class WalletListItemComponent {
     event.target.src = 'assets/icons/wallet.png';
   }
 
+  // Event handlers
   onViewWallet(): void {
     this.viewWallet.emit(this.wallet);
   }
@@ -82,5 +107,12 @@ export class WalletListItemComponent {
   // TrackBy function for performance optimization
   trackByWalletId(index: number, wallet: Wallet): string {
     return wallet.id ?? '';
+  }
+
+  // Clear memoized values when wallet changes
+  private clearMemoizedValues(): void {
+    this._walletIconUrl = null;
+    this._goalProgress = null;
+    this._walletTypeLabel = null;
   }
 }
