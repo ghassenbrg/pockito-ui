@@ -137,13 +137,14 @@ export class WalletFormService {
 
   getFormData(form: FormGroup): WalletFormData {
     const formValue = form.value;
+    console.log(formValue);
     return {
       name: formValue.name,
       initialBalance: formValue.initialBalance,
       balance: formValue.balance,
       currency: formValue.currency,
       type: formValue.type,
-      goalAmount: formValue.goalAmount > 0 ? formValue.goalAmount : undefined,
+      goalAmount: formValue.goalAmount !== null && formValue.goalAmount !== undefined ? formValue.goalAmount : undefined,
       isDefault: formValue.isDefault,
       active: formValue.active,
       iconUrl: formValue.iconUrl || undefined,

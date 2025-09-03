@@ -1,62 +1,29 @@
 import { Injectable } from '@angular/core';
-import { MessageService } from 'primeng/api';
-import { Message } from 'primeng/api';
 import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject } from 'rxjs';
+import { ToastMessage } from '../models/toast-message.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ToastService {
-  constructor(
-    private messageService: MessageService,
-    private translateService: TranslateService
-  ) {}
+  private toastMessagesSubject = new BehaviorSubject<ToastMessage[]>([]);
+  public toastMessages$ = this.toastMessagesSubject.asObservable();
+
+  constructor(private translateService: TranslateService) {}
 
   /**
    * Show success toast
    */
   showSuccess(key: string, params?: any, life: number = 3000): void {
-    this.translateService.get(`toast.success.${key}`, params).subscribe(summary => {
-      this.translateService.get(`toast.messages.${key}`, params).subscribe(detail => {
-        this.messageService.add({
-          severity: 'success',
-          summary,
-          detail,
-          life
-        });
-      });
-    });
-  }
-
-  /**
-   * Show info toast
-   */
-  showInfo(key: string, params?: any, life: number = 3000): void {
-    this.translateService.get(`toast.info.${key}`, params).subscribe(summary => {
-      this.translateService.get(`toast.messages.${key}`, params).subscribe(detail => {
-        this.messageService.add({
-          severity: 'info',
-          summary,
-          detail,
-          life
-        });
-      });
-    });
-  }
-
-  /**
-   * Show warning toast
-   */
-  showWarning(key: string, params?: any, life: number = 4000): void {
-    this.translateService.get(`toast.warning.${key}`, params).subscribe(summary => {
-      this.translateService.get(`toast.messages.${key}`, params).subscribe(detail => {
-        this.messageService.add({
-          severity: 'warn',
-          summary,
-          detail,
-          life
-        });
-      });
+    const summary = this.translateService.instant(`toast.success.${key}`, params);
+    const detail = this.translateService.instant(`toast.messages.${key}`, params);
+    
+    this.addToast({
+      severity: 'success',
+      summary,
+      detail,
+      life,
     });
   }
 
@@ -64,59 +31,92 @@ export class ToastService {
    * Show error toast
    */
   showError(key: string, params?: any, life: number = 5000): void {
-    this.translateService.get(`toast.error.${key}`, params).subscribe(summary => {
-      this.translateService.get(`toast.messages.${key}`, params).subscribe(detail => {
-        this.messageService.add({
-          severity: 'error',
-          summary,
-          detail,
-          life
-        });
-      });
+    const summary = this.translateService.instant(`toast.error.${key}`, params);
+    const detail = this.translateService.instant(`toast.messages.${key}`, params);
+    
+    this.addToast({
+      severity: 'error',
+      summary,
+      detail,
+      life,
     });
   }
 
   /**
-   * Show error toast from HTTP error
+   * Show info toast
    */
-  showHttpError(error: any, errorKey: string = 'general'): void {
-    const params: any = {};
+  showInfo(key: string, params?: any, life: number = 3000): void {
+    const summary = this.translateService.instant(`toast.info.${key}`, params);
+    const detail = this.translateService.instant(`toast.messages.${key}`, params);
     
-    if (error?.status) {
-      params.status = error.status;
-    }
-    
-    if (error?.error?.message) {
-      params.errorMessage = error.error.message;
-    } else if (error?.message) {
-      params.errorMessage = error.message;
-    } else if (error?.statusText) {
-      params.errorMessage = `${error.statusText} (${error.status})`;
-    } else if (typeof error === 'string') {
-      params.errorMessage = error;
-    }
-
-    this.showError(errorKey, params);
+    this.addToast({
+      severity: 'info',
+      summary,
+      detail,
+      life,
+    });
   }
 
   /**
-   * Show multiple toasts
+   * Show warning toast
    */
-  showMultiple(messages: Message[]): void {
-    this.messageService.addAll(messages);
+  showWarning(key: string, params?: any, life: number = 5000): void {
+    const summary = this.translateService.instant(`toast.warning.${key}`, params);
+    const detail = this.translateService.instant(`toast.messages.${key}`, params);
+    
+    this.addToast({
+      severity: 'warn',
+      summary,
+      detail,
+      life,
+    });
+  }
+
+  /**
+   * Show HTTP error toast (for API service errors)
+   */
+  showHttpError(error: any, messageKey: string, params?: any, life: number = 5000): void {
+    // Extract error details from HTTP error response
+    const status = error?.status || 'Unknown';
+    const errorMessage = error?.error?.message || error?.message || 'An error occurred';
+    
+    // Merge params with error details
+    const errorParams = {
+      status,
+      errorMessage,
+      ...params
+    };
+
+    const summary = this.translateService.instant(`toast.error.${messageKey}`, errorParams);
+    const detail = this.translateService.instant(`toast.messages.${messageKey}`, errorParams);
+    
+    this.addToast({
+      severity: 'error',
+      summary,
+      detail,
+      life,
+    });
+  }
+
+  /**
+   * Add toast to the list
+   */
+  private addToast(toast: ToastMessage): void {
+    const currentToasts = this.toastMessagesSubject.value;
+    this.toastMessagesSubject.next([...currentToasts, toast]);
   }
 
   /**
    * Clear all toasts
    */
-  clear(): void {
-    this.messageService.clear();
+  clearAll(): void {
+    this.toastMessagesSubject.next([]);
   }
 
   /**
-   * Clear toasts by key
+   * Get current toasts
    */
-  clearByKey(key: string): void {
-    this.messageService.clear(key);
+  getToasts(): ToastMessage[] {
+    return this.toastMessagesSubject.value;
   }
 }

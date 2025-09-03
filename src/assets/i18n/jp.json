@@ -19,29 +19,15 @@
       "more": "その他"
     },
     "mobile": {
-      "closeMenu": "メニューを閉じる",
-      "moreOptionsHeader": "その他のオプション",
-      "openMenu": "メニューを開く",
-      "menuAccessibility": "モバイルナビゲーションメニュー"
+      "closeMenu": "メニューを閉じる"
     },
     "common": {
-      "appName": "Pockito",
-      "loading": "読み込み中...",
-      "error": "エラー",
-      "success": "成功"
+      "appName": "Pockito"
     },
     "dialogs": {
       "moreOptions": "その他のオプション",
       "switchLanguage": "言語を切り替え",
-      "testLanguageSwitcher": "言語切り替えのテスト",
-      "close": "閉じる",
-      "cancel": "キャンセル",
-      "confirm": "確認"
-    },
-    "accessibility": {
-      "closeButton": "閉じるボタン",
-      "navigationItem": "ナビゲーション項目",
-      "tooltip": "ツールチップ"
+      "testLanguageSwitcher": "言語切り替えのテスト"
     }
   },
   "wallet": {
@@ -186,10 +172,19 @@
       "walletUpdated": "ウォレットが更新されました",
       "walletDeleted": "ウォレットが削除されました",
       "defaultWalletSet": "デフォルトウォレットが設定されました",
-      "walletsReordered": "ウォレットの順序が更新されました",
-      "currencyUpdated": "通貨が更新されました",
-      "countryUpdated": "国が更新されました",
-      "welcomeBack": "おかえりなさい"
+      "walletsReordered": "ウォレットの順序が変更されました",
+      "currencyUpdated": "通貨が{{currency}}に更新されました",
+      "countryUpdated": "国が{{country}}に更新されました",
+      "welcomeBack": "おかえりなさい、{{username}}さん！"
+    },
+    "info": {
+      "general": "情報",
+      "walletInfo": "ウォレット情報",
+      "userInfo": "ユーザー情報"
+    },
+    "warning": {
+      "general": "警告",
+      "formValidation": "フォーム検証が必要です"
     },
     "error": {
       "general": "エラーが発生しました",
@@ -200,6 +195,7 @@
       "serverError": "サーバーエラー",
       "requestError": "リクエストエラー",
       "networkError": "ネットワークエラー",
+      "requestFailed": "リクエストが失敗しました",
       "failedToLoadWallets": "ウォレットの読み込みに失敗しました",
       "failedToLoadWallet": "ウォレットの読み込みに失敗しました",
       "failedToCreateWallet": "ウォレットの作成に失敗しました",
@@ -217,69 +213,36 @@
     },
     "messages": {
       "walletCreatedSuccessfully": "ウォレットが正常に作成されました",
+      "walletUpdated": "ウォレットが正常に更新されました",
       "walletUpdatedSuccessfully": "ウォレットが正常に更新されました",
       "walletDeletedSuccessfully": "ウォレットが正常に削除されました",
       "defaultWalletUpdated": "デフォルトウォレットが更新されました",
       "walletOrderUpdated": "ウォレットの順序が更新されました",
-      "defaultCurrencyChanged": "デフォルト通貨が{currency}に変更されました",
-      "countryChanged": "国が{country}に変更されました",
-      "helloUser": "こんにちは、{username}さん！",
+      "defaultCurrencyChanged": "デフォルト通貨が{{currency}}に変更されました",
+      "countryChanged": "国が{{country}}に変更されました",
+      "helloUser": "こんにちは、{{username}}さん！",
+      "welcomeBack": "おかえりなさい、{{username}}さん！",
       "sessionExpired": "セッションが期限切れです。再度ログインしてください。",
       "noPermission": "このアクションを実行する権限がありません。",
       "resourceNotFound": "要求されたリソースが見つかりません。",
       "internalServerError": "内部サーバーエラーが発生しました。後でもう一度お試しください。",
-      "serverErrorOccurred": "サーバーエラーが発生しました（{status}）。後でもう一度お試しください。",
-      "requestFailed": "リクエストが失敗しました（{status}）。{errorMessage, select, undefined {入力を確認して再試行してください。} other {{errorMessage}}}",
-      "networkErrorOccurred": "ネットワークエラーが発生しました。接続を確認して再試行してください。"
+      "serverErrorOccurred": "サーバーエラーが発生しました（{{status}}）。後でもう一度お試しください。",
+      "requestFailed": "リクエストが失敗しました（{{status}}）。{{errorMessage}}",
+      "validationError": "検証に失敗しました。入力を確認して再試行してください。",
+      "serverUnavailable": "サーバーが一時的に利用できません。後でもう一度お試しください。",
+      "connectionTimeout": "接続がタイムアウトしました。インターネット接続を確認して再試行してください。",
+      "networkErrorOccurred": "ネットワークエラーが発生しました。接続を確認して再試行してください。",
+      "general": "予期しないエラーが発生しました。再試行してください。",
+      "formErrors": "送信前にフォームエラーを修正してください"
     }
   },
   "form": {
-    "validation": {
-      "required": "このフィールドは必須です",
-      "minLength": "最小長は{min}文字です",
-      "maxLength": "最大長は{max}文字です",
-      "email": "有効なメールアドレスを入力してください",
-      "pattern": "有効な値を入力してください",
-      "min": "値は{min}以上である必要があります",
-      "max": "値は{max}以下である必要があります",
-      "invalidFormat": "無効な形式です",
-      "passwordMismatch": "パスワードが一致しません",
-      "uniqueValue": "この値は一意である必要があります"
-    },
-    "messages": {
-      "saving": "保存中...",
-      "saved": "正常に保存されました",
-      "savingFailed": "保存に失敗しました",
-      "loading": "読み込み中...",
-      "loadingFailed": "読み込みに失敗しました",
-      "deleting": "削除中...",
-      "deleted": "正常に削除されました",
-      "deletionFailed": "削除に失敗しました",
-      "updating": "更新中...",
-      "updated": "正常に更新されました",
-      "updateFailed": "更新に失敗しました",
-      "creating": "作成中...",
-      "created": "正常に作成されました",
-      "creationFailed": "作成に失敗しました"
-    },
-    "confirmations": {
-      "deleteTitle": "削除の確認",
-      "deleteMessage": "このアイテムを削除してもよろしいですか？この操作は元に戻せません。",
-      "unsavedChangesTitle": "未保存の変更",
-      "unsavedChangesMessage": "未保存の変更があります。本当に離れますか？",
-      "discardChanges": "変更を破棄",
-      "saveChanges": "変更を保存",
-      "cancel": "キャンセル",
-      "confirm": "確認",
-      "yes": "はい",
-      "no": "いいえ"
-    },
     "errors": {
       "fieldRequired": "このフィールドは必須です",
-      "minLength": "最小長は{min}文字です",
-      "maxLength": "最大長は{max}文字です",
-      "minValue": "値は{min}以上である必要があります",
-      "maxValue": "値は{max}以下である必要があります",
+      "minLength": "最小長は{{min}}文字です",
+      "maxLength": "最大長は{{max}}文字です",
+      "minValue": "値は{{min}}以上である必要があります",
+      "maxValue": "値は{{max}}以下である必要があります",
       "invalidFormat": "無効な形式です",
       "invalidUrl": "有効なURLを入力してください",
       "invalidEmail": "有効なメールアドレスを入力してください"

@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {
-  FormBuilder,
-  FormGroup,
-  ReactiveFormsModule
-} from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { LoadingService } from '@shared/services/loading.service';
@@ -17,7 +18,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { TooltipModule } from 'primeng/tooltip';
 import { Subscription, combineLatest } from 'rxjs';
-import { map, switchMap, filter, take } from 'rxjs/operators';
+import { filter, map, switchMap, take } from 'rxjs/operators';
 import { WalletFormService } from '../services/wallet-form.service';
 import { WalletFacade } from '../services/wallet.facade';
 
@@ -37,14 +38,14 @@ import { WalletFacade } from '../services/wallet.facade';
   ],
   templateUrl: './edit-wallet.component.html',
   styleUrls: ['./edit-wallet.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EditWalletComponent implements OnInit, OnDestroy {
   editWalletForm!: FormGroup;
-  
+
   // Observables for reactive data binding
   wallet$ = this.route.params.pipe(
-    switchMap(params => {
+    switchMap((params) => {
       const walletId = params['id'];
       if (walletId && walletId !== 'new') {
         return this.walletFacade.getWalletById(walletId);
@@ -52,17 +53,27 @@ export class EditWalletComponent implements OnInit, OnDestroy {
       return [null];
     })
   );
-  
+
   isEditMode$ = this.route.params.pipe(
-    map(params => params['id'] && params['id'] !== 'new')
+    map((params) => params['id'] && params['id'] !== 'new')
   );
 
   // Form options from service
   walletTypes$ = this.walletFormService.walletTypes$;
   currencies$ = this.walletFormService.currencies$;
+
+  // Loading state from NgRx store
+  loading$ = this.walletFacade.isLoading$;
   
-  // Loading state from global service
-  loading$ = this.loadingService.loading$;
+  // Operation-specific loading states
+  isCreatingWallet$ = this.walletFacade.isCreatingWallet$;
+  isUpdatingWallet$ = this.walletFacade.isUpdatingWallet$;
+  isLoadingWalletById$ = this.walletFacade.isLoadingWalletById$;
+  
+  // Operation states with loading and errors
+  createWalletState$ = this.walletFacade.createWalletState$;
+  updateWalletState$ = this.walletFacade.updateWalletState$;
+  loadWalletByIdState$ = this.walletFacade.loadWalletByIdState$;
 
   // Icon preview properties
   iconPreviewLoaded: boolean = false;
@@ -85,6 +96,16 @@ export class EditWalletComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.loadWallet();
     this.walletFacade.clearError();
+    
+    // Listen for route changes to ensure loading state is reset
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        // Reset loading state when route changes
+        if (this.loadingService.isLoading) {
+          this.loadingService.hide();
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -94,20 +115,24 @@ export class EditWalletComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     if (this.editWalletForm.valid) {
-      const walletData = this.walletFormService.getFormData(this.editWalletForm);
-      
-      combineLatest([this.isEditMode$, this.wallet$]).pipe(
-        take(1)
-      ).subscribe(([isEditMode, wallet]) => {
-        if (isEditMode && wallet) {
-          this.updateWallet(walletData, wallet.id!);
-        } else {
-          this.createWallet(walletData);
-        }
-      });
+      const walletData = this.walletFormService.getFormData(
+        this.editWalletForm
+      );
+
+      combineLatest([this.isEditMode$, this.wallet$])
+        .pipe(take(1))
+        .subscribe(([isEditMode, wallet]) => {
+          if (isEditMode && wallet) {
+            this.updateWallet(walletData, wallet.id!);
+          } else {
+            this.createWallet(walletData);
+          }
+        });
     } else {
       this.walletFormService.markFormGroupTouched(this.editWalletForm);
-      this.toastService.showError('Please fix the form errors before submitting');
+      this.toastService.showError(
+        'Please fix the form errors before submitting'
+      );
     }
   }
 
@@ -121,7 +146,10 @@ export class EditWalletComponent implements OnInit, OnDestroy {
   }
 
   isFieldInvalid(fieldName: string): boolean {
-    return this.walletFormService.isFieldInvalid(this.editWalletForm, fieldName);
+    return this.walletFormService.isFieldInvalid(
+      this.editWalletForm,
+      fieldName
+    );
   }
 
   // Icon preview methods
@@ -166,39 +194,39 @@ export class EditWalletComponent implements OnInit, OnDestroy {
   }
 
   private loadWallet(): void {
-    this.routeSubscription = this.route.params.pipe(
-      switchMap(params => {
-        const walletId = params['id'];
-        if (walletId && walletId !== 'new') {
-          // Defer loading state changes to prevent ExpressionChangedAfterItHasBeenCheckedError
-          setTimeout(() => {
+    this.routeSubscription = this.route.params
+      .pipe(
+        switchMap((params) => {
+          const walletId = params['id'];
+          
+          if (walletId && walletId !== 'new') {
+            // Always fetch the latest version from API
             this.loadingService.show('Loading wallet...');
-          });
-          
-          this.walletFacade.loadWallets();
-          
-          return this.walletFacade.wallets$.pipe(
-            map(wallets => wallets.find(w => w.id === walletId)),
-            filter(wallet => !!wallet),
-            take(1)
-          );
-        } else {
-          this.setDefaultValues();
-          return [null];
-        }
-      })
-    ).subscribe({
-      next: (wallet) => {
-        if (wallet) {
-          this.walletFormService.populateForm(this.editWalletForm, wallet);
+            this.walletFacade.loadWalletById(walletId);
+
+            // Wait for the wallet to load
+            return this.walletFacade.selectedWallet$.pipe(
+              filter((wallet) => !!wallet && wallet.id === walletId),
+              take(1)
+            );
+          } else {
+            this.setDefaultValues();
+            return [null];
+          }
+        })
+      )
+      .subscribe({
+        next: (wallet) => {
+          if (wallet) {
+            this.walletFormService.populateForm(this.editWalletForm, wallet);
+            this.loadingService.hide();
+          }
+        },
+        error: (error) => {
+          console.error('Error loading wallet:', error);
           this.loadingService.hide();
-        }
-      },
-      error: (error) => {
-        console.error('Error loading wallet:', error);
-        this.loadingService.hide();
-      }
-    });
+        },
+      });
   }
 
   private setDefaultValues(): void {
@@ -206,50 +234,12 @@ export class EditWalletComponent implements OnInit, OnDestroy {
   }
 
   private updateWallet(walletData: any, walletId: string): void {
-    this.startWalletOperation();
-    
-    // Defer loading state changes to prevent ExpressionChangedAfterItHasBeenCheckedError
-    setTimeout(() => {
-      this.loadingService.show('Updating wallet...');
-    });
-    
+    // Simply dispatch the action - NgRx handles everything else
     this.walletFacade.updateWallet(walletId, walletData);
   }
 
   private createWallet(walletData: any): void {
-    this.startWalletOperation();
-    
-    // Defer loading state changes to prevent ExpressionChangedAfterItHasBeenCheckedError
-    setTimeout(() => {
-      this.loadingService.show('Creating wallet...');
-    });
-    
+    // Simply dispatch the action - NgRx handles everything else
     this.walletFacade.createWallet(walletData);
-  }
-
-  private startWalletOperation(): void {
-    // Unsubscribe from any previous operation subscription
-    if (this.walletOperationSubscription) {
-      this.walletOperationSubscription.unsubscribe();
-    }
-    
-    let operationStarted = false;
-    
-    this.walletOperationSubscription = this.walletFacade.isLoading$.subscribe((isLoading: boolean) => {
-      if (isLoading) {
-        operationStarted = true;
-      } else if (operationStarted) {
-        operationStarted = false;
-        this.loadingService.hide();
-        
-        // Check for errors and navigate accordingly
-        this.walletFacade.error$.pipe(take(1)).subscribe(error => {
-          if (!error) {
-            this.router.navigate(['/app/wallets']);
-          }
-          // If there's an error, user stays on form (error interceptor shows toast)
-        });
-      }
-    });
   }
 }

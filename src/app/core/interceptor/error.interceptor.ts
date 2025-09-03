@@ -44,7 +44,10 @@ export function errorInterceptor(
       }
 
       if (err.status >= 400) {
-        toastService.showError('requestFailed', { status: err.status });
+        toastService.showError('requestFailed', { 
+          status: err.status,
+          errorMessage: err.error?.message || 'Please check your input and try again.'
+        });
         console.error('Client error:', err);
         return throwError(() => err);
       }
@@ -69,6 +72,9 @@ function handleBadRequestError(err: HttpErrorResponse, req: any, toastService: T
       errorMessage: err.error?.message || 'Invalid wallet data provided'
     });
   } else {
-    toastService.showError('requestFailed', { status: err.status });
+    toastService.showError('requestFailed', { 
+      status: err.status,
+      errorMessage: err.error?.message || 'Please check your input and try again.'
+    });
   }
 }

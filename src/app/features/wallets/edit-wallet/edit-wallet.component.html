@@ -21,7 +21,7 @@
         icon="pi pi-arrow-left"
         class="p-button-text"
         (click)="onCancel()"
-        [disabled]="(loading$ | async)?.isLoading"
+        [disabled]="(isUpdatingWallet$ | async) || (isCreatingWallet$ | async)"
       ></button>
     </div>
   </div>
@@ -286,7 +286,7 @@
             icon="pi pi-times"
             class="p-button-outlined"
             (click)="onCancel()"
-            [disabled]="(loading$ | async)?.isLoading"
+            [disabled]="(isUpdatingWallet$ | async) || (isCreatingWallet$ | async)"
           ></button>
         </div>
         
@@ -297,7 +297,7 @@
             [label]="(isEditMode$ | async) ? ('editWallet.buttons.update_wallet' | translate) : ('editWallet.buttons.create_wallet' | translate)"
             [icon]="(isEditMode$ | async) ? 'pi pi-check' : 'pi pi-plus'"
             class="p-button-primary"
-            [disabled]="editWalletForm.invalid || (loading$ | async)?.isLoading"
+                          [disabled]="editWalletForm.invalid || (isUpdatingWallet$ | async) || (isCreatingWallet$ | async)"
           ></button>
         </div>
       </div>

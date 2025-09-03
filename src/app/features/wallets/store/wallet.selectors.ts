@@ -19,14 +19,107 @@ export const selectViewMode = createSelector(
   (state: WalletState) => state.viewMode
 );
 
+// Loading state selectors
 export const selectIsLoading = createSelector(
   selectWalletState,
   (state: WalletState) => state.isLoading
 );
 
+export const selectLoadingStates = createSelector(
+  selectWalletState,
+  (state: WalletState) => state.loadingStates
+);
+
+export const selectIsLoadingOperation = (operation: string) => createSelector(
+  selectLoadingStates,
+  (loadingStates) => loadingStates[operation as keyof typeof loadingStates] || false
+);
+
+export const selectIsLoadingWallets = createSelector(
+  selectLoadingStates,
+  (loadingStates) => loadingStates.loadWallets
+);
+
+export const selectIsLoadingWalletById = createSelector(
+  selectLoadingStates,
+  (loadingStates) => loadingStates.loadWalletById
+);
+
+export const selectIsCreatingWallet = createSelector(
+  selectLoadingStates,
+  (loadingStates) => loadingStates.createWallet
+);
+
+export const selectIsUpdatingWallet = createSelector(
+  selectLoadingStates,
+  (loadingStates) => loadingStates.updateWallet
+);
+
+export const selectIsDeletingWallet = createSelector(
+  selectLoadingStates,
+  (loadingStates) => loadingStates.deleteWallet
+);
+
+export const selectIsSettingDefaultWallet = createSelector(
+  selectLoadingStates,
+  (loadingStates) => loadingStates.setDefaultWallet
+);
+
+export const selectIsMovingWalletUp = createSelector(
+  selectLoadingStates,
+  (loadingStates) => loadingStates.moveWalletUp
+);
+
+export const selectIsMovingWalletDown = createSelector(
+  selectLoadingStates,
+  (loadingStates) => loadingStates.moveWalletDown
+);
+
+// Error state selectors
 export const selectError = createSelector(
   selectWalletState,
   (state: WalletState) => state.error
+);
+
+export const selectOperationErrors = createSelector(
+  selectWalletState,
+  (state: WalletState) => state.operationErrors
+);
+
+export const selectOperationError = (operation: string) => createSelector(
+  selectOperationErrors,
+  (operationErrors) => operationErrors[operation as keyof typeof operationErrors] || null
+);
+
+export const selectHasAnyError = createSelector(
+  selectWalletState,
+  (state: WalletState) => !!state.error || Object.values(state.operationErrors).some(error => !!error)
+);
+
+export const selectHasOperationError = (operation: string) => createSelector(
+  selectOperationErrors,
+  (operationErrors) => !!operationErrors[operation as keyof typeof operationErrors]
+);
+
+// Success state selectors
+export const selectLastSuccessfulOperation = createSelector(
+  selectWalletState,
+  (state: WalletState) => state.lastSuccessfulOperation
+);
+
+export const selectHasSuccessfulOperation = createSelector(
+  selectLastSuccessfulOperation,
+  (lastSuccessfulOperation) => !!lastSuccessfulOperation.type
+);
+
+export const selectSuccessfulOperationType = createSelector(
+  selectLastSuccessfulOperation,
+  (lastSuccessfulOperation) => lastSuccessfulOperation.type
+);
+
+export const selectSuccessfulOperationTimestamp = createSelector(
+  selectLastSuccessfulOperation,
+  (lastSuccessfulOperation) => lastSuccessfulOperation.timestamp
 );
 
 // Computed selectors
@@ -74,4 +167,45 @@ export const selectCanMoveWalletDown = (walletId: string) => createSelector(
     const walletIndex = wallets.findIndex(w => w.id === walletId);
     return walletIndex < wallets.length - 1;
   }
+);
+
+// Combined loading and error selectors for specific operations
+export const selectWalletOperationState = (operation: string) => createSelector(
+  selectIsLoadingOperation(operation),
+  selectOperationError(operation),
+  (isLoading, error) => ({
+    isLoading,
+    error,
+    hasError: !!error
+  })
+);
+
+export const selectCreateWalletState = createSelector(
+  selectIsCreatingWallet,
+  selectOperationError('createWallet'),
+  (isLoading, error) => ({
+    isLoading,
+    error,
+    hasError: !!error
+  })
+);
+
+export const selectUpdateWalletState = createSelector(
+  selectIsUpdatingWallet,
+  selectOperationError('updateWallet'),
+  (isLoading, error) => ({
+    isLoading,
+    error,
+    hasError: !!error
+  })
+);
+
+export const selectLoadWalletByIdState = createSelector(
+  selectIsLoadingWalletById,
+  selectOperationError('loadWalletById'),
+  (isLoading, error) => ({
+    isLoading,
+    error,
+    hasError: !!error
+  })
 );

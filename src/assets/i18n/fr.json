@@ -19,29 +19,15 @@
       "more": "Plus"
     },
     "mobile": {
-      "closeMenu": "Fermer le menu",
-      "moreOptionsHeader": "Plus d'Options",
-      "openMenu": "Ouvrir le menu",
-      "menuAccessibility": "Menu de navigation mobile"
+      "closeMenu": "Fermer le menu"
     },
     "common": {
-      "appName": "Pockito",
-      "loading": "Chargement...",
-      "error": "Erreur",
-      "success": "Succès"
+      "appName": "Pockito"
     },
     "dialogs": {
       "moreOptions": "Plus d'Options",
       "switchLanguage": "Changer de Langue",
-      "testLanguageSwitcher": "Test du sélecteur de langue",
-      "close": "Fermer",
-      "cancel": "Annuler",
-      "confirm": "Confirmer"
-    },
-    "accessibility": {
-      "closeButton": "Bouton de fermeture",
-      "navigationItem": "Élément de navigation",
-      "tooltip": "Info-bulle"
+      "testLanguageSwitcher": "Test du sélecteur de langue"
     }
   },
   "wallet": {
@@ -187,9 +173,18 @@
       "walletDeleted": "Portefeuille Supprimé",
       "defaultWalletSet": "Portefeuille par Défaut Défini",
       "walletsReordered": "Portefeuilles Réorganisés",
-      "currencyUpdated": "Devise Mis à Jour",
-      "countryUpdated": "Pays Mis à Jour",
-      "welcomeBack": "Bon Retour"
+      "currencyUpdated": "Devise Mis à Jour vers {{currency}}",
+      "countryUpdated": "Pays Mis à Jour vers {{country}}",
+      "welcomeBack": "Bon Retour, {{username}} !"
+    },
+    "info": {
+      "general": "Information",
+      "walletInfo": "Information sur le Portefeuille",
+      "userInfo": "Information Utilisateur"
+    },
+    "warning": {
+      "general": "Avertissement",
+      "formValidation": "Validation du Formulaire Requise"
     },
     "error": {
       "general": "Une erreur s'est produite",
@@ -200,6 +195,7 @@
       "serverError": "Erreur Serveur",
       "requestError": "Erreur de Demande",
       "networkError": "Erreur Réseau",
+      "requestFailed": "Demande Échouée",
       "failedToLoadWallets": "Échec du chargement des portefeuilles",
       "failedToLoadWallet": "Échec du chargement du portefeuille",
       "failedToCreateWallet": "Échec de la création du portefeuille",
@@ -217,69 +213,36 @@
     },
     "messages": {
       "walletCreatedSuccessfully": "Le portefeuille a été créé avec succès",
+      "walletUpdated": "Le portefeuille a été mis à jour avec succès",
       "walletUpdatedSuccessfully": "Le portefeuille a été mis à jour avec succès",
       "walletDeletedSuccessfully": "Le portefeuille a été supprimé avec succès",
       "defaultWalletUpdated": "Le portefeuille par défaut a été mis à jour",
       "walletOrderUpdated": "L'ordre des portefeuilles a été mis à jour",
-      "defaultCurrencyChanged": "La devise par défaut a été changée en {currency}",
-      "countryChanged": "Le pays a été changé en {country}",
-      "helloUser": "Bonjour {username} !",
+      "defaultCurrencyChanged": "La devise par défaut a été changée en {{currency}}",
+      "countryChanged": "Le pays a été changé en {{country}}",
+      "helloUser": "Bonjour {{username}} !",
+      "welcomeBack": "Bon retour, {{username}} !",
       "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
       "noPermission": "Vous n'avez pas la permission d'effectuer cette action.",
       "resourceNotFound": "La ressource demandée n'a pas été trouvée.",
       "internalServerError": "Une erreur interne du serveur s'est produite. Veuillez réessayer plus tard.",
-      "serverErrorOccurred": "Une erreur serveur s'est produite ({status}). Veuillez réessayer plus tard.",
-      "requestFailed": "La demande a échoué ({status}). {errorMessage, select, undefined {Veuillez vérifier votre saisie et réessayer.} other {{errorMessage}}}",
-      "networkErrorOccurred": "Une erreur réseau s'est produite. Veuillez vérifier votre connexion et réessayer."
+      "serverErrorOccurred": "Une erreur serveur s'est produite ({{status}}). Veuillez réessayer plus tard.",
+      "requestFailed": "La demande a échoué ({{status}}). {{errorMessage}}",
+      "validationError": "La validation a échoué. Veuillez vérifier votre saisie et réessayer.",
+      "serverUnavailable": "Le serveur est temporairement indisponible. Veuillez réessayer plus tard.",
+      "connectionTimeout": "La connexion a expiré. Veuillez vérifier votre connexion internet et réessayer.",
+      "networkErrorOccurred": "Une erreur réseau s'est produite. Veuillez vérifier votre connexion et réessayer.",
+      "general": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+      "formErrors": "Veuillez corriger les erreurs du formulaire avant de soumettre"
     }
   },
   "form": {
-    "validation": {
-      "required": "Ce champ est requis",
-      "minLength": "La longueur minimale est de {min} caractères",
-      "maxLength": "La longueur maximale est de {max} caractères",
-      "email": "Veuillez entrer une adresse e-mail valide",
-      "pattern": "Veuillez entrer une valeur valide",
-      "min": "La valeur doit être au moins {min}",
-      "max": "La valeur doit être au plus {max}",
-      "invalidFormat": "Format invalide",
-      "passwordMismatch": "Les mots de passe ne correspondent pas",
-      "uniqueValue": "Cette valeur doit être unique"
-    },
-    "messages": {
-      "saving": "Enregistrement...",
-      "saved": "Enregistré avec succès",
-      "savingFailed": "Échec de l'enregistrement",
-      "loading": "Chargement...",
-      "loadingFailed": "Échec du chargement",
-      "deleting": "Suppression...",
-      "deleted": "Supprimé avec succès",
-      "deletionFailed": "Échec de la suppression",
-      "updating": "Mise à jour...",
-      "updated": "Mis à jour avec succès",
-      "updateFailed": "Échec de la mise à jour",
-      "creating": "Création...",
-      "created": "Créé avec succès",
-      "creationFailed": "Échec de la création"
-    },
-    "confirmations": {
-      "deleteTitle": "Confirmer la Suppression",
-      "deleteMessage": "Êtes-vous sûr de vouloir supprimer cet élément ? Cette action ne peut pas être annulée.",
-      "unsavedChangesTitle": "Modifications Non Enregistrées",
-      "unsavedChangesMessage": "Vous avez des modifications non enregistrées. Êtes-vous sûr de vouloir partir ?",
-      "discardChanges": "Abandonner les Modifications",
-      "saveChanges": "Enregistrer les Modifications",
-      "cancel": "Annuler",
-      "confirm": "Confirmer",
-      "yes": "Oui",
-      "no": "Non"
-    },
     "errors": {
       "fieldRequired": "Ce champ est requis",
-      "minLength": "La longueur minimale est de {min} caractères",
-      "maxLength": "La longueur maximale est de {max} caractères",
-      "minValue": "La valeur doit être au moins {min}",
-      "maxValue": "La valeur doit être au plus {max}",
+      "minLength": "La longueur minimale est de {{min}} caractères",
+      "maxLength": "La longueur maximale est de {{max}} caractères",
+      "minValue": "La valeur doit être au moins {{min}}",
+      "maxValue": "La valeur doit être au plus {{max}}",
       "invalidFormat": "Format invalide",
       "invalidUrl": "Veuillez entrer une URL valide",
       "invalidEmail": "Veuillez entrer une adresse e-mail valide"

@@ -30,7 +30,6 @@ export class WalletService {
       tap(wallets => this.walletsSubject.next(wallets)),
       catchError(error => {
         console.error('Error fetching wallets:', error);
-        this.toastService.showHttpError(error, 'failedToLoadWallets');
         throw error; // Re-throw error for component handling
       })
     );
@@ -43,7 +42,6 @@ export class WalletService {
     return this.http.get<WalletDto>(`${this.baseUrl}/${walletId}`).pipe(
       catchError(error => {
         console.error(`Error fetching wallet ${walletId}:`, error);
-        this.toastService.showHttpError(error, 'failedToLoadWallet');
         throw error; // Re-throw error for component handling
       })
     );
@@ -54,16 +52,12 @@ export class WalletService {
    */
   createWallet(wallet: WalletDto): Observable<WalletDto> {
     return this.http.post<WalletDto>(`${this.baseUrl}`, wallet).pipe(
-      tap(newWallet => {
-        const currentWallets = this.walletsSubject.value;
-        const updatedWallets = [...currentWallets, newWallet];
-        this.walletsSubject.next(updatedWallets);
-        this.updateWalletOrderPositions();
+      tap(_newWallet => {
+        // NgRx handles state management, so we just show success toast
         this.toastService.showSuccess('walletCreated');
       }),
       catchError(error => {
         console.error('Error creating wallet:', error);
-        this.toastService.showHttpError(error, 'failedToCreateWallet');
         throw error; // Re-throw error for component handling
       })
     );
@@ -74,19 +68,12 @@ export class WalletService {
    */
   updateWallet(walletId: string, wallet: WalletDto): Observable<WalletDto> {
     return this.http.put<WalletDto>(`${this.baseUrl}/${walletId}`, wallet).pipe(
-      tap(updatedWallet => {
-        const currentWallets = this.walletsSubject.value;
-        const walletIndex = currentWallets.findIndex(w => w.id === walletId);
-        
-        if (walletIndex !== -1) {
-          currentWallets[walletIndex] = updatedWallet;
-          this.walletsSubject.next([...currentWallets]);
-        }
+      tap(_updatedWallet => {
+        // NgRx handles state management, so we just show success toast
         this.toastService.showSuccess('walletUpdated');
       }),
       catchError(error => {
         console.error(`Error updating wallet ${walletId}:`, error);
-        this.toastService.showHttpError(error, 'failedToUpdateWallet');
         throw error; // Re-throw error for component handling
       })
     );
@@ -98,15 +85,11 @@ export class WalletService {
   deleteWallet(walletId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${walletId}`).pipe(
       tap(() => {
-        const currentWallets = this.walletsSubject.value;
-        const filteredWallets = currentWallets.filter(wallet => wallet.id !== walletId);
-        this.walletsSubject.next(filteredWallets);
-        this.updateWalletOrderPositions();
+        // NgRx handles state management, so we just show success toast
         this.toastService.showSuccess('walletDeleted');
       }),
       catchError(error => {
         console.error(`Error deleting wallet ${walletId}:`, error);
-        this.toastService.showHttpError(error, 'failedToDeleteWallet');
         throw error; // Re-throw error for component handling
       })
     );
@@ -118,24 +101,11 @@ export class WalletService {
   setDefaultWallet(walletId: string): Observable<WalletDto> {
     return this.http.post<WalletDto>(`${this.baseUrl}/${walletId}/set-default`, {}).pipe(
       tap(() => {
-        const currentWallets = this.walletsSubject.value;
-        
-        // Remove default from all wallets
-        currentWallets.forEach(wallet => {
-          wallet.isDefault = false;
-        });
-        
-        // Set the specified wallet as default
-        const targetWallet = currentWallets.find(wallet => wallet.id === walletId);
-        if (targetWallet) {
-          targetWallet.isDefault = true;
-          this.walletsSubject.next([...currentWallets]);
-        }
+        // NgRx handles state management, so we just show success toast
         this.toastService.showSuccess('defaultWalletSet');
       }),
       catchError(error => {
         console.error(`Error setting default wallet ${walletId}:`, error);
-        this.toastService.showHttpError(error, 'failedToSetDefaultWallet');
         throw error; // Re-throw error for component handling
       })
     );
@@ -147,32 +117,12 @@ export class WalletService {
   reorderWallets(walletIds: string[]): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/reorder`, { walletIds }).pipe(
       tap(() => {
-        const currentWallets = this.walletsSubject.value;
-        const reorderedWallets: WalletDto[] = [];
-        
-        // Reorder based on the provided order
-        walletIds.forEach((id, index) => {
-          const wallet = currentWallets.find(w => w.id === id);
-          if (wallet) {
-            wallet.orderPosition = index + 1;
-            reorderedWallets.push(wallet);
-          }
-        });
-        
-        // Add any remaining wallets
-        currentWallets.forEach(wallet => {
-          if (!walletIds.includes(wallet.id!)) {
-            wallet.orderPosition = reorderedWallets.length + 1;
-            reorderedWallets.push(wallet);
-          }
-        });
-        
-        this.walletsSubject.next(reorderedWallets);
+        // NgRx handles state management, so we just show success toast
         this.toastService.showSuccess('walletsReordered');
+
       }),
       catchError(error => {
         console.error('Error reordering wallets:', error);
-        this.toastService.showHttpError(error, 'failedToReorderWallets');
         throw error; // Re-throw error for component handling
       })
     );
@@ -185,7 +135,6 @@ export class WalletService {
     return this.http.get<WalletDto[]>(`${this.baseUrl}/type/${type}`).pipe(
       catchError(error => {
         console.error(`Error fetching wallets by type ${type}:`, error);
-        this.toastService.showHttpError(error, 'failedToLoadWalletsByType');
         throw error; // Re-throw error for component handling
       })
     );
@@ -198,7 +147,6 @@ export class WalletService {
     return this.http.get<WalletDto>(`${this.baseUrl}/default`).pipe(
       catchError(error => {
         console.error('Error fetching default wallet:', error);
-        this.toastService.showHttpError(error, 'failedToLoadDefaultWallet');
         throw error; // Re-throw error for component handling
       })
     );
@@ -225,48 +173,6 @@ export class WalletService {
     return Math.min((wallet.balance! / (wallet.goalAmount ?? 1)) * 100, 100);
   }
 
-  // Reordering Methods
-  moveWalletUp(wallet: WalletDto): void {
-    const currentWallets = this.walletsSubject.value;
-    const currentIndex = currentWallets.findIndex(w => w.id === wallet.id);
-    
-    if (currentIndex > 0) {
-      // Swap with the wallet above
-      const temp = currentWallets[currentIndex];
-      currentWallets[currentIndex] = currentWallets[currentIndex - 1];
-      currentWallets[currentIndex - 1] = temp;
-      
-      // Update orderPosition values
-      this.updateWalletOrderPositions();
-      this.walletsSubject.next([...currentWallets]);
-    }
-  }
-
-  moveWalletDown(wallet: WalletDto): void {
-    const currentWallets = this.walletsSubject.value;
-    const currentIndex = currentWallets.findIndex(w => w.id === wallet.id);
-    
-    if (currentIndex < currentWallets.length - 1) {
-      // Swap with the wallet below
-      const temp = currentWallets[currentIndex];
-      currentWallets[currentIndex] = currentWallets[currentIndex + 1];
-      currentWallets[currentIndex + 1] = temp;
-      
-      // Update orderPosition values
-      this.updateWalletOrderPositions();
-      this.walletsSubject.next([...currentWallets]);
-    }
-  }
-
-  private getNextOrderPosition(): number {
-    const currentWallets = this.walletsSubject.value;
-    return currentWallets.length + 1;
-  }
-
-  private updateWalletOrderPositions(): void {
-    const currentWallets = this.walletsSubject.value;
-    currentWallets.forEach((wallet, index) => {
-      wallet.orderPosition = index + 1;
-    });
-  }
+  // Reordering Methods - Now handled by NgRx effects using reorderWallets API
+  // The old methods have been removed to avoid conflicts with NgRx state management
 }

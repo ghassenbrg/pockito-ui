@@ -14,9 +14,9 @@ import { PockitoTerminalComponent } from '@core/pockito-terminal/pockito-termina
 import { KeycloakService } from '@core/security/keycloak.service';
 import { ResponsiveService } from '@core/services/responsive.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { GlobalToastComponent } from '@shared/components/global-toast/global-toast.component';
 import { LanguageSwitcherComponent } from '@shared/components/language-switcher/language-switcher.component';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
+import { ToastComponent } from '@shared/components/toast/toast.component';
 import { LoadingService } from '@shared/services/loading.service';
 import { MenuItem, MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
@@ -36,8 +36,8 @@ import { filter } from 'rxjs/operators';
     TranslatePipe,
     PockitoTerminalComponent,
     LanguageSwitcherComponent,
-    GlobalToastComponent,
     LoadingSpinnerComponent,
+    ToastComponent,
   ],
   providers: [MessageService, TerminalService],
   templateUrl: './app-layout.component.html',

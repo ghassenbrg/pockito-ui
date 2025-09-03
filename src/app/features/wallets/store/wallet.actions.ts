@@ -12,6 +12,20 @@ export const loadWalletsFailure = createAction(
   props<{ error: string }>()
 );
 
+// Load Single Wallet by ID
+export const loadWalletById = createAction(
+  '[Wallet] Load Wallet By ID',
+  props<{ walletId: string }>()
+);
+export const loadWalletByIdSuccess = createAction(
+  '[Wallet] Load Wallet By ID Success',
+  props<{ wallet: Wallet }>()
+);
+export const loadWalletByIdFailure = createAction(
+  '[Wallet] Load Wallet By ID Failure',
+  props<{ error: string }>()
+);
+
 // Create Wallet
 export const createWallet = createAction(
   '[Wallet] Create Wallet',
@@ -106,4 +120,23 @@ export const setViewMode = createAction(
   props<{ viewMode: 'cards' | 'list' }>()
 );
 
+// Enhanced error handling actions
 export const clearError = createAction('[Wallet] Clear Error');
+export const clearOperationError = createAction(
+  '[Wallet] Clear Operation Error',
+  props<{ operation: string }>()
+);
+export const clearAllErrors = createAction('[Wallet] Clear All Errors');
+
+// Success tracking actions
+export const clearSuccessState = createAction('[Wallet] Clear Success State');
+
+// Loading state management actions
+export const setGlobalLoading = createAction(
+  '[Wallet] Set Global Loading',
+  props<{ isLoading: boolean }>()
+);
+export const setOperationLoading = createAction(
+  '[Wallet] Set Operation Loading',
+  props<{ operation: string; isLoading: boolean }>()
+);

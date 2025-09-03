@@ -1,8 +1,8 @@
 <!-- APP LAYOUT COMPONENT - MOBILE-FIRST RESPONSIVE DESIGN -->
 <div class="app-shell">
-  <!-- GLOBAL TOAST COMPONENT -->
-  <app-global-toast></app-global-toast>
-
+  <!-- TOAST COMPONENT -->
+  <app-toast></app-toast>
+  
   <!-- GLOBAL LOADING SPINNER -->
   <app-loading-spinner 
     [isLoading]="(loading$ | async)?.isLoading || false"

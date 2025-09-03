@@ -31,7 +31,6 @@ export class UserService {
       }),
       catchError(error => {
         console.error('Error getting/creating current user:', error);
-        this.toastService.showHttpError(error, 'failedToAuthenticateUser');
         throw error; // Re-throw error for component handling
       })
     );
@@ -45,7 +44,6 @@ export class UserService {
     return this.http.get<UserDto>(`${this.baseUrl}/${username}`).pipe(
       catchError(error => {
         console.error(`Error fetching user ${username}:`, error);
-        this.toastService.showHttpError(error, 'failedToLoadUserProfile');
         throw error; // Re-throw error for component handling
       })
     );
@@ -59,7 +57,6 @@ export class UserService {
     return this.http.get<void>(`${this.baseUrl}/${username}/exists`).pipe(
       catchError(error => {
         console.error(`Error checking if user ${username} exists:`, error);
-        this.toastService.showHttpError(error, 'failedToCheckUserExistence');
         throw error; // Re-throw error for component handling
       })
     );
@@ -77,7 +74,6 @@ export class UserService {
       }),
       catchError(error => {
         console.error(`Error updating currency for user ${username}:`, error);
-        this.toastService.showHttpError(error, 'failedToUpdateCurrency');
         throw error; // Re-throw error for component handling
       })
     );
@@ -95,7 +91,6 @@ export class UserService {
       }),
       catchError(error => {
         console.error(`Error updating country for user ${username}:`, error);
-        this.toastService.showHttpError(error, 'failedToUpdateCountry');
         throw error; // Re-throw error for component handling
       })
     );

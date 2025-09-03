@@ -1,30 +1,32 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { KeycloakService } from './core/security/keycloak.service';
+import { MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { KeycloakService } from './core/security/keycloak.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, ToastModule],
-  providers: [MessageService] ,
+  imports: [CommonModule, RouterOutlet],
+  providers: [MessageService],
   template: `
-    <div *ngIf="isLoading$ | async" class="min-h-screen flex items-center justify-center bg-gray-50">
+    <div
+      *ngIf="isLoading$ | async"
+      class="min-h-screen flex items-center justify-center bg-gray-50"
+    >
       <div class="text-center">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <div
+          class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"
+        ></div>
         <p class="text-gray-600">Initializing Keycloak...</p>
       </div>
     </div>
-    
-    <p-toast position="top-center" key="tc" />
 
     <router-outlet *ngIf="!(isLoading$ | async)"></router-outlet>
   `,
-  styles: []
+  styles: [],
 })
 export class AppComponent implements OnInit {
   isLoading$: Observable<boolean>;
@@ -34,9 +36,9 @@ export class AppComponent implements OnInit {
     private keycloakService: KeycloakService
   ) {
     // Show loading until Keycloak is fully initialized
-    this.isLoading$ = this.keycloakService.getInitialized().pipe(
-      map(initialized => !initialized)
-    );
+    this.isLoading$ = this.keycloakService
+      .getInitialized()
+      .pipe(map((initialized) => !initialized));
   }
 
   ngOnInit(): void {

@@ -15,9 +15,35 @@ export class WalletFacade {
   wallets$ = this.store.select(WalletSelectors.selectWallets);
   selectedWallet$ = this.store.select(WalletSelectors.selectSelectedWallet);
   viewMode$ = this.store.select(WalletSelectors.selectViewMode);
+  
+  // Loading state selectors
   isLoading$ = this.store.select(WalletSelectors.selectIsLoading);
+  loadingStates$ = this.store.select(WalletSelectors.selectLoadingStates);
+  
+  // Operation-specific loading selectors
+  isCreatingWallet$ = this.store.select(WalletSelectors.selectIsCreatingWallet);
+  isUpdatingWallet$ = this.store.select(WalletSelectors.selectIsUpdatingWallet);
+  isDeletingWallet$ = this.store.select(WalletSelectors.selectIsDeletingWallet);
+  isSettingDefaultWallet$ = this.store.select(WalletSelectors.selectIsSettingDefaultWallet);
+  isMovingWalletUp$ = this.store.select(WalletSelectors.selectIsMovingWalletUp);
+  isMovingWalletDown$ = this.store.select(WalletSelectors.selectIsMovingWalletDown);
+  isLoadingWalletById$ = this.store.select(WalletSelectors.selectIsLoadingWalletById);
+  
+  // Error state selectors
   error$ = this.store.select(WalletSelectors.selectError);
-
+  operationErrors$ = this.store.select(WalletSelectors.selectOperationErrors);
+  hasAnyError$ = this.store.select(WalletSelectors.selectHasAnyError);
+  
+  // Success state selectors
+  lastSuccessfulOperation$ = this.store.select(WalletSelectors.selectLastSuccessfulOperation);
+  hasSuccessfulOperation$ = this.store.select(WalletSelectors.selectHasSuccessfulOperation);
+  successfulOperationType$ = this.store.select(WalletSelectors.selectSuccessfulOperationType);
+  
+  // Combined operation state selectors
+  createWalletState$ = this.store.select(WalletSelectors.selectCreateWalletState);
+  updateWalletState$ = this.store.select(WalletSelectors.selectUpdateWalletState);
+  loadWalletByIdState$ = this.store.select(WalletSelectors.selectLoadWalletByIdState);
+  
   // Computed selectors
   activeWallets$ = this.store.select(WalletSelectors.selectActiveWallets);
   defaultWallet$ = this.store.select(WalletSelectors.selectDefaultWallet);
@@ -32,6 +58,10 @@ export class WalletFacade {
   // Actions
   loadWallets(): void {
     this.store.dispatch(WalletActions.loadWallets());
+  }
+
+  loadWalletById(walletId: string): void {
+    this.store.dispatch(WalletActions.loadWalletById({ walletId }));
   }
 
   createWallet(walletData: WalletFormData): void {
@@ -80,8 +110,31 @@ export class WalletFacade {
     this.store.dispatch(WalletActions.setViewMode({ viewMode }));
   }
 
+  // Enhanced error handling methods
   clearError(): void {
     this.store.dispatch(WalletActions.clearError());
+  }
+
+  clearOperationError(operation: string): void {
+    this.store.dispatch(WalletActions.clearOperationError({ operation }));
+  }
+
+  clearAllErrors(): void {
+    this.store.dispatch(WalletActions.clearAllErrors());
+  }
+
+  // Success state management
+  clearSuccessState(): void {
+    this.store.dispatch(WalletActions.clearSuccessState());
+  }
+
+  // Loading state management
+  setGlobalLoading(isLoading: boolean): void {
+    this.store.dispatch(WalletActions.setGlobalLoading({ isLoading }));
+  }
+
+  setOperationLoading(operation: string, isLoading: boolean): void {
+    this.store.dispatch(WalletActions.setOperationLoading({ operation, isLoading }));
   }
 
   // Navigation methods
@@ -122,5 +175,14 @@ export class WalletFacade {
     // Add business logic for when a wallet can be deleted
     // For example, wallets with transactions might not be deletable
     return wallet.active ?? true;
+  }
+
+  // Helper methods for checking operation states
+  getOperationState(operation: string): Observable<{ isLoading: boolean; error: string | null; hasError: boolean }> {
+    return this.store.select(WalletSelectors.selectWalletOperationState(operation));
+  }
+
+  hasOperationError(operation: string): Observable<boolean> {
+    return this.store.select(WalletSelectors.selectHasOperationError(operation));
   }
 }
