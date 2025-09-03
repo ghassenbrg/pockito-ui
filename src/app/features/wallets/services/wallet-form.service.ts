@@ -90,7 +90,7 @@ export class WalletFormService {
   createForm(): FormGroup {
     return this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
-      initialBalance: [0, [Validators.required, Validators.min(0)]],
+      initialBalance: [0, [Validators.required]],
       balance: [0, [Validators.required]],
       currency: [Currency.TND, [Validators.required]],
       type: [WalletType.BANK_ACCOUNT, [Validators.required]],
@@ -137,7 +137,6 @@ export class WalletFormService {
 
   getFormData(form: FormGroup): WalletFormData {
     const formValue = form.value;
-    console.log(formValue);
     return {
       name: formValue.name,
       initialBalance: formValue.initialBalance,

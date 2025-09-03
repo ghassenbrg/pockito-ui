@@ -233,7 +233,12 @@
       "connectionTimeout": "La connexion a expiré. Veuillez vérifier votre connexion internet et réessayer.",
       "networkErrorOccurred": "Une erreur réseau s'est produite. Veuillez vérifier votre connexion et réessayer.",
       "general": "Une erreur inattendue s'est produite. Veuillez réessayer.",
-      "formErrors": "Veuillez corriger les erreurs du formulaire avant de soumettre"
+      "formErrors": "Veuillez corriger les erreurs du formulaire avant de soumettre",
+      "authentication": "Votre session a expiré. Veuillez vous reconnecter.",
+      "forbidden": "Vous n'avez pas la permission d'effectuer cette action.",
+      "notFound": "La ressource demandée n'a pas été trouvée.",
+      "serverError": "Une erreur interne du serveur s'est produite. Veuillez réessayer plus tard.",
+      "networkError": "Une erreur réseau s'est produite. Veuillez vérifier votre connexion et réessayer."
     }
   },
   "form": {

@@ -6,6 +6,7 @@ import { Currency, Country } from '@api/model/common.model';
 import { environment } from '@environments/environment';
 import { catchError, tap } from 'rxjs/operators';
 import { ToastService } from '@shared/services/toast.service';
+import { KeycloakService } from '@core/security/keycloak.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,8 @@ export class UserService {
 
   constructor(
     private http: HttpClient,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private keycloakService: KeycloakService
   ) {}
 
   /**
@@ -25,8 +27,8 @@ export class UserService {
   getOrCreateCurrentUser(): Observable<UserDto> {
     return this.http.get<UserDto>(`${this.baseUrl}/me`).pipe(
       tap(user => {
-        if (user.username) {
-          this.toastService.showSuccess('welcomeBack', { username: user.username });
+        if (user.username && this.keycloakService.getUserInfo().given_name) {
+          this.toastService.showSuccess('welcomeBack', { username: this.keycloakService.getUserInfo().given_name });
         }
       }),
       catchError(error => {
