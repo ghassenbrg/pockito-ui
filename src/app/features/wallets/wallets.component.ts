@@ -60,25 +60,8 @@ export class WalletsComponent implements OnInit, OnDestroy {
   }
 
   private setupSubscriptions(): void {
-    // Subscribe to responsive service for auto-switching view mode on mobile
-    this.subscriptions.add(
-      this.responsiveService.screenSize$.pipe(
-        map(screenSize => screenSize.isMobile)
-      ).subscribe(isMobile => {
-        // Auto-switch to list view on mobile if currently in cards view
-        if (isMobile) {
-          this.subscriptions.add(
-            this.walletFacade.viewMode$.pipe(
-              map(viewMode => viewMode === 'cards')
-            ).subscribe(isCardsView => {
-              if (isCardsView) {
-                this.setViewMode('list');
-              }
-            })
-          );
-        }
-      })
-    );
+    // No auto-switching logic - let users choose their preferred view mode
+    // The responsive CSS will handle the layout appropriately for both mobile and desktop
   }
 
   private loadWallets(): void {
@@ -148,6 +131,7 @@ export class WalletsComponent implements OnInit, OnDestroy {
   }
 
   onViewModeChange(viewMode: ViewMode): void {
+    // This will automatically save the view mode to localStorage via the reducer
     this.setViewMode(viewMode);
   }
 

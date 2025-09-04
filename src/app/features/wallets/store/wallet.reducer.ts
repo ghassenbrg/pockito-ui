@@ -236,10 +236,21 @@ export const walletReducer = createReducer(
     selectedWallet: wallet,
   })),
 
-  on(WalletActions.setViewMode, (state, { viewMode }) => ({
-    ...state,
-    viewMode,
-  })),
+  on(WalletActions.setViewMode, (state, { viewMode }) => {
+    // Save view mode to localStorage
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('wallet-view-mode', viewMode);
+      }
+    } catch (error) {
+      console.warn('Failed to save view mode to localStorage:', error);
+    }
+    
+    return {
+      ...state,
+      viewMode,
+    };
+  }),
 
   // Enhanced error handling
   on(WalletActions.clearError, (state) => ({

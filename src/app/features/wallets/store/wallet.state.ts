@@ -41,10 +41,31 @@ export interface WalletState {
   };
 }
 
+// Helper function to get view mode from localStorage
+const getInitialViewMode = (): ViewMode => {
+  try {
+    // Check if localStorage is available (some browsers/contexts might not support it)
+    if (typeof localStorage === 'undefined') {
+      return 'cards';
+    }
+    
+    const savedViewMode = localStorage.getItem('wallet-view-mode');
+    if (savedViewMode === 'cards' || savedViewMode === 'list') {
+      return savedViewMode;
+    }
+    
+    // If no valid saved preference, default to cards
+    return 'cards';
+  } catch (error) {
+    console.warn('Failed to load view mode from localStorage:', error);
+    return 'cards';
+  }
+};
+
 export const initialState: WalletState = {
   wallets: [],
   selectedWallet: null,
-  viewMode: 'cards',
+  viewMode: getInitialViewMode(),
   
   // Global loading state
   isLoading: false,

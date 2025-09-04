@@ -75,6 +75,14 @@ export class WalletCardComponent implements OnChanges {
     return this.walletDisplayService.isWalletDefault(this.wallet);
   }
 
+  getWalletColor(): string {
+    return this.walletDisplayService.getWalletColor(this.wallet);
+  }
+
+  getWalletColorVariants(): { primary: string; light: string; dark: string; gradient: string } {
+    return this.walletDisplayService.getWalletColorVariants(this.getWalletColor());
+  }
+
   onImageError(event: any): void {
     event.target.src = 'assets/icons/wallet.png';
   }

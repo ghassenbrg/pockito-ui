@@ -131,6 +131,61 @@ export class WalletDisplayService {
     return wallets.findIndex(w => w.id === wallet.id) + 1;
   }
 
+  // Color utilities for wallet theming
+  getWalletColor(wallet: Wallet): string {
+    return wallet.color || this.getDefaultWalletColor(wallet.type);
+  }
+
+  getDefaultWalletColor(type: string): string {
+    const defaultColors: Record<string, string> = {
+      'BANK_ACCOUNT': '#2563eb', // Blue
+      'CASH': '#10b981', // Green
+      'CREDIT_CARD': '#f59e0b', // Amber
+      'SAVINGS': '#8b5cf6', // Purple
+      'CUSTOM': '#6b7280' // Gray
+    };
+    return defaultColors[type] || '#6b7280';
+  }
+
+  getWalletColorVariants(color: string): { primary: string; light: string; dark: string; gradient: string } {
+    // Convert hex to RGB for manipulation
+    const hex = color.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    // Create lighter variant (20% opacity on white)
+    const lightR = Math.round(r + (255 - r) * 0.8);
+    const lightG = Math.round(g + (255 - g) * 0.8);
+    const lightB = Math.round(b + (255 - b) * 0.8);
+
+    // Create darker variant (20% darker)
+    const darkR = Math.round(r * 0.8);
+    const darkG = Math.round(g * 0.8);
+    const darkB = Math.round(b * 0.8);
+
+    return {
+      primary: color,
+      light: `rgb(${lightR}, ${lightG}, ${lightB})`,
+      dark: `rgb(${darkR}, ${darkG}, ${darkB})`,
+      gradient: `linear-gradient(135deg, ${color}, rgb(${darkR}, ${darkG}, ${darkB}))`
+    };
+  }
+
+  getContrastColor(backgroundColor: string): string {
+    // Convert hex to RGB
+    const hex = backgroundColor.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    // Calculate luminance
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    // Return white or black based on luminance
+    return luminance > 0.5 ? '#000000' : '#ffffff';
+  }
+
   sortWalletsByOrder(wallets: Wallet[]): Wallet[] {
     return [...wallets].sort((a, b) => (a.orderPosition ?? 0) - (b.orderPosition ?? 0));
   }

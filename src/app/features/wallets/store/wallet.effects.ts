@@ -117,10 +117,16 @@ export class WalletEffects {
             newOrder[currentIndex] = newOrder[currentIndex - 1];
             newOrder[currentIndex - 1] = temp;
             
+            // Update orderPosition for all wallets in the new order
+            const walletsWithUpdatedPositions = newOrder.map((w, index) => ({
+              ...w,
+              orderPosition: index
+            }));
+            
             // Use reorderWallets API to update the order
             const walletIds = newOrder.map(w => w.id!);
             return this.walletService.reorderWallets(walletIds).pipe(
-              map(() => WalletActions.moveWalletUpSuccess({ wallets: newOrder })),
+              map(() => WalletActions.moveWalletUpSuccess({ wallets: walletsWithUpdatedPositions })),
               catchError(error => of(WalletActions.moveWalletUpFailure({ 
                 error: error.message || 'Failed to move wallet up' 
               })))
@@ -152,10 +158,16 @@ export class WalletEffects {
             newOrder[currentIndex] = newOrder[currentIndex + 1];
             newOrder[currentIndex + 1] = temp;
             
+            // Update orderPosition for all wallets in the new order
+            const walletsWithUpdatedPositions = newOrder.map((w, index) => ({
+              ...w,
+              orderPosition: index
+            }));
+            
             // Use reorderWallets API to update the order
             const walletIds = newOrder.map(w => w.id!);
             return this.walletService.reorderWallets(walletIds).pipe(
-              map(() => WalletActions.moveWalletDownSuccess({ wallets: newOrder })),
+              map(() => WalletActions.moveWalletDownSuccess({ wallets: walletsWithUpdatedPositions })),
               catchError(error => of(WalletActions.moveWalletDownFailure({ 
                 error: error.message || 'Failed to move wallet down' 
               })))

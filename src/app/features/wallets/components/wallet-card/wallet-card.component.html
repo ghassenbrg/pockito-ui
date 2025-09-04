@@ -1,6 +1,10 @@
 <div
   class="wallet-card"
   [class.inactive]="!isWalletActive()"
+  [style.--wallet-color]="getWalletColor()"
+  [style.--wallet-color-light]="getWalletColorVariants().light"
+  [style.--wallet-color-dark]="getWalletColorVariants().dark"
+  [style.--wallet-color-gradient]="getWalletColorVariants().gradient"
 >
   <div class="card-header">
     <div class="wallet-icon-container">

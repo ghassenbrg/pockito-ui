@@ -109,6 +109,32 @@ export class WalletFacade {
     this.store.dispatch(WalletActions.setViewMode({ viewMode }));
   }
 
+  // Utility method to get the current view mode from localStorage
+  getStoredViewMode(): ViewMode {
+    try {
+      if (typeof localStorage === 'undefined') {
+        return 'cards';
+      }
+      
+      const savedViewMode = localStorage.getItem('wallet-view-mode');
+      return (savedViewMode === 'cards' || savedViewMode === 'list') ? savedViewMode : 'cards';
+    } catch (error) {
+      console.warn('Failed to read view mode from localStorage:', error);
+      return 'cards';
+    }
+  }
+
+  // Utility method to clear stored view mode (useful for testing or reset functionality)
+  clearStoredViewMode(): void {
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('wallet-view-mode');
+      }
+    } catch (error) {
+      console.warn('Failed to clear view mode from localStorage:', error);
+    }
+  }
+
   // Enhanced error handling methods
   clearError(): void {
     this.store.dispatch(WalletActions.clearError());
