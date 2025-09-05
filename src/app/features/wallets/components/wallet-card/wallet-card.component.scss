@@ -4,7 +4,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   transition: all 0.3s ease;
-  border: 2px solid var(--wallet-color-light, #e2e8f0);
+  border: 2px solid #e2e8f0;
   position: relative;
   overflow: hidden;
 
@@ -322,7 +322,7 @@
     }
 
     .card-content .balance-section .balance-row .value {
-      font-size: 18px;
+      font-size: 19px;
     }
 
     .card-actions {

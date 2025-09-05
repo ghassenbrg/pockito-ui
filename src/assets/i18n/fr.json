@@ -57,7 +57,8 @@
       "edit": "Modifier le Portefeuille",
       "delete": "Supprimer le Portefeuille",
       "make_default": "Définir par Défaut",
-      "already_default": "Déjà par Défaut"
+      "already_default": "Déjà par Défaut",
+      "menu": "Actions du Portefeuille"
     },
     "click_to_view": "Cliquer pour voir",
     "move_up": "Monter",

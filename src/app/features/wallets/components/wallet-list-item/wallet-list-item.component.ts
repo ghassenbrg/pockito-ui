@@ -1,21 +1,25 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy, OnChanges, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
-import { TranslateModule } from '@ngx-translate/core';
+import { MenuModule } from 'primeng/menu';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Wallet } from '@api/model/wallet.model';
 import { WalletDisplayService } from '../../services/wallet-display.service';
 import { WalletGoalProgress, FormattedAmount } from '../../models/wallet.types';
+import { MenuItem } from 'primeng/api';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-wallet-list-item',
   standalone: true,
-  imports: [CommonModule, ButtonModule, TooltipModule, TranslateModule],
+  imports: [CommonModule, ButtonModule, TooltipModule, MenuModule, OverlayPanelModule, TranslateModule],
   templateUrl: './wallet-list-item.component.html',
   styleUrl: './wallet-list-item.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WalletListItemComponent implements OnChanges {
+export class WalletListItemComponent implements OnInit, OnChanges, OnDestroy {
   @Input() wallet!: Wallet;
   @Input() canMoveUp: boolean = false;
   @Input() canMoveDown: boolean = false;
@@ -27,19 +31,67 @@ export class WalletListItemComponent implements OnChanges {
   @Output() moveUp = new EventEmitter<Wallet>();
   @Output() moveDown = new EventEmitter<Wallet>();
 
+  // Menu items for the three-dot menu
+  menuItems: MenuItem[] = [];
+
+  // Language change subscription
+  private languageSubscription?: Subscription;
+
   // Memoized getters for better performance
   private _walletIconUrl: string | null = null;
   private _goalProgress: WalletGoalProgress | null = null;
   private _walletTypeLabel: string | null = null;
 
   constructor(
-    private walletDisplayService: WalletDisplayService
+    private walletDisplayService: WalletDisplayService,
+    private translate: TranslateService
   ) {}
+
+  ngOnInit(): void {
+    this.initializeMenuItems();
+    
+    // Subscribe to language changes to update menu items
+    this.languageSubscription = this.translate.onLangChange.subscribe(() => {
+      this.initializeMenuItems();
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['wallet']) {
       this.clearMemoizedValues();
+      this.initializeMenuItems();
     }
+  }
+
+  ngOnDestroy(): void {
+    if (this.languageSubscription) {
+      this.languageSubscription.unsubscribe();
+    }
+  }
+
+  private initializeMenuItems(): void {
+    this.menuItems = [
+      {
+        label: this.translate.instant('wallet.actions.edit'),
+        icon: 'pi pi-pencil',
+        command: () => this.onEditWallet()
+      },
+      {
+        label: this.translate.instant('wallet.actions.make_default'),
+        icon: 'pi pi-star',
+        disabled: this.isWalletDefault(),
+        command: () => this.onMakeDefault()
+      },
+      {
+        separator: true
+      },
+      {
+        label: this.translate.instant('wallet.actions.delete'),
+        icon: 'pi pi-trash',
+        styleClass: 'p-menuitem-danger',
+        command: () => this.onDeleteWallet()
+      }
+    ];
   }
 
   getWalletIconUrl(): string {
