@@ -178,7 +178,7 @@
 
       &:disabled {
         opacity: 0.3;
-        cursor: not-allowed;
+        cursor: default;
       }
 
       &.up-btn {
@@ -269,7 +269,7 @@
         &.p-disabled {
           .p-menuitem-link {
             color: #9ca3af;
-            cursor: not-allowed;
+            cursor: default;
 
             &:hover {
               background: transparent;

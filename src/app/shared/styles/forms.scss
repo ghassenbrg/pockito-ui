@@ -124,7 +124,7 @@
 
       &:disabled {
         opacity: 0.6;
-        cursor: not-allowed;
+        cursor: default;
         transform: none;
       }
     }
@@ -324,6 +324,13 @@
           &:focus-visible {
             outline: 2px solid #3b82f6;
             outline-offset: 2px;
+          }
+
+          // Disabled and readonly states
+          &:disabled,
+          &[readonly] {
+            cursor: default;
+            opacity: 0.6;
           }
         }
 
@@ -531,7 +538,7 @@
             height: 40px;
             border-radius: 10px;
             overflow: hidden;
-            background: #f1f5f9;
+            background: white;
             border: 2px solid #e2e8f0;
             display: flex;
             align-items: center;
@@ -697,7 +704,7 @@
 
           &:disabled {
             opacity: 0.6;
-            cursor: not-allowed;
+            cursor: default;
             transform: none;
           }
         }
@@ -754,7 +761,7 @@
 
           &:disabled {
             opacity: 0.6;
-            cursor: not-allowed;
+            cursor: default;
             transform: none;
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
           }

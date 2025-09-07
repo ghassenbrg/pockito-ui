@@ -13,6 +13,8 @@ import { tokenInterceptor } from './core/interceptor/token.interceptor';
 import { errorInterceptor } from './core/interceptor/error.interceptor';
 import { walletReducer } from './features/wallets/store/wallet.reducer';
 import { WalletEffects } from './features/wallets/store/wallet.effects';
+import { categoryReducer } from './features/categories/store/category.reducer';
+import { CategoryEffects } from './features/categories/store/category.effects';
 
 // ⬇️ v17 API from @ngx-translate/core
 import { provideTranslateService } from '@ngx-translate/core';
@@ -65,9 +67,10 @@ export const appConfig: ApplicationConfig = {
 
     // NgRx Store Configuration
     provideStore({
-      wallet: walletReducer
+      wallet: walletReducer,
+      category: categoryReducer
     }),
-    provideEffects([WalletEffects]),
+    provideEffects([WalletEffects, CategoryEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: false,

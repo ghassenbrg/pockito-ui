@@ -58,6 +58,18 @@ export const routes: Routes = [
         loadComponent: () => import('./features/categories/categories.component').then(m => m.CategoriesComponent)
       },
       {
+        path: 'categories/edit/:id',
+        loadComponent: () => import('./features/categories/edit-category/edit-category.component').then(m => m.EditCategoryComponent)
+      },
+      {
+        path: 'categories/new',
+        loadComponent: () => import('./features/categories/edit-category/edit-category.component').then(m => m.EditCategoryComponent)
+      },
+      {
+        path: 'categories/view/:id',
+        loadComponent: () => import('./features/categories/edit-category/edit-category.component').then(m => m.EditCategoryComponent)
+      },
+      {
         path: 'settings',
         loadComponent: () => import('./features/settings/settings.component').then(m => m.SettingsComponent)
       },

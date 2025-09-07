@@ -176,7 +176,10 @@
       "walletsReordered": "Portefeuilles Réorganisés",
       "currencyUpdated": "Devise Mis à Jour vers {{currency}}",
       "countryUpdated": "Pays Mis à Jour vers {{country}}",
-      "welcomeBack": "Bon Retour, {{username}} !"
+      "welcomeBack": "Bon Retour, {{username}} !",
+      "categoryCreated": "Catégorie Créée",
+      "categoryUpdated": "Catégorie Mis à Jour",
+      "categoryDeleted": "Catégorie Supprimée"
     },
     "info": {
       "general": "Information",
@@ -210,7 +213,12 @@
       "failedToLoadUserProfile": "Échec du chargement du profil utilisateur",
       "failedToCheckUserExistence": "Échec de la vérification de l'existence de l'utilisateur",
       "failedToUpdateCurrency": "Échec de la mise à jour de la devise",
-      "failedToUpdateCountry": "Échec de la mise à jour du pays"
+      "failedToUpdateCountry": "Échec de la mise à jour du pays",
+      "failedToLoadCategories": "Échec du chargement des catégories",
+      "failedToLoadCategory": "Échec du chargement de la catégorie",
+      "failedToCreateCategory": "Échec de la création de la catégorie",
+      "failedToUpdateCategory": "Échec de la mise à jour de la catégorie",
+      "failedToDeleteCategory": "Échec de la suppression de la catégorie"
     },
     "messages": {
       "walletCreated": "Le portefeuille a été créé avec succès",
@@ -224,6 +232,9 @@
       "countryChanged": "Le pays a été changé en {{country}}",
       "helloUser": "Bonjour {{username}} !",
       "welcomeBack": "Bon retour, {{username}} !",
+      "categoryCreated": "La catégorie a été créée avec succès",
+      "categoryUpdated": "La catégorie a été mise à jour avec succès",
+      "categoryDeleted": "La catégorie a été supprimée avec succès",
       "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
       "noPermission": "Vous n'avez pas la permission d'effectuer cette action.",
       "resourceNotFound": "La ressource demandée n'a pas été trouvée.",
@@ -241,6 +252,105 @@
       "notFound": "La ressource demandée n'a pas été trouvée.",
       "serverError": "Une erreur interne du serveur s'est produite. Veuillez réessayer plus tard.",
       "networkError": "Une erreur réseau s'est produite. Veuillez vérifier votre connexion et réessayer."
+    }
+  },
+  "category": {
+    "title": "Vos Catégories",
+    "subtitle": "Organisez vos transactions avec des catégories personnalisées",
+    "new_category": "Nouvelle Catégorie",
+    "view_mode": {
+      "cards": "Cartes",
+      "list": "Liste"
+    },
+    "types": {
+      "EXPENSE": "Dépense",
+      "INCOME": "Revenu"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "actions": {
+      "view": "Voir la Catégorie",
+      "edit": "Modifier la Catégorie",
+      "delete": "Supprimer la Catégorie",
+      "menu": "Actions de Catégorie",
+      "cannot_delete_has_children": "Impossible de supprimer - a des enfants"
+    },
+    "parent": "Parent",
+    "children": "Enfants",
+    "click_to_view": "Cliquer pour voir",
+    "empty_state": {
+      "title": "Aucune catégorie pour le moment",
+      "description": "Créez votre première catégorie pour commencer à organiser vos transactions"
+    }
+  },
+  "editCategory": {
+    "create": {
+      "title": "Créer une Nouvelle Catégorie",
+      "subtitle": "Configurez une nouvelle catégorie pour vos transactions"
+    },
+    "edit": {
+      "title": "Modifier la Catégorie : ",
+      "subtitle": "Mettez à jour les informations de votre catégorie"
+    },
+    "view": {
+      "title": "Détails de la Catégorie : ",
+      "subtitle": "Voir les informations de la catégorie"
+    },
+    "back": "Retour aux Catégories",
+    "back_to_categories": "Retour aux Catégories",
+    "sections": {
+      "basic_info": "Informations de Base",
+      "appearance": "Apparence",
+      "hierarchy": "Hiérarchie",
+      "settings": "Paramètres"
+    },
+    "fields": {
+      "name": "Nom de la Catégorie",
+      "category_type": "Type de Catégorie",
+      "color": "Couleur",
+      "icon_url": "URL de l'Icône",
+      "parent_category": "Catégorie Parente",
+      "icon_preview": "Aperçu de l'Icône",
+      "description": "Description"
+    },
+    "placeholders": {
+      "enter_category_name": "Entrez le nom de la catégorie",
+      "category_type_placeholder": "Sélectionnez le type de catégorie",
+      "icon_url_placeholder": "https://exemple.com/icone.png",
+      "parent_category_placeholder": "Sélectionnez une catégorie parente (optionnel)",
+      "description_placeholder": "Entrez la description de la catégorie (optionnel)",
+      "hex_color": "#3b82f6"
+    },
+    "hints": {
+      "name": "Choisissez un nom descriptif pour une identification facile",
+      "category_type": "Sélectionnez si c'est une catégorie de dépense ou de revenu",
+      "color": "Choisissez une couleur pour identifier visuellement cette catégorie",
+      "icon_url": "URL vers une icône personnalisée de catégorie (PNG, JPG ou SVG recommandé)",
+      "parent_category": "Optionnel : Sélectionnez une catégorie parente pour créer une hiérarchie",
+      "parent_category_help": "Les catégories enfants seront regroupées sous leur parent",
+      "description": "Optionnel : Ajoutez une description pour aider à identifier cette catégorie"
+    },
+    "labels": {
+      "characters": "caractères"
+    },
+    "messages": {
+      "icon_preview_error": "Impossible de charger l'aperçu de l'icône. Veuillez vérifier l'URL.",
+      "updating_category": "Mise à jour de la catégorie...",
+      "creating_category": "Création de la catégorie..."
+    },
+    "buttons": {
+      "cancel": "Annuler",
+      "create": "Créer la Catégorie",
+      "update": "Mettre à Jour la Catégorie",
+      "edit": "Modifier",
+      "back": "Retour"
+    },
+    "cancel": "Annuler",
+    "validation": {
+      "required": "Requis",
+      "optional": "Optionnel"
     }
   },
   "form": {

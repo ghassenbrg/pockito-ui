@@ -1,0 +1,73 @@
+<div class="categories-container">
+  <!-- Enhanced Header Section -->
+  <div class="categories-header">
+    <div class="header-content">
+      <div class="header-icon">
+        <i class="pi pi-tags"></i>
+      </div>
+      <div class="header-text">
+        <h1 class="page-title">{{ 'category.title' | translate }}</h1>
+        <p class="page-subtitle">{{ 'category.subtitle' | translate }}</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button 
+        class="new-category-btn" 
+        pButton 
+        (click)="createCategory()"
+        [label]="'category.new_category' | translate"
+        icon="pi pi-plus"
+      ></button>
+    </div>
+  </div>
+
+  <!-- View Switcher -->
+  <app-category-view-switcher
+    [currentView]="(currentViewMode$ | async) || 'cards'"
+    (viewChange)="onViewModeChange($event)"
+  ></app-category-view-switcher>
+
+  <!-- Categories Content -->
+  <div class="categories-content">
+    <!-- Card Mode (Desktop) -->
+    <div class="categories-grid" [class.hidden]="(currentViewMode$ | async) === 'list'">
+      <app-category-card
+        *ngFor="let category of categories$ | async; trackBy: trackByCategoryId"
+        [category]="category"
+        (viewCategory)="onViewCategory($event)"
+        (editCategory)="onEditCategory($event)"
+        (deleteCategory)="onDeleteCategory($event)"
+      ></app-category-card>
+    </div>
+
+    <!-- List Mode (Mobile) -->
+    <div class="categories-list" [class.hidden]="(currentViewMode$ | async) === 'cards'">
+      <app-category-list-item
+        *ngFor="let category of categories$ | async; trackBy: trackByCategoryId"
+        [category]="category"
+        (viewCategory)="onViewCategory($event)"
+        (editCategory)="onEditCategory($event)"
+        (deleteCategory)="onDeleteCategory($event)"
+      ></app-category-list-item>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="(categories$ | async)?.length === 0">
+      <div class="empty-icon">
+        <i class="pi pi-tags"></i>
+      </div>
+      <h3 class="empty-title">{{ 'category.empty_state.title' | translate }}</h3>
+      <p class="empty-description">
+        {{ 'category.empty_state.description' | translate }}
+      </p>
+      <button 
+        class="empty-action-btn" 
+        pButton 
+        (click)="createCategory()"
+        [label]="'category.new_category' | translate"
+        icon="pi pi-plus"
+        class="p-button-primary"
+      ></button>
+    </div>
+  </div>
+</div>

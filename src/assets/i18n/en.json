@@ -176,7 +176,10 @@
       "walletsReordered": "Wallets Reordered",
       "currencyUpdated": "Currency Updated to {{currency}}",
       "countryUpdated": "Country Updated to {{country}}",
-      "welcomeBack": "Welcome Back, {{username}} !"
+      "welcomeBack": "Welcome Back, {{username}} !",
+      "categoryCreated": "Category Created",
+      "categoryUpdated": "Category Updated",
+      "categoryDeleted": "Category Deleted"
     },
     "info": {
       "general": "Information",
@@ -210,7 +213,12 @@
       "failedToLoadUserProfile": "Failed to load user profile",
       "failedToCheckUserExistence": "Failed to check user existence",
       "failedToUpdateCurrency": "Failed to update currency",
-      "failedToUpdateCountry": "Failed to update country"
+      "failedToUpdateCountry": "Failed to update country",
+      "failedToLoadCategories": "Failed to load categories",
+      "failedToLoadCategory": "Failed to load category",
+      "failedToCreateCategory": "Failed to create category",
+      "failedToUpdateCategory": "Failed to update category",
+      "failedToDeleteCategory": "Failed to delete category"
     },
     "messages": {
       "walletCreated": "Wallet has been created successfully",
@@ -224,6 +232,9 @@
       "countryChanged": "Country changed to {{country}}",
       "helloUser": "Hello {{username}}!",
       "welcomeBack": "Welcome back, {{username}}!",
+      "categoryCreated": "Category has been created successfully",
+      "categoryUpdated": "Category has been updated successfully",
+      "categoryDeleted": "Category has been deleted successfully",
       "sessionExpired": "Your session has expired. Please log in again.",
       "noPermission": "You do not have permission to perform this action.",
       "resourceNotFound": "The requested resource was not found.",
@@ -241,6 +252,105 @@
       "notFound": "The requested resource was not found.",
       "serverError": "An internal server error occurred. Please try again later.",
       "networkError": "A network error occurred. Please check your connection and try again."
+    }
+  },
+  "category": {
+    "title": "Your Categories",
+    "subtitle": "Organize your transactions with custom categories",
+    "new_category": "New Category",
+    "view_mode": {
+      "cards": "Cards",
+      "list": "List"
+    },
+    "types": {
+      "EXPENSE": "Expense",
+      "INCOME": "Income"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "actions": {
+      "view": "View Category",
+      "edit": "Edit Category",
+      "delete": "Delete Category",
+      "menu": "Category Actions",
+      "cannot_delete_has_children": "Cannot delete - has children"
+    },
+    "parent": "Parent",
+    "children": "Children",
+    "click_to_view": "Click to view",
+    "empty_state": {
+      "title": "No categories yet",
+      "description": "Create your first category to start organizing your transactions"
+    }
+  },
+  "editCategory": {
+    "create": {
+      "title": "Create New Category",
+      "subtitle": "Set up a new category for your transactions"
+    },
+    "edit": {
+      "title": "Edit Category: ",
+      "subtitle": "Update your category information"
+    },
+    "view": {
+      "title": "Category Details: ",
+      "subtitle": "View category information"
+    },
+    "back": "Back to Categories",
+    "back_to_categories": "Back to Categories",
+    "sections": {
+      "basic_info": "Basic Information",
+      "appearance": "Appearance",
+      "hierarchy": "Hierarchy",
+      "settings": "Settings"
+    },
+    "fields": {
+      "name": "Category Name",
+      "category_type": "Category Type",
+      "color": "Color",
+      "icon_url": "Icon URL",
+      "parent_category": "Parent Category",
+      "icon_preview": "Icon Preview",
+      "description": "Description"
+    },
+    "placeholders": {
+      "enter_category_name": "Enter category name",
+      "category_type_placeholder": "Select category type",
+      "icon_url_placeholder": "https://example.com/icon.png",
+      "parent_category_placeholder": "Select parent category (optional)",
+      "description_placeholder": "Enter category description (optional)",
+      "hex_color": "#3b82f6"
+    },
+    "hints": {
+      "name": "Choose a descriptive name for easy identification",
+      "category_type": "Select whether this is an expense or income category",
+      "color": "Choose a color to visually identify this category",
+      "icon_url": "URL to a custom category icon (PNG, JPG, or SVG recommended)",
+      "parent_category": "Optional: Select a parent category to create a hierarchy",
+      "parent_category_help": "Child categories will be grouped under their parent",
+      "description": "Optional: Add a description to help identify this category"
+    },
+    "labels": {
+      "characters": "characters"
+    },
+    "messages": {
+      "icon_preview_error": "Unable to load icon preview. Please check the URL.",
+      "updating_category": "Updating category...",
+      "creating_category": "Creating category..."
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "create": "Create Category",
+      "update": "Update Category",
+      "edit": "Edit",
+      "back": "Back"
+    },
+    "cancel": "Cancel",
+    "validation": {
+      "required": "Required",
+      "optional": "Optional"
     }
   },
   "form": {

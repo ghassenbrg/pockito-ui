@@ -176,7 +176,10 @@
       "walletsReordered": "ウォレットの順序が変更されました",
       "currencyUpdated": "通貨が{{currency}}に更新されました",
       "countryUpdated": "国が{{country}}に更新されました",
-      "welcomeBack": "おかえりなさい、{{username}}さん！"
+      "welcomeBack": "おかえりなさい、{{username}}さん！",
+      "categoryCreated": "カテゴリが作成されました",
+      "categoryUpdated": "カテゴリが更新されました",
+      "categoryDeleted": "カテゴリが削除されました"
     },
     "info": {
       "general": "情報",
@@ -210,7 +213,12 @@
       "failedToLoadUserProfile": "ユーザープロファイルの読み込みに失敗しました",
       "failedToCheckUserExistence": "ユーザー存在確認に失敗しました",
       "failedToUpdateCurrency": "通貨の更新に失敗しました",
-      "failedToUpdateCountry": "国の更新に失敗しました"
+      "failedToUpdateCountry": "国の更新に失敗しました",
+      "failedToLoadCategories": "カテゴリの読み込みに失敗しました",
+      "failedToLoadCategory": "カテゴリの読み込みに失敗しました",
+      "failedToCreateCategory": "カテゴリの作成に失敗しました",
+      "failedToUpdateCategory": "カテゴリの更新に失敗しました",
+      "failedToDeleteCategory": "カテゴリの削除に失敗しました"
     },
     "messages": {
       "walletCreated": "ウォレットが正常に作成されました",
@@ -224,6 +232,9 @@
       "countryChanged": "国が{{country}}に変更されました",
       "helloUser": "こんにちは、{{username}}さん！",
       "welcomeBack": "おかえりなさい、{{username}}さん！",
+      "categoryCreated": "カテゴリが正常に作成されました",
+      "categoryUpdated": "カテゴリが正常に更新されました",
+      "categoryDeleted": "カテゴリが正常に削除されました",
       "sessionExpired": "セッションが期限切れです。再度ログインしてください。",
       "noPermission": "このアクションを実行する権限がありません。",
       "resourceNotFound": "要求されたリソースが見つかりません。",
@@ -241,6 +252,105 @@
       "notFound": "要求されたリソースが見つかりません。",
       "serverError": "内部サーバーエラーが発生しました。後でもう一度お試しください。",
       "networkError": "ネットワークエラーが発生しました。接続を確認して再試行してください。"
+    }
+  },
+  "category": {
+    "title": "あなたのカテゴリ",
+    "subtitle": "カスタムカテゴリで取引を整理しましょう",
+    "new_category": "新しいカテゴリ",
+    "view_mode": {
+      "cards": "カード",
+      "list": "リスト"
+    },
+    "types": {
+      "EXPENSE": "支出",
+      "INCOME": "収入"
+    },
+    "status": {
+      "active": "アクティブ",
+      "inactive": "非アクティブ"
+    },
+    "actions": {
+      "view": "カテゴリを表示",
+      "edit": "カテゴリを編集",
+      "delete": "カテゴリを削除",
+      "menu": "カテゴリアクション",
+      "cannot_delete_has_children": "削除できません - 子カテゴリがあります"
+    },
+    "parent": "親",
+    "children": "子",
+    "click_to_view": "クリックして表示",
+    "empty_state": {
+      "title": "まだカテゴリがありません",
+      "description": "最初のカテゴリを作成して、取引の整理を始めましょう"
+    }
+  },
+  "editCategory": {
+    "create": {
+      "title": "新しいカテゴリを作成",
+      "subtitle": "取引用の新しいカテゴリを設定します"
+    },
+    "edit": {
+      "title": "カテゴリを編集: ",
+      "subtitle": "カテゴリ情報を更新します"
+    },
+    "view": {
+      "title": "カテゴリ詳細: ",
+      "subtitle": "カテゴリ情報を表示します"
+    },
+    "back": "カテゴリに戻る",
+    "back_to_categories": "カテゴリに戻る",
+    "sections": {
+      "basic_info": "基本情報",
+      "appearance": "外観",
+      "hierarchy": "階層",
+      "settings": "設定"
+    },
+    "fields": {
+      "name": "カテゴリ名",
+      "category_type": "カテゴリタイプ",
+      "color": "色",
+      "icon_url": "アイコンURL",
+      "parent_category": "親カテゴリ",
+      "icon_preview": "アイコンプレビュー",
+      "description": "説明"
+    },
+    "placeholders": {
+      "enter_category_name": "カテゴリ名を入力",
+      "category_type_placeholder": "カテゴリタイプを選択",
+      "icon_url_placeholder": "https://exemple.com/icone.png",
+      "parent_category_placeholder": "親カテゴリを選択（オプション）",
+      "description_placeholder": "カテゴリの説明を入力（オプション）",
+      "hex_color": "#3b82f6"
+    },
+    "hints": {
+      "name": "簡単に識別できる説明的な名前を選択してください",
+      "category_type": "これが支出カテゴリか収入カテゴリかを選択してください",
+      "color": "このカテゴリを視覚的に識別する色を選択してください",
+      "icon_url": "カスタムカテゴリアイコンのURL（PNG、JPG、またはSVGを推奨）",
+      "parent_category": "オプション：階層を作成するために親カテゴリを選択してください",
+      "parent_category_help": "子カテゴリは親の下にグループ化されます",
+      "description": "オプション：このカテゴリを識別するのに役立つ説明を追加してください"
+    },
+    "labels": {
+      "characters": "文字"
+    },
+    "messages": {
+      "icon_preview_error": "アイコンプレビューを読み込めません。URLを確認してください。",
+      "updating_category": "カテゴリを更新中...",
+      "creating_category": "カテゴリを作成中..."
+    },
+    "buttons": {
+      "cancel": "キャンセル",
+      "create": "カテゴリを作成",
+      "update": "カテゴリを更新",
+      "edit": "編集",
+      "back": "戻る"
+    },
+    "cancel": "キャンセル",
+    "validation": {
+      "required": "必須",
+      "optional": "オプション"
     }
   },
   "form": {
