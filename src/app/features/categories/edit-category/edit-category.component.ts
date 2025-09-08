@@ -250,13 +250,11 @@ export class EditCategoryComponent implements OnInit, OnDestroy {
             this.categoryFormService.populateForm(this.editCategoryForm, category);
             // Reload parent categories after populating the form, excluding current category
             const categoryType = this.editCategoryForm.get('categoryType')?.value;
-            console.log('Reloading parent categories after category load:', { categoryType, excludeCategoryId: category.id });
             this.categoryFormService.loadParentCategories(categoryType, category.id);
             this.loadingService.hide();
           }
         },
-        error: (error) => {
-          console.error('Error loading category:', error);
+        error: (_error) => {
           this.loadingService.hide();
         },
       });

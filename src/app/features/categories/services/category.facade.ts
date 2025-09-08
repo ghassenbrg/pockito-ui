@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Category, CreateCategoryDto, UpdateCategoryDto } from '@api/model/category.model';
+import { Category, CreateCategoryDto } from '@api/model/category.model';
 import { CategoryFormData, ViewMode } from '../models/category.types';
 import * as CategoryActions from '../store/category.actions';
 import * as CategorySelectors from '../store/category.selectors';

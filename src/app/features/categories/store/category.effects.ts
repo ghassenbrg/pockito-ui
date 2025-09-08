@@ -5,7 +5,6 @@ import { of } from 'rxjs';
 import { map, mergeMap, catchError, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { CategoryApiService } from '@api/services/category.service';
-import { CreateCategoryDto, UpdateCategoryDto } from '@api/model/category.model';
 import * as CategoryActions from './category.actions';
 
 @Injectable()

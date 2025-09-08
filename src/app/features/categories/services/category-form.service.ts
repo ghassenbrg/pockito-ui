@@ -138,21 +138,17 @@ export class CategoryFormService implements OnDestroy {
 
   // Method to load parent categories from API
   loadParentCategories(categoryType?: CategoryType, excludeCategoryId?: string): void {
-    console.log('loadParentCategories called in service with categoryType:', categoryType, 'and excludeCategoryId:', excludeCategoryId);
     if (!categoryType) {
-      console.log('Loading all root categories');
       // If no category type specified, load all root categories
       this.categoryApiService.getRootCategories().pipe(
         map(categories => this.transformCategoriesToOptions(categories, excludeCategoryId)),
-        catchError(error => {
-          console.error('Error loading parent categories:', error);
+        catchError(_error => {
           return of([]);
         })
       ).subscribe(options => {
         this.parentCategoriesSubject.next(options);
       });
     } else {
-      console.log('Loading root categories filtered by type:', categoryType);
       // Load root categories filtered by type
       this.categoryApiService.getHierarchicalCategoriesByType(categoryType).pipe(
         map(categories => {
@@ -160,8 +156,7 @@ export class CategoryFormService implements OnDestroy {
           const rootCategories = categories.filter(cat => !cat.parentCategoryId);
           return this.transformCategoriesToOptions(rootCategories, excludeCategoryId);
         }),
-        catchError(error => {
-          console.error('Error loading parent categories by type:', error);
+        catchError(_error => {
           return of([]);
         })
       ).subscribe(options => {
