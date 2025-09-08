@@ -1,0 +1,68 @@
+<div class="transaction-list-item" [style.border-left-color]="getTransactionTypeColor(transaction.transactionType)">
+  <div class="transaction-main">
+    <div class="transaction-info">
+      <div class="transaction-type">
+        <i [class]="getTransactionTypeIcon(transaction.transactionType)" 
+           [style.color]="getTransactionTypeColor(transaction.transactionType)"></i>
+        <span class="type-label">{{ transaction.transactionType | translate }}</span>
+      </div>
+      
+      <div class="transaction-details">
+        <div class="wallet-info" *ngIf="transaction.walletFromName || transaction.walletToName">
+          <span *ngIf="transaction.walletFromName">{{ transaction.walletFromName }}</span>
+          <i class="pi pi-arrows-h" *ngIf="transaction.walletFromName && transaction.walletToName"></i>
+          <span *ngIf="transaction.walletToName">{{ transaction.walletToName }}</span>
+        </div>
+        
+        <div class="category-info" *ngIf="transaction.categoryName">
+          <i class="pi pi-tag"></i>
+          <span>{{ transaction.categoryName }}</span>
+        </div>
+        
+        <div class="transaction-note" *ngIf="transaction.note">
+          <i class="pi pi-comment"></i>
+          <span>{{ transaction.note }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="transaction-amount-date">
+      <div class="transaction-amount" [class.expense]="transaction.transactionType === 'EXPENSE'"
+           [class.income]="transaction.transactionType === 'INCOME'"
+           [class.transfer]="transaction.transactionType === 'TRANSFER'">
+        <span *ngIf="transaction.transactionType === 'EXPENSE'">-</span>
+        <span *ngIf="transaction.transactionType === 'INCOME'">+</span>
+        {{ formatAmount(transaction.amount) }}
+      </div>
+      
+      <div class="transaction-date">
+        <i class="pi pi-calendar"></i>
+        <span>{{ formatDate(transaction.effectiveDate) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="transaction-actions">
+    <button 
+      class="action-btn view-btn" 
+      pButton 
+      icon="pi pi-eye" 
+      [pTooltip]="'transaction.view' | translate"
+      (click)="onViewTransaction()">
+    </button>
+    <button 
+      class="action-btn edit-btn" 
+      pButton 
+      icon="pi pi-pencil" 
+      [pTooltip]="'transaction.edit' | translate"
+      (click)="onEditTransaction()">
+    </button>
+    <button 
+      class="action-btn delete-btn" 
+      pButton 
+      icon="pi pi-trash" 
+      [pTooltip]="'transaction.delete' | translate"
+      (click)="onDeleteTransaction()">
+    </button>
+  </div>
+</div>

@@ -179,7 +179,10 @@
       "welcomeBack": "Welcome Back, {{username}} !",
       "categoryCreated": "Category Created",
       "categoryUpdated": "Category Updated",
-      "categoryDeleted": "Category Deleted"
+      "categoryDeleted": "Category Deleted",
+      "transactionCreated": "Transaction Created",
+      "transactionUpdated": "Transaction Updated",
+      "transactionDeleted": "Transaction Deleted"
     },
     "info": {
       "general": "Information",
@@ -218,7 +221,12 @@
       "failedToLoadCategory": "Failed to load category",
       "failedToCreateCategory": "Failed to create category",
       "failedToUpdateCategory": "Failed to update category",
-      "failedToDeleteCategory": "Failed to delete category"
+      "failedToDeleteCategory": "Failed to delete category",
+      "failedToLoadTransactions": "Failed to load transactions",
+      "failedToLoadTransaction": "Failed to load transaction",
+      "failedToCreateTransaction": "Failed to create transaction",
+      "failedToUpdateTransaction": "Failed to update transaction",
+      "failedToDeleteTransaction": "Failed to delete transaction"
     },
     "messages": {
       "walletCreated": "Wallet has been created successfully",
@@ -235,6 +243,9 @@
       "categoryCreated": "Category has been created successfully",
       "categoryUpdated": "Category has been updated successfully",
       "categoryDeleted": "Category has been deleted successfully",
+      "transactionCreated": "Transaction has been created successfully",
+      "transactionUpdated": "Transaction has been updated successfully",
+      "transactionDeleted": "Transaction has been deleted successfully",
       "sessionExpired": "Your session has expired. Please log in again.",
       "noPermission": "You do not have permission to perform this action.",
       "resourceNotFound": "The requested resource was not found.",
@@ -352,6 +363,95 @@
       "required": "Required",
       "optional": "Optional"
     }
+  },
+  "transaction": {
+    "title": "Your Transactions",
+    "subtitle": "Track and manage your financial transactions",
+    "new_transaction": "New Transaction",
+    "view_list": "List View",
+    "view_cards": "Card View",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete",
+    "empty_state": {
+      "title": "No transactions yet",
+      "description": "Create your first transaction to start tracking your finances"
+    },
+    "filters": {
+      "title": "Filter Transactions",
+      "clear": "Clear Filters",
+      "wallet": "Wallet",
+      "type": "Type",
+      "date_range": "Date Range",
+      "select_wallet": "Select wallet",
+      "select_type": "Select type",
+      "select_date_range": "Select date range"
+    },
+    "create": {
+      "title": "Create New Transaction",
+      "subtitle": "Add a new transaction to your records",
+      "basic_info": "Basic Information",
+      "type": "Transaction Type",
+      "amount": "Amount",
+      "from_wallet": "From Wallet",
+      "to_wallet": "To Wallet",
+      "date": "Date",
+      "category": "Category",
+      "exchange_rate": "Exchange Rate",
+      "note": "Note",
+      "select_type": "Select transaction type",
+      "enter_amount": "Enter amount",
+      "select_from_wallet": "Select source wallet",
+      "select_to_wallet": "Select destination wallet",
+      "select_date": "Select date",
+      "select_category": "Select category",
+      "enter_exchange_rate": "Enter exchange rate",
+      "enter_note": "Enter note (optional)",
+      "create": "Create Transaction"
+    },
+    "edit": {
+      "title": "Edit Transaction",
+      "subtitle": "Update transaction information",
+      "update": "Update Transaction"
+    },
+    "view": {
+      "title": "Transaction Details",
+      "subtitle": "View transaction information"
+    },
+    "types": {
+      "EXPENSE": "Expense",
+      "INCOME": "Income",
+      "TRANSFER": "Transfer"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "results": "results",
+      "show": "Show",
+      "per_page": "per page",
+      "first": "First page",
+      "previous": "Previous page",
+      "next": "Next page",
+      "last": "Last page"
+    }
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "create": "Create",
+    "update": "Update",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information",
+    "close": "Close"
   },
   "form": {
     "errors": {

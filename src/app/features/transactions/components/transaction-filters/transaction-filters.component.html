@@ -1,0 +1,55 @@
+<div class="transaction-filters">
+  <div class="filters-header">
+    <h3>{{ 'transaction.filters.title' | translate }}</h3>
+    <button 
+      class="clear-filters-btn" 
+      pButton 
+      icon="pi pi-times" 
+      [label]="'transaction.filters.clear' | translate"
+      (click)="onClearFilters()"
+      class="p-button-text p-button-sm">
+    </button>
+  </div>
+
+  <div class="filters-content">
+    <div class="filter-group">
+      <label class="filter-label">{{ 'transaction.filters.wallet' | translate }}</label>
+      <p-dropdown 
+        [options]="wallets" 
+        [(ngModel)]="selectedWallet"
+        optionLabel="name" 
+        optionValue="id"
+        [placeholder]="'transaction.filters.select_wallet' | translate"
+        [showClear]="true"
+        (onChange)="onWalletChange($event.value)"
+        class="filter-dropdown">
+      </p-dropdown>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">{{ 'transaction.filters.type' | translate }}</label>
+      <p-dropdown 
+        [options]="transactionTypes" 
+        [(ngModel)]="selectedType"
+        optionLabel="label" 
+        optionValue="value"
+        [placeholder]="'transaction.filters.select_type' | translate"
+        [showClear]="true"
+        (onChange)="onTypeChange($event.value)"
+        class="filter-dropdown">
+      </p-dropdown>
+    </div>
+
+    <div class="filter-group">
+      <label class="filter-label">{{ 'transaction.filters.date_range' | translate }}</label>
+      <p-calendar 
+        [(ngModel)]="dateRange"
+        selectionMode="range" 
+        [readonlyInput]="true"
+        [placeholder]="'transaction.filters.select_date_range' | translate"
+        (onSelect)="onDateRangeChange($event)"
+        class="filter-calendar">
+      </p-calendar>
+    </div>
+  </div>
+</div>

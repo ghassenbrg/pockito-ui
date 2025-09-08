@@ -179,7 +179,10 @@
       "welcomeBack": "おかえりなさい、{{username}}さん！",
       "categoryCreated": "カテゴリが作成されました",
       "categoryUpdated": "カテゴリが更新されました",
-      "categoryDeleted": "カテゴリが削除されました"
+      "categoryDeleted": "カテゴリが削除されました",
+      "transactionCreated": "取引が作成されました",
+      "transactionUpdated": "取引が更新されました",
+      "transactionDeleted": "取引が削除されました"
     },
     "info": {
       "general": "情報",
@@ -218,7 +221,12 @@
       "failedToLoadCategory": "カテゴリの読み込みに失敗しました",
       "failedToCreateCategory": "カテゴリの作成に失敗しました",
       "failedToUpdateCategory": "カテゴリの更新に失敗しました",
-      "failedToDeleteCategory": "カテゴリの削除に失敗しました"
+      "failedToDeleteCategory": "カテゴリの削除に失敗しました",
+      "failedToLoadTransactions": "取引の読み込みに失敗しました",
+      "failedToLoadTransaction": "取引の読み込みに失敗しました",
+      "failedToCreateTransaction": "取引の作成に失敗しました",
+      "failedToUpdateTransaction": "取引の更新に失敗しました",
+      "failedToDeleteTransaction": "取引の削除に失敗しました"
     },
     "messages": {
       "walletCreated": "ウォレットが正常に作成されました",
@@ -235,6 +243,9 @@
       "categoryCreated": "カテゴリが正常に作成されました",
       "categoryUpdated": "カテゴリが正常に更新されました",
       "categoryDeleted": "カテゴリが正常に削除されました",
+      "transactionCreated": "取引が正常に作成されました",
+      "transactionUpdated": "取引が正常に更新されました",
+      "transactionDeleted": "取引が正常に削除されました",
       "sessionExpired": "セッションが期限切れです。再度ログインしてください。",
       "noPermission": "このアクションを実行する権限がありません。",
       "resourceNotFound": "要求されたリソースが見つかりません。",
@@ -352,6 +363,95 @@
       "required": "必須",
       "optional": "オプション"
     }
+  },
+  "transaction": {
+    "title": "取引履歴",
+    "subtitle": "金融取引を追跡・管理する",
+    "new_transaction": "新しい取引",
+    "view_list": "リスト表示",
+    "view_cards": "カード表示",
+    "view": "表示",
+    "edit": "編集",
+    "delete": "削除",
+    "empty_state": {
+      "title": "取引がありません",
+      "description": "最初の取引を作成して財務管理を開始しましょう"
+    },
+    "filters": {
+      "title": "取引をフィルター",
+      "clear": "フィルターをクリア",
+      "wallet": "ウォレット",
+      "type": "タイプ",
+      "date_range": "日付範囲",
+      "select_wallet": "ウォレットを選択",
+      "select_type": "タイプを選択",
+      "select_date_range": "日付範囲を選択"
+    },
+    "create": {
+      "title": "新しい取引を作成",
+      "subtitle": "新しい取引を記録に追加",
+      "basic_info": "基本情報",
+      "type": "取引タイプ",
+      "amount": "金額",
+      "from_wallet": "送金元ウォレット",
+      "to_wallet": "送金先ウォレット",
+      "date": "日付",
+      "category": "カテゴリ",
+      "exchange_rate": "為替レート",
+      "note": "メモ",
+      "select_type": "取引タイプを選択",
+      "enter_amount": "金額を入力",
+      "select_from_wallet": "送金元ウォレットを選択",
+      "select_to_wallet": "送金先ウォレットを選択",
+      "select_date": "日付を選択",
+      "select_category": "カテゴリを選択",
+      "enter_exchange_rate": "為替レートを入力",
+      "enter_note": "メモを入力（オプション）",
+      "create": "取引を作成"
+    },
+    "edit": {
+      "title": "取引を編集",
+      "subtitle": "取引情報を更新",
+      "update": "取引を更新"
+    },
+    "view": {
+      "title": "取引詳細",
+      "subtitle": "取引情報を表示"
+    },
+    "types": {
+      "EXPENSE": "支出",
+      "INCOME": "収入",
+      "TRANSFER": "送金"
+    },
+    "pagination": {
+      "showing": "表示中",
+      "of": "/",
+      "results": "件",
+      "show": "表示",
+      "per_page": "件/ページ",
+      "first": "最初のページ",
+      "previous": "前のページ",
+      "next": "次のページ",
+      "last": "最後のページ"
+    }
+  },
+  "common": {
+    "cancel": "キャンセル",
+    "save": "保存",
+    "delete": "削除",
+    "edit": "編集",
+    "view": "表示",
+    "create": "作成",
+    "update": "更新",
+    "back": "戻る",
+    "next": "次へ",
+    "previous": "前へ",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功",
+    "warning": "警告",
+    "info": "情報",
+    "close": "閉じる"
   },
   "form": {
     "errors": {

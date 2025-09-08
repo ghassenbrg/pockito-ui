@@ -42,6 +42,18 @@ export const routes: Routes = [
         loadComponent: () => import('./features/transactions/transactions.component').then(m => m.TransactionsComponent)
       },
       {
+        path: 'transactions/create',
+        loadComponent: () => import('./features/transactions/create-transaction/create-transaction.component').then(m => m.CreateTransactionComponent)
+      },
+      {
+        path: 'transactions/edit/:id',
+        loadComponent: () => import('./features/transactions/create-transaction/create-transaction.component').then(m => m.CreateTransactionComponent)
+      },
+      {
+        path: 'transactions/view/:id',
+        loadComponent: () => import('./features/transactions/create-transaction/create-transaction.component').then(m => m.CreateTransactionComponent)
+      },
+      {
         path: 'subscriptions',
         loadComponent: () => import('./features/subscriptions/subscriptions.component').then(m => m.SubscriptionsComponent)
       },

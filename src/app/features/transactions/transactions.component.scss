@@ -1,0 +1,243 @@
+.transactions-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .transactions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    color: white;
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+
+      .header-icon {
+        width: 48px;
+        height: 48px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        i {
+          font-size: 24px;
+        }
+      }
+
+      .header-text {
+        .page-title {
+          margin: 0;
+          font-size: 28px;
+          font-weight: 700;
+          line-height: 1.2;
+        }
+
+        .page-subtitle {
+          margin: 4px 0 0 0;
+          font-size: 16px;
+          opacity: 0.9;
+        }
+      }
+    }
+
+    .header-actions {
+      .new-transaction-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        font-weight: 600;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.3);
+          border-color: rgba(255, 255, 255, 0.5);
+        }
+      }
+    }
+  }
+
+  .view-switcher {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 24px;
+
+    .view-buttons {
+      display: flex;
+      background: white;
+      border-radius: 8px;
+      padding: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      .view-btn {
+        width: 40px;
+        height: 40px;
+        border: none;
+        background: transparent;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #6b7280;
+
+        &:hover {
+          background: #f3f4f6;
+          color: #374151;
+        }
+
+        &.active {
+          background: #3b82f6;
+          color: white;
+        }
+
+        i {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+  .filters-section {
+    margin-bottom: 24px;
+  }
+
+  .transactions-content {
+    .transactions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 20px;
+
+      &.hidden {
+        display: none;
+      }
+    }
+
+    .transactions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      &.hidden {
+        display: none;
+      }
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+      .empty-icon {
+        width: 80px;
+        height: 80px;
+        background: #f3f4f6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 24px;
+
+        i {
+          font-size: 32px;
+          color: #9ca3af;
+        }
+      }
+
+      .empty-title {
+        margin: 0 0 12px 0;
+        font-size: 24px;
+        font-weight: 600;
+        color: #374151;
+      }
+
+      .empty-description {
+        margin: 0 0 32px 0;
+        font-size: 16px;
+        color: #6b7280;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .empty-action-btn {
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .transactions-container {
+    padding: 16px;
+
+    .transactions-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+      padding: 20px;
+
+      .header-content {
+        .header-text {
+          .page-title {
+            font-size: 24px;
+          }
+
+          .page-subtitle {
+            font-size: 14px;
+          }
+        }
+      }
+
+      .header-actions {
+        .new-transaction-btn {
+          width: 100%;
+        }
+      }
+    }
+
+    .view-switcher {
+      justify-content: center;
+    }
+
+    .transactions-content {
+      .transactions-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .empty-state {
+        padding: 40px 16px;
+
+        .empty-icon {
+          width: 60px;
+          height: 60px;
+
+          i {
+            font-size: 24px;
+          }
+        }
+
+        .empty-title {
+          font-size: 20px;
+        }
+
+        .empty-description {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
