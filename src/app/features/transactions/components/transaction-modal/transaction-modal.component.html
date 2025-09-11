@@ -1,14 +1,28 @@
 <p-dialog 
   [visible]="visible" 
   [modal]="true" 
-  [closable]="true"
+  [closable]="false"
   [draggable]="false"
   [resizable]="false"
   [style]="{ width: '90vw', maxWidth: '600px' }"
   [breakpoints]="{ '960px': '95vw', '640px': '100vw' }"
-  [header]="modalTitle | translate"
   (onHide)="onCancel()"
+  (onShow)="onShow()"
+  [dismissableMask]="true"
   class="transaction-modal">
+  
+  <ng-template pTemplate="header">
+    <div class="modal-header">
+      <h3 class="modal-title">{{ modalTitle | translate }}</h3>
+      <button 
+        type="button" 
+        class="p-dialog-header-icon p-dialog-header-close p-link" 
+        (click)="onCancel()"
+        [attr.aria-label]="'common.close' | translate">
+        <span class="p-dialog-header-close-icon pi pi-times"></span>
+      </button>
+    </div>
+  </ng-template>
   
   <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()" class="transaction-form">
     <div class="form-section">

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, OnChanges, SimpleChanges, ChangeDetectionStrategy, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -71,14 +71,16 @@ export class TransactionModalComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['visible'] && this.visible) {
-      // Ensure wallets and categories are loaded when modal opens
-      this.transactionFacade.ensureDataLoaded();
-      
-      if (this.transaction && (this.mode === 'edit' || this.mode === 'view')) {
-        this.populateForm();
-      } else if (this.mode === 'create') {
-        this.resetForm();
+    if (changes['visible']) {
+      if (this.visible) {
+        // Ensure wallets and categories are loaded when modal opens
+        this.transactionFacade.ensureDataLoaded();
+        
+        if (this.transaction && (this.mode === 'edit' || this.mode === 'view')) {
+          this.populateForm();
+        } else if (this.mode === 'create') {
+          this.resetForm();
+        }
       }
     }
   }
@@ -179,7 +181,7 @@ export class TransactionModalComponent implements OnInit, OnDestroy, OnChanges {
         amount: formData.amount,
         exchangeRate: formData.exchangeRate,
         note: formData.note,
-        effectiveDate: formData.effectiveDate.toISOString().split('T')[0],
+        effectiveDate: this.formatDateForAPI(formData.effectiveDate),
         categoryId: formData.categoryId
       };
 
@@ -198,12 +200,32 @@ export class TransactionModalComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  onShow(): void {
+    // Modal is being shown
+  }
+
   onCancel(): void {
     this.closeModal();
   }
 
+  // Handle ESC key press
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscapeKey(_event: KeyboardEvent): void {
+    if (this.visible) {
+      this.closeModal();
+    }
+  }
+
   private closeModal(): void {
     this.visibleChange.emit(false);
+  }
+
+  private formatDateForAPI(date: Date): string {
+    // Format date as YYYY-MM-DD without timezone conversion
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   private markFormGroupTouched(): void {

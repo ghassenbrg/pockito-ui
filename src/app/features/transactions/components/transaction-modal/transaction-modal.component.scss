@@ -1,4 +1,40 @@
 .transaction-modal {
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+
+    .modal-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .p-dialog-header-close {
+      background: transparent;
+      border: none;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #f3f4f6;
+      }
+
+      .p-dialog-header-close-icon {
+        font-size: 16px;
+        color: #6b7280;
+      }
+    }
+  }
+
   .transaction-form {
     .form-section {
       margin-bottom: 24px;
