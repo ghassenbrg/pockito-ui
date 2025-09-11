@@ -71,7 +71,7 @@
           <p-dropdown 
             id="walletFromId"
             formControlName="walletFromId"
-            [options]="wallets"
+            [options]="walletFromOptions"
             optionLabel="name"
             optionValue="id"
             [placeholder]="'transaction.create.select_from_wallet' | translate"
@@ -88,7 +88,7 @@
           <p-dropdown 
             id="walletToId"
             formControlName="walletToId"
-            [options]="wallets"
+            [options]="walletToOptions"
             optionLabel="name"
             optionValue="id"
             [placeholder]="'transaction.create.select_to_wallet' | translate"
@@ -132,14 +132,18 @@
         </div>
       </div>
 
-      <div class="form-row" *ngIf="transactionForm.get('transactionType')?.value === 'TRANSFER'">
+      <div class="form-row" *ngIf="transactionForm.get('transactionType')?.value === 'TRANSFER' && shouldShowExchangeRate">
         <div class="form-group">
           <label for="exchangeRate">{{ 'transaction.create.exchange_rate' | translate }}</label>
           <p-inputNumber 
             id="exchangeRate"
             formControlName="exchangeRate"
+            mode="decimal"
             [min]="0.000001"
             [step]="0.000001"
+            [useGrouping]="false"
+            [minFractionDigits]="0"
+            [maxFractionDigits]="6"
             [placeholder]="'transaction.create.enter_exchange_rate' | translate"
             [disabled]="isFormDisabled"
             class="form-control">

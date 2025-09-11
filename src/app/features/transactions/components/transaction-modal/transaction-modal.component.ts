@@ -47,6 +47,12 @@ export class TransactionModalComponent implements OnInit, OnDestroy, OnChanges {
   categories: Category[] = [];
   loading = false;
 
+  // External wallet option for transfers
+  externalWalletOption = { id: null, name: 'External Wallet', currency: 'N/A' as const };
+  
+  // Flag to prevent infinite loops during validation
+  private isUpdatingForm = false;
+
   transactionTypes = [
     { label: 'Expense', value: 'EXPENSE' },
     { label: 'Income', value: 'INCOME' },
@@ -103,11 +109,39 @@ export class TransactionModalComponent implements OnInit, OnDestroy, OnChanges {
         this.updateFormValidation(type);
       })
     );
+
+    // Watch for wallet selection changes to update exchange rate and validate external wallet
+    this.subscriptions.add(
+      this.transactionForm.get('walletFromId')?.valueChanges.subscribe(() => {
+        if (this.isUpdatingForm) return;
+        this.updateExchangeRate();
+        // Only validate if it's a transfer transaction
+        if (this.transactionForm.get('transactionType')?.value === 'TRANSFER') {
+          this.validateExternalWalletSelection();
+        }
+      })
+    );
+
+    this.subscriptions.add(
+      this.transactionForm.get('walletToId')?.valueChanges.subscribe(() => {
+        if (this.isUpdatingForm) return;
+        this.updateExchangeRate();
+        // Only validate if it's a transfer transaction
+        if (this.transactionForm.get('transactionType')?.value === 'TRANSFER') {
+          this.validateExternalWalletSelection();
+        }
+      })
+    );
   }
 
   private updateFormValidation(transactionType: string): void {
+    if (this.isUpdatingForm) return;
+    
+    this.isUpdatingForm = true;
+    
     const walletFromControl = this.transactionForm.get('walletFromId');
     const walletToControl = this.transactionForm.get('walletToId');
+    const exchangeRateControl = this.transactionForm.get('exchangeRate');
 
     // Clear previous validators
     walletFromControl?.clearValidators();
@@ -117,10 +151,14 @@ export class TransactionModalComponent implements OnInit, OnDestroy, OnChanges {
       case 'EXPENSE':
         walletFromControl?.setValidators([Validators.required]);
         walletToControl?.setValue(null);
+        // Reset exchange rate for non-transfer transactions
+        exchangeRateControl?.setValue(1);
         break;
       case 'INCOME':
         walletToControl?.setValidators([Validators.required]);
         walletFromControl?.setValue(null);
+        // Reset exchange rate for non-transfer transactions
+        exchangeRateControl?.setValue(1);
         break;
       case 'TRANSFER':
         // At least one wallet must be selected
@@ -130,6 +168,13 @@ export class TransactionModalComponent implements OnInit, OnDestroy, OnChanges {
 
     walletFromControl?.updateValueAndValidity();
     walletToControl?.updateValueAndValidity();
+    
+    // Update exchange rate based on wallet selection (only for transfer)
+    if (transactionType === 'TRANSFER') {
+      this.updateExchangeRate();
+    }
+    
+    this.isUpdatingForm = false;
   }
 
   private loadFormData(): void {
@@ -228,6 +273,37 @@ export class TransactionModalComponent implements OnInit, OnDestroy, OnChanges {
     return `${year}-${month}-${day}`;
   }
 
+  private updateExchangeRate(): void {
+    const exchangeRateControl = this.transactionForm.get('exchangeRate');
+    
+    if (!this.shouldShowExchangeRate) {
+      // Set exchange rate to 1 when hidden (same currency or external wallet)
+      exchangeRateControl?.setValue(1);
+    }
+  }
+
+  private validateExternalWalletSelection(): void {
+    const transactionType = this.transactionForm.get('transactionType')?.value;
+    const walletFromId = this.transactionForm.get('walletFromId')?.value;
+    const walletToId = this.transactionForm.get('walletToId')?.value;
+    
+    // Only validate for transfer transactions
+    if (transactionType !== 'TRANSFER') {
+      return;
+    }
+    
+    // Check if both are external wallets (null values)
+    if (walletFromId === null && walletToId === null) {
+      // Only set errors, don't clear values to avoid infinite loop
+      this.transactionForm.get('walletFromId')?.setErrors({ 'bothExternal': true });
+      this.transactionForm.get('walletToId')?.setErrors({ 'bothExternal': true });
+    } else {
+      // Clear any previous external wallet errors
+      this.transactionForm.get('walletFromId')?.setErrors(null);
+      this.transactionForm.get('walletToId')?.setErrors(null);
+    }
+  }
+
   private markFormGroupTouched(): void {
     Object.keys(this.transactionForm.controls).forEach(key => {
       const control = this.transactionForm.get(key);
@@ -243,6 +319,9 @@ export class TransactionModalComponent implements OnInit, OnDestroy, OnChanges {
       }
       if (control.errors['min']) {
         return `${fieldName} must be greater than ${control.errors['min'].min}`;
+      }
+      if (control.errors['bothExternal']) {
+        return 'Cannot select external wallet for both from and to wallets';
       }
     }
     return '';
@@ -276,5 +355,54 @@ export class TransactionModalComponent implements OnInit, OnDestroy, OnChanges {
 
   get isFormDisabled(): boolean {
     return this.mode === 'view' || this.loading;
+  }
+
+  get walletFromOptions(): any[] {
+    const transactionType = this.transactionForm.get('transactionType')?.value;
+    if (transactionType === 'TRANSFER') {
+      return [...this.wallets, this.externalWalletOption];
+    }
+    return this.wallets;
+  }
+
+  get walletToOptions(): any[] {
+    const transactionType = this.transactionForm.get('transactionType')?.value;
+    if (transactionType === 'TRANSFER') {
+      return [...this.wallets, this.externalWalletOption];
+    }
+    return this.wallets;
+  }
+
+  get shouldShowExchangeRate(): boolean {
+    const transactionType = this.transactionForm.get('transactionType')?.value;
+    const walletFromId = this.transactionForm.get('walletFromId')?.value;
+    const walletToId = this.transactionForm.get('walletToId')?.value;
+    
+    // Only show for transfer transactions
+    if (transactionType !== 'TRANSFER') {
+      return false;
+    }
+    
+    // Don't show if both are external wallets (validation error)
+    if (walletFromId === null && walletToId === null) {
+      return false;
+    }
+    
+    // Don't show if only one external wallet is selected (no conversion needed)
+    if (walletFromId === null || walletToId === null) {
+      return false;
+    }
+    
+    // Find the selected wallets
+    const fromWallet = this.wallets.find(w => w.id === walletFromId);
+    const toWallet = this.wallets.find(w => w.id === walletToId);
+    
+    // Don't show if wallets not found
+    if (!fromWallet || !toWallet) {
+      return false;
+    }
+    
+    // Don't show if both wallets have the same currency
+    return fromWallet.currency !== toWallet.currency;
   }
 }
