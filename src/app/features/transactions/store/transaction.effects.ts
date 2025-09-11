@@ -203,7 +203,7 @@ export class TransactionEffects {
 
   private confirmDeletion(transactionType: string, amount: number): boolean {
     const typeLabel = this.getTransactionTypeLabel(transactionType);
-    return confirm(`Are you sure you want to delete this ${typeLabel.toLowerCase()} transaction of $${amount}?`);
+    return confirm(`Are you sure you want to delete this ${typeLabel.toLowerCase()} transaction of ${amount}?`);
   }
 
   private getTransactionTypeLabel(type: string): string {

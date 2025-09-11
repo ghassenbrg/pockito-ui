@@ -37,8 +37,8 @@
     <div class="balance-section">
       <div class="balance-row">
         <span class="label">{{ 'wallet.balance' | translate }}:</span>
-        <span class="value" [style.color]="formatAmount(wallet.balance).color">
-          {{ formatAmount(wallet.balance).text }} {{ wallet.currency }}
+        <span class="value" [style.color]="(wallet.balance || 0) >= 0 ? '#10b981' : '#dc2626'">
+          {{ (wallet.balance || 0) >= 0 ? '+' : '' }}{{ wallet.balance | pockitoCurrency:wallet.currency:'code' }}
         </span>
       </div>
     </div>
@@ -47,7 +47,7 @@
       <div class="goal-header">
         <span class="label">{{ 'wallet.goal' | translate }}:</span>
         <span class="value">
-          {{ (wallet.goalAmount ?? 0).toFixed(2) }} {{ wallet.currency }}
+          {{ (wallet.goalAmount ?? 0) | pockitoCurrency:wallet.currency:'code' }}
         </span>
       </div>
       <div class="progress-container">

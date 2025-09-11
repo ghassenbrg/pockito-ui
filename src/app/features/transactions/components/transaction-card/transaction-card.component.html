@@ -10,7 +10,7 @@
          [class.transfer]="transaction.transactionType === 'TRANSFER'">
       <span *ngIf="transaction.transactionType === 'EXPENSE'">-</span>
       <span *ngIf="transaction.transactionType === 'INCOME'">+</span>
-      {{ formatAmount(transaction.amount) }}
+      {{ transaction.amount | pockitoCurrency:'USD':'code' }}
     </div>
   </div>
 

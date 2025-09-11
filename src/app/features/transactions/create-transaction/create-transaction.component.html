@@ -36,6 +36,7 @@
             formControlName="amount"
             mode="currency"
             currency="USD"
+            [currencyDisplay]="'code'"
             [min]="0.01"
             [step]="0.01"
             [placeholder]="'transaction.create.enter_amount' | translate"

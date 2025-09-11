@@ -173,6 +173,7 @@
               class="form-input-number"
               mode="currency"
               [currency]="editWalletForm.get('currency')?.value || 'USD'"
+              [currencyDisplay]="'code'"
             ></p-inputNumber>
             <div *ngIf="isFieldInvalid('initialBalance')" class="error-message">
               {{ getFieldError('initialBalance') }}
@@ -193,6 +194,7 @@
               class="form-input-number"
               mode="currency"
               [currency]="editWalletForm.get('currency')?.value || 'USD'"
+              [currencyDisplay]="'code'"
             ></p-inputNumber>
             <small class="field-hint">{{ 'editWallet.hints.goal_amount' | translate }}</small>
           </div>

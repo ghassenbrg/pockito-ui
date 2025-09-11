@@ -7,29 +7,36 @@ import { WalletGoalProgress, FormattedAmount } from '../models/wallet.types';
 })
 export class WalletDisplayService {
   // Memoization cache for expensive operations
-  private amountFormatCache = new Map<number, FormattedAmount>();
+  private amountFormatCache = new Map<string, FormattedAmount>();
   private goalProgressCache = new Map<string, WalletGoalProgress>();
   private typeLabelCache = new Map<string, string>();
   private currencyLabelCache = new Map<string, string>();
-  formatAmount(amount: number | undefined): FormattedAmount {
+  formatAmount(amount: number | undefined, currency: string = 'USD'): FormattedAmount {
     if (!amount || amount === 0) {
       return { text: '0.00', color: '#1a202c' }; // Black
     }
     
     // Check cache first
-    if (this.amountFormatCache.has(amount)) {
-      return this.amountFormatCache.get(amount)!;
+    const cacheKey = `${amount}-${currency}`;
+    if (this.amountFormatCache.has(cacheKey)) {
+      return this.amountFormatCache.get(cacheKey)!;
     }
     
     let result: FormattedAmount;
+    const formattedAmount = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency,
+      currencyDisplay: 'code'
+    }).format(Math.abs(amount));
+    
     if (amount > 0) {
-      result = { text: `+${amount.toFixed(2)}`, color: '#10b981' }; // Green
+      result = { text: `+${formattedAmount}`, color: '#10b981' }; // Green
     } else {
-      result = { text: `${amount.toFixed(2)}`, color: '#dc2626' }; // Red
+      result = { text: `-${formattedAmount}`, color: '#dc2626' }; // Red
     }
     
     // Cache the result
-    this.amountFormatCache.set(amount, result);
+    this.amountFormatCache.set(cacheKey, result);
     return result;
   }
 

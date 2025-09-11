@@ -4,11 +4,12 @@ import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { TransactionDto, TransactionType } from '@api/model/transaction.model';
+import { PockitoCurrencyPipe } from '@shared/pipes/pockito-currency.pipe';
 
 @Component({
   selector: 'app-transaction-list-item',
   standalone: true,
-  imports: [CommonModule, ButtonModule, TooltipModule, TranslateModule],
+  imports: [CommonModule, ButtonModule, TooltipModule, TranslateModule, PockitoCurrencyPipe],
   templateUrl: './transaction-list-item.component.html',
   styleUrl: './transaction-list-item.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -57,12 +58,6 @@ export class TransactionListItemComponent {
     }
   }
 
-  formatAmount(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD' // This should be dynamic based on wallet currency
-    }).format(amount);
-  }
 
   formatDate(dateString: string): string {
     return new Date(dateString).toLocaleDateString();

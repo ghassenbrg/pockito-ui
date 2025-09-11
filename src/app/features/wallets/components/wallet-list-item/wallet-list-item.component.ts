@@ -7,14 +7,15 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { Wallet } from '@api/model/wallet.model';
 import { WalletDisplayService } from '../../services/wallet-display.service';
-import { WalletGoalProgress, FormattedAmount } from '../../models/wallet.types';
+import { WalletGoalProgress } from '../../models/wallet.types';
 import { MenuItem } from 'primeng/api';
 import { Subscription } from 'rxjs';
+import { PockitoCurrencyPipe } from '@shared/pipes/pockito-currency.pipe';
 
 @Component({
   selector: 'app-wallet-list-item',
   standalone: true,
-  imports: [CommonModule, ButtonModule, TooltipModule, MenuModule, OverlayPanelModule, TranslateModule],
+  imports: [CommonModule, ButtonModule, TooltipModule, MenuModule, OverlayPanelModule, TranslateModule, PockitoCurrencyPipe],
   templateUrl: './wallet-list-item.component.html',
   styleUrl: './wallet-list-item.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -108,9 +109,6 @@ export class WalletListItemComponent implements OnInit, OnChanges, OnDestroy {
     return this._goalProgress;
   }
 
-  formatAmount(amount: number | undefined): FormattedAmount {
-    return this.walletDisplayService.formatAmount(amount);
-  }
 
   getWalletTypeLabel(): string {
     if (!this._walletTypeLabel) {

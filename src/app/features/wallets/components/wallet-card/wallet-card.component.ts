@@ -5,12 +5,13 @@ import { TooltipModule } from 'primeng/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { Wallet } from '@api/model/wallet.model';
 import { WalletDisplayService } from '../../services/wallet-display.service';
-import { WalletGoalProgress, FormattedAmount } from '../../models/wallet.types';
+import { WalletGoalProgress } from '../../models/wallet.types';
+import { PockitoCurrencyPipe } from '@shared/pipes/pockito-currency.pipe';
 
 @Component({
   selector: 'app-wallet-card',
   standalone: true,
-  imports: [CommonModule, ButtonModule, TooltipModule, TranslateModule],
+  imports: [CommonModule, ButtonModule, TooltipModule, TranslateModule, PockitoCurrencyPipe],
   templateUrl: './wallet-card.component.html',
   styleUrl: './wallet-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -56,9 +57,6 @@ export class WalletCardComponent implements OnChanges {
     return this._goalProgress;
   }
 
-  formatAmount(amount: number | undefined): FormattedAmount {
-    return this.walletDisplayService.formatAmount(amount);
-  }
 
   getWalletTypeLabel(): string {
     if (!this._walletTypeLabel) {

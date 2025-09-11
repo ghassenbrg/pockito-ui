@@ -29,8 +29,8 @@
   </div>
   
   <div class="wallet-item-balance">
-    <span class="balance-value" [style.color]="formatAmount(wallet.balance).color">
-      {{ formatAmount(wallet.balance).text }} {{ wallet.currency }}
+    <span class="balance-value" [style.color]="(wallet.balance || 0) >= 0 ? '#10b981' : '#dc2626'">
+      {{ (wallet.balance || 0) >= 0 ? '+' : '' }}{{ wallet.balance | pockitoCurrency:wallet.currency:'code' }}
     </span>
     <div class="goal-progress-mobile" *ngIf="getGoalProgress().hasGoal">
       <div class="progress-bar">
