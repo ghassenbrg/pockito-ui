@@ -20,6 +20,7 @@ import { TransactionModalComponent } from './components/transaction-modal/transa
 import { TransactionPaginationComponent } from './components/transaction-pagination/transaction-pagination.component';
 import { TransactionFilters, ViewMode } from './models/transaction.types';
 import { TransactionFacade } from './services/transaction.facade';
+import { PageHeaderComponent, PageHeaderConfig } from '../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-transactions',
@@ -34,6 +35,7 @@ import { TransactionFacade } from './services/transaction.facade';
     TransactionFiltersComponent,
     TransactionModalComponent,
     TransactionPaginationComponent,
+    PageHeaderComponent,
   ],
   templateUrl: './transactions.component.html',
   styleUrl: './transactions.component.scss',
@@ -61,6 +63,21 @@ export class TransactionsComponent implements OnInit, OnDestroy {
   pageSize$ = this.transactionFacade.pageSize$;
   totalElements$ = this.transactionFacade.totalElements$;
   paginationInfo$ = this.transactionFacade.paginationInfo$;
+  
+  // Page header configuration
+  headerConfig: PageHeaderConfig = {
+    title: 'Transactions',
+    subtitle: 'Track your income and expenses across all accounts',
+    icon: 'pi pi-credit-card',
+    buttonText: 'New Transaction',
+    buttonIcon: 'pi pi-plus',
+    showButton: true,
+    buttonClass: 'p-button-text',
+    showSecondaryButton: true,
+    secondaryButtonText: 'Export Data',
+    secondaryButtonIcon: 'pi pi-download',
+    secondaryButtonClass: 'p-button-outlined'
+  };
  
   private subscriptions = new Subscription();
 
@@ -101,6 +118,14 @@ export class TransactionsComponent implements OnInit, OnDestroy {
     this.modalMode = 'create';
     this.selectedTransaction = null;
     this.showModal = true;
+  }
+
+  /**
+   * Handle secondary button click
+   */
+  onSecondaryButtonClick(): void {
+    // In a real application, this would open an export data dialog
+    console.log('Export data clicked');
   }
 
   viewTransaction(transaction: TransactionDto): void {

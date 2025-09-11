@@ -1,19 +1,10 @@
 <div class="dashboard">
   <!-- Page Header -->
-  <div class="page-header">
-    <div class="header-content">
-      <h1 class="page-title">Dashboard</h1>
-      <p class="page-subtitle">Welcome back! Here's what's happening with your account.</p>
-    </div>
-    <div class="header-actions">
-      <p-button 
-        label="New Project" 
-        icon="pi pi-plus" 
-        styleClass="p-button-primary"
-        (onClick)="createProject()"
-      ></p-button>
-    </div>
-  </div>
+  <app-page-header 
+    [config]="headerConfig"
+    (buttonClick)="createProject()"
+    (secondaryButtonClick)="onSecondaryButtonClick()"
+  ></app-page-header>
 
   <!-- Statistics Cards -->
   <div class="stats-grid">

@@ -1,40 +1,9 @@
 <div class="form-container">
-  <div class="form-header">
-    <div class="header-content">
-      <div class="header-icon">
-        <i class="pi pi-tag"></i>
-      </div>
-      <div class="header-text">
-        <h1 class="form-title">
-          <ng-container *ngIf="(isViewMode$ | async); else editCreateTitle">
-            {{ 'editCategory.view.title' | translate }}{{ editCategoryForm.get('name')?.value || '' }}
-          </ng-container>
-          <ng-template #editCreateTitle>
-            {{ (isEditMode$ | async) ? ('editCategory.edit.title' | translate) + (editCategoryForm.get('name')?.value || '') : ('editCategory.create.title' | translate) }}
-          </ng-template>
-        </h1>
-        <p class="form-subtitle">
-          <ng-container *ngIf="(isViewMode$ | async); else editCreateSubtitle">
-            {{ 'editCategory.view.subtitle' | translate }}
-          </ng-container>
-          <ng-template #editCreateSubtitle>
-            {{ (isEditMode$ | async) ? ('editCategory.edit.subtitle' | translate) : ('editCategory.create.subtitle' | translate) }}
-          </ng-template>
-        </p>
-      </div>
-    </div>
-    <div class="header-actions">
-      <button
-        type="button"
-        pButton
-        [label]="'editCategory.back_to_categories' | translate"
-        icon="pi pi-arrow-left"
-        class="p-button-text"
-        (click)="onCancel()"
-        [disabled]="(isUpdatingCategory$ | async) || (isCreatingCategory$ | async)"
-      ></button>
-    </div>
-  </div>
+  <!-- Page Header -->
+  <app-page-header 
+    [config]="headerConfig"
+    (buttonClick)="onHeaderButtonClick()"
+  ></app-page-header>
 
   <div class="form-content">
     <form [formGroup]="editCategoryForm" (ngSubmit)="onSubmit()" class="form">

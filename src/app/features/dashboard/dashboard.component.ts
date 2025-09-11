@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { TagModule } from 'primeng/tag';
+import { PageHeaderComponent, PageHeaderConfig } from '../../shared/components/page-header/page-header.component';
 
 // Interfaces for type safety
 interface Project {
@@ -28,7 +29,8 @@ interface Activity {
     CommonModule,
     CardModule,
     ButtonModule,
-    TagModule
+    TagModule,
+    PageHeaderComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
@@ -43,6 +45,21 @@ export class DashboardComponent implements OnInit {
   // Data arrays
   recentProjects: Project[] = [];
   recentActivity: Activity[] = [];
+
+  // Page header configuration
+  headerConfig: PageHeaderConfig = {
+    title: 'Dashboard',
+    subtitle: 'Welcome back! Here\'s what\'s happening with your account.',
+    icon: 'pi pi-chart-pie',
+    buttonText: 'New Project',
+    buttonIcon: 'pi pi-plus',
+    showButton: true,
+    buttonClass: 'p-button-text',
+    showSecondaryButton: true,
+    secondaryButtonText: 'View Analytics',
+    secondaryButtonIcon: 'pi pi-chart-bar',
+    secondaryButtonClass: 'p-button-outlined'
+  };
 
   constructor(private router: Router) {}
 
@@ -173,6 +190,13 @@ export class DashboardComponent implements OnInit {
   createProject(): void {
     // In a real application, this would open a create project modal or navigate to create page
     // this.router.navigate(['/app/projects/create']);
+  }
+
+  /**
+   * Handle secondary button click
+   */
+  onSecondaryButtonClick(): void {
+    this.viewAnalytics();
   }
 
   /**

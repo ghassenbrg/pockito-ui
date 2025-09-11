@@ -1,8 +1,12 @@
 // Edit Category Component Styles
-// Using shared form styles with category-specific enhancements
+// Using design system for consistent spacing
+@import '../../../shared/styles/_design-system';
 
-// Import shared form styles (this will be handled by the global styles)
-// The shared styles are already imported globally in the app
+.form-container {
+  @include page-container(56.25rem); // 900px
+  background: var(--pockito-bg-secondary);
+  min-height: 100vh;
+}
 
 // Color picker styles (specific to this component)
 .color-picker-container {

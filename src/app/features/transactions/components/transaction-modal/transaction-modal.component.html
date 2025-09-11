@@ -171,11 +171,12 @@
   </form>
 
   <ng-template pTemplate="footer">
-    <div class="modal-actions">
+    <div class="unified-modal-actions">
       <button 
         type="button" 
         pButton 
         [label]="'common.cancel' | translate"
+        icon="pi pi-times"
         (click)="onCancel()"
         [disabled]="loading"
         class="p-button-secondary">
@@ -184,6 +185,7 @@
         type="button" 
         pButton 
         [label]="submitButtonLabel | translate"
+        [icon]="mode === 'view' ? 'pi pi-pencil' : (mode === 'edit' ? 'pi pi-check' : 'pi pi-plus')"
         [loading]="loading"
         [disabled]="transactionForm.invalid && mode !== 'view'"
         (click)="onSubmit()"

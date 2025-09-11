@@ -40,9 +40,9 @@
         <h3>{{ "appLayout.navigation.mainNavigation" | translate }}</h3>
         <div class="mobile-nav-grid">
           <div
-            class="mobile-nav-item"
+            class="mobile-nav-item ripple-effect"
             *ngFor="let item of dockItems"
-            (click)="handleMobileNavigation(item)"
+            (click)="handleMobileNavigation(item, $event)"
           >
             <img [src]="item.icon" [alt]="item.label" />
             <span>{{ item.label }}</span>
@@ -54,9 +54,9 @@
         <h3>{{ "appLayout.navigation.moreOptions" | translate }}</h3>
         <div class="mobile-nav-grid">
           <div
-            class="mobile-nav-item"
+            class="mobile-nav-item ripple-effect"
             *ngFor="let item of moreItems"
-            (click)="handleMobileNavigation(item)"
+            (click)="handleMobileNavigation(item, $event)"
           >
             <img [src]="item.icon" [alt]="item.label" />
             <span>{{ item.label }}</span>
@@ -112,9 +112,9 @@
   <nav class="mobile-bottom-nav">
     <div class="mobile-bottom-nav-items">
       <div
-        class="mobile-bottom-nav-item"
+        class="mobile-bottom-nav-item ripple-effect"
         *ngFor="let item of mobileBottomNavItems"
-        (click)="handleMobileBottomNavClick(item)"
+        (click)="handleMobileBottomNavClick(item, $event)"
         [class.active]="isActiveTab(item)"
       >
         <img [src]="item.icon" [alt]="item.label" />

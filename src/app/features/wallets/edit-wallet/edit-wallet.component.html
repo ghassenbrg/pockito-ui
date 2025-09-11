@@ -1,30 +1,9 @@
 <div class="form-container">
-  <div class="form-header">
-    <div class="header-content">
-      <div class="header-icon">
-        <i class="pi pi-wallet"></i>
-      </div>
-      <div class="header-text">
-        <h1 class="form-title">
-          {{ (isEditMode$ | async) ? ('editWallet.edit.title' | translate) + (editWalletForm.get('name')?.value || '') : ('editWallet.create.title' | translate) }}
-        </h1>
-        <p class="form-subtitle">
-          {{ (isEditMode$ | async) ? ('editWallet.edit.subtitle' | translate) : ('editWallet.create.subtitle' | translate) }}
-        </p>
-      </div>
-    </div>
-    <div class="header-actions">
-      <button
-        type="button"
-        pButton
-        [label]="'editWallet.back_to_wallets' | translate"
-        icon="pi pi-arrow-left"
-        class="p-button-text"
-        (click)="onCancel()"
-        [disabled]="(isUpdatingWallet$ | async) || (isCreatingWallet$ | async)"
-      ></button>
-    </div>
-  </div>
+  <!-- Page Header -->
+  <app-page-header 
+    [config]="headerConfig"
+    (buttonClick)="onHeaderButtonClick()"
+  ></app-page-header>
 
   <div class="form-content">
     <form [formGroup]="editWalletForm" (ngSubmit)="onSubmit()" class="form">
@@ -51,6 +30,7 @@
               formControlName="name"
               [placeholder]="'editWallet.placeholders.enter_wallet_name' | translate"
               [class.invalid]="isFieldInvalid('name')"
+              [readonly]="(isViewMode$ | async) || false"
               class="form-input"
               maxlength="50"
               autocomplete="off"
@@ -73,6 +53,8 @@
               optionValue="value"
               [placeholder]="'editWallet.placeholders.select_wallet_type' | translate"
               [class.invalid]="isFieldInvalid('type')"
+              [disabled]="(isViewMode$ | async) || false"
+              [readonly]="(isViewMode$ | async) || false"
               class="form-dropdown"
               [showClear]="false"
               [filter]="false"
@@ -103,7 +85,8 @@
                [showClear]="false"
                [filter]="false"
                appendTo="body"
-               [readonly]="(isEditMode$ | async) || false"
+               [disabled]="(isViewMode$ | async) || false"
+               [readonly]="(isViewMode$ | async) || false"
                [overlayOptions]="{ autoZIndex: true }"
              ></p-dropdown>
              <div *ngIf="isFieldInvalid('currency')" class="error-message">
@@ -125,6 +108,7 @@
                 pInputText
                 formControlName="iconUrl"
                 [placeholder]="'editWallet.placeholders.icon_url_placeholder' | translate"
+                [readonly]="(isViewMode$ | async) || false"
                 class="form-input"
                 (input)="onIconUrlChange()"
                 autocomplete="url"
@@ -238,7 +222,8 @@
             <textarea
               id="description"
               formControlName="description"
-                              [placeholder]="'editWallet.placeholders.description_placeholder' | translate"
+              [placeholder]="'editWallet.placeholders.description_placeholder' | translate"
+              [readonly]="(isViewMode$ | async) || false"
               class="form-textarea"
               rows="3"
               maxlength="200"
@@ -260,6 +245,7 @@
                 formControlName="color"
                 class="form-color-picker"
                 [value]="editWalletForm.get('color')?.value || '#3b82f6'"
+                [disabled]="(isViewMode$ | async) || false"
                 (input)="onColorChange($event)"
               />
               <input
@@ -267,6 +253,7 @@
                 class="form-hex-input"
                 [placeholder]="'editWallet.placeholders.hex_color' | translate"
                 [value]="editWalletForm.get('color')?.value || '#3b82f6'"
+                [readonly]="(isViewMode$ | async) || false"
                 (input)="onHexInputChange($event)"
                 maxlength="7"
                 pattern="^#[0-9A-Fa-f]{6}$"
@@ -278,7 +265,7 @@
       </div>
 
       <!-- Form Actions -->
-      <div class="form-actions">
+      <div class="form-actions" *ngIf="!(isViewMode$ | async)">
         <div class="form-actions-left">
           <button
             type="button"
@@ -298,7 +285,33 @@
             [label]="(isEditMode$ | async) ? ('editWallet.buttons.update_wallet' | translate) : ('editWallet.buttons.create_wallet' | translate)"
             [icon]="(isEditMode$ | async) ? 'pi pi-check' : 'pi pi-plus'"
             class="p-button-primary"
-                          [disabled]="editWalletForm.invalid || (isUpdatingWallet$ | async) || (isCreatingWallet$ | async)"
+            [loading]="((isUpdatingWallet$ | async) || false) || ((isCreatingWallet$ | async) || false)"
+            [disabled]="editWalletForm.invalid || (isUpdatingWallet$ | async) || (isCreatingWallet$ | async)"
+          ></button>
+        </div>
+      </div>
+
+      <!-- View Mode Actions -->
+      <div class="form-actions" *ngIf="isViewMode$ | async">
+        <div class="form-actions-left">
+          <button
+            type="button"
+            pButton
+            [label]="'editWallet.buttons.back' | translate"
+            icon="pi pi-arrow-left"
+            class="p-button-outlined"
+            (click)="onCancel()"
+          ></button>
+        </div>
+        
+        <div class="form-actions-right">
+          <button
+            type="button"
+            pButton
+            [label]="'editWallet.buttons.edit' | translate"
+            icon="pi pi-pencil"
+            class="p-button-primary"
+            (click)="onEditClick()"
           ></button>
         </div>
       </div>

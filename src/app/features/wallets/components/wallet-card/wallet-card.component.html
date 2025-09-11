@@ -7,26 +7,26 @@
   [style.--wallet-color-gradient]="getWalletColorVariants().gradient"
 >
   <div class="card-header">
-    <div class="wallet-icon-container">
+    <div class="icon-container">
       <img
         [src]="getWalletIconUrl()"
         [alt]="wallet.name"
-        class="wallet-icon"
+        class="icon"
         (error)="onImageError($event)"
       />
       <div class="icon-overlay" *ngIf="!isWalletActive()">
         <i class="pi pi-pause"></i>
       </div>
     </div>
-    <div class="wallet-info">
-      <h3 class="wallet-name">{{ wallet.name }}</h3>
-      <span class="wallet-type">{{ 'wallet.types.' + wallet.type.toUpperCase() | translate }}</span>
+    <div class="info">
+      <h3 class="title">{{ wallet.name }}</h3>
+      <span class="subtitle">{{ 'wallet.types.' + wallet.type.toUpperCase() | translate }}</span>
     </div>
-    <div class="wallet-status">
+    <div class="status">
       <span class="status-badge" [class.active]="isWalletActive()">
         {{ isWalletActive() ? ('wallet.status.active' | translate) : ('wallet.status.inactive' | translate) }}
       </span>
-      <span class="default-badge" *ngIf="isWalletDefault()">
+      <span class="special-badge" *ngIf="isWalletDefault()">
         <i class="pi pi-star-fill"></i>
         {{ 'wallet.status.default' | translate }}
       </span>
@@ -37,14 +37,14 @@
     <div class="balance-section">
       <div class="balance-row">
         <span class="label">{{ 'wallet.balance' | translate }}:</span>
-        <span class="value" [style.color]="(wallet.balance || 0) >= 0 ? '#10b981' : '#dc2626'">
+        <span class="value" [style.color]="(wallet.balance || 0) >= 0 ? 'var(--pockito-success)' : 'var(--pockito-error)'">
           {{ (wallet.balance || 0) >= 0 ? '+' : '' }}{{ wallet.balance | pockitoCurrency:wallet.currency:'code' }}
         </span>
       </div>
     </div>
 
-    <div class="goal-section" *ngIf="getGoalProgress().hasGoal">
-      <div class="goal-header">
+    <div class="progress-section" *ngIf="getGoalProgress().hasGoal">
+      <div class="progress-header">
         <span class="label">{{ 'wallet.goal' | translate }}:</span>
         <span class="value">
           {{ (wallet.goalAmount ?? 0) | pockitoCurrency:wallet.currency:'code' }}
@@ -62,7 +62,7 @@
       </div>
     </div>
 
-    <div class="wallet-description" *ngIf="wallet.description">
+    <div class="description" *ngIf="wallet.description">
       <p class="description-text">{{ wallet.description }}</p>
     </div>
   </div>

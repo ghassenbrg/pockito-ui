@@ -19,6 +19,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { filter, map, switchMap, take } from 'rxjs/operators';
 import { CategoryFormService } from '../services/category-form.service';
 import { CategoryFacade } from '../services/category.facade';
+import { PageHeaderComponent, PageHeaderConfig } from '@shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-edit-category',
@@ -31,6 +32,7 @@ import { CategoryFacade } from '../services/category.facade';
     DropdownModule,
     TooltipModule,
     TranslateModule,
+    PageHeaderComponent,
   ],
   templateUrl: './edit-category.component.html',
   styleUrls: ['./edit-category.component.scss'],
@@ -38,6 +40,17 @@ import { CategoryFacade } from '../services/category.facade';
 })
 export class EditCategoryComponent implements OnInit, OnDestroy {
   editCategoryForm!: FormGroup;
+  
+  // Header configuration
+  headerConfig: PageHeaderConfig = {
+    title: '',
+    subtitle: '',
+    icon: 'pi pi-tag',
+    showButton: true,
+    buttonText: 'Back to Categories',
+    buttonIcon: 'pi pi-arrow-left',
+    buttonClass: 'p-button-text'
+  };
 
   // Observables for reactive data binding
   category$ = this.route.params.pipe(
@@ -97,6 +110,12 @@ export class EditCategoryComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.loadCategory();
     this.categoryFacade.clearError();
+    this.updateHeaderConfig();
+    
+    // Update header when form changes
+    this.editCategoryForm.get('name')?.valueChanges.subscribe(() => {
+      this.updateHeaderConfig();
+    });
     
     // Load parent categories after form is initialized
     setTimeout(() => {
@@ -143,6 +162,47 @@ export class EditCategoryComponent implements OnInit, OnDestroy {
 
   onCancel(): void {
     this.router.navigate(['/app/categories']);
+  }
+
+  onHeaderButtonClick(): void {
+    this.onCancel();
+  }
+
+  private updateHeaderConfig(): void {
+    const isEditMode = this.route.snapshot.params['id'] && this.route.snapshot.params['id'] !== 'new';
+    const isViewMode = this.route.snapshot.url.some(segment => segment.path === 'view');
+    
+    if (isViewMode) {
+      this.headerConfig = {
+        title: `View Category: ${this.editCategoryForm.get('name')?.value || ''}`,
+        subtitle: 'View category details',
+        icon: 'pi pi-tag',
+        showButton: true,
+        buttonText: 'Back to Categories',
+        buttonIcon: 'pi pi-arrow-left',
+        buttonClass: 'p-button-text'
+      };
+    } else if (isEditMode) {
+      this.headerConfig = {
+        title: `Edit Category: ${this.editCategoryForm.get('name')?.value || ''}`,
+        subtitle: 'Modify category details',
+        icon: 'pi pi-tag',
+        showButton: true,
+        buttonText: 'Back to Categories',
+        buttonIcon: 'pi pi-arrow-left',
+        buttonClass: 'p-button-text'
+      };
+    } else {
+      this.headerConfig = {
+        title: 'Create New Category',
+        subtitle: 'Add a new category to organize your transactions',
+        icon: 'pi pi-tag',
+        showButton: true,
+        buttonText: 'Back to Categories',
+        buttonIcon: 'pi pi-arrow-left',
+        buttonClass: 'p-button-text'
+      };
+    }
   }
 
   private loadParentCategories(): void {

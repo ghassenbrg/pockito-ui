@@ -21,6 +21,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { filter, map, switchMap, take } from 'rxjs/operators';
 import { WalletFormService } from '../services/wallet-form.service';
 import { WalletFacade } from '../services/wallet.facade';
+import { PageHeaderComponent, PageHeaderConfig } from '@shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-edit-wallet',
@@ -35,6 +36,7 @@ import { WalletFacade } from '../services/wallet.facade';
     CheckboxModule,
     TooltipModule,
     TranslateModule,
+    PageHeaderComponent,
   ],
   templateUrl: './edit-wallet.component.html',
   styleUrls: ['./edit-wallet.component.scss'],
@@ -42,6 +44,17 @@ import { WalletFacade } from '../services/wallet.facade';
 })
 export class EditWalletComponent implements OnInit, OnDestroy {
   editWalletForm!: FormGroup;
+  
+  // Header configuration
+  headerConfig: PageHeaderConfig = {
+    title: '',
+    subtitle: '',
+    icon: 'pi pi-wallet',
+    showButton: true,
+    buttonText: 'Back to Wallets',
+    buttonIcon: 'pi pi-arrow-left',
+    buttonClass: 'p-button-text'
+  };
 
   // Observables for reactive data binding
   wallet$ = this.route.params.pipe(
@@ -56,6 +69,10 @@ export class EditWalletComponent implements OnInit, OnDestroy {
 
   isEditMode$ = this.route.params.pipe(
     map((params) => params['id'] && params['id'] !== 'new')
+  );
+
+  isViewMode$ = this.route.url.pipe(
+    map(url => url.some(segment => segment.path === 'view'))
   );
 
   // Form options from service
@@ -96,6 +113,12 @@ export class EditWalletComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.loadWallet();
     this.walletFacade.clearError();
+    this.updateHeaderConfig();
+    
+    // Update header when form changes
+    this.editWalletForm.get('name')?.valueChanges.subscribe(() => {
+      this.updateHeaderConfig();
+    });
     
     // Listen for route changes to ensure loading state is reset
     this.router.events
@@ -136,6 +159,57 @@ export class EditWalletComponent implements OnInit, OnDestroy {
 
   onCancel(): void {
     this.router.navigate(['/app/wallets']);
+  }
+
+  onEditClick(): void {
+    // Navigate to edit mode by removing 'view' from the URL
+    this.route.url.subscribe(urlSegments => {
+      const newUrl = urlSegments
+        .filter(segment => segment.path !== 'view')
+        .map(segment => segment.path);
+      this.router.navigate(['/app/wallets/edit', ...newUrl]);
+    }).unsubscribe();
+  }
+
+  onHeaderButtonClick(): void {
+    this.onCancel();
+  }
+
+  private updateHeaderConfig(): void {
+    const isEditMode = this.route.snapshot.params['id'] && this.route.snapshot.params['id'] !== 'new';
+    const isViewMode = this.route.snapshot.url.some(segment => segment.path === 'view');
+    
+    if (isViewMode) {
+      this.headerConfig = {
+        title: `View Wallet: ${this.editWalletForm.get('name')?.value || ''}`,
+        subtitle: 'View wallet details',
+        icon: 'pi pi-wallet',
+        showButton: true,
+        buttonText: 'Back to Wallets',
+        buttonIcon: 'pi pi-arrow-left',
+        buttonClass: 'p-button-text'
+      };
+    } else if (isEditMode) {
+      this.headerConfig = {
+        title: `Edit Wallet: ${this.editWalletForm.get('name')?.value || ''}`,
+        subtitle: 'Modify wallet details',
+        icon: 'pi pi-wallet',
+        showButton: true,
+        buttonText: 'Back to Wallets',
+        buttonIcon: 'pi pi-arrow-left',
+        buttonClass: 'p-button-text'
+      };
+    } else {
+      this.headerConfig = {
+        title: 'Create New Wallet',
+        subtitle: 'Add a new wallet to manage your finances',
+        icon: 'pi pi-wallet',
+        showButton: true,
+        buttonText: 'Back to Wallets',
+        buttonIcon: 'pi pi-arrow-left',
+        buttonClass: 'p-button-text'
+      };
+    }
   }
 
   // Form validation methods

@@ -1,23 +1,23 @@
+@import '../../../shared/styles/_design-system';
+
 .create-transaction-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
+  @include page-container(50rem); // 800px
 
   .form-header {
     text-align: center;
-    margin-bottom: 32px;
+    margin-bottom: $spacing-2xl;
 
     h1 {
-      margin: 0 0 8px 0;
-      font-size: 28px;
-      font-weight: 700;
-      color: #374151;
+      margin: 0 0 $spacing-sm 0;
+      font-size: $font-size-4xl;
+      font-weight: $font-weight-bold;
+      color: var(--pockito-text-primary);
     }
 
     p {
       margin: 0;
-      font-size: 16px;
-      color: #6b7280;
+      font-size: $font-size-base;
+      color: var(--pockito-text-secondary);
     }
   }
 

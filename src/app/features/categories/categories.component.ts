@@ -13,6 +13,7 @@ import { CategoryViewSwitcherComponent } from './components/view-switcher/view-s
 import { ViewMode } from './models/category.types';
 import { CategoryFacade } from './services/category.facade';
 import { ResponsiveService } from '@core/services/responsive.service';
+import { PageHeaderComponent, PageHeaderConfig } from '../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-categories',
@@ -24,7 +25,8 @@ import { ResponsiveService } from '@core/services/responsive.service';
     TranslateModule,
     CategoryCardComponent,
     CategoryListItemComponent,
-    CategoryViewSwitcherComponent
+    CategoryViewSwitcherComponent,
+    PageHeaderComponent
   ],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.scss',
@@ -37,6 +39,21 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     map(screenSize => screenSize.isMobile)
   );
   currentViewMode$ = this.categoryFacade.viewMode$;
+  
+  // Page header configuration
+  headerConfig: PageHeaderConfig = {
+    title: 'Categories',
+    subtitle: 'Organize your transactions with custom categories',
+    icon: 'pi pi-tags',
+    buttonText: 'New Category',
+    buttonIcon: 'pi pi-plus',
+    showButton: true,
+    buttonClass: 'p-button-text',
+    showSecondaryButton: true,
+    secondaryButtonText: 'Import Categories',
+    secondaryButtonIcon: 'pi pi-download',
+    secondaryButtonClass: 'p-button-outlined'
+  };
   
   private subscriptions = new Subscription();
 
@@ -75,6 +92,14 @@ export class CategoriesComponent implements OnInit, OnDestroy {
 
   createCategory(): void {
     this.categoryFacade.navigateToCreateCategory();
+  }
+
+  /**
+   * Handle secondary button click
+   */
+  onSecondaryButtonClick(): void {
+    // In a real application, this would open an import categories dialog
+    console.log('Import categories clicked');
   }
 
   viewCategory(category: Category): void {

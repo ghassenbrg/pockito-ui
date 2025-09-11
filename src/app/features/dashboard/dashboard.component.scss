@@ -1,72 +1,10 @@
+@import '../../shared/styles/design-system';
+
 .dashboard {
-  padding: 1rem;
-  max-width: 1400px;
-  margin: 0 auto;
-  
-  // Mobile-first padding
-  @media (min-width: 768px) {
-    padding: 1.5rem;
-  }
-  
-  @media (min-width: 1024px) {
-    padding: 2rem;
-  }
+  @include page-container(87.5rem); // 1400px - consistent with wallets
 }
 
-// Page Header
-.page-header {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--surface-border);
-  
-  // Stack vertically on mobile
-  @media (min-width: 768px) {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-  }
-
-  .header-content {
-    .page-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text-color);
-      margin: 0 0 0.5rem 0;
-      line-height: 1.2;
-      
-      @media (min-width: 768px) {
-        font-size: 2rem;
-      }
-    }
-
-    .page-subtitle {
-      color: var(--text-color-secondary);
-      font-size: 1rem;
-      margin: 0;
-      line-height: 1.5;
-      
-      @media (min-width: 768px) {
-        font-size: 1.125rem;
-      }
-    }
-  }
-
-  .header-actions {
-    // PrimeNG button styles are handled by the component
-    .p-button {
-      width: 100%;
-      
-      @media (min-width: 768px) {
-        width: auto;
-      }
-    }
-  }
-}
+// Page header styles are now handled by the shared PageHeaderComponent
 
 // Statistics Grid
 .stats-grid {
@@ -505,15 +443,21 @@
     // Add mobile-specific spacing for the new mobile layout (no top header)
     padding-top: 1rem; // No need to account for mobile header
     padding-bottom: calc(80px + 1rem); // Account for mobile bottom nav
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
   }
   
   // Make cards more touch-friendly on mobile
   .stat-card,
   .content-card {
     border-radius: 1rem;
+    margin-bottom: 1rem;
+    -webkit-tap-highlight-color: transparent;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     
     &:active {
       transform: scale(0.98);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
   }
   
@@ -521,14 +465,73 @@
   .p-button {
     min-height: 44px;
     min-width: 44px;
+    font-size: 16px; // Prevent zoom on iOS
+    border-radius: 12px;
+    -webkit-tap-highlight-color: transparent;
+    
+    &:active {
+      transform: scale(0.95);
+    }
   }
   
   // Better mobile grid layouts
   .stats-grid {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
   
   .content-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  // Enhanced mobile card styling
+  .stat-card {
+    .stat-icon {
+      width: 3rem;
+      height: 3rem;
+    }
+    
+    .stat-value {
+      font-size: 1.75rem;
+    }
+  }
+  
+  // Mobile-optimized project items
+  .project-item {
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    
+    &:active {
+      transform: scale(0.98);
+      background: rgba(255, 255, 255, 0.8);
+    }
+  }
+  
+  // Mobile-optimized activity items
+  .activity-item {
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    
+    &:active {
+      background: rgba(0, 0, 0, 0.05);
+    }
+  }
+  
+  // Mobile-optimized quick actions
+  .quick-actions {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    
+    .action-btn {
+      padding: 0.75rem;
+      font-size: 16px;
+      border-radius: 12px;
+    }
   }
 }

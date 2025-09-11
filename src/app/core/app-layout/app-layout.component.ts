@@ -13,6 +13,7 @@ import { UserService } from '@api/services/user.service';
 import { PockitoTerminalComponent } from '@core/pockito-terminal/pockito-terminal.component';
 import { KeycloakService } from '@core/security/keycloak.service';
 import { ResponsiveService } from '@core/services/responsive.service';
+import { MobileService } from '@core/services/mobile.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageSwitcherComponent } from '@shared/components/language-switcher/language-switcher.component';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
@@ -57,6 +58,10 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
   private touchEndX: number = 0;
   private touchEndY: number = 0;
   private readonly minSwipeDistance = 50;
+  
+  // Mobile features
+  private pullToRefreshCleanup?: () => void;
+  private swipeGestureCleanup?: () => void;
 
   dockItems: MenuItem[] | undefined;
   moreItems: MenuItem[] | undefined;
@@ -82,6 +87,7 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private translate: TranslateService,
     private responsiveService: ResponsiveService,
+    private mobileService: MobileService,
     private loadingService: LoadingService,
     private userService: UserService
   ) {
@@ -98,6 +104,7 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
     this.loadCurrentUser();
 
     this.initializeMenuItems();
+    this.setupMobileFeatures();
 
     // Subscribe to language changes to refresh menu items
     this.translate.onLangChange.subscribe(() => {
@@ -119,6 +126,15 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.responsiveSubscription) {
       this.responsiveSubscription.unsubscribe();
+    }
+    
+    // Cleanup mobile features
+    if (this.pullToRefreshCleanup) {
+      this.pullToRefreshCleanup();
+    }
+    
+    if (this.swipeGestureCleanup) {
+      this.swipeGestureCleanup();
     }
   }
 
@@ -399,6 +415,42 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Setup mobile-specific features
+   */
+  private setupMobileFeatures(): void {
+    if (this.mobileService.isMobile()) {
+      // Setup pull-to-refresh
+      this.pullToRefreshCleanup = this.mobileService.setupPullToRefresh(() => {
+        this.mobileService.hapticFeedback('light');
+        // Refresh current page data
+        window.location.reload();
+      });
+
+      // Setup swipe gestures for navigation
+      const mainContent = this.elementRef.nativeElement.querySelector('.main-content-area');
+      if (mainContent) {
+        this.swipeGestureCleanup = this.mobileService.setupSwipeGesture(
+          mainContent,
+          {
+            onSwipeRight: () => {
+              if (!this.mobileMenuOpen) {
+                this.openMobileMenu();
+                this.mobileService.hapticFeedback('light');
+              }
+            },
+            onSwipeLeft: () => {
+              if (this.mobileMenuOpen) {
+                this.closeMobileMenu();
+                this.mobileService.hapticFeedback('light');
+              }
+            }
+          }
+        );
+      }
+    }
+  }
+
   // Update active route based on current URL
   private updateActiveRoute(url: string): void {
     if (url.includes('/app/dashboard')) {
@@ -461,16 +513,19 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
   toggleMobileMenu(): void {
     this.mobileMenuOpen = !this.mobileMenuOpen;
     this.updateBodyScroll();
+    this.mobileService.hapticFeedback('light');
   }
 
   openMobileMenu(): void {
     this.mobileMenuOpen = true;
     this.updateBodyScroll();
+    this.mobileService.hapticFeedback('light');
   }
 
   closeMobileMenu(): void {
     this.mobileMenuOpen = false;
     this.updateBodyScroll();
+    this.mobileService.hapticFeedback('light');
   }
 
   private updateBodyScroll(): void {
@@ -481,7 +536,11 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleMobileNavigation(item: MenuItem): void {
+  handleMobileNavigation(item: MenuItem, event?: Event): void {
+    if (event) {
+      this.mobileService.createRippleEffect(event.target as HTMLElement, event as any);
+    }
+    this.mobileService.hapticFeedback('light');
     this.closeMobileMenu();
     if (item.command) {
       item.command({} as any); // Pass empty event object
@@ -489,7 +548,12 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
   }
 
   // Handle mobile bottom navigation clicks
-  handleMobileBottomNavClick(item: MenuItem): void {
+  handleMobileBottomNavClick(item: MenuItem, event?: Event): void {
+    if (event) {
+      this.mobileService.createRippleEffect(event.target as HTMLElement, event as any);
+    }
+    this.mobileService.hapticFeedback('light');
+    
     if (item.label === this.translate.instant('appLayout.navigation.more')) {
       // Open the more options dialog (same behavior as top bar)
       this.displayMore = true;

@@ -1,25 +1,10 @@
 <div class="wallets-container">
-  <!-- Enhanced Header Section -->
-  <div class="wallets-header">
-    <div class="header-content">
-      <div class="header-icon">
-        <i class="pi pi-wallet"></i>
-      </div>
-      <div class="header-text">
-        <h1 class="page-title">{{ 'wallet.title' | translate }}</h1>
-        <p class="page-subtitle">{{ 'wallet.subtitle' | translate }}</p>
-      </div>
-    </div>
-    <div class="header-actions">
-      <button 
-        class="new-wallet-btn" 
-        pButton 
-        (click)="createWallet()"
-        [label]="'wallet.new_wallet' | translate"
-        icon="pi pi-plus"
-      ></button>
-    </div>
-  </div>
+  <!-- Page Header -->
+  <app-page-header 
+    [config]="headerConfig"
+    (buttonClick)="createWallet()"
+    (secondaryButtonClick)="onSecondaryButtonClick()"
+  ></app-page-header>
 
   <!-- View Switcher -->
   <app-view-switcher
@@ -71,7 +56,7 @@
         {{ 'wallet.empty_state.description' | translate }}
       </p>
       <button 
-        class="empty-action-btn" 
+        class="empty-action" 
         pButton 
         (click)="createWallet()"
         [label]="'wallet.new_wallet' | translate"

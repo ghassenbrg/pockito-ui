@@ -7,29 +7,29 @@
   [style.--wallet-color-dark]="getWalletColorVariants().dark"
   [style.--wallet-color-gradient]="getWalletColorVariants().gradient"
 >
-  <div class="wallet-item-icon">
+  <div class="item-icon">
     <img
       [src]="getWalletIconUrl()"
       [alt]="wallet.name"
-      class="wallet-icon-small"
+      class="icon-small"
       (error)="onImageError($event)"
     />
   </div>
   
-  <div class="wallet-item-info">
-    <h3 class="wallet-name">{{ wallet.name }}</h3>
-    <div class="wallet-meta">
-      <span class="default-indicator" *ngIf="isWalletDefault()">
+  <div class="item-info">
+    <h3 class="title">{{ wallet.name }}</h3>
+    <div class="meta">
+      <span class="special-indicator" *ngIf="isWalletDefault()">
         <i class="pi pi-star-fill"></i>
       </span>
     </div>
-    <div class="wallet-description-mobile" *ngIf="wallet.description">
+    <div class="description-mobile" *ngIf="wallet.description">
       {{ wallet.description }}
     </div>
   </div>
   
-  <div class="wallet-item-balance">
-    <span class="balance-value" [style.color]="(wallet.balance || 0) >= 0 ? '#10b981' : '#dc2626'">
+  <div class="item-balance">
+    <span class="balance-value" [style.color]="(wallet.balance || 0) >= 0 ? 'var(--pockito-success)' : 'var(--pockito-error)'">
       {{ (wallet.balance || 0) >= 0 ? '+' : '' }}{{ wallet.balance | pockitoCurrency:wallet.currency:'code' }}
     </span>
     <div class="goal-progress-mobile" *ngIf="getGoalProgress().hasGoal">
@@ -48,7 +48,7 @@
    <div class="action-buttons">
      <p-button 
        icon="pi pi-ellipsis-v" 
-       styleClass="p-button-text p-button-rounded three-dot-menu-btn"
+       styleClass="p-button-text p-button-rounded menu-btn"
        (click)="menu.toggle($event); $event.stopPropagation()"
        [pTooltip]="'wallet.actions.menu' | translate"
        tooltipPosition="left"

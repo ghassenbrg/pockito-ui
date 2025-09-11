@@ -7,22 +7,22 @@
   [style.--category-color-gradient]="getCategoryColorVariants().gradient"
 >
   <div class="card-header">
-    <div class="category-icon-container">
+    <div class="icon-container">
       <img
         [src]="getCategoryIconUrl()"
         [alt]="category.name"
-        class="category-icon"
+        class="icon"
         (error)="onImageError($event)"
       />
       <div class="icon-overlay" *ngIf="!isCategoryActive()">
         <i class="pi pi-pause"></i>
       </div>
     </div>
-    <div class="category-info">
-      <h3 class="category-name">{{ category.name }}</h3>
-      <span class="category-type">{{ getCategoryTypeLabel() | translate }}</span>
+    <div class="info">
+      <h3 class="title">{{ category.name }}</h3>
+      <span class="subtitle">{{ getCategoryTypeLabel() | translate }}</span>
     </div>
-    <div class="category-status">
+    <div class="status">
       <span class="status-badge" [class.active]="isCategoryActive()">
         {{ isCategoryActive() ? ('category.status.active' | translate) : ('category.status.inactive' | translate) }}
       </span>
@@ -30,7 +30,7 @@
   </div>
 
   <div class="card-content">
-    <div class="category-details">
+    <div class="details">
       <div class="detail-row" *ngIf="hasParent()">
         <span class="label">{{ 'category.parent' | translate }}:</span>
         <span class="value">{{ category.parentCategoryName }}</span>

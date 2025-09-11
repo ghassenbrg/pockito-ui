@@ -156,10 +156,13 @@
           padding: 16px 12px;
           border-radius: 12px;
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
           text-align: center;
           background: rgba(0, 0, 0, 0.02);
           border: 1px solid rgba(0, 0, 0, 0.05);
+          -webkit-tap-highlight-color: transparent;
+          position: relative;
+          overflow: hidden;
 
           &:hover {
             background: rgba(0, 0, 0, 0.05);
@@ -168,7 +171,8 @@
           }
 
           &:active {
-            transform: translateY(0);
+            transform: scale(0.95);
+            background: rgba(0, 0, 0, 0.1);
           }
 
           img {
@@ -204,6 +208,8 @@
   z-index: 1000;
   padding-bottom: env(safe-area-inset-bottom);
   box-shadow: var(--shadow-light);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
 
   .mobile-bottom-nav-items {
     display: flex;
@@ -218,8 +224,11 @@
       padding: 8px;
       border-radius: 12px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       min-width: 64px;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+      overflow: hidden;
 
       &:hover {
         background: rgba(0, 0, 0, 0.05);
@@ -227,6 +236,7 @@
 
       &:active {
         transform: scale(0.95);
+        background: rgba(0, 0, 0, 0.1);
       }
 
       &.active {

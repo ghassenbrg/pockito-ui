@@ -13,6 +13,7 @@ import { ViewSwitcherComponent } from './components/view-switcher/view-switcher.
 import { ViewMode } from './models/wallet.types';
 import { WalletFacade } from './services/wallet.facade';
 import { ResponsiveService } from '@core/services/responsive.service';
+import { PageHeaderComponent, PageHeaderConfig } from '../../shared/components/page-header/page-header.component';
 
 @Component({
   selector: 'app-wallets',
@@ -24,7 +25,8 @@ import { ResponsiveService } from '@core/services/responsive.service';
     TranslateModule,
     WalletCardComponent,
     WalletListItemComponent,
-    ViewSwitcherComponent
+    ViewSwitcherComponent,
+    PageHeaderComponent
   ],
   templateUrl: './wallets.component.html',
   styleUrl: './wallets.component.scss',
@@ -37,6 +39,21 @@ export class WalletsComponent implements OnInit, OnDestroy {
     map(screenSize => screenSize.isMobile)
   );
   currentViewMode$ = this.walletFacade.viewMode$;
+  
+  // Page header configuration
+  headerConfig: PageHeaderConfig = {
+    title: 'Wallets',
+    subtitle: 'Manage your financial accounts and track balances',
+    icon: 'pi pi-wallet',
+    buttonText: 'New Wallet',
+    buttonIcon: 'pi pi-plus',
+    showButton: true,
+    buttonClass: 'p-button-text',
+    showSecondaryButton: true,
+    secondaryButtonText: 'Import Wallets',
+    secondaryButtonIcon: 'pi pi-download',
+    secondaryButtonClass: 'p-button-outlined'
+  };
   
   private subscriptions = new Subscription();
 
@@ -75,6 +92,14 @@ export class WalletsComponent implements OnInit, OnDestroy {
 
   createWallet(): void {
     this.walletFacade.navigateToCreateWallet();
+  }
+
+  /**
+   * Handle secondary button click
+   */
+  onSecondaryButtonClick(): void {
+    // In a real application, this would open an import wallets dialog
+    console.log('Import wallets clicked');
   }
 
   viewWallet(wallet: Wallet): void {

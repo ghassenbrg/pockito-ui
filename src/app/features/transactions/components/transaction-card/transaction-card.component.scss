@@ -1,171 +1,27 @@
+@import '../../../../shared/styles/component-mixins';
+
 .transaction-card {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-left: 4px solid #e5e7eb;
-  transition: all 0.3s ease;
-  position: relative;
+  @include transaction-card;
+  @include mobile-transaction-adjustments;
 
-  &:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    transform: translateY(-2px);
-  }
-
+  // Transaction type color overrides
   .transaction-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-
-    .transaction-type {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-
-      i {
-        font-size: 16px;
-      }
-
-      .type-label {
-        font-weight: 600;
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-    }
-
     .transaction-amount {
-      font-size: 20px;
-      font-weight: 700;
-      font-family: 'Inter', sans-serif;
-
       &.expense {
-        color: #ef4444;
+        color: var(--pockito-error);
       }
 
       &.income {
-        color: #10b981;
+        color: var(--pockito-success);
       }
 
       &.transfer {
-        color: #3b82f6;
+        color: var(--pockito-info);
       }
     }
   }
 
-  .transaction-details {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 16px;
-
-    .wallet-info {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-
-      .wallet-from,
-      .wallet-to {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        color: #6b7280;
-
-        i {
-          font-size: 12px;
-        }
-      }
-    }
-
-    .category-info,
-    .transaction-note,
-    .transaction-date {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      color: #6b7280;
-
-      i {
-        font-size: 12px;
-        width: 12px;
-      }
-    }
-
-    .transaction-note {
-      font-style: italic;
-    }
-  }
-
-  .transaction-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    padding-top: 16px;
-    border-top: 1px solid #f3f4f6;
-
-    .action-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-
-      &.view-btn {
-        background: #f3f4f6;
-        color: #6b7280;
-
-        &:hover {
-          background: #e5e7eb;
-          color: #374151;
-        }
-      }
-
-      &.edit-btn {
-        background: #dbeafe;
-        color: #3b82f6;
-
-        &:hover {
-          background: #bfdbfe;
-          color: #1d4ed8;
-        }
-      }
-
-      &.delete-btn {
-        background: #fee2e2;
-        color: #ef4444;
-
-        &:hover {
-          background: #fecaca;
-          color: #dc2626;
-        }
-      }
-    }
-  }
+  // Action button styling is now handled by the unified transaction card mixin
 }
 
-// Responsive design
-@media (max-width: 768px) {
-  .transaction-card {
-    padding: 16px;
-
-    .transaction-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-
-      .transaction-amount {
-        font-size: 18px;
-      }
-    }
-
-    .transaction-actions {
-      justify-content: center;
-    }
-  }
-}
+// Mobile adjustments are handled by the mobile-transaction-adjustments mixin

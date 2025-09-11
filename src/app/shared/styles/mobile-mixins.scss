@@ -1,0 +1,332 @@
+// Mobile-specific mixins for consistent native app-like experience
+
+// ===== MOBILE CARD MIXIN =====
+@mixin mobile-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+  
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// ===== TOUCH-FRIENDLY BUTTON MIXIN =====
+@mixin touch-button {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--text-color);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: scale(0.95);
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+}
+
+// ===== MOBILE LIST ITEM MIXIN =====
+@mixin mobile-list-item {
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+
+  &:active {
+    transform: scale(0.98);
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.9);
+  }
+}
+
+// ===== MOBILE INPUT MIXIN =====
+@mixin mobile-input {
+  width: 100%;
+  padding: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  font-size: 16px; // Prevent zoom on iOS
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  &::placeholder {
+    color: var(--text-color-secondary);
+    opacity: 0.7;
+  }
+}
+
+// ===== MOBILE MODAL MIXIN =====
+@mixin mobile-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+  
+  .modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 24px;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+  
+  &.active .modal-content {
+    transform: translateY(0);
+  }
+}
+
+// ===== MOBILE SWIPE INDICATOR MIXIN =====
+@mixin mobile-swipe-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 40px;
+  background: var(--primary-color);
+  border-radius: 2px;
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+  
+  &.left {
+    left: 10px;
+  }
+  
+  &.right {
+    right: 10px;
+  }
+  
+  &.active {
+    opacity: 1;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+}
+
+// ===== MOBILE LOADING SPINNER MIXIN =====
+@mixin mobile-loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+// ===== MOBILE EMPTY STATE MIXIN =====
+@mixin mobile-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  
+  .empty-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 32px;
+    color: var(--text-color-secondary);
+  }
+  
+  .empty-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0 0 8px 0;
+  }
+  
+  .empty-description {
+    font-size: 16px;
+    color: var(--text-color-secondary);
+    margin: 0 0 32px 0;
+    line-height: 1.5;
+  }
+  
+  .empty-action {
+    @include touch-button;
+    background: var(--primary-color);
+    color: white;
+    
+    &:hover {
+      background: var(--primary-color-dark);
+    }
+  }
+}
+
+// ===== MOBILE RESPONSIVE GRID MIXIN =====
+@mixin mobile-responsive-grid($mobile-cols: 1, $tablet-cols: 2, $desktop-cols: 3) {
+  display: grid;
+  grid-template-columns: repeat($mobile-cols, 1fr);
+  gap: 16px;
+  
+  @media (min-width: 768px) {
+    grid-template-columns: repeat($tablet-cols, 1fr);
+    gap: 20px;
+  }
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat($desktop-cols, 1fr);
+    gap: 24px;
+  }
+}
+
+// ===== MOBILE TYPOGRAPHY MIXIN =====
+@mixin mobile-typography {
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0 0 16px 0;
+  }
+  
+  h1 { font-size: 28px; }
+  h2 { font-size: 24px; }
+  h3 { font-size: 20px; }
+  h4 { font-size: 18px; }
+  h5 { font-size: 16px; }
+  h6 { font-size: 14px; }
+  
+  p {
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0 0 16px 0;
+    color: var(--text-color-secondary);
+  }
+  
+  @media (min-width: 768px) {
+    h1 { font-size: 32px; }
+    h2 { font-size: 28px; }
+    h3 { font-size: 24px; }
+    h4 { font-size: 20px; }
+    h5 { font-size: 18px; }
+    h6 { font-size: 16px; }
+    
+    p {
+      font-size: 18px;
+    }
+  }
+}
+
+// ===== MOBILE ANIMATIONS =====
+@keyframes mobileSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mobileFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mobileSlideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes mobileSlideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+// ===== MOBILE ANIMATION MIXINS =====
+@mixin mobile-slide-up($duration: 0.3s) {
+  animation: mobileSlideUp $duration ease-out;
+}
+
+@mixin mobile-fade-in($duration: 0.3s) {
+  animation: mobileFadeIn $duration ease-out;
+}
+
+@mixin mobile-slide-in-right($duration: 0.3s) {
+  animation: mobileSlideInRight $duration ease-out;
+}
+
+@mixin mobile-slide-in-left($duration: 0.3s) {
+  animation: mobileSlideInLeft $duration ease-out;
+}

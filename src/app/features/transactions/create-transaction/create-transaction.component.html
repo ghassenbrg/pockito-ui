@@ -142,22 +142,29 @@
     </div>
 
     <div class="form-actions">
-      <button 
-        type="button" 
-        pButton 
-        [label]="'common.cancel' | translate"
-        (click)="onCancel()"
-        class="p-button-secondary">
-      </button>
-      <button 
-        type="submit" 
-        pButton 
-        [label]="isEditMode ? ('transaction.edit.update' | translate) : ('transaction.create.create' | translate)"
-        [loading]="loading"
-        [disabled]="transactionForm.invalid || isViewMode"
-        class="p-button-primary"
-        *ngIf="!isViewMode">
-      </button>
+      <div class="form-actions-left">
+        <button 
+          type="button" 
+          pButton 
+          [label]="'common.cancel' | translate"
+          icon="pi pi-times"
+          (click)="onCancel()"
+          class="p-button-outlined">
+        </button>
+      </div>
+      
+      <div class="form-actions-right">
+        <button 
+          type="submit" 
+          pButton 
+          [label]="isEditMode ? ('transaction.edit.update' | translate) : ('transaction.create.create' | translate)"
+          [icon]="isEditMode ? 'pi pi-check' : 'pi pi-plus'"
+          [loading]="loading"
+          [disabled]="transactionForm.invalid || isViewMode"
+          class="p-button-primary"
+          *ngIf="!isViewMode">
+        </button>
+      </div>
     </div>
   </form>
 </div>

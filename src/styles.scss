@@ -3,7 +3,74 @@
 @import "primeicons/primeicons.css";
 
 // Import shared form styles
+
+// Global PrimeNG button icon centering fix
+.action-btn {
+  .p-button-icon {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  span {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+}
 @import "./app/shared/styles/forms.scss";
+
+// Import unified design system
+@import "./app/shared/styles/design-system.scss";
+@import "./app/shared/styles/component-mixins.scss";
+@import "./app/shared/styles/mobile-mixins.scss";
+@import "./app/shared/styles/unified-header.scss";
+@import "./app/shared/styles/unified-actions.scss";
+
+// Global action button icon centering fix
+.action-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  
+  .p-button-icon {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  // For PrimeNG buttons with icon attribute
+  &[icon] {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    .p-button-icon {
+      margin: 0 !important;
+    }
+  }
+}
 
 /* Safe area utilities for mobile devices */
 :root {
@@ -51,7 +118,17 @@ body.mobile-menu-open {
 
 body {
   margin: 0;
-
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  overflow-x: hidden;
 }
 
 /* Prevent aria-hidden on focused elements */
@@ -146,11 +223,14 @@ body {
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
 
   &:hover {
     background: rgba(0, 0, 0, 0.1);
@@ -158,12 +238,48 @@ body {
   }
 
   &:active {
-    transform: translateY(0);
+    transform: scale(0.95);
+    background: rgba(0, 0, 0, 0.15);
   }
 
   &:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
+  }
+}
+
+/* Native-like ripple effect for buttons */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+  }
+  
+  &.ripple::after {
+    animation: ripple 0.6s ease-out;
   }
 }
 
@@ -176,6 +292,81 @@ body {
   padding: 20px;
   margin: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+  
+  &:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Native-like pull-to-refresh indicator */
+.pull-to-refresh {
+  position: fixed;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  
+  &.active {
+    top: 20px;
+  }
+  
+  .refresh-icon {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--primary-color);
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Mobile swipe indicators */
+.swipe-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 40px;
+  background: var(--primary-color);
+  border-radius: 2px;
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+  
+  &.left {
+    left: 10px;
+  }
+  
+  &.right {
+    right: 10px;
+  }
+  
+  &.active {
+    opacity: 1;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
 }
 
 /* Responsive spacing */
@@ -260,5 +451,95 @@ body {
   &:hover,
   &:focus {
     transform: scale(1.12);
+  }
+}
+
+/* Enhanced mobile optimizations */
+@media (max-width: 1023px) {
+  // Improve touch targets
+  button, 
+  .p-button,
+  [role="button"],
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 44px;
+    min-width: 44px;
+    font-size: 16px; // Prevent zoom on iOS
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  // Improve form inputs
+  input, 
+  textarea, 
+  select {
+    font-size: 16px; // Prevent zoom on iOS
+    -webkit-appearance: none;
+    border-radius: 8px;
+  }
+  
+  // Improve scrolling performance
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  // Disable text selection on interactive elements
+  button,
+  .p-button,
+  [role="button"],
+  .mobile-nav-item,
+  .mobile-bottom-nav-item {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+  // Improve focus indicators
+  *:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  
+  // Smooth scrolling
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  // Prevent horizontal scroll
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* iOS-specific optimizations */
+@supports (-webkit-touch-callout: none) {
+  // iOS Safari specific styles
+  input, 
+  textarea, 
+  select {
+    border-radius: 8px;
+    -webkit-appearance: none;
+  }
+  
+  // Fix iOS input zoom
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="search"],
+  textarea,
+  select {
+    font-size: 16px;
+  }
+  
+  // Fix iOS button styling
+  button,
+  input[type="button"],
+  input[type="submit"] {
+    -webkit-appearance: none;
+    border-radius: 8px;
   }
 }

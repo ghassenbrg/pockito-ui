@@ -1,20 +1,13 @@
 // Edit Wallet Component Styles
-// Optimized for size - only essential styles included
+// Using design system for consistent spacing
+@import '../../../shared/styles/_design-system';
 
 .edit-wallet-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
-  background: #f8fafc;
+  @include page-container(56.25rem); // 900px
+  background: var(--pockito-bg-secondary);
   min-height: 100vh;
 
-  @media (max-width: 768px) {
-    padding: 15px;
-  }
-
-  @media (max-width: 480px) {
-    padding: 10px;
-  }
+  // Responsive spacing is handled by the page-container mixin
 }
 
 // Color picker styles

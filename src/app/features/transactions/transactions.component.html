@@ -1,25 +1,10 @@
 <div class="transactions-container">
-  <!-- Enhanced Header Section -->
-  <div class="transactions-header">
-    <div class="header-content">
-      <div class="header-icon">
-        <i class="pi pi-credit-card"></i>
-      </div>
-      <div class="header-text">
-        <h1 class="page-title">{{ 'transaction.title' | translate }}</h1>
-        <p class="page-subtitle">{{ 'transaction.subtitle' | translate }}</p>
-      </div>
-    </div>
-    <div class="header-actions">
-      <button 
-        class="new-transaction-btn" 
-        pButton 
-        (click)="createTransaction()"
-        [label]="'transaction.new_transaction' | translate"
-        icon="pi pi-plus"
-      ></button>
-    </div>
-  </div>
+  <!-- Page Header -->
+  <app-page-header 
+    [config]="headerConfig"
+    (buttonClick)="createTransaction()"
+    (secondaryButtonClick)="onSecondaryButtonClick()"
+  ></app-page-header>
 
   <!-- View Switcher -->
   <div class="view-switcher">
@@ -86,7 +71,7 @@
         {{ 'transaction.empty_state.description' | translate }}
       </p>
       <button 
-        class="empty-action-btn" 
+        class="empty-action" 
         pButton 
         (click)="createTransaction()"
         [label]="'transaction.new_transaction' | translate"
