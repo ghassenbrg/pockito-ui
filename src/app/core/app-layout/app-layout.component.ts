@@ -10,7 +10,6 @@ import {
 import { NavigationEnd, Router } from '@angular/router';
 import { UserDto } from '@api/model/user.model';
 import { UserService } from '@api/services/user.service';
-import { PockitoTerminalComponent } from '@core/pockito-terminal/pockito-terminal.component';
 import { KeycloakService } from '@core/security/keycloak.service';
 import { ResponsiveService } from '@core/services/responsive.service';
 import { MobileService } from '@core/services/mobile.service';
@@ -35,7 +34,6 @@ import { filter } from 'rxjs/operators';
     DialogModule,
     TerminalModule,
     TranslatePipe,
-    PockitoTerminalComponent,
     LanguageSwitcherComponent,
     LoadingSpinnerComponent,
     ToastComponent,
@@ -263,20 +261,6 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         icon: '/assets/icons/category.png',
         command: () => {
           this.navigateTo('/app/categories');
-        },
-      },
-      {
-        label: this.translate.instant('appLayout.navigation.terminal'),
-        tooltipOptions: {
-          tooltipLabel: this.translate.instant('appLayout.navigation.terminal'),
-          tooltipPosition: 'top',
-          positionTop: -15,
-          positionLeft: 15,
-          showDelay: 300,
-        },
-        icon: '/assets/icons/terminal.svg',
-        command: () => {
-          this.displayTerminal = true;
         },
       },
       {

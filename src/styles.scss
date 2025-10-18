@@ -2,76 +2,6 @@
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
 
-// Import shared form styles
-
-// Global PrimeNG button icon centering fix
-.action-btn {
-  .p-button-icon {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    line-height: 1 !important;
-    width: 100% !important;
-    height: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-  
-  span {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-}
-@import "./app/shared/styles/forms.scss";
-
-// Import unified design system
-@import "./app/shared/styles/design-system.scss";
-@import "./app/shared/styles/component-mixins.scss";
-@import "./app/shared/styles/mobile-mixins.scss";
-@import "./app/shared/styles/unified-header.scss";
-@import "./app/shared/styles/unified-actions.scss";
-
-// Global action button icon centering fix
-.action-btn {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  
-  .p-button-icon {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    height: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  
-  // For PrimeNG buttons with icon attribute
-  &[icon] {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    
-    .p-button-icon {
-      margin: 0 !important;
-    }
-  }
-}
-
 /* Safe area utilities for mobile devices */
 :root {
   --safe-area-inset-top: env(safe-area-inset-top);
@@ -118,7 +48,8 @@ body.mobile-menu-open {
 
 body {
   margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
@@ -263,9 +194,9 @@ body {
 .ripple-effect {
   position: relative;
   overflow: hidden;
-  
+
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     top: 50%;
     left: 50%;
@@ -277,7 +208,7 @@ body {
     transform: scale(1, 1) translate(-50%);
     transform-origin: 50% 50%;
   }
-  
+
   &.ripple::after {
     animation: ripple 0.6s ease-out;
   }
@@ -294,7 +225,7 @@ body {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-tap-highlight-color: transparent;
-  
+
   &:active {
     transform: scale(0.98);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -318,11 +249,11 @@ body {
   backdrop-filter: blur(10px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1000;
-  
+
   &.active {
     top: 20px;
   }
-  
+
   .refresh-icon {
     width: 20px;
     height: 20px;
@@ -334,8 +265,12 @@ body {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Mobile swipe indicators */
@@ -349,15 +284,15 @@ body {
   border-radius: 2px;
   opacity: 0.3;
   transition: opacity 0.3s ease;
-  
+
   &.left {
     left: 10px;
   }
-  
+
   &.right {
     right: 10px;
   }
-  
+
   &.active {
     opacity: 1;
     animation: pulse 1.5s ease-in-out infinite;
@@ -365,8 +300,13 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 /* Responsive spacing */
@@ -457,7 +397,7 @@ body {
 /* Enhanced mobile optimizations */
 @media (max-width: 1023px) {
   // Improve touch targets
-  button, 
+  button,
   .p-button,
   [role="button"],
   input[type="button"],
@@ -467,21 +407,21 @@ body {
     font-size: 16px; // Prevent zoom on iOS
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   // Improve form inputs
-  input, 
-  textarea, 
+  input,
+  textarea,
   select {
     font-size: 16px; // Prevent zoom on iOS
     -webkit-appearance: none;
     border-radius: 8px;
   }
-  
+
   // Improve scrolling performance
   * {
     -webkit-overflow-scrolling: touch;
   }
-  
+
   // Disable text selection on interactive elements
   button,
   .p-button,
@@ -493,19 +433,19 @@ body {
     -ms-user-select: none;
     user-select: none;
   }
-  
+
   // Improve focus indicators
   *:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 2px;
     border-radius: 4px;
   }
-  
+
   // Smooth scrolling
   html {
     scroll-behavior: smooth;
   }
-  
+
   // Prevent horizontal scroll
   body {
     overflow-x: hidden;
@@ -515,13 +455,13 @@ body {
 /* iOS-specific optimizations */
 @supports (-webkit-touch-callout: none) {
   // iOS Safari specific styles
-  input, 
-  textarea, 
+  input,
+  textarea,
   select {
     border-radius: 8px;
     -webkit-appearance: none;
   }
-  
+
   // Fix iOS input zoom
   input[type="text"],
   input[type="email"],
@@ -534,7 +474,7 @@ body {
   select {
     font-size: 16px;
   }
-  
+
   // Fix iOS button styling
   button,
   input[type="button"],
@@ -542,4 +482,11 @@ body {
     -webkit-appearance: none;
     border-radius: 8px;
   }
+}
+
+.p-dock .p-dock-list-container {
+  background: none;
+  border: none;
+  padding: 0;
+  border-radius: 0;
 }

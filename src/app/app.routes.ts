@@ -29,6 +29,7 @@ export const routes: Routes = [
         path: 'wallets',
         loadComponent: () => import('./features/wallets/wallets.component').then(m => m.WalletsComponent)
       },
+      /*
       {
         path: 'wallets/edit/:id',
         loadComponent: () => import('./features/wallets/edit-wallet/edit-wallet.component').then(m => m.EditWalletComponent)
@@ -89,6 +90,7 @@ export const routes: Routes = [
         path: 'account',
         loadComponent: () => import('./features/account/account.component').then(m => m.AccountComponent)
       }
+        */
     ],
   },
   {

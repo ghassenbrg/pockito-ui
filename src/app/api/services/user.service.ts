@@ -1,67 +1,36 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { UserDto } from '@api/model/user.model';
-import { Currency, Country } from '@api/model/common.model';
-import { environment } from '@environments/environment';
-import { catchError, tap } from 'rxjs/operators';
-import { ToastService } from '@shared/services/toast.service';
-import { KeycloakService } from '@core/security/keycloak.service';
+import { UserDto, Currency, Country } from '../models';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private readonly baseUrl = `${environment.api.baseUrl}/users`;
+  private readonly baseUrl = '/api/users';
 
-  constructor(
-    private http: HttpClient,
-    private toastService: ToastService,
-    private keycloakService: KeycloakService
-  ) {}
+  constructor(private http: HttpClient) {}
 
   /**
    * Get or create current user
-   * Retrieves the current authenticated user or creates a new one if it doesn't exist.
+   * Retrieves the current authenticated user or creates a new one if it doesn't exist
    */
   getOrCreateCurrentUser(): Observable<UserDto> {
-    return this.http.get<UserDto>(`${this.baseUrl}/me`).pipe(
-      tap(user => {
-        if (user.username && this.keycloakService.getUserInfo().given_name) {
-          this.toastService.showSuccess('welcomeBack', { username: this.keycloakService.getUserInfo().given_name });
-        }
-      }),
-      catchError(error => {
-        console.error('Error getting/creating current user:', error);
-        throw error; // Re-throw error for component handling
-      })
-    );
+    return this.http.get<UserDto>(`${this.baseUrl}/me`);
   }
 
   /**
    * Get user by username
-   * Retrieves a user by their username
    */
   getUserByUsername(username: string): Observable<UserDto> {
-    return this.http.get<UserDto>(`${this.baseUrl}/${username}`).pipe(
-      catchError(error => {
-        console.error(`Error fetching user ${username}:`, error);
-        throw error; // Re-throw error for component handling
-      })
-    );
+    return this.http.get<UserDto>(`${this.baseUrl}/${username}`);
   }
 
   /**
    * Check if user exists
-   * Checks whether a user with the specified username exists
    */
   checkUserExists(username: string): Observable<void> {
-    return this.http.get<void>(`${this.baseUrl}/${username}/exists`).pipe(
-      catchError(error => {
-        console.error(`Error checking if user ${username} exists:`, error);
-        throw error; // Re-throw error for component handling
-      })
-    );
+    return this.http.get<void>(`${this.baseUrl}/${username}/exists`);
   }
 
   /**
@@ -70,15 +39,7 @@ export class UserService {
    */
   updateUserCurrency(username: string, currencyCode: Currency): Observable<UserDto> {
     const params = new HttpParams().set('currencyCode', currencyCode);
-    return this.http.put<UserDto>(`${this.baseUrl}/${username}/currency`, {}, { params }).pipe(
-      tap(() => {
-        this.toastService.showSuccess('currencyUpdated', { currency: currencyCode });
-      }),
-      catchError(error => {
-        console.error(`Error updating currency for user ${username}:`, error);
-        throw error; // Re-throw error for component handling
-      })
-    );
+    return this.http.put<UserDto>(`${this.baseUrl}/${username}/currency`, {}, { params });
   }
 
   /**
@@ -87,15 +48,6 @@ export class UserService {
    */
   updateUserCountry(username: string, countryCode: Country): Observable<UserDto> {
     const params = new HttpParams().set('countryCode', countryCode);
-    return this.http.put<UserDto>(`${this.baseUrl}/${username}/country`, {}, { params }).pipe(
-      tap(() => {
-        this.toastService.showSuccess('countryUpdated', { country: countryCode });
-      }),
-      catchError(error => {
-        console.error(`Error updating country for user ${username}:`, error);
-        throw error; // Re-throw error for component handling
-      })
-    );
+    return this.http.put<UserDto>(`${this.baseUrl}/${username}/country`, {}, { params });
   }
 }
-

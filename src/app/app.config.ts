@@ -10,13 +10,6 @@ import { MessageService } from 'primeng/api';
 import { routes } from './app.routes';
 import { KeycloakService } from './core/security/keycloak.service';
 import { tokenInterceptor } from './core/interceptor/token.interceptor';
-import { errorInterceptor } from './core/interceptor/error.interceptor';
-import { walletReducer } from './features/wallets/store/wallet.reducer';
-import { WalletEffects } from './features/wallets/store/wallet.effects';
-import { categoryReducer } from './features/categories/store/category.reducer';
-import { CategoryEffects } from './features/categories/store/category.effects';
-import { transactionReducer } from './features/transactions/store/transaction.reducer';
-import { TransactionEffects } from './features/transactions/store/transaction.effects';
 
 // ⬇️ v17 API from @ngx-translate/core
 import { provideTranslateService } from '@ngx-translate/core';
@@ -40,8 +33,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(
       withInterceptors([
-        tokenInterceptor,
-        errorInterceptor
+        tokenInterceptor
       ])
     ),
     provideAnimations(),
@@ -68,12 +60,8 @@ export const appConfig: ApplicationConfig = {
     }),
 
     // NgRx Store Configuration
-    provideStore({
-      wallet: walletReducer,
-      category: categoryReducer,
-      transaction: transactionReducer
-    }),
-    provideEffects([WalletEffects, CategoryEffects, TransactionEffects]),
+    provideStore({}),
+    provideEffects([]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: false,
