@@ -1,5 +1,7 @@
 <div class="wallet-form">
   <form [formGroup]="walletForm" (ngSubmit)="onSubmit()" class="wallet-form__content">
+
+    <span> is edit mode: {{ isEditMode }}</span>
     <!-- Name Field -->
     <div class="form-field">
       <label for="wallet-name" class="form-field__label">

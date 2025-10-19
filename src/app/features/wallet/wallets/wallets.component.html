@@ -61,6 +61,7 @@
     [closeOnEscape]="true"
   >
     <app-wallet-form
+    *ngIf="displayCreateWalletDialog"
     (walletSaved)="onWalletSaved($event)"
     (formCancelled)="onFormCancelled()"
     ></app-wallet-form>

@@ -1,13 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -25,11 +17,11 @@ import {
 import { ToastService } from '@shared/services/toast.service';
 
 // PrimeNG imports
-import { InputTextModule } from 'primeng/inputtext';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { DropdownModule } from 'primeng/dropdown';
-import { ColorPickerModule } from 'primeng/colorpicker';
 import { CheckboxModule } from 'primeng/checkbox';
+import { ColorPickerModule } from 'primeng/colorpicker';
+import { DropdownModule } from 'primeng/dropdown';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-wallet-form',
@@ -49,7 +41,7 @@ import { CheckboxModule } from 'primeng/checkbox';
   templateUrl: './wallet-form.component.html',
   styleUrl: './wallet-form.component.scss',
 })
-export class WalletFormComponent implements OnInit, OnChanges {
+export class WalletFormComponent implements OnInit {
   @Input() walletId: string | null = null;
   @Output() walletSaved = new EventEmitter<WalletDto>();
   @Output() formCancelled = new EventEmitter<void>();
@@ -62,7 +54,7 @@ export class WalletFormComponent implements OnInit, OnChanges {
   // Available options for dropdowns
   currencies = Object.values(Currency);
   walletTypes = Object.values(WalletType);
-  
+
   // PrimeNG dropdown options
   currencyOptions: any[] = [];
   walletTypeOptions: any[] = [];
@@ -83,6 +75,10 @@ export class WalletFormComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.isEditMode = !!this.walletId;
+    if (this.isEditMode) {
+      this.walletForm.get('currency')?.disable();
+    }
+
     this.initializeDropdownOptions();
 
     this.userService.currentUser$.subscribe((user: UserDto | null) => {
@@ -90,7 +86,7 @@ export class WalletFormComponent implements OnInit, OnChanges {
         this.currentUser = user;
         if (!this.isEditMode) {
           this.walletForm.patchValue({
-            currency: user.defaultCurrency ?? '',
+            currency: user.defaultCurrency ?? undefined,
           });
         }
       }
@@ -101,29 +97,23 @@ export class WalletFormComponent implements OnInit, OnChanges {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['walletId'] && this.isEditMode && this.walletId) {
-      this.loadWallet(this.walletId);
-    }
-  }
-
   private createForm(): FormGroup {
-    return this.fb.group({
+    const form = this.fb.group({
       name: [
-        '',
+        null,
         [
           Validators.required,
           Validators.minLength(1),
           Validators.maxLength(100),
         ],
       ],
-      currency: ['', Validators.required],
-      type: ['', Validators.required],
+      currency: [undefined, Validators.required],
+      type: [undefined, Validators.required],
       initialBalance: [0, [Validators.min(0)]],
-      description: ['', Validators.maxLength(500)],
+      description: [undefined, Validators.maxLength(500)],
       color: ['#1d4ed8'],
       iconUrl: [
-        '',
+        undefined,
         [
           Validators.pattern(
             /^https?:\/\/.+\.(jpg|jpeg|png|gif|svg|webp)(\?.*)?$/i
@@ -132,6 +122,8 @@ export class WalletFormComponent implements OnInit, OnChanges {
       ],
       isDefault: [false],
     });
+
+    return form;
   }
 
   private loadWallet(walletId: string): void {
@@ -307,15 +299,15 @@ export class WalletFormComponent implements OnInit, OnChanges {
 
   private initializeDropdownOptions(): void {
     // Initialize currency options
-    this.currencyOptions = this.currencies.map(currency => ({
+    this.currencyOptions = this.currencies.map((currency) => ({
       label: this.getCurrencyLabel(currency),
-      value: currency
+      value: currency,
     }));
 
     // Initialize wallet type options
-    this.walletTypeOptions = this.walletTypes.map(type => ({
+    this.walletTypeOptions = this.walletTypes.map((type) => ({
       label: this.getWalletTypeLabel(type),
-      value: type
+      value: type,
     }));
   }
 }
