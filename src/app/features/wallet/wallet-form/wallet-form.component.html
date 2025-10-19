@@ -1,0 +1,184 @@
+<div class="wallet-form">
+  <form [formGroup]="walletForm" (ngSubmit)="onSubmit()" class="wallet-form__content">
+    <!-- Name Field -->
+    <div class="form-field">
+      <label for="wallet-name" class="form-field__label">
+        Name <span class="required">*</span>
+      </label>
+      <input
+        id="wallet-name"
+        type="text"
+        formControlName="name"
+        class="form-field__input"
+        [class.form-field__input--error]="walletForm.get('name')?.invalid && walletForm.get('name')?.touched"
+        placeholder="Enter wallet name"
+        maxlength="100"
+      />
+      <div class="form-field__error" *ngIf="getFieldError('name')">
+        {{ getFieldError('name') }}
+      </div>
+    </div>
+
+    <!-- Currency Field -->
+    <div class="form-field">
+      <label for="wallet-currency" class="form-field__label">
+        Currency <span class="required">*</span>
+      </label>
+      <select
+        id="wallet-currency"
+        formControlName="currency"
+        class="form-field__select"
+        [class.form-field__select--error]="walletForm.get('currency')?.invalid && walletForm.get('currency')?.touched"
+      >
+        <option value="">Select currency</option>
+        <option *ngFor="let currency of currencies" [value]="currency">
+          {{ currency }}
+        </option>
+      </select>
+      <div class="form-field__error" *ngIf="getFieldError('currency')">
+        {{ getFieldError('currency') }}
+      </div>
+    </div>
+
+    <!-- Type Field -->
+    <div class="form-field">
+      <label for="wallet-type" class="form-field__label">
+        Type <span class="required">*</span>
+      </label>
+      <select
+        id="wallet-type"
+        formControlName="type"
+        class="form-field__select"
+        [class.form-field__select--error]="walletForm.get('type')?.invalid && walletForm.get('type')?.touched"
+      >
+        <option value="">Select wallet type</option>
+        <option *ngFor="let type of walletTypes" [value]="type">
+          {{ getWalletTypeLabel(type) }}
+        </option>
+      </select>
+      <div class="form-field__error" *ngIf="getFieldError('type')">
+        {{ getFieldError('type') }}
+      </div>
+    </div>
+
+    <!-- Initial Balance Field -->
+    <div class="form-field">
+      <label for="wallet-balance" class="form-field__label">
+        Initial Balance
+      </label>
+      <input
+        id="wallet-balance"
+        type="number"
+        formControlName="initialBalance"
+        class="form-field__input"
+        [class.form-field__input--error]="walletForm.get('initialBalance')?.invalid && walletForm.get('initialBalance')?.touched"
+        placeholder="0.00"
+        min="0"
+        step="0.01"
+      />
+      <div class="form-field__error" *ngIf="getFieldError('initialBalance')">
+        {{ getFieldError('initialBalance') }}
+      </div>
+    </div>
+
+    <!-- Description Field -->
+    <div class="form-field">
+      <label for="wallet-description" class="form-field__label">
+        Description
+      </label>
+      <textarea
+        id="wallet-description"
+        formControlName="description"
+        class="form-field__textarea"
+        [class.form-field__textarea--error]="walletForm.get('description')?.invalid && walletForm.get('description')?.touched"
+        placeholder="Optional description"
+        maxlength="500"
+        rows="3"
+      ></textarea>
+      <div class="form-field__error" *ngIf="getFieldError('description')">
+        {{ getFieldError('description') }}
+      </div>
+    </div>
+
+    <!-- Icon URL Field -->
+    <div class="form-field">
+      <label for="wallet-icon" class="form-field__label">
+        Wallet Icon
+      </label>
+      <input
+        id="wallet-icon"
+        type="url"
+        formControlName="iconUrl"
+        class="form-field__input"
+        [class.form-field__input--error]="walletForm.get('iconUrl')?.invalid && walletForm.get('iconUrl')?.touched"
+        placeholder="https://example.com/icon.png"
+      />
+      <div class="form-field__error" *ngIf="getFieldError('iconUrl')">
+        {{ getFieldError('iconUrl') }}
+      </div>
+      
+      <!-- Icon Preview -->
+      <div class="icon-preview" *ngIf="getIconUrl() && isValidImageUrl(getIconUrl())">
+        <div class="icon-preview__container">
+          <img 
+            [src]="getIconUrl()" 
+            alt="Wallet icon preview" 
+            class="icon-preview__image"
+            (error)="onImageError($event)"
+          />
+          <div class="icon-preview__label">Preview</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Color Field -->
+    <div class="form-field">
+      <label for="wallet-color" class="form-field__label">
+        Color
+      </label>
+      <div class="color-picker">
+        <input
+          id="wallet-color"
+          type="color"
+          formControlName="color"
+          class="color-picker__input"
+        />
+        <span class="color-picker__label">Choose wallet color</span>
+      </div>
+    </div>
+
+    <!-- Default Wallet Checkbox -->
+    <div class="form-field form-field--checkbox">
+      <label class="checkbox-label">
+        <input
+          type="checkbox"
+          formControlName="isDefault"
+          class="checkbox-label__input"
+        />
+        <span class="checkbox-label__text">Set as default wallet</span>
+      </label>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="wallet-form__actions">
+      <pockito-button
+        [type]="PockitoButtonType.CANCEL"
+        [size]="PockitoButtonSize.MEDIUM"
+        (click)="onCancel()"
+        [disabled]="isLoading"
+      >
+        Cancel
+      </pockito-button>
+      
+      <pockito-button
+        [type]="PockitoButtonType. SUBMIT"
+        [size]="PockitoButtonSize.MEDIUM"
+        buttonType="submit"
+        [loading]="isLoading"
+        [disabled]="walletForm.invalid || isLoading"
+      >
+        {{ isEditMode ? 'Update Wallet' : 'Create Wallet' }}
+      </pockito-button>
+    </div>
+  </form>
+</div>

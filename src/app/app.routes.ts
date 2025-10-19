@@ -27,20 +27,17 @@ export const routes: Routes = [
       },
       {
         path: 'wallets',
-        loadComponent: () => import('./features/wallets/wallets.component').then(m => m.WalletsComponent)
+        loadComponent: () => import('./features/wallet/wallets/wallets.component').then(m => m.WalletsComponent)
+      },
+      {
+        path: 'wallets/:id',
+        loadComponent: () => import('./features/wallet/wallet-detail/wallet-detail.component').then(m => m.WalletDetailComponent)
       },
       /*
       {
-        path: 'wallets/edit/:id',
-        loadComponent: () => import('./features/wallets/edit-wallet/edit-wallet.component').then(m => m.EditWalletComponent)
-      },
-      {
-        path: 'wallets/new',
-        loadComponent: () => import('./features/wallets/edit-wallet/edit-wallet.component').then(m => m.EditWalletComponent)
-      },
-      {
         path: 'transactions',
-        loadComponent: () => import('./features/transactions/transactions.component').then(m => m.TransactionsComponent)
+        loadComponent: () => import('./features/transaction/transactions/transactions.component').then(m => m.TransactionsComponent)
+      },
       },
       {
         path: 'transactions/create',

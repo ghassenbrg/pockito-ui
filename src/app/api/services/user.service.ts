@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { UserDto, Currency, Country } from '../models';
 
 @Injectable({
@@ -9,6 +9,9 @@ import { UserDto, Currency, Country } from '../models';
 export class UserService {
   private readonly baseUrl = '/api/users';
 
+  private currentUserSubject = new BehaviorSubject< UserDto | null >(null);
+  public currentUser$ = this.currentUserSubject.asObservable();
+  
   constructor(private http: HttpClient) {}
 
   /**
@@ -16,7 +19,9 @@ export class UserService {
    * Retrieves the current authenticated user or creates a new one if it doesn't exist
    */
   getOrCreateCurrentUser(): Observable<UserDto> {
-    return this.http.get<UserDto>(`${this.baseUrl}/me`);
+    return this.http.get<UserDto>(`${this.baseUrl}/me`).pipe(
+      tap((user) => this.currentUserSubject.next(user))
+    );
   }
 
   /**

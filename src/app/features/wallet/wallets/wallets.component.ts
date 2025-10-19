@@ -8,8 +8,10 @@ import {
   PockitoButtonComponent,
   PockitoButtonType,
 } from '@shared/components/pockito-button/pockito-button.component';
-import { PockitoCurrencyPipe } from '../../shared/pipes/pockito-currency.pipe';
-import { Router } from '@angular/router';
+import { PockitoCurrencyPipe } from '../../../shared/pipes/pockito-currency.pipe';
+import { ActivatedRoute, Router } from '@angular/router';
+import { DialogModule } from "primeng/dialog";
+import { WalletFormComponent } from '../wallet-form/wallet-form.component';
 
 @Component({
   selector: 'app-wallets',
@@ -17,22 +19,27 @@ import { Router } from '@angular/router';
   imports: [
     CommonModule,
     PockitoButtonComponent,
+    WalletFormComponent,
     TranslatePipe,
     PockitoCurrencyPipe,
-  ],
+    DialogModule
+],
   templateUrl: './wallets.component.html',
   styleUrl: './wallets.component.scss',
 })
 export class WalletsComponent implements OnInit {
+
   wallets: WalletDto[] = [];
   PockitoButtonType = PockitoButtonType;
+  displayCreateWalletDialog = false;
 
   constructor(
     private walletService: WalletService,
     private loadingService: LoadingService,
     private toastService: ToastService,
     private translateService: TranslateService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -62,12 +69,16 @@ export class WalletsComponent implements OnInit {
     });
   }
 
+  showCreateWalletDialog() {
+    this.displayCreateWalletDialog = true;
+  }
+
   addWallet() {
     // TODO: Implement add wallet functionality
     this.toastService.showSuccess('wallets.addWallet');
   }
 
   viewWallet(wallet: WalletDto) {
-    this.router.navigate(['/wallets', wallet.id]);
+    this.router.navigate([wallet.id], { relativeTo: this.route });
   }
 }
