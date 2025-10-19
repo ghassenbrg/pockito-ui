@@ -33,28 +33,60 @@
   "wallets": {
     "title": "Portefeuilles",
     "loading": "Chargement des portefeuilles...",
+    "loadingError": "Erreur lors du chargement des portefeuilles",
+    "loadingWalletError": "Erreur lors du chargement du portefeuille",
+    "loadingErrorMessage": "Erreur lors du chargement des portefeuilles. Veuillez réessayer.",
     "addWallet": "Ajouter un Portefeuille",
     "balance": "Solde",
-    "createWallet": "Créer un Portefeuille"
-  },
-  "toast": {
-    "success": {
-      "welcomeBack": "Bienvenue, {{username}} !",
-      "wallets.addWallet": "Portefeuille ajouté avec succès !"
-    },
-    "error": {
-      "loadingError": "Erreur lors du chargement des portefeuilles"
-    },
-    "info": {
-    },
-    "warning": {
-    }, 
-    "messages": {
-      "welcomeBack": "",
-      "loadingError": "Échec du chargement des portefeuilles. Veuillez réessayer.",
-      "wallets.addWallet": "Votre portefeuille a été ajouté avec succès."
+    "createWallet": "Créer un Portefeuille",
+    "updateWallet": "Mettre à jour le Portefeuille",
+    "createWalletSuccess": "Portefeuille créé avec succès",
+    "createWalletSuccessMessage": "Votre portefeuille {{name}} a été ajouté avec succès.",
+    "updateWalletSuccess": "Portefeuille mis à jour avec succès",
+    "updateWalletSuccessMessage": "Votre portefeuille {{name}} a été mis à jour avec succès.",
+    "createWalletError": "Erreur lors de la création du portefeuille",
+    "createWalletErrorMessage": "Erreur lors de la création du portefeuille. Veuillez réessayer.",
+    "updateWalletError": "Erreur lors de la mise à jour du portefeuille",
+    "updateWalletErrorMessage": "Erreur lors de la mise à jour du portefeuille. Veuillez réessayer.",
+    "form": {
+      "name": "Nom",
+      "nameRequired": "Le nom est requis",
+      "namePlaceholder": "Entrez le nom du portefeuille",
+      "currency": "Devise",
+      "currencyRequired": "La devise est requise",
+      "currencyPlaceholder": "Sélectionnez une devise",
+      "type": "Type",
+      "typeRequired": "Le type est requis",
+      "typePlaceholder": "Sélectionnez le type de portefeuille",
+      "initialBalance": "Solde Initial",
+      "initialBalancePlaceholder": "0,00",
+      "description": "Description",
+      "descriptionPlaceholder": "Description optionnelle",
+      "icon": "Icône du Portefeuille",
+      "iconPlaceholder": "https://exemple.com/icone.png",
+      "iconPreview": "Aperçu",
+      "color": "Couleur",
+      "colorLabel": "Choisissez la couleur du portefeuille",
+      "isDefault": "Définir comme portefeuille par défaut",
+      "required": "*",
+      "actions": {
+        "cancel": "Annuler",
+        "create": "Créer le Portefeuille",
+        "update": "Mettre à jour le Portefeuille"
+      },
+      "errors": {
+        "nameRequired": "Le nom est requis",
+        "nameMinLength": "Le nom doit contenir au moins 1 caractère",
+        "nameMaxLength": "Le nom ne doit pas dépasser 100 caractères",
+        "currencyRequired": "La devise est requise",
+        "typeRequired": "Le type est requis",
+        "initialBalanceMin": "Le solde initial doit être d'au moins 0",
+        "descriptionMaxLength": "La description ne doit pas dépasser 500 caractères",
+        "iconUrlPattern": "Veuillez entrer une URL d'image valide (jpg, jpeg, png, gif, svg, webp)"
+      }
     }
   },
+  "common": {},
   "enums": {
     "walletType": {
       "BANK_ACCOUNT": "Compte Bancaire",

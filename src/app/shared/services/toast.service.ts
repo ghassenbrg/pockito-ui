@@ -15,9 +15,9 @@ export class ToastService {
   /**
    * Show success toast
    */
-  showSuccess(key: string, params?: any, life: number = 3000): void {
-    const summary = this.translateService.instant(`toast.success.${key}`, params);
-    const detail = this.translateService.instant(`toast.messages.${key}`, params);
+  showSuccess(title: string, message: string, params?: any, life: number = 3000): void {
+    const summary = this.translateService.instant(title, params);
+    const detail = this.translateService.instant(message, params);
     
     this.addToast({
       severity: 'success',
@@ -30,9 +30,9 @@ export class ToastService {
   /**
    * Show error toast
    */
-  showError(key: string, params?: any, life: number = 5000): void {
-    const summary = this.translateService.instant(`toast.error.${key}`, params);
-    const detail = this.translateService.instant(`toast.messages.${key}`, params);
+  showError(title: string, message: string, params?: any, life: number = 5000): void {
+    const summary = this.translateService.instant(title, params);
+    const detail = this.translateService.instant(message, params);
     
     this.addToast({
       severity: 'error',
@@ -45,9 +45,9 @@ export class ToastService {
   /**
    * Show info toast
    */
-  showInfo(key: string, params?: any, life: number = 3000): void {
-    const summary = this.translateService.instant(`toast.info.${key}`, params);
-    const detail = this.translateService.instant(`toast.messages.${key}`, params);
+  showInfo(title: string, message: string, params?: any, life: number = 3000): void {
+    const summary = this.translateService.instant(title, params);
+    const detail = this.translateService.instant(message, params);
     
     this.addToast({
       severity: 'info',
@@ -60,9 +60,9 @@ export class ToastService {
   /**
    * Show warning toast
    */
-  showWarning(key: string, params?: any, life: number = 5000): void {
-    const summary = this.translateService.instant(`toast.warning.${key}`, params);
-    const detail = this.translateService.instant(`toast.messages.${key}`, params);
+  showWarning(title: string, message: string, params?: any, life: number = 5000): void {
+    const summary = this.translateService.instant(title, params);
+    const detail = this.translateService.instant(message, params);
     
     this.addToast({
       severity: 'warn',
@@ -75,7 +75,7 @@ export class ToastService {
   /**
    * Show HTTP error toast (for API service errors)
    */
-  showHttpError(error: any, messageKey: string, params?: any, life: number = 5000): void {
+  showHttpError(error: any, title: string, message: string, params?: any, life: number = 5000): void {
     // Extract error details from HTTP error response
     const status = error?.status || 'Unknown';
     const errorMessage = error?.error?.message || error?.message || 'An error occurred';
@@ -87,8 +87,8 @@ export class ToastService {
       ...params
     };
 
-    const summary = this.translateService.instant(`toast.error.${messageKey}`, errorParams);
-    const detail = this.translateService.instant(`toast.messages.${messageKey}`, errorParams);
+    const summary = this.translateService.instant(title, errorParams);
+    const detail = this.translateService.instant(message, errorParams);
     
     this.addToast({
       severity: 'error',

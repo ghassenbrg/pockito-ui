@@ -33,9 +33,58 @@
   "wallets": {
     "title": "Wallets",
     "loading": "Loading wallets...",
+    "loadingError": "Error loading wallets",
+    "loadingWalletError": "Error loading wallet",
+    "loadingErrorMessage": "Error loading wallets. Please try again.",
     "addWallet": "Add Wallet",
     "balance": "Balance",
-    "createWallet": "Create Wallet"
+    "createWallet": "Create Wallet",
+    "updateWallet": "Update Wallet",
+    "createWalletSuccess": "Wallet created successfully",
+    "createWalletSuccessMessage": "Your wallet {{name}} has been added successfully.",
+    "updateWalletSuccess": "Wallet updated successfully",
+    "updateWalletSuccessMessage": "Your wallet {{name}} has been updated successfully.",
+    "createWalletError": "Failed to create wallet",
+    "createWalletErrorMessage": "Failed to create wallet. Please try again.",
+    "updateWalletError": "Failed to update wallet",
+    "updateWalletErrorMessage": "Failed to update wallet. Please try again.",
+    "form": {
+      "name": "Name",
+      "nameRequired": "Name is required",
+      "namePlaceholder": "Enter wallet name",
+      "currency": "Currency",
+      "currencyRequired": "Currency is required",
+      "currencyPlaceholder": "Select currency",
+      "type": "Type",
+      "typeRequired": "Type is required",
+      "typePlaceholder": "Select wallet type",
+      "initialBalance": "Initial Balance",
+      "initialBalancePlaceholder": "0.00",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional description",
+      "icon": "Wallet Icon",
+      "iconPlaceholder": "https://example.com/icon.png",
+      "iconPreview": "Preview",
+      "color": "Color",
+      "colorLabel": "Choose wallet color",
+      "isDefault": "Set as default wallet",
+      "required": "*",
+      "actions": {
+        "cancel": "Cancel",
+        "create": "Create Wallet",
+        "update": "Update Wallet"
+      },
+      "errors": {
+        "nameRequired": "Name is required",
+        "nameMinLength": "Name must be at least 1 character",
+        "nameMaxLength": "Name must not exceed 100 characters",
+        "currencyRequired": "Currency is required",
+        "typeRequired": "Type is required",
+        "initialBalanceMin": "Initial balance must be at least 0",
+        "descriptionMaxLength": "Description must not exceed 500 characters",
+        "iconUrlPattern": "Please enter a valid image URL (jpg, jpeg, png, gif, svg, webp)"
+      }
+    }
   },
   "toast": {
     "success": {

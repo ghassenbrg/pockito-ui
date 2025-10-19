@@ -3,130 +3,158 @@
     <!-- Name Field -->
     <div class="form-field">
       <label for="wallet-name" class="form-field__label">
-        Name <span class="required">*</span>
+        {{ 'wallets.form.name' | translate }} <span class="required">{{ 'wallets.form.required' | translate }}</span>
       </label>
       <input
         id="wallet-name"
         type="text"
+        pInputText
         formControlName="name"
-        class="form-field__input"
-        [class.form-field__input--error]="walletForm.get('name')?.invalid && walletForm.get('name')?.touched"
-        placeholder="Enter wallet name"
-        maxlength="100"
+        [placeholder]="'wallets.form.namePlaceholder' | translate"
+        [maxlength]="100"
+        [class.p-invalid]="walletForm.get('name')?.invalid && walletForm.get('name')?.touched"
+        class="w-full"
       />
-      <div class="form-field__error" *ngIf="getFieldError('name')">
+      <small 
+        *ngIf="getFieldError('name')" 
+        class="p-error"
+        style="display: block; margin-top: 0.25rem;"
+      >
         {{ getFieldError('name') }}
-      </div>
+      </small>
     </div>
 
     <!-- Currency Field -->
     <div class="form-field">
       <label for="wallet-currency" class="form-field__label">
-        Currency <span class="required">*</span>
+        {{ 'wallets.form.currency' | translate }} <span class="required">{{ 'wallets.form.required' | translate }}</span>
       </label>
-      <select
+      <p-dropdown
         id="wallet-currency"
         formControlName="currency"
-        class="form-field__select"
-        [class.form-field__select--error]="walletForm.get('currency')?.invalid && walletForm.get('currency')?.touched"
+        [options]="currencyOptions"
+        [placeholder]="'wallets.form.currencyPlaceholder' | translate"
+        [showClear]="true"
+        [filter]="true"
+        filterBy="label"
+        [class.p-invalid]="walletForm.get('currency')?.invalid && walletForm.get('currency')?.touched"
+        styleClass="w-full"
+      />
+      <small 
+        *ngIf="getFieldError('currency')" 
+        class="p-error"
+        style="display: block; margin-top: 0.25rem;"
       >
-        <option value="">Select currency</option>
-        <option *ngFor="let currency of currencies" [value]="currency">
-          {{ currency }}
-        </option>
-      </select>
-      <div class="form-field__error" *ngIf="getFieldError('currency')">
         {{ getFieldError('currency') }}
-      </div>
+      </small>
     </div>
 
     <!-- Type Field -->
     <div class="form-field">
       <label for="wallet-type" class="form-field__label">
-        Type <span class="required">*</span>
+        {{ 'wallets.form.type' | translate }} <span class="required">{{ 'wallets.form.required' | translate }}</span>
       </label>
-      <select
+      <p-dropdown
         id="wallet-type"
         formControlName="type"
-        class="form-field__select"
-        [class.form-field__select--error]="walletForm.get('type')?.invalid && walletForm.get('type')?.touched"
+        [options]="walletTypeOptions"
+        [placeholder]="'wallets.form.typePlaceholder' | translate"
+        [showClear]="true"
+        [filter]="false"
+        filterBy="label"
+        [class.p-invalid]="walletForm.get('type')?.invalid && walletForm.get('type')?.touched"
+        styleClass="w-full"
+      />
+      <small 
+        *ngIf="getFieldError('type')" 
+        class="p-error"
+        style="display: block; margin-top: 0.25rem;"
       >
-        <option value="">Select wallet type</option>
-        <option *ngFor="let type of walletTypes" [value]="type">
-          {{ getWalletTypeLabel(type) }}
-        </option>
-      </select>
-      <div class="form-field__error" *ngIf="getFieldError('type')">
         {{ getFieldError('type') }}
-      </div>
+      </small>
     </div>
 
     <!-- Initial Balance Field -->
     <div class="form-field">
       <label for="wallet-balance" class="form-field__label">
-        Initial Balance
+        {{ 'wallets.form.initialBalance' | translate }}
       </label>
-      <input
+      <p-inputNumber
         id="wallet-balance"
-        type="number"
         formControlName="initialBalance"
-        class="form-field__input"
-        [class.form-field__input--error]="walletForm.get('initialBalance')?.invalid && walletForm.get('initialBalance')?.touched"
-        placeholder="0.00"
-        min="0"
-        step="0.01"
+        [placeholder]="'wallets.form.initialBalancePlaceholder' | translate"
+        [min]="0"
+        [step]="0.01"
+        [useGrouping]="true"
+        [class.p-invalid]="walletForm.get('initialBalance')?.invalid && walletForm.get('initialBalance')?.touched"
+        styleClass="w-full"
       />
-      <div class="form-field__error" *ngIf="getFieldError('initialBalance')">
+      <small 
+        *ngIf="getFieldError('initialBalance')" 
+        class="p-error"
+        style="display: block; margin-top: 0.25rem;"
+      >
         {{ getFieldError('initialBalance') }}
-      </div>
+      </small>
     </div>
 
     <!-- Description Field -->
     <div class="form-field">
       <label for="wallet-description" class="form-field__label">
-        Description
+        {{ 'wallets.form.description' | translate }}
       </label>
       <textarea
         id="wallet-description"
+        pInputText
         formControlName="description"
-        class="form-field__textarea"
-        [class.form-field__textarea--error]="walletForm.get('description')?.invalid && walletForm.get('description')?.touched"
-        placeholder="Optional description"
-        maxlength="500"
+        [placeholder]="'wallets.form.descriptionPlaceholder' | translate"
+        [maxlength]="500"
         rows="3"
+        [class.p-invalid]="walletForm.get('description')?.invalid && walletForm.get('description')?.touched"
+        class="w-full"
+        style="resize: vertical; min-height: 100px;"
       ></textarea>
-      <div class="form-field__error" *ngIf="getFieldError('description')">
+      <small 
+        *ngIf="getFieldError('description')" 
+        class="p-error"
+        style="display: block; margin-top: 0.25rem;"
+      >
         {{ getFieldError('description') }}
-      </div>
+      </small>
     </div>
 
     <!-- Icon URL Field -->
     <div class="form-field">
       <label for="wallet-icon" class="form-field__label">
-        Wallet Icon
+        {{ 'wallets.form.icon' | translate }}
       </label>
       <input
         id="wallet-icon"
         type="url"
+        pInputText
         formControlName="iconUrl"
-        class="form-field__input"
-        [class.form-field__input--error]="walletForm.get('iconUrl')?.invalid && walletForm.get('iconUrl')?.touched"
-        placeholder="https://example.com/icon.png"
+        [placeholder]="'wallets.form.iconPlaceholder' | translate"
+        [class.p-invalid]="walletForm.get('iconUrl')?.invalid && walletForm.get('iconUrl')?.touched"
+        class="w-full"
       />
-      <div class="form-field__error" *ngIf="getFieldError('iconUrl')">
+      <small 
+        *ngIf="getFieldError('iconUrl')" 
+        class="p-error"
+        style="display: block; margin-top: 0.25rem;"
+      >
         {{ getFieldError('iconUrl') }}
-      </div>
+      </small>
       
       <!-- Icon Preview -->
       <div class="icon-preview" *ngIf="getIconUrl() && isValidImageUrl(getIconUrl())">
         <div class="icon-preview__container">
           <img 
             [src]="getIconUrl()" 
-            alt="Wallet icon preview" 
+            [alt]="'wallets.form.iconPreview' | translate" 
             class="icon-preview__image"
             (error)="onImageError($event)"
           />
-          <div class="icon-preview__label">Preview</div>
+          <div class="icon-preview__label">{{ 'wallets.form.iconPreview' | translate }}</div>
         </div>
       </div>
     </div>
@@ -134,29 +162,28 @@
     <!-- Color Field -->
     <div class="form-field">
       <label for="wallet-color" class="form-field__label">
-        Color
+        {{ 'wallets.form.color' | translate }}
       </label>
       <div class="color-picker">
-        <input
+        <p-colorPicker
           id="wallet-color"
-          type="color"
           formControlName="color"
-          class="color-picker__input"
+          [inline]="false"
+          [format]="'hex'"
+          styleClass="w-full"
         />
-        <span class="color-picker__label">Choose wallet color</span>
+        <span class="color-picker__label">{{ 'wallets.form.colorLabel' | translate }}</span>
       </div>
     </div>
 
     <!-- Default Wallet Checkbox -->
     <div class="form-field form-field--checkbox">
-      <label class="checkbox-label">
-        <input
-          type="checkbox"
-          formControlName="isDefault"
-          class="checkbox-label__input"
-        />
-        <span class="checkbox-label__text">Set as default wallet</span>
-      </label>
+      <p-checkbox
+        formControlName="isDefault"
+        [binary]="true"
+        [label]="'wallets.form.isDefault' | translate"
+        styleClass="w-full"
+      />
     </div>
 
     <!-- Form Actions -->
@@ -167,7 +194,7 @@
         (click)="onCancel()"
         [disabled]="isLoading"
       >
-        Cancel
+        {{ 'wallets.form.actions.cancel' | translate }}
       </pockito-button>
       
       <pockito-button
@@ -177,7 +204,7 @@
         [loading]="isLoading"
         [disabled]="walletForm.invalid || isLoading"
       >
-        {{ isEditMode ? 'Update Wallet' : 'Create Wallet' }}
+        {{ isEditMode ? ('wallets.form.actions.update' | translate) : ('wallets.form.actions.create' | translate) }}
       </pockito-button>
     </div>
   </form>

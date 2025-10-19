@@ -1,18 +1,55 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Currency, UserDto, WalletDto, WalletType } from '@api/models';
 import { UserService, WalletService } from '@api/services';
-import { PockitoButtonComponent, PockitoButtonType, PockitoButtonSize } from '@shared/components/pockito-button/pockito-button.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {
+  PockitoButtonComponent,
+  PockitoButtonSize,
+  PockitoButtonType,
+} from '@shared/components/pockito-button/pockito-button.component';
+import { ToastService } from '@shared/services/toast.service';
+
+// PrimeNG imports
+import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { DropdownModule } from 'primeng/dropdown';
+import { ColorPickerModule } from 'primeng/colorpicker';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @Component({
   selector: 'app-wallet-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, PockitoButtonComponent],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    PockitoButtonComponent,
+    TranslateModule,
+    // PrimeNG modules
+    InputTextModule,
+    InputNumberModule,
+    DropdownModule,
+    ColorPickerModule,
+    CheckboxModule,
+  ],
   templateUrl: './wallet-form.component.html',
   styleUrl: './wallet-form.component.scss',
 })
-export class WalletFormComponent implements OnInit {
+export class WalletFormComponent implements OnInit, OnChanges {
   @Input() walletId: string | null = null;
   @Output() walletSaved = new EventEmitter<WalletDto>();
   @Output() formCancelled = new EventEmitter<void>();
@@ -25,6 +62,10 @@ export class WalletFormComponent implements OnInit {
   // Available options for dropdowns
   currencies = Object.values(Currency);
   walletTypes = Object.values(WalletType);
+  
+  // PrimeNG dropdown options
+  currencyOptions: any[] = [];
+  walletTypeOptions: any[] = [];
 
   // Button types and sizes for template
   PockitoButtonType = PockitoButtonType;
@@ -33,20 +74,23 @@ export class WalletFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private walletService: WalletService,
-    private userService: UserService
+    private userService: UserService,
+    private translate: TranslateService,
+    private toastService: ToastService
   ) {
     this.walletForm = this.createForm();
   }
 
   ngOnInit(): void {
     this.isEditMode = !!this.walletId;
-    
+    this.initializeDropdownOptions();
+
     this.userService.currentUser$.subscribe((user: UserDto | null) => {
       if (user) {
         this.currentUser = user;
         if (!this.isEditMode) {
           this.walletForm.patchValue({
-            currency: user.defaultCurrency ?? Currency.USD
+            currency: user.defaultCurrency ?? '',
           });
         }
       }
@@ -57,16 +101,36 @@ export class WalletFormComponent implements OnInit {
     }
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['walletId'] && this.isEditMode && this.walletId) {
+      this.loadWallet(this.walletId);
+    }
+  }
+
   private createForm(): FormGroup {
     return this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(100)]],
+      name: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(1),
+          Validators.maxLength(100),
+        ],
+      ],
       currency: ['', Validators.required],
       type: ['', Validators.required],
       initialBalance: [0, [Validators.min(0)]],
       description: ['', Validators.maxLength(500)],
       color: ['#1d4ed8'],
-      iconUrl: ['', [Validators.pattern(/^https?:\/\/.+\.(jpg|jpeg|png|gif|svg|webp)(\?.*)?$/i)]],
-      isDefault: [false]
+      iconUrl: [
+        '',
+        [
+          Validators.pattern(
+            /^https?:\/\/.+\.(jpg|jpeg|png|gif|svg|webp)(\?.*)?$/i
+          ),
+        ],
+      ],
+      isDefault: [false],
     });
   }
 
@@ -74,22 +138,30 @@ export class WalletFormComponent implements OnInit {
     this.isLoading = true;
     this.walletService.getWallet(walletId).subscribe({
       next: (wallet: WalletDto) => {
-        this.walletForm.patchValue({
-          name: wallet.name,
-          currency: wallet.currency,
-          type: wallet.type,
-          initialBalance: wallet.initialBalance,
-          description: wallet.description || '',
-          color: wallet.color || '#1d4ed8',
-          iconUrl: wallet.iconUrl || '',
-          isDefault: wallet.isDefault
-        });
+        this.patchWalletForm(wallet);
         this.isLoading = false;
       },
       error: (error) => {
         console.error('Error loading wallet:', error);
+        this.toastService.showError(
+          'wallets.loadingWalletError',
+          error.error.message
+        );
         this.isLoading = false;
-      }
+      },
+    });
+  }
+
+  private patchWalletForm(wallet: WalletDto): void {
+    this.walletForm.patchValue({
+      name: wallet.name,
+      currency: wallet.currency,
+      type: wallet.type,
+      initialBalance: wallet.initialBalance,
+      description: wallet.description || '',
+      color: wallet.color || '#1d4ed8',
+      iconUrl: wallet.iconUrl || '',
+      isDefault: wallet.isDefault,
     });
   }
 
@@ -105,7 +177,7 @@ export class WalletFormComponent implements OnInit {
         color: formValue.color,
         iconUrl: formValue.iconUrl || '',
         isDefault: formValue.isDefault,
-        goalAmount: 0
+        goalAmount: 0,
       };
 
       if (this.isEditMode && this.walletId) {
@@ -125,11 +197,20 @@ export class WalletFormComponent implements OnInit {
       next: (createdWallet: WalletDto) => {
         this.walletSaved.emit(createdWallet);
         this.isLoading = false;
+        this.toastService.showSuccess(
+          'wallets.createWalletSuccess',
+          'wallets.createWalletSuccessMessage',
+          { name: walletData.name }
+        );
       },
       error: (error) => {
         console.error('Error creating wallet:', error);
         this.isLoading = false;
-      }
+        this.toastService.showError(
+          'wallets.createWalletError',
+          error.error.message
+        );
+      },
     });
   }
 
@@ -139,11 +220,20 @@ export class WalletFormComponent implements OnInit {
       next: (updatedWallet: WalletDto) => {
         this.walletSaved.emit(updatedWallet);
         this.isLoading = false;
+        this.toastService.showSuccess(
+          'wallets.updateWalletSuccess',
+          'wallets.updateWalletSuccessMessage',
+          { name: updatedWallet.name }
+        );
       },
       error: (error) => {
         console.error('Error updating wallet:', error);
         this.isLoading = false;
-      }
+        this.toastService.showError(
+          'wallets.updateWalletError',
+          error.error.message
+        );
+      },
     });
   }
 
@@ -152,7 +242,7 @@ export class WalletFormComponent implements OnInit {
   }
 
   private markFormGroupTouched(): void {
-    Object.keys(this.walletForm.controls).forEach(key => {
+    Object.keys(this.walletForm.controls).forEach((key) => {
       const control = this.walletForm.get(key);
       control?.markAsTouched();
     });
@@ -162,42 +252,41 @@ export class WalletFormComponent implements OnInit {
     const control = this.walletForm.get(fieldName);
     if (control?.errors && control.touched) {
       if (control.errors['required']) {
-        return `${fieldName} is required`;
+        return this.translate.instant(
+          `wallets.form.errors.${fieldName}Required`
+        );
       }
       if (control.errors['minlength']) {
-        return `${fieldName} must be at least ${control.errors['minlength'].requiredLength} characters`;
+        return this.translate.instant(
+          `wallets.form.errors.${fieldName}MinLength`
+        );
       }
       if (control.errors['maxlength']) {
-        return `${fieldName} must not exceed ${control.errors['maxlength'].requiredLength} characters`;
+        return this.translate.instant(
+          `wallets.form.errors.${fieldName}MaxLength`
+        );
       }
       if (control.errors['min']) {
-        return `${fieldName} must be at least ${control.errors['min'].min}`;
+        return this.translate.instant(`wallets.form.errors.${fieldName}Min`);
       }
       if (control.errors['pattern']) {
         if (fieldName === 'iconUrl') {
-          return 'Please enter a valid image URL (jpg, jpeg, png, gif, svg, webp)';
+          return this.translate.instant('wallets.form.errors.iconUrlPattern');
         }
-        return `${fieldName} format is invalid`;
+        return this.translate.instant(
+          `wallets.form.errors.${fieldName}Pattern`
+        );
       }
     }
     return '';
   }
 
   getWalletTypeLabel(type: WalletType): string {
-    switch (type) {
-      case WalletType.BANK_ACCOUNT:
-        return 'Bank Account';
-      case WalletType.CASH:
-        return 'Cash';
-      case WalletType.CREDIT_CARD:
-        return 'Credit Card';
-      case WalletType.SAVINGS:
-        return 'Savings';
-      case WalletType.CUSTOM:
-        return 'Custom';
-      default:
-        return type;
-    }
+    return this.translate.instant(`enums.walletType.${type}`);
+  }
+
+  getCurrencyLabel(currency: Currency): string {
+    return this.translate.instant(`enums.currency.${currency}`);
   }
 
   getIconUrl(): string {
@@ -214,5 +303,19 @@ export class WalletFormComponent implements OnInit {
     const img = event.target as HTMLImageElement;
     img.style.display = 'none';
     console.warn('Failed to load image:', this.getIconUrl());
+  }
+
+  private initializeDropdownOptions(): void {
+    // Initialize currency options
+    this.currencyOptions = this.currencies.map(currency => ({
+      label: this.getCurrencyLabel(currency),
+      value: currency
+    }));
+
+    // Initialize wallet type options
+    this.walletTypeOptions = this.walletTypes.map(type => ({
+      label: this.getWalletTypeLabel(type),
+      value: type
+    }));
   }
 }

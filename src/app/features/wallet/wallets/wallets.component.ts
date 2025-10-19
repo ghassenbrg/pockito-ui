@@ -60,7 +60,7 @@ export class WalletsComponent implements OnInit {
         this.loadingService.hide();
       },
       error: () => {
-        this.toastService.showError('loadingError');
+        this.toastService.showError('wallets.loadingError', 'wallets.loadingErrorMessage', { status: 500 });
         this.loadingService.hide();
       },
       complete: () => {
@@ -73,9 +73,19 @@ export class WalletsComponent implements OnInit {
     this.displayCreateWalletDialog = true;
   }
 
-  addWallet() {
-    // TODO: Implement add wallet functionality
-    this.toastService.showSuccess('wallets.addWallet');
+  onWalletSaved(wallet: WalletDto) {
+    this.wallets.push(wallet);
+    this.wallets = this.wallets.sort((a, b) => {
+      if (a.orderPosition == null && b.orderPosition == null) return 0;
+      if (a.orderPosition == null) return 1;
+      if (b.orderPosition == null) return -1;
+      return a.orderPosition - b.orderPosition;
+    });
+    this.displayCreateWalletDialog = false;
+  }
+
+  onFormCancelled() {
+    this.displayCreateWalletDialog = false;
   }
 
   viewWallet(wallet: WalletDto) {
