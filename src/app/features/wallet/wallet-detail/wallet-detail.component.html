@@ -2,8 +2,12 @@
   <div class="wallets-header">
     <h1>
       <span class="wallet-name">{{ wallet.name }}</span>
-      <span class="wallet-balance"
-        >({{ wallet.balance | pockitoCurrency : wallet.currency }})</span
+      <span
+        class="wallet-balance"
+        [class.positive]="wallet.balance && wallet.balance > 0"
+        [class.negative]="wallet.balance && wallet.balance < 0"
+        [class.zero]="!wallet.balance || wallet.balance === 0"
+        > ({{ wallet.balance | pockitoCurrency : wallet.currency }})</span
       >
     </h1>
 
