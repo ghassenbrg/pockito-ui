@@ -354,6 +354,10 @@
     height: 100%;
     overflow: hidden;
     background-color: var(--background-color);
+    background:
+    radial-gradient(1100px 700px at 10% -10%, rgba(219, 234, 254, 0.6) 0%, rgba(219, 234, 254, 0) 60%),
+    radial-gradient(900px 600px at 90% 0%, rgba(233, 213, 255, 0.4) 0%, rgba(233, 213, 255, 0) 55%),
+    linear-gradient(135deg, #eef3ff, #f7fafc);
   }
 
   // App content area

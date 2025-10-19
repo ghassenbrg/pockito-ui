@@ -1,0 +1,197 @@
+/* ---------- Light Theme Tokens ---------- */
+$bg-a: #eef3ff;
+$bg-b: #f7fafc;
+
+$surface: rgba(255, 255, 255, 0.9);
+$stroke: rgba(15, 23, 42, 0.08);
+
+$shadow-sm: 0 6px 16px rgba(2, 6, 23, 0.06);
+$shadow-lg: 0 14px 34px rgba(2, 6, 23, 0.12);
+
+$text-900: #0f172a;
+$text-700: #334155;
+$text-500: #64748b;
+
+$primary: #2563eb;
+$success: #16a34a;
+$danger: #ef4444;
+
+/* ---------- Page Shell ---------- */
+.wallets-container {
+  min-height: 100%;
+  padding: clamp(20px, 3vw, 40px);
+  box-sizing: border-box;
+}
+
+/* ---------- Header ---------- */
+.wallets-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 16px;
+  margin-bottom: clamp(16px, 3vw, 28px);
+
+  h1 {
+    margin: 0;
+    font-size: clamp(28px, 4vw, 44px);
+    line-height: 1.1;
+    font-weight: 700;
+    color: $text-900;
+    letter-spacing: 0.2px;
+  }
+
+  .add-wallet-btn {
+    /* Non-breaking cosmetic variables for your design system button */
+    --pk-button-radius: 14px;
+    --pk-button-padding: 12px 18px;
+    --pk-button-font-weight: 600;
+    --pk-button-font-size: 0.95rem;
+    --pk-button-bg: #1d4ed8;
+    --pk-button-bg-hover: #1e40af;
+    --pk-button-shadow: 0 10px 26px rgba(29, 78, 216, 0.22);
+  }
+}
+
+/* ---------- Grid ---------- */
+.wallets-content .wallets-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: clamp(12px, 2vw, 22px);
+}
+
+/* ---------- Card ---------- */
+.wallet-item {
+  background: $surface;
+  border: 1px solid $stroke;
+  border-radius: 22px;
+  padding: clamp(16px, 2.2vw, 22px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), $shadow-sm;
+  backdrop-filter: blur(6px);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), $shadow-lg;
+    border-color: rgba(15, 23, 42, 0.12);
+  }
+
+  &.is-positive .wallet-balance .amount { color: $success; }
+  &.is-negative .wallet-balance .amount { color: $danger; }
+
+  /* Header row */
+  .wallet-item-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    column-gap: 16px;
+  }
+
+  /* Icon bubble */
+  .wallet-icon {
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #f6f9ff, #ffffff);
+    border: 1px solid $stroke;
+    box-shadow:
+      0 6px 16px rgba(2, 6, 23, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.85);
+
+    img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  }
+
+  /* Middle text */
+  .wallet-info {
+    min-width: 0;
+
+    .wallet-name {
+      margin: 0;
+      font-size: clamp(18px, 2.2vw, 20px);
+      font-weight: 700;
+      color: $text-700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: 0.2px;
+    }
+
+    .wallet-type {
+      margin-top: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.35px;
+      color: $text-500;
+    }
+  }
+
+  /* Right balance */
+  .wallet-balance {
+    text-align: right;
+
+    .amount {
+      display: inline-block;
+      font-size: clamp(18px, 2.6vw, 22px);
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      color: $text-700; // overridden by positive/negative state
+    }
+  }
+
+  /* Footer strip (uses data you already have: type & currency) */
+  .wallet-item-footer {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(15, 23, 42, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    .label {
+      font-size: 12px;
+      font-weight: 600;
+      color: $text-500;
+      letter-spacing: 0.2px;
+    }
+
+    .currency-chip {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      background: rgba(2, 6, 23, 0.04);
+      color: $text-700;
+      border: 1px solid rgba(2, 6, 23, 0.06);
+    }
+  }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 560px) {
+    /*
+  .wallets-header {
+    grid-template-columns: 1fr;
+    .add-wallet-btn { justify-self: start; }
+  }
+  */
+  .wallet-item {
+    .wallet-item-header {
+      grid-template-columns: auto 1fr;
+      row-gap: 12px;
+    }
+    .wallet-balance {
+      grid-column: 1 / -1;
+      text-align: left;
+    }
+  }
+}

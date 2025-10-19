@@ -30,18 +30,28 @@
       "testLanguageSwitcher": "Test du sélecteur de langue"
     }
   },
+  "wallets": {
+    "title": "Portefeuilles",
+    "loading": "Chargement des portefeuilles...",
+    "addWallet": "Ajouter un Portefeuille",
+    "balance": "Solde"
+  },
   "toast": {
     "success": {
-      "welcomeBack": "Bienvenue, {{username}} !"
+      "welcomeBack": "Bienvenue, {{username}} !",
+      "wallets.addWallet": "Portefeuille ajouté avec succès !"
     },
     "error": {
+      "loadingError": "Erreur lors du chargement des portefeuilles"
     },
     "info": {
     },
     "warning": {
     }, 
     "messages": {
-      "welcomeBack": ""
+      "welcomeBack": "",
+      "loadingError": "Échec du chargement des portefeuilles. Veuillez réessayer.",
+      "wallets.addWallet": "Votre portefeuille a été ajouté avec succès."
     }
   }
 }

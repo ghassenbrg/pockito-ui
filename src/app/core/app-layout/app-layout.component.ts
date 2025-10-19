@@ -8,8 +8,6 @@ import {
   Renderer2,
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { UserDto } from '@api/model/user.model';
-import { UserService } from '@api/services/user.service';
 import { KeycloakService } from '@core/security/keycloak.service';
 import { ResponsiveService } from '@core/services/responsive.service';
 import { MobileService } from '@core/services/mobile.service';
@@ -24,6 +22,8 @@ import { DockModule } from 'primeng/dock';
 import { TerminalModule, TerminalService } from 'primeng/terminal';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { UserDto } from '@api/models';
+import { UserService } from '@api/services';
 
 @Component({
   selector: 'app-layout',

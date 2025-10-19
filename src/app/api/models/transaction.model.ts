@@ -15,7 +15,11 @@ export interface TransactionDto {
   categoryName?: string;
 }
 
-export type TransactionType = 'TRANSFER' | 'EXPENSE' | 'INCOME';
+export enum TransactionType {
+  TRANSFER = 'TRANSFER',
+  EXPENSE = 'EXPENSE',
+  INCOME = 'INCOME'
+}
 
 export interface Pageable {
   page?: number;

@@ -30,18 +30,28 @@
       "testLanguageSwitcher": "言語切り替えのテスト"
     }
   },
+  "wallets": {
+    "title": "ウォレット",
+    "loading": "ウォレットを読み込み中...",
+    "addWallet": "ウォレットを追加",
+    "balance": "残高"
+  },
   "toast": {
     "success": {
-      "welcomeBack": "ようこそ、{{username}}さん!"
+      "welcomeBack": "ようこそ、{{username}}さん!",
+      "wallets.addWallet": "ウォレットが正常に追加されました！"
     },
     "error": {
+      "loadingError": "ウォレットの読み込みエラー"
     },
     "info": {
     },
     "warning": {
     }, 
     "messages": {
-      "welcomeBack": ""
+      "welcomeBack": "",
+      "loadingError": "ウォレットの読み込みに失敗しました。もう一度お試しください。",
+      "wallets.addWallet": "ウォレットが正常に追加されました。"
     }
   }
 }

@@ -19,6 +19,8 @@ export class PockitoCurrencyPipe implements PipeTransform {
       return '0.00 ' + currency;
     }
 
+    const sign = value > 0 ? '+' : '';
+
     // Use Angular's CurrencyPipe to format the number
     const formattedAmount = this.currencyPipe.transform(
       value, 
@@ -37,10 +39,10 @@ export class PockitoCurrencyPipe implements PipeTransform {
       // The CurrencyPipe with 'code' display adds currency at the beginning like "USD100.50"
       // We need to remove the currency code and add it to the end with space
       const amountWithoutCurrency = formattedAmount.replace(currency, '');
-      return `${amountWithoutCurrency} ${currency}`;
+      return `${sign}${amountWithoutCurrency} ${currency}`;
     }
 
     // For other display types, return as is
-    return formattedAmount;
+    return `${sign}${formattedAmount}`;
   }
 }

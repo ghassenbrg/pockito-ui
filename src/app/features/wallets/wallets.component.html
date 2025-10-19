@@ -1,1 +1,49 @@
-<p>wallets works!</p>
+<div class="wallets-container">
+  <div class="wallets-header">
+    <h1>{{ "wallets.title" | translate }}</h1>
+
+    <pockito-button
+      [type]="PockitoButtonType.PRIMARY"
+      icon="fa-solid fa-plus"
+      iconPosition="left"
+      (click)="addWallet()"
+      class="add-wallet-btn"
+    >
+      {{ "wallets.addWallet" | translate }}
+    </pockito-button>
+  </div>
+
+  <div class="wallets-content">
+    <div class="wallets-list">
+      <div
+        class="wallet-item"
+        (click)="viewWallet(wallet)"
+        *ngFor="let wallet of wallets"
+        [ngClass]="{
+          'is-positive': wallet.balance && wallet.balance >= 0,
+          'is-negative': wallet.balance && wallet.balance < 0
+        }"
+      >
+        <div class="wallet-item-header">
+          <span class="wallet-icon" *ngIf="wallet.iconUrl">
+            <img
+              [src]="wallet.iconUrl"
+              alt="{{ wallet.name }} icon"
+            />
+          </span>
+
+          <div class="wallet-info">
+            <h2 class="wallet-name" title="{{ wallet.name }}">
+              {{ wallet.name }}
+            </h2>
+            <div class="wallet-balance">
+              <span class="amount">
+                {{ wallet.balance | pockitoCurrency : wallet.currency }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

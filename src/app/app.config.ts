@@ -6,6 +6,8 @@ import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { MessageService } from 'primeng/api';
+import { TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
 
 import { routes } from './app.routes';
 import { KeycloakService } from './core/security/keycloak.service';
@@ -28,6 +30,25 @@ function initializeApp(keycloakService: KeycloakService) {
   };
 }
 
+function initializeTranslations(translateService: TranslateService) {
+  return async () => {
+    try {
+      // Set default language and wait for translations to load
+      const saved = localStorage.getItem('preferredLanguage');
+      const browser = (navigator.language || 'en').split('-')[0];
+      const lang = saved || browser || 'en';
+      
+      translateService.setFallbackLang('en');
+      await firstValueFrom(translateService.use(lang));
+      
+      return true;
+    } catch (error) {
+      console.error('APP_INITIALIZER: Translation loading failed', error);
+      return false;
+    }
+  };
+}
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
@@ -44,6 +65,12 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,
       deps: [KeycloakService],
+      multi: true,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeTranslations,
+      deps: [TranslateService],
       multi: true,
     },
 

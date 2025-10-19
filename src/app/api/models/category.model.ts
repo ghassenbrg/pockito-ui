@@ -11,4 +11,7 @@ export interface CategoryDto {
   childCount?: number;
 }
 
-export type CategoryType = 'EXPENSE' | 'INCOME';
+export enum CategoryType {
+  EXPENSE = 'EXPENSE',
+  INCOME = 'INCOME'
+}

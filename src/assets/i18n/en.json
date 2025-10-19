@@ -30,18 +30,28 @@
       "testLanguageSwitcher": "Test language switcher"
     }
   },
+  "wallets": {
+    "title": "Wallets",
+    "loading": "Loading wallets...",
+    "addWallet": "Add Wallet",
+    "balance": "Balance"
+  },
   "toast": {
     "success": {
-      "welcomeBack": "Welcome back, {{username}}!"
+      "welcomeBack": "Welcome back, {{username}}!",
+      "wallets.addWallet": "Wallet added successfully!"
     },
     "error": {
+      "loadingError": "Error loading wallets"
     },
     "info": {
     },
     "warning": {
     }, 
     "messages": {
-      "welcomeBack": ""
+      "welcomeBack": "",
+      "loadingError": "Failed to load wallets. Please try again.",
+      "wallets.addWallet": "Your wallet has been added successfully."
     }
   }
 }

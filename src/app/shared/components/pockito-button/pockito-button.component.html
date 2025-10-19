@@ -1,0 +1,39 @@
+<button
+  [class]="buttonClasses"
+  [type]="buttonType"
+  [disabled]="disabled || loading"
+  [attr.aria-label]="ariaLabel"
+  [attr.title]="title"
+  [attr.aria-disabled]="disabled || loading"
+  (click)="onClick($event)"
+  (keydown)="onKeyDown($event)"
+  role="button"
+  tabindex="0">
+  
+  <!-- Loading spinner -->
+  <span *ngIf="loading" class="pockito-button__spinner" aria-hidden="true">
+    <svg class="pockito-button__spinner-icon" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-dasharray="31.416" stroke-dashoffset="31.416">
+        <animate attributeName="stroke-dasharray" dur="2s" values="0 31.416;15.708 15.708;0 31.416" repeatCount="indefinite"/>
+        <animate attributeName="stroke-dashoffset" dur="2s" values="0;-15.708;-31.416" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+  </span>
+
+  <!-- Left icon -->
+  <i *ngIf="icon && iconPosition === 'left' && !loading" 
+     [class]="icon" 
+     class="pockito-button__icon pockito-button__icon--left"
+     aria-hidden="true"></i>
+
+  <!-- Button content -->
+  <span class="pockito-button__content" [class.pockito-button__content--loading]="loading">
+    <ng-content></ng-content>
+  </span>
+
+  <!-- Right icon -->
+  <i *ngIf="icon && iconPosition === 'right' && !loading" 
+     [class]="icon" 
+     class="pockito-button__icon pockito-button__icon--right"
+     aria-hidden="true"></i>
+</button>

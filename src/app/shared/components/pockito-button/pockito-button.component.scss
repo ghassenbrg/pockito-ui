@@ -1,0 +1,366 @@
+// Pockito Button Component Styles
+// Unified button component with different types and colors
+
+.pockito-button {
+  // Base button styles
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  outline: none;
+  overflow: hidden;
+
+  // Touch-friendly minimum size
+  min-height: 44px;
+  min-width: 44px;
+
+  // Focus styles
+  &:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+  }
+
+  // Disabled state
+  &--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  // Loading state
+  &--loading {
+    cursor: wait;
+    pointer-events: none;
+  }
+
+  // Full width
+  &--full-width {
+    width: 100%;
+  }
+
+  // Size variants
+  &--small {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    min-height: 36px;
+    border-radius: 8px;
+  }
+
+  &--medium {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    min-height: 44px;
+  }
+
+  &--large {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+    min-height: 52px;
+    border-radius: 16px;
+  }
+
+  // Icon positioning
+  &--icon-left {
+    .pockito-button__icon--left {
+      margin-right: 0.25rem;
+    }
+  }
+
+  &--icon-right {
+    .pockito-button__icon--right {
+      margin-left: 0.25rem;
+    }
+  }
+
+  // Button type variants
+  &--default {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text-color);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+
+    &:hover:not(:disabled) {
+      background: rgba(0, 0, 0, 0.1);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      background: rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  &--primary {
+    background: var(--primary-color);
+    color: var(--primary-color-text);
+    border: 1px solid var(--primary-color);
+
+    &:hover:not(:disabled) {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      background: #1e40af;
+    }
+  }
+
+  &--secondary {
+    background: #64748b;
+    color: white;
+    border: 1px solid #64748b;
+
+    &:hover:not(:disabled) {
+      background: #475569;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      background: #334155;
+    }
+  }
+
+  &--success {
+    background: #10b981;
+    color: white;
+    border: 1px solid #10b981;
+
+    &:hover:not(:disabled) {
+      background: #059669;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      background: #047857;
+    }
+  }
+
+  &--warning {
+    background: #f59e0b;
+    color: white;
+    border: 1px solid #f59e0b;
+
+    &:hover:not(:disabled) {
+      background: #d97706;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      background: #b45309;
+    }
+  }
+
+  &--danger {
+    background: #ef4444;
+    color: white;
+    border: 1px solid #ef4444;
+
+    &:hover:not(:disabled) {
+      background: #dc2626;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      background: #b91c1c;
+    }
+  }
+
+  &--info {
+    background: #3b82f6;
+    color: white;
+    border: 1px solid #3b82f6;
+
+    &:hover:not(:disabled) {
+      background: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      background: #1d4ed8;
+    }
+  }
+
+  &--submit {
+    background: #10b981;
+    color: white;
+    border: 1px solid #10b981;
+
+    &:hover:not(:disabled) {
+      background: #059669;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      background: #047857;
+    }
+  }
+
+  &--cancel {
+    background: #6b7280;
+    color: white;
+    border: 1px solid #6b7280;
+
+    &:hover:not(:disabled) {
+      background: #4b5563;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+      background: #374151;
+    }
+  }
+
+  // Content and icon styles
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease;
+
+    &--loading {
+      opacity: 0.7;
+    }
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+    transition: transform 0.2s ease;
+
+    &--left {
+      margin-right: 0.25rem;
+    }
+
+    &--right {
+      margin-left: 0.25rem;
+    }
+  }
+
+  &__spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.5rem;
+  }
+
+  &__spinner-icon {
+    width: 1rem;
+    height: 1rem;
+    animation: spin 1s linear infinite;
+  }
+}
+
+// Loading animation
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Ripple effect for enhanced interaction
+.pockito-button:not(:disabled):not(.pockito-button--loading) {
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  &:active::before {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+// Mobile optimizations
+@media (max-width: 1023px) {
+  .pockito-button {
+    // Ensure touch-friendly sizing on mobile
+    min-height: 44px;
+    min-width: 44px;
+    font-size: 16px; // Prevent zoom on iOS
+
+    &--small {
+      min-height: 40px;
+      font-size: 14px;
+    }
+
+    &--large {
+      min-height: 48px;
+      font-size: 18px;
+    }
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .pockito-button {
+    border-width: 2px;
+    
+    &:focus-visible {
+      outline-width: 3px;
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .pockito-button {
+    transition: none;
+    
+    &:hover:not(:disabled) {
+      transform: none;
+    }
+    
+    &:active:not(:disabled) {
+      transform: none;
+    }
+  }
+  
+  .pockito-button__spinner-icon {
+    animation: none;
+  }
+}
