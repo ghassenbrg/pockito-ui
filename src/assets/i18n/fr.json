@@ -37,6 +37,8 @@
     "loadingWalletError": "Erreur lors du chargement du portefeuille",
     "loadingErrorMessage": "Erreur lors du chargement des portefeuilles. Veuillez réessayer.",
     "addWallet": "Ajouter un Portefeuille",
+    "editWallet": "Modifier le Portefeuille",
+    "transactions": "Transactions",
     "balance": "Solde",
     "createWallet": "Créer un Portefeuille",
     "updateWallet": "Mettre à jour le Portefeuille",
@@ -86,7 +88,17 @@
       }
     }
   },
-  "common": {},
+  "common": {
+    "loading": "Chargement...",
+    "loadingError": "Erreur lors du chargement",
+    "loadingErrorMessage": "Erreur lors du chargement. Veuillez réessayer.",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "deleteSuccess": "Suppression réussie",
+    "deleteSuccessMessage": "L'élément a été supprimé avec succès.",
+    "deleteError": "Suppression échouée",
+    "deleteErrorMessage": "Suppression échouée. Veuillez réessayer."
+  },
   "enums": {
     "walletType": {
       "BANK_ACCOUNT": "Compte Bancaire",

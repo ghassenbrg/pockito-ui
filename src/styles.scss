@@ -383,7 +383,7 @@ body {
   border-right-color: var(--surface-overlay);
 }
 
-.p-menuitem-content:not(:has(.active-dock-item)) {
+.desktop-shell .p-menuitem-content:not(:has(.active-dock-item)) {
   cursor: pointer !important;
   // Add a little zoom-in animation on hover/focus for dock icons
   transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);

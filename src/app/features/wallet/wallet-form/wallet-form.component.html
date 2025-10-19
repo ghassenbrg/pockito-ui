@@ -1,11 +1,14 @@
 <div class="wallet-form">
-  <form [formGroup]="walletForm" (ngSubmit)="onSubmit()" class="wallet-form__content">
-
-    <span> is edit mode: {{ isEditMode }}</span>
+  <form
+    [formGroup]="walletForm"
+    (ngSubmit)="onSubmit()"
+    class="wallet-form__content"
+  >
     <!-- Name Field -->
     <div class="form-field">
       <label for="wallet-name" class="form-field__label">
-        {{ 'wallets.form.name' | translate }} <span class="required">{{ 'wallets.form.required' | translate }}</span>
+        {{ "wallets.form.name" | translate }}
+        <span class="required">{{ "wallets.form.required" | translate }}</span>
       </label>
       <input
         id="wallet-name"
@@ -14,22 +17,25 @@
         formControlName="name"
         [placeholder]="'wallets.form.namePlaceholder' | translate"
         [maxlength]="100"
-        [class.p-invalid]="walletForm.get('name')?.invalid && walletForm.get('name')?.touched"
+        [class.p-invalid]="
+          walletForm.get('name')?.invalid && walletForm.get('name')?.touched
+        "
         class="w-full"
       />
-      <small 
-        *ngIf="getFieldError('name')" 
+      <small
+        *ngIf="getFieldError('name')"
         class="p-error"
-        style="display: block; margin-top: 0.25rem;"
+        style="display: block; margin-top: 0.25rem"
       >
-        {{ getFieldError('name') }}
+        {{ getFieldError("name") }}
       </small>
     </div>
 
     <!-- Currency Field -->
     <div class="form-field">
       <label for="wallet-currency" class="form-field__label">
-        {{ 'wallets.form.currency' | translate }} <span class="required">{{ 'wallets.form.required' | translate }}</span>
+        {{ "wallets.form.currency" | translate }}
+        <span class="required">{{ "wallets.form.required" | translate }}</span>
       </label>
       <p-dropdown
         id="wallet-currency"
@@ -39,22 +45,26 @@
         [showClear]="true"
         [filter]="true"
         filterBy="label"
-        [class.p-invalid]="walletForm.get('currency')?.invalid && walletForm.get('currency')?.touched"
+        [class.p-invalid]="
+          walletForm.get('currency')?.invalid &&
+          walletForm.get('currency')?.touched
+        "
         styleClass="w-full"
       />
-      <small 
-        *ngIf="getFieldError('currency')" 
+      <small
+        *ngIf="getFieldError('currency')"
         class="p-error"
-        style="display: block; margin-top: 0.25rem;"
+        style="display: block; margin-top: 0.25rem"
       >
-        {{ getFieldError('currency') }}
+        {{ getFieldError("currency") }}
       </small>
     </div>
 
     <!-- Type Field -->
     <div class="form-field">
       <label for="wallet-type" class="form-field__label">
-        {{ 'wallets.form.type' | translate }} <span class="required">{{ 'wallets.form.required' | translate }}</span>
+        {{ "wallets.form.type" | translate }}
+        <span class="required">{{ "wallets.form.required" | translate }}</span>
       </label>
       <p-dropdown
         id="wallet-type"
@@ -64,22 +74,24 @@
         [showClear]="true"
         [filter]="false"
         filterBy="label"
-        [class.p-invalid]="walletForm.get('type')?.invalid && walletForm.get('type')?.touched"
+        [class.p-invalid]="
+          walletForm.get('type')?.invalid && walletForm.get('type')?.touched
+        "
         styleClass="w-full"
       />
-      <small 
-        *ngIf="getFieldError('type')" 
+      <small
+        *ngIf="getFieldError('type')"
         class="p-error"
-        style="display: block; margin-top: 0.25rem;"
+        style="display: block; margin-top: 0.25rem"
       >
-        {{ getFieldError('type') }}
+        {{ getFieldError("type") }}
       </small>
     </div>
 
     <!-- Initial Balance Field -->
     <div class="form-field">
       <label for="wallet-balance" class="form-field__label">
-        {{ 'wallets.form.initialBalance' | translate }}
+        {{ "wallets.form.initialBalance" | translate }}
       </label>
       <p-inputNumber
         id="wallet-balance"
@@ -88,22 +100,25 @@
         [min]="0"
         [step]="0.01"
         [useGrouping]="true"
-        [class.p-invalid]="walletForm.get('initialBalance')?.invalid && walletForm.get('initialBalance')?.touched"
+        [class.p-invalid]="
+          walletForm.get('initialBalance')?.invalid &&
+          walletForm.get('initialBalance')?.touched
+        "
         styleClass="w-full"
       />
-      <small 
-        *ngIf="getFieldError('initialBalance')" 
+      <small
+        *ngIf="getFieldError('initialBalance')"
         class="p-error"
-        style="display: block; margin-top: 0.25rem;"
+        style="display: block; margin-top: 0.25rem"
       >
-        {{ getFieldError('initialBalance') }}
+        {{ getFieldError("initialBalance") }}
       </small>
     </div>
 
     <!-- Description Field -->
     <div class="form-field">
       <label for="wallet-description" class="form-field__label">
-        {{ 'wallets.form.description' | translate }}
+        {{ "wallets.form.description" | translate }}
       </label>
       <textarea
         id="wallet-description"
@@ -112,23 +127,26 @@
         [placeholder]="'wallets.form.descriptionPlaceholder' | translate"
         [maxlength]="500"
         rows="3"
-        [class.p-invalid]="walletForm.get('description')?.invalid && walletForm.get('description')?.touched"
+        [class.p-invalid]="
+          walletForm.get('description')?.invalid &&
+          walletForm.get('description')?.touched
+        "
         class="w-full"
-        style="resize: vertical; min-height: 100px;"
+        style="resize: vertical; min-height: 100px"
       ></textarea>
-      <small 
-        *ngIf="getFieldError('description')" 
+      <small
+        *ngIf="getFieldError('description')"
         class="p-error"
-        style="display: block; margin-top: 0.25rem;"
+        style="display: block; margin-top: 0.25rem"
       >
-        {{ getFieldError('description') }}
+        {{ getFieldError("description") }}
       </small>
     </div>
 
     <!-- Icon URL Field -->
     <div class="form-field">
       <label for="wallet-icon" class="form-field__label">
-        {{ 'wallets.form.icon' | translate }}
+        {{ "wallets.form.icon" | translate }}
       </label>
       <input
         id="wallet-icon"
@@ -136,27 +154,35 @@
         pInputText
         formControlName="iconUrl"
         [placeholder]="'wallets.form.iconPlaceholder' | translate"
-        [class.p-invalid]="walletForm.get('iconUrl')?.invalid && walletForm.get('iconUrl')?.touched"
+        [class.p-invalid]="
+          walletForm.get('iconUrl')?.invalid &&
+          walletForm.get('iconUrl')?.touched
+        "
         class="w-full"
       />
-      <small 
-        *ngIf="getFieldError('iconUrl')" 
+      <small
+        *ngIf="getFieldError('iconUrl')"
         class="p-error"
-        style="display: block; margin-top: 0.25rem;"
+        style="display: block; margin-top: 0.25rem"
       >
-        {{ getFieldError('iconUrl') }}
+        {{ getFieldError("iconUrl") }}
       </small>
-      
+
       <!-- Icon Preview -->
-      <div class="icon-preview" *ngIf="getIconUrl() && isValidImageUrl(getIconUrl())">
+      <div
+        class="icon-preview"
+        *ngIf="getIconUrl() && isValidImageUrl(getIconUrl())"
+      >
         <div class="icon-preview__container">
-          <img 
-            [src]="getIconUrl()" 
-            [alt]="'wallets.form.iconPreview' | translate" 
+          <img
+            [src]="getIconUrl()"
+            [alt]="'wallets.form.iconPreview' | translate"
             class="icon-preview__image"
             (error)="onImageError($event)"
           />
-          <div class="icon-preview__label">{{ 'wallets.form.iconPreview' | translate }}</div>
+          <div class="icon-preview__label">
+            {{ "wallets.form.iconPreview" | translate }}
+          </div>
         </div>
       </div>
     </div>
@@ -164,7 +190,7 @@
     <!-- Color Field -->
     <div class="form-field">
       <label for="wallet-color" class="form-field__label">
-        {{ 'wallets.form.color' | translate }}
+        {{ "wallets.form.color" | translate }}
       </label>
       <div class="color-picker">
         <p-colorPicker
@@ -174,7 +200,9 @@
           [format]="'hex'"
           styleClass="w-full"
         />
-        <span class="color-picker__label">{{ 'wallets.form.colorLabel' | translate }}</span>
+        <span class="color-picker__label">{{
+          "wallets.form.colorLabel" | translate
+        }}</span>
       </div>
     </div>
 
@@ -196,17 +224,21 @@
         (click)="onCancel()"
         [disabled]="isLoading"
       >
-        {{ 'wallets.form.actions.cancel' | translate }}
+        {{ "wallets.form.actions.cancel" | translate }}
       </pockito-button>
-      
+
       <pockito-button
-        [type]="PockitoButtonType. SUBMIT"
+        [type]="PockitoButtonType.SUBMIT"
         [size]="PockitoButtonSize.MEDIUM"
         buttonType="submit"
         [loading]="isLoading"
         [disabled]="walletForm.invalid || isLoading"
       >
-        {{ isEditMode ? ('wallets.form.actions.update' | translate) : ('wallets.form.actions.create' | translate) }}
+        {{
+          isEditMode
+            ? ("wallets.form.actions.update" | translate)
+            : ("wallets.form.actions.create" | translate)
+        }}
       </pockito-button>
     </div>
   </form>

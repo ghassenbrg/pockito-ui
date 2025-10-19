@@ -12,13 +12,19 @@ export interface LoadingState {
 export class LoadingService {
   private loadingSubject = new BehaviorSubject<LoadingState>({ isLoading: false });
   public loading$ = this.loadingSubject.asObservable();
+  private loadingCount = 0;
 
   show(message?: string): void {
+    this.loadingCount++;
     this.loadingSubject.next({ isLoading: true, message });
   }
 
   hide(): void {
-    this.loadingSubject.next({ isLoading: false });
+    this.loadingCount--;
+    if (this.loadingCount <= 0) {
+      this.loadingCount = 0;
+      this.loadingSubject.next({ isLoading: false });
+    }
   }
 
   getCurrentState(): LoadingState {

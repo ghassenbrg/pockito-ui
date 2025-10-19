@@ -13,8 +13,8 @@ export interface WalletDto {
   description?: string;
   color?: string;
   active?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
   createdBy?: string;
   updatedBy?: string;
 }

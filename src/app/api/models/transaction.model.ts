@@ -8,7 +8,7 @@ export interface TransactionDto {
   exchangeRate: number;
   walletToAmount?: number;
   note?: string;
-  effectiveDate: string;
+  effectiveDate: Date;
   categoryId?: string;
   walletFromName?: string;
   walletToName?: string;
@@ -18,7 +18,7 @@ export interface TransactionDto {
 export enum TransactionType {
   TRANSFER = 'TRANSFER',
   EXPENSE = 'EXPENSE',
-  INCOME = 'INCOME'
+  INCOME = 'INCOME',
 }
 
 export interface Pageable {
@@ -28,10 +28,10 @@ export interface Pageable {
 }
 
 export interface PageTransactionDto {
-  totalPages?: number;
-  totalElements?: number;
+  totalPages: number;
+  totalElements: number;
   size?: number;
-  content?: TransactionDto[];
+  content: TransactionDto[];
   number?: number;
   sort?: Sort;
   first?: boolean;

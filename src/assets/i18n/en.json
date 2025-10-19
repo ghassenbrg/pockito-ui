@@ -37,6 +37,8 @@
     "loadingWalletError": "Error loading wallet",
     "loadingErrorMessage": "Error loading wallets. Please try again.",
     "addWallet": "Add Wallet",
+    "editWallet": "Edit Wallet",
+    "transactions": "Transactions",
     "balance": "Balance",
     "createWallet": "Create Wallet",
     "updateWallet": "Update Wallet",
@@ -86,23 +88,16 @@
       }
     }
   },
-  "toast": {
-    "success": {
-      "welcomeBack": "Welcome back, {{username}}!",
-      "wallets.addWallet": "Wallet added successfully!"
-    },
-    "error": {
-      "loadingError": "Error loading wallets"
-    },
-    "info": {
-    },
-    "warning": {
-    }, 
-    "messages": {
-      "welcomeBack": "",
-      "loadingError": "Failed to load wallets. Please try again.",
-      "wallets.addWallet": "Your wallet has been added successfully."
-    }
+  "common": {
+    "loading": "Loading...",
+    "loadingError": "Error loading",
+    "loadingErrorMessage": "Error loading. Please try again.",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteSuccess": "Delete successful",
+    "deleteSuccessMessage": "The item has been deleted successfully.",
+    "deleteError": "Delete failed",
+    "deleteErrorMessage": "Delete failed. Please try again."
   },
   "enums": {
     "walletType": {

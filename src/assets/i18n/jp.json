@@ -37,6 +37,8 @@
     "loadingError": "ウォレットの読み込みに失敗しました",
     "loadingErrorMessage": "ウォレットの読み込みに失敗しました。もう一度お試しください。",
     "addWallet": "ウォレットを追加",
+    "editWallet": "ウォレットを編集",
+    "transactions": "取引",
     "balance": "残高",
     "createWallet": "ウォレットを作成",
     "updateWallet": "ウォレットを更新",
@@ -86,23 +88,16 @@
       }
     }
   },
-  "toast": {
-    "success": {
-      "welcomeBack": "ようこそ、{{username}}さん!",
-      "wallets.addWallet": "ウォレットが正常に追加されました！"
-    },
-    "error": {
-      "loadingError": "ウォレットの読み込みエラー"
-    },
-    "info": {
-    },
-    "warning": {
-    }, 
-    "messages": {
-      "welcomeBack": "",
-      "loadingError": "ウォレットの読み込みに失敗しました。もう一度お試しください。",
-      "wallets.addWallet": "ウォレットが正常に追加されました。"
-    }
+  "common": {
+    "loading": "読み込み中...",
+    "loadingError": "読み込みに失敗しました",
+    "loadingErrorMessage": "読み込みに失敗しました。もう一度お試しください。",
+    "edit": "編集",
+    "delete": "削除",
+    "deleteSuccess": "削除成功",
+    "deleteSuccessMessage": "アイテムが正常に削除されました。",
+    "deleteError": "削除失敗",
+    "deleteErrorMessage": "削除失敗しました。もう一度お試しください。"
   },
   "enums": {
     "walletType": {

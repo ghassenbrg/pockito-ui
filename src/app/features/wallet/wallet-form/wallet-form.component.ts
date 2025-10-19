@@ -42,7 +42,7 @@ import { InputTextModule } from 'primeng/inputtext';
   styleUrl: './wallet-form.component.scss',
 })
 export class WalletFormComponent implements OnInit {
-  @Input() walletId: string | null = null;
+  @Input() walletId?: string;
   @Output() walletSaved = new EventEmitter<WalletDto>();
   @Output() formCancelled = new EventEmitter<void>();
 

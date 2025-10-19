@@ -1,1 +1,77 @@
-<p>wallet-detail works!</p>
+<div class="wallets-container" *ngIf="wallet">
+  <div class="wallets-header">
+    <h1>
+      <span class="wallet-name">{{ wallet.name }}</span>
+      <span class="wallet-balance"
+        >({{ wallet.balance | pockitoCurrency : wallet.currency }})</span
+      >
+    </h1>
+
+    <p-menu #menu [model]="menuItems" [popup]="true" appendTo="body" />
+    <p-button (onClick)="menu.toggle($event)" icon="pi pi-ellipsis-v" />
+  </div>
+
+  <div class="wallets-content">
+    <div class="wallets-transactions"></div>
+    <div class="wallets-transactions-header">
+      <h2>{{ "wallets.transactions" | translate }}</h2>
+    </div>
+    <div class="wallets-transactions-content" *ngIf="pageableTransactions">
+      <p-table
+        [value]="pageableTransactions.content"
+        [paginator]="true"
+        [rows]="pageableTransactions.size"
+        [totalRecords]="pageableTransactions.totalElements"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>transactionType</th>
+            <th>walletFromName</th>
+            <th>walletToName</th>
+            <th>amount</th>
+            <th>effectiveDate</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-transaction>
+          <tr>
+            <td>{{ transaction.transactionType }}</td>
+            <td>{{ transaction.walletFromName }}</td>
+            <td>{{ transaction.walletToName }}</td>
+            <td>
+              <span *ngIf="transaction.walletFromId === walletId">
+                {{
+                  transaction.amount * -1 | pockitoCurrency : wallet.currency
+                }}
+              </span>
+              <span *ngIf="transaction.walletToId === walletId">
+                {{
+                  transaction.walletToAmount | pockitoCurrency : wallet.currency
+                }}
+              </span>
+            </td>
+            <td>{{ transaction.effectiveDate | date : "dd/MM/yyyy" }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<!-- Wallet Form Dialog -->
+<p-dialog
+  [maximizable]="true"
+  [(visible)]="displayEditWalletDialog"
+  [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
+  [style]="{ width: '60vw' }"
+  [modal]="true"
+  [header]="'wallets.createWallet' | translate"
+  [closable]="true"
+  [closeOnEscape]="true"
+>
+  <app-wallet-form
+    *ngIf="displayEditWalletDialog"
+    (walletSaved)="onWalletSaved($event)"
+    (formCancelled)="onFormCancelled()"
+    [walletId]="wallet?.id"
+  ></app-wallet-form>
+</p-dialog>
