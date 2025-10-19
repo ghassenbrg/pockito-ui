@@ -97,7 +97,8 @@
     "deleteSuccess": "Delete successful",
     "deleteSuccessMessage": "The item has been deleted successfully.",
     "deleteError": "Delete failed",
-    "deleteErrorMessage": "Delete failed. Please try again."
+    "deleteErrorMessage": "Delete failed. Please try again.",
+    "paginatorTemplate": "Showing {first} to {last} of {totalRecords} entries"
   },
   "enums": {
     "walletType": {

@@ -97,7 +97,8 @@
     "deleteSuccess": "Suppression réussie",
     "deleteSuccessMessage": "L'élément a été supprimé avec succès.",
     "deleteError": "Suppression échouée",
-    "deleteErrorMessage": "Suppression échouée. Veuillez réessayer."
+    "deleteErrorMessage": "Suppression échouée. Veuillez réessayer.",
+    "paginatorTemplate": "Afficher {first} à {last} sur {totalRecords} entrées"
   },
   "enums": {
     "walletType": {

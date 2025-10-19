@@ -106,8 +106,7 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
 
     // Subscribe to language changes to refresh menu items
     this.translate.onLangChange.subscribe(() => {
-      this.initializeMenuItems();
-      this.updateActiveRoute(this.router.url);
+      window.location.reload();
     });
 
     // Subscribe to screen size changes to refresh menu items

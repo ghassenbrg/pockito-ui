@@ -20,12 +20,18 @@
       <p-table
         [value]="pageableTransactions.content"
         [paginator]="true"
-        [rows]="pageableTransactions.size"
-        [totalRecords]="pageableTransactions.totalElements"
+        [rows]="pageSize"
+        [totalRecords]="totalRecords"
+        [first]="currentPage * pageSize"
+        [lazy]="true"
+        (onPage)="onPageChange($event)"
+        [rowsPerPageOptions]="[5, 10, 20, 50]"
+        [showCurrentPageReport]="true"
+        [currentPageReportTemplate]="getPaginatorTemplate()"
       >
         <ng-template pTemplate="header">
           <tr>
-            <th>transactionType</th>
+            <th></th>
             <th>walletFromName</th>
             <th>walletToName</th>
             <th>amount</th>
@@ -34,7 +40,35 @@
         </ng-template>
         <ng-template pTemplate="body" let-transaction>
           <tr>
-            <td>{{ transaction.transactionType }}</td>
+            <td class="transaction-type">
+              <i
+                *ngIf="transaction.transactionType === TransactionType.TRANSFER"
+                class="fa-solid fa-right-left type-icon transfer"
+                [pTooltip]="
+                  'enums.transactionType.' + TransactionType.TRANSFER
+                    | translate
+                "
+                tooltipPosition="top"
+              ></i>
+
+              <i
+                *ngIf="transaction.transactionType === TransactionType.INCOME"
+                class="fa-solid fa-arrow-trend-up type-icon income"
+                [pTooltip]="
+                  'enums.transactionType.' + TransactionType.INCOME | translate
+                "
+                tooltipPosition="top"
+              ></i>
+
+              <i
+                *ngIf="transaction.transactionType === TransactionType.EXPENSE"
+                class="fa-solid fa-arrow-trend-down type-icon expense"
+                [pTooltip]="
+                  'enums.transactionType.' + TransactionType.EXPENSE | translate
+                "
+                tooltipPosition="top"
+              ></i>
+            </td>
             <td>{{ transaction.walletFromName }}</td>
             <td>{{ transaction.walletToName }}</td>
             <td>

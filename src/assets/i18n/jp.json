@@ -97,7 +97,8 @@
     "deleteSuccess": "削除成功",
     "deleteSuccessMessage": "アイテムが正常に削除されました。",
     "deleteError": "削除失敗",
-    "deleteErrorMessage": "削除失敗しました。もう一度お試しください。"
+    "deleteErrorMessage": "削除失敗しました。もう一度お試しください。",
+    "paginatorTemplate": "{first}から{last}までの{totalRecords}件を表示"
   },
   "enums": {
     "walletType": {
