@@ -66,9 +66,7 @@ export class PockitoButtonComponent {
     return classes.join(' ');
   }
 
-  onClick(event: MouseEvent | KeyboardEvent): void {
-    console.log('PockitoButton onClick called', event.type, event);
-    
+  onClick(event: MouseEvent | KeyboardEvent): void {    
     if (this.disabled || this.loading) {
       event.preventDefault();
       event.stopPropagation();
@@ -83,7 +81,6 @@ export class PockitoButtonComponent {
     // Stop event propagation to prevent double triggers
     event.stopPropagation();
     
-    console.log('PockitoButton emitting click event');
     this.click.emit(event as MouseEvent);
   }
 

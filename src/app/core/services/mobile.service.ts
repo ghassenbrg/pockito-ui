@@ -1,4 +1,4 @@
-import { Injectable, HostListener } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 export interface MobileFeatures {
@@ -13,20 +13,22 @@ export interface MobileFeatures {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MobileService {
-  private mobileFeaturesSubject = new BehaviorSubject<MobileFeatures>(this.getMobileFeatures());
+  private mobileFeaturesSubject = new BehaviorSubject<MobileFeatures>(
+    this.getMobileFeatures()
+  );
   public mobileFeatures$ = this.mobileFeaturesSubject.asObservable();
 
   constructor() {
     this.updateMobileFeatures();
-    
+
     // Listen for orientation changes
     window.addEventListener('orientationchange', () => {
       setTimeout(() => this.updateMobileFeatures(), 100);
     });
-    
+
     // Listen for resize events
     window.addEventListener('resize', () => {
       this.updateMobileFeatures();
@@ -38,8 +40,11 @@ export class MobileService {
     const isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
     const isDesktop = window.innerWidth > 1024;
     const hasTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-    const orientation = window.innerHeight > window.innerWidth ? 'portrait' : 'landscape';
+    const isStandalone = window.matchMedia(
+      '(display-mode: standalone)'
+    ).matches;
+    const orientation =
+      window.innerHeight > window.innerWidth ? 'portrait' : 'landscape';
 
     return {
       isMobile,
@@ -49,7 +54,7 @@ export class MobileService {
       isStandalone,
       orientation,
       screenWidth: window.innerWidth,
-      screenHeight: window.innerHeight
+      screenHeight: window.innerHeight,
     };
   }
 
@@ -83,11 +88,20 @@ export class MobileService {
   }
 
   // Touch gesture helpers
-  createRippleEffect(element: HTMLElement, event: TouchEvent | MouseEvent): void {
+  createRippleEffect(
+    element: HTMLElement,
+    event: TouchEvent | MouseEvent
+  ): void {
     const rect = element.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height);
-    const x = event instanceof TouchEvent ? event.touches[0].clientX - rect.left : event.clientX - rect.left;
-    const y = event instanceof TouchEvent ? event.touches[0].clientY - rect.top : event.clientY - rect.top;
+    const x =
+      event instanceof TouchEvent
+        ? event.touches[0].clientX - rect.left
+        : event.clientX - rect.left;
+    const y =
+      event instanceof TouchEvent
+        ? event.touches[0].clientY - rect.top
+        : event.clientY - rect.top;
 
     const ripple = document.createElement('div');
     ripple.style.cssText = `
@@ -113,7 +127,7 @@ export class MobileService {
       const patterns = {
         light: [10],
         medium: [20],
-        heavy: [30]
+        heavy: [30],
       };
       navigator.vibrate(patterns[type]);
     }
@@ -124,7 +138,7 @@ export class MobileService {
     let startY = 0;
     let pullDistance = 0;
     let isPulling = false;
-    let pullThreshold = 80;
+    const pullThreshold = 80;
 
     const handleTouchStart = (e: TouchEvent) => {
       if (window.scrollY === 0) {
@@ -150,12 +164,14 @@ export class MobileService {
         callback();
         this.hidePullToRefreshIndicator();
       }
-      
+
       isPulling = false;
       pullDistance = 0;
     };
 
-    document.addEventListener('touchstart', handleTouchStart, { passive: false });
+    document.addEventListener('touchstart', handleTouchStart, {
+      passive: false,
+    });
     document.addEventListener('touchmove', handleTouchMove, { passive: false });
     document.addEventListener('touchend', handleTouchEnd);
 
@@ -244,7 +260,9 @@ export class MobileService {
     };
 
     element.addEventListener('touchstart', handleTouchStart, { passive: true });
-    element.addEventListener('touchend', handleTouchEnd, { passive: !preventDefault });
+    element.addEventListener('touchend', handleTouchEnd, {
+      passive: !preventDefault,
+    });
 
     return () => {
       element.removeEventListener('touchstart', handleTouchStart);

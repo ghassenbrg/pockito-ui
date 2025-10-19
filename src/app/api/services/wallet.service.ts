@@ -1,10 +1,10 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { WalletDto, WalletType, ReorderWalletsRequest } from '../models';
+import { ReorderWalletsRequest, WalletDto, WalletType } from '../models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WalletService {
   private readonly baseUrl = '/api/wallets';
@@ -50,7 +50,10 @@ export class WalletService {
    * Set a wallet as default
    */
   setDefaultWallet(walletId: string): Observable<WalletDto> {
-    return this.http.post<WalletDto>(`${this.baseUrl}/${walletId}/set-default`, {});
+    return this.http.post<WalletDto>(
+      `${this.baseUrl}/${walletId}/set-default`,
+      {}
+    );
   }
 
   /**
