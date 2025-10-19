@@ -84,6 +84,7 @@ export class WalletDetailComponent implements OnInit {
           this.currentPage = transactions.number || 0;
           this.pageSize = transactions.size || 10;
           this.pageableTransactions = transactions;
+          this.loadingService.hide(); 
         },
         error: () => {
           this.toastService.showError(
@@ -91,10 +92,7 @@ export class WalletDetailComponent implements OnInit {
             'common.loadingErrorMessage'
           );
           this.loadingService.hide();
-        },
-        complete: () => {
-          this.loadingService.hide();
-        },
+        }
       });
   }
 
@@ -109,6 +107,7 @@ export class WalletDetailComponent implements OnInit {
     this.walletService.getWallet(this.walletId).subscribe({
       next: (wallet: WalletDto) => {
         this.wallet = wallet;
+        this.loadingService.hide();
       },
       error: () => {
         this.toastService.showError(
@@ -116,10 +115,7 @@ export class WalletDetailComponent implements OnInit {
           'common.loadingErrorMessage'
         );
         this.loadingService.hide();
-      },
-      complete: () => {
-        this.loadingService.hide();
-      },
+      }
     });
   }
 
@@ -143,6 +139,8 @@ export class WalletDetailComponent implements OnInit {
           'common.deleteSuccess',
           'common.deleteSuccessMessage'
         );
+        this.loadingService.hide();
+        this.router.navigate(['../'], { relativeTo: this.route });
       },
       error: () => {
         this.toastService.showError(
@@ -150,11 +148,7 @@ export class WalletDetailComponent implements OnInit {
           'common.deleteErrorMessage'
         );
         this.loadingService.hide();
-      },
-      complete: () => {
-        this.loadingService.hide();
-        this.router.navigate(['../'], { relativeTo: this.route });
-      },
+      }
     });
   }
 
