@@ -80,10 +80,10 @@ export class WalletDetailComponent implements OnInit {
       .getTransactionsByWallet(this.walletId, { page, size })
       .subscribe({
         next: (transactions: PageTransactionDto) => {
-          this.pageableTransactions = transactions;
           this.totalRecords = transactions.totalElements;
           this.currentPage = transactions.number || 0;
           this.pageSize = transactions.size || 10;
+          this.pageableTransactions = transactions;
         },
         error: () => {
           this.toastService.showError(
