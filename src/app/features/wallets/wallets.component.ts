@@ -50,9 +50,11 @@ export class WalletsComponent implements OnInit {
           if (b.orderPosition == null) return -1;
           return a.orderPosition - b.orderPosition;
         });
+        this.loadingService.hide();
       },
       error: () => {
         this.toastService.showError('loadingError');
+        this.loadingService.hide();
       },
       complete: () => {
         this.loadingService.hide();
