@@ -1,17 +1,21 @@
 <div class="wallets-container">
-  <div class="wallets-header">
-    <h1>{{ "wallets.title" | translate }}</h1>
+  <app-page-header>
+    <div slot="title">
+      <h1>{{ "wallets.title" | translate }}</h1>
+    </div>
 
-    <pockito-button
-      [type]="PockitoButtonType.PRIMARY"
-      icon="fa-solid fa-plus"
-      iconPosition="left"
-      (click)="showCreateWalletDialog()"
-      class="add-wallet-btn"
-    >
-      {{ "wallets.addWallet" | translate }}
-    </pockito-button>
-  </div>
+    <div slot="actions">
+      <pockito-button
+        [type]="PockitoButtonType.PRIMARY"
+        icon="fa-solid fa-plus"
+        iconPosition="left"
+        (click)="showCreateWalletDialog()"
+        class="add-wallet-btn"
+      >
+        {{ "wallets.addWallet" | translate }}
+      </pockito-button>
+    </div>
+  </app-page-header>
 
   <div class="wallets-content">
     <div class="wallets-list">

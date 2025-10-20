@@ -1,0 +1,137 @@
+/* ---------- Design Tokens ---------- */
+// Colors
+$surface: rgba(255, 255, 255, 0.9);
+$stroke: rgba(15, 23, 42, 0.08);
+$text-900: #0f172a;
+$text-700: #334155;
+$text-500: #64748b;
+$success: #16a34a;
+$danger: #ef4444;
+
+/* ---------- Page Header ---------- */
+.page-header {
+  margin-bottom: clamp(16px, 3vw, 28px);
+}
+
+.page-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-header-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ---------- Default Title Styles ---------- */
+::ng-deep .page-header-main {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  
+  img {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border: 2px solid rgba(15, 23, 42, 0.08);
+    box-shadow: 0 2px 8px rgba(2, 6, 23, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(2, 6, 23, 0.12);
+    }
+  }
+  
+  /* Style both h1 elements to be inline */
+  h1 {
+    margin: 0;
+    display: inline;
+    line-height: 1.1;
+    letter-spacing: 0.2px;
+  }
+  
+  .wallet-name {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    color: $text-900;
+    margin-right: 12px;
+  }
+  
+  .wallet-balance {
+    font-size: clamp(20px, 3vw, 32px);
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    opacity: 0.8;
+  }
+}
+
+/* ---------- Responsive Design ---------- */
+@media (max-width: 768px) {
+  .page-header {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  ::ng-deep .page-header-main {
+    gap: 12px;
+    
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+    }
+    
+    .wallet-name {
+      font-size: clamp(24px, 5vw, 32px);
+      margin-right: 8px;
+    }
+    
+    .wallet-balance {
+      font-size: clamp(18px, 4vw, 26px);
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header {
+    margin-bottom: 16px;
+  }
+
+  ::ng-deep .page-header-main {
+    gap: 10px;
+    
+    img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+    }
+    
+    .wallet-name {
+      font-size: 24px;
+      margin-right: 6px;
+    }
+    
+    .wallet-balance {
+      font-size: 18px;
+    }
+  }
+}
+
+/* ---------- Accessibility ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .page-header {
+    transition: none;
+  }
+}

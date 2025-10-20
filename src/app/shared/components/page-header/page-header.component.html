@@ -1,0 +1,13 @@
+<div class="page-header">
+  <div class="page-header-content">
+    <!-- Main title and subtitle slot -->
+    <div class="page-header-main">
+      <ng-content select="[slot=title]"></ng-content>
+    </div>
+
+    <!-- Actions slot (buttons, menus, etc.) -->
+    <div class="page-header-actions">
+      <ng-content select="[slot=actions]"></ng-content>
+    </div>
+  </div>
+</div>

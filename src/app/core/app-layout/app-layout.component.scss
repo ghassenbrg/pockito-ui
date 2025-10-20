@@ -274,6 +274,13 @@
   display: block;
   min-height: calc(100vh - var(--mobile-bottom-nav-height));
   background-color: var(--background-color);
+  background:
+    radial-gradient(1100px 700px at 10% -10%, rgba(219, 234, 254, 0.6) 0%, rgba(219, 234, 254, 0) 60%),
+    radial-gradient(900px 600px at 90% 0%, rgba(233, 213, 255, 0.4) 0%, rgba(233, 213, 255, 0) 55%),
+    linear-gradient(135deg, #eef3ff, #f7fafc);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 
   @media (min-width: 1024px) {
     position: fixed;
@@ -284,7 +291,7 @@
     min-height: auto;
     overflow-y: auto;
     z-index: 1;
-    background-color: transparent;
+    background: none; // Remove mobile background on desktop since desktop has its own
   }
 }
 
@@ -401,15 +408,11 @@
   }
 }
 
-// Large desktop (1280px+)
-@media (min-width: 1280px) {
+// Mobile bottom padding for app content
+@media (max-width: 1023px) {
   .app-content {
-    padding: 32px;
+    padding-bottom: 80px !important;
   }
-}
-
-.app-content {
-  padding-bottom: 80px !important;
 }
 
 // -----------------------------------------------------------------------------
