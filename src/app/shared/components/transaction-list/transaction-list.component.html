@@ -110,22 +110,43 @@
 
             <div class="transaction-meta">
               <div class="transaction-amount">
+                <!-- When walletId is provided (wallet detail view) -->
                 <span
-                  *ngIf="transaction.walletFromId === walletId"
+                  *ngIf="walletId && transaction.walletFromId === walletId"
                   class="amount-negative"
                 >
                   {{
-                    transaction.amount * -1 | pockitoCurrency : wallet?.currency
+                    transaction.amount * -1 | pockitoCurrency : wallet?.currency:'code':true
                   }}
                 </span>
                 <span
-                  *ngIf="transaction.walletToId === walletId"
+                  *ngIf="walletId && transaction.walletToId === walletId"
                   class="amount-positive"
                 >
                   {{
                     transaction.walletToAmount
-                      | pockitoCurrency : wallet?.currency
+                      | pockitoCurrency : wallet?.currency:'code':true
                   }}
+                </span>
+                
+                <!-- When no walletId is provided (all transactions view) -->
+                <span
+                  *ngIf="!walletId && transaction.transactionType === 'INCOME'"
+                  class="amount-positive"
+                >
+                  {{ transaction.walletToAmount | pockitoCurrency:transaction.walletToCurrency:'code':true }}
+                </span>
+                <span
+                  *ngIf="!walletId && transaction.transactionType === 'EXPENSE'"
+                  class="amount-negative"
+                >
+                  {{ transaction.amount | pockitoCurrency:transaction.walletFromCurrency:'code':true }}
+                </span>
+                <span
+                  *ngIf="!walletId && transaction.transactionType === 'TRANSFER'"
+                  class="amount-neutral"
+                >
+                  {{ transaction.amount | pockitoCurrency:transaction.walletFromCurrency:'code':false }}
                 </span>
               </div>
             </div>

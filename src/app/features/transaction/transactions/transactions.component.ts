@@ -43,7 +43,7 @@ export class TransactionsComponent implements OnInit {
     const pageable: Pageable = {
       page: this.currentPage,
       size: this.pageSize,
-      sort: ['date,desc']
+      sort: ['effectiveDate,desc']
     };
 
     this.transactionService.listTransactions(pageable).subscribe({

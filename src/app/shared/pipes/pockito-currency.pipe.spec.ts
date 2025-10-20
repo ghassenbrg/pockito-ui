@@ -13,12 +13,17 @@ describe('PockitoCurrencyPipe', () => {
 
   it('should format currency with code on the right side', () => {
     const result = pipe.transform(100.50, 'USD', 'code');
-    expect(result).toBe('+100.50 USD');
+    expect(result).toBe('100.50 USD');
   });
 
   it('should format currency with code on the right side for different currencies', () => {
-    expect(pipe.transform(100.50, 'EUR', 'code')).toBe('+100.50 EUR');
-    expect(pipe.transform(100.50, 'JPY', 'code')).toBe('+101 JPY'); // JPY doesn't use decimal places
+    expect(pipe.transform(100.50, 'EUR', 'code')).toBe('100.50 EUR');
+    expect(pipe.transform(100.50, 'JPY', 'code')).toBe('100.50 JPY');
+  });
+
+  it('should format currency with positive sign when showPositiveSign is true', () => {
+    const result = pipe.transform(100.50, 'USD', 'code', true);
+    expect(result).toBe('+100.50 USD');
   });
 
   it('should handle null and undefined values', () => {

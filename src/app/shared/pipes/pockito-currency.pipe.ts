@@ -12,22 +12,21 @@ export class PockitoCurrencyPipe implements PipeTransform {
     value: number | null | undefined, 
     currency: string = 'USD', 
     display: 'code' | 'symbol' | 'symbol-narrow' = 'code',
-    digitsInfo?: string,
-    locale?: string
+    showPositiveSign: boolean = false
   ): string {
     if (value === null || value === undefined) {
       return '0.00 ' + currency;
     }
 
-    const sign = value > 0 ? '+' : '';
+    const sign = value > 0 && showPositiveSign ? '+' : '';
 
     // Use Angular's CurrencyPipe to format the number
     const formattedAmount = this.currencyPipe.transform(
       value, 
       currency, 
       display, 
-      digitsInfo, 
-      locale
+      '1.2-2',
+      undefined
     );
 
     if (!formattedAmount) {
