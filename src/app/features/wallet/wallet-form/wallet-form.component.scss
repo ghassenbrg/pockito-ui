@@ -1,3 +1,6 @@
+/* ---------- Design Tokens ---------- */
+@import '../../../shared/styles/tokens';
+
 .wallet-form {
   max-width: 600px;
   margin: 0 auto;
@@ -15,7 +18,7 @@
     justify-content: flex-end;
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid $stroke;
   }
 }
 
@@ -26,7 +29,7 @@
 
   &__label {
     font-weight: 500;
-    color: #374151;
+    color: $text-700;
     font-size: 0.875rem;
   }
 
@@ -38,7 +41,7 @@
 }
 
 .required {
-  color: #dc2626;
+  color: $danger;
   font-weight: 600;
 }
 
@@ -49,7 +52,7 @@
 
   &__label {
     font-size: 0.75rem;
-    color: #6b7280;
+    color: $text-500;
     margin-top: 0.25rem;
   }
 }
@@ -63,21 +66,21 @@
     align-items: center;
     gap: 0.5rem;
     padding: 1rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    background-color: #f9fafb;
+    border: 1px solid $stroke;
+    border-radius: $radius-md;
+    background-color: $surface;
   }
 
   &__image {
     width: 48px;
     height: 48px;
     object-fit: contain;
-    border-radius: 0.25rem;
+    border-radius: $radius-sm;
   }
 
   &__label {
     font-size: 0.75rem;
-    color: #6b7280;
+    color: $text-500;
   }
 }
 
@@ -93,22 +96,22 @@
   .p-checkbox {
     .p-checkbox-label {
       font-size: 0.875rem;
-      color: #374151;
+      color: $text-700;
     }
   }
 
   .p-error {
     font-size: 0.75rem;
-    color: #dc2626;
+    color: $danger;
   }
 
   .p-invalid {
-    border-color: #dc2626 !important;
+    border-color: $danger !important;
   }
 }
 
 // Responsive design
-@media (max-width: 768px) {
+@media (max-width: $breakpoint-tablet) {
   .wallet-form {
     padding: 1rem;
   }

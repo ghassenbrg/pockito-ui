@@ -2,19 +2,17 @@
   <app-page-header>
     <div class="wallet-info" slot="title">
       <img [src]="wallet.iconUrl || 'assets/icons/' + wallet.type + '.png'" alt="{{ wallet.name }} icon" />
-      <div style="display: block;">
-        <h1 class="wallet-name">
-          {{ wallet.name }}
-        </h1>
-        <h1
-          class="wallet-balance"
-          [class.positive]="wallet.balance && wallet.balance > 0"
-          [class.negative]="wallet.balance && wallet.balance < 0"
-          [class.zero]="!wallet.balance || wallet.balance === 0"
-        >
-          ({{ wallet.balance | pockitoCurrency : wallet.currency }})
-        </h1>
-      </div>
+      <h1 class="wallet-name">
+        {{ wallet.name }}
+      </h1>
+      <h1
+        class="wallet-balance"
+        [class.positive]="wallet.balance && wallet.balance > 0"
+        [class.negative]="wallet.balance && wallet.balance < 0"
+        [class.zero]="!wallet.balance || wallet.balance === 0"
+      >
+        ({{ wallet.balance | pockitoCurrency : wallet.currency }})
+      </h1>
     </div>
 
     <div slot="actions">

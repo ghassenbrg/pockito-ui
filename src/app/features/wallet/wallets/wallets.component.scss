@@ -1,16 +1,10 @@
 /* ---------- Design Tokens ---------- */
-// Colors
-$surface: rgba(255, 255, 255, 0.9);
-$stroke: rgba(15, 23, 42, 0.08);
-$text-900: #0f172a;
-$text-700: #334155;
-$text-500: #64748b;
-$success: #16a34a;
-$danger: #ef4444;
+@import '../../../shared/styles/tokens';
 
-// Shadows
-$shadow-sm: 0 6px 16px rgba(2, 6, 23, 0.06);
-$shadow-lg: 0 14px 34px rgba(2, 6, 23, 0.12);
+// Component-specific variables
+$wallet-card-radius: 22px;
+$wallet-icon-size: 56px;
+$wallet-icon-radius: 16px;
 
 /* ---------- Page Shell ---------- */
 .wallets-container {
@@ -41,7 +35,7 @@ $shadow-lg: 0 14px 34px rgba(2, 6, 23, 0.12);
 .wallet-item {
   background: $surface;
   border: 1px solid $stroke;
-  border-radius: 22px;
+  border-radius: $wallet-card-radius;
   padding: clamp(16px, 2.2vw, 22px);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), $shadow-sm;
   backdrop-filter: blur(6px);
@@ -70,14 +64,12 @@ $shadow-lg: 0 14px 34px rgba(2, 6, 23, 0.12);
     overflow: hidden;
     display: grid;
     place-items: center;
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
+    width: $wallet-icon-size;
+    height: $wallet-icon-size;
+    border-radius: $wallet-icon-radius;
     background: linear-gradient(145deg, #f6f9ff, #ffffff);
     border: 1px solid $stroke;
-    box-shadow:
-      0 6px 16px rgba(2, 6, 23, 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    box-shadow: $shadow-sm, inset 0 1px 0 rgba(255, 255, 255, 0.85);
 
     img {
       width: 100%;
@@ -117,11 +109,11 @@ $shadow-lg: 0 14px 34px rgba(2, 6, 23, 0.12);
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 560px) {
+@media (max-width: $breakpoint-mobile) {
   .wallet-item {
     .wallet-item-header {
       grid-template-columns: auto 1fr;
-      row-gap: 12px;
+      row-gap: $spacing-md;
     }
     
     .wallet-balance {
