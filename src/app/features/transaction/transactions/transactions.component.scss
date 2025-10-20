@@ -1,0 +1,25 @@
+/* ---------- Design Tokens ---------- */
+@import '../../../shared/styles/tokens';
+
+/* ---------- Transactions Container ---------- */
+.transactions-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: $spacing-3xl;
+}
+
+/* ---------- Transactions Content ---------- */
+.transactions-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0; // Allows flex child to shrink below content size
+}
+
+/* ---------- Responsive Design ---------- */
+@media (max-width: $breakpoint-tablet) {
+  .transactions-container {
+    gap: $spacing-2xl;
+  }
+}

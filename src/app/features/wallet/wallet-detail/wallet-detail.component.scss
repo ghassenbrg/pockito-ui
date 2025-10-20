@@ -2,12 +2,6 @@
 @import '../../../shared/styles/tokens';
 
 
-/* ---------- Page Shell ---------- */
-.wallets-container {
-  min-height: 100%;
-  padding: clamp(20px, 3vw, 40px);
-  box-sizing: border-box;
-}
 
 /* ---------- Wallet Specific Styles ---------- */
 .wallet-info {
@@ -40,17 +34,8 @@
 }
 
 /* ---------- Responsive Design ---------- */
-@media (max-width: $breakpoint-tablet) {
-  .wallets-container {
-    padding: $spacing-lg;
-  }
-}
 
 @media (max-width: $breakpoint-mobile) {
-  .wallets-container {
-    padding: $spacing-md;
-  }
-
   .wallets-transactions-header {
     margin-bottom: $spacing-xl;
 

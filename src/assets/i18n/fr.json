@@ -30,12 +30,22 @@
       "testLanguageSwitcher": "Test du sélecteur de langue"
     }
   },
+  "transactions": {
+    "title": "Transactions",
+    "loading": "Chargement des transactions...",
+    "loadingError": "Erreur lors du chargement des transactions",
+    "loadingErrorMessage": "Erreur lors du chargement des transactions. Veuillez réessayer.",
+    "noTransactions": "Aucune transaction trouvée",
+    "noTransactionsMessage": "Vous n'avez pas encore de transactions."
+  },
   "wallets": {
     "title": "Portefeuilles",
     "loading": "Chargement des portefeuilles...",
     "loadingError": "Erreur lors du chargement des portefeuilles",
     "loadingWalletError": "Erreur lors du chargement du portefeuille",
     "loadingErrorMessage": "Erreur lors du chargement des portefeuilles. Veuillez réessayer.",
+    "noWallets": "Aucun portefeuille trouvé",
+    "noWalletsMessage": "Vous n'avez pas encore de portefeuilles. Créez votre premier portefeuille pour commencer.",
     "addWallet": "Ajouter un Portefeuille",
     "editWallet": "Modifier le Portefeuille",
     "transactions": "Transactions",
@@ -98,7 +108,8 @@
     "deleteSuccessMessage": "L'élément a été supprimé avec succès.",
     "deleteError": "Suppression échouée",
     "deleteErrorMessage": "Suppression échouée. Veuillez réessayer.",
-    "paginatorTemplate": "Afficher {first} à {last} sur {totalRecords} entrées"
+    "paginatorTemplate": "Afficher {first} à {last} sur {totalRecords} entrées",
+    "rowsPerPage": "Lignes par page"
   },
   "enums": {
     "walletType": {

@@ -1,6 +1,25 @@
-<div class="wallets-transactions-content" *ngIf="pageableTransactions">
+<div class="wallets-transactions-content">
+  <!-- Empty State -->
+  <app-empty-state
+    *ngIf="
+      !pageableTransactions ||
+      !pageableTransactions.content ||
+      pageableTransactions.content.length === 0
+    "
+    icon="fa-solid fa-receipt"
+    title="transactions.noTransactions"
+    message="transactions.noTransactionsMessage"
+  ></app-empty-state>
+
   <!-- Transactions grouped by date -->
-  <div class="transactions-list">
+  <div
+    class="transactions-list"
+    *ngIf="
+      pageableTransactions &&
+      pageableTransactions.content &&
+      pageableTransactions.content.length > 0
+    "
+  >
     <div class="date-section" *ngFor="let dateKey of getSortedDateKeys()">
       <!-- Date header -->
       <div class="date-header">
@@ -16,13 +35,10 @@
           <!-- Transaction icon -->
           <div class="transaction-icon">
             <i
-              *ngIf="
-                transaction.transactionType === TransactionType.TRANSFER
-              "
+              *ngIf="transaction.transactionType === TransactionType.TRANSFER"
               class="fa-solid fa-right-left type-icon transfer"
               [pTooltip]="
-                'enums.transactionType.' + TransactionType.TRANSFER
-                  | translate
+                'enums.transactionType.' + TransactionType.TRANSFER | translate
               "
               tooltipPosition="top"
             ></i>
@@ -31,20 +47,16 @@
               *ngIf="transaction.transactionType === TransactionType.INCOME"
               class="fa-solid fa-arrow-trend-up type-icon income"
               [pTooltip]="
-                'enums.transactionType.' + TransactionType.INCOME
-                  | translate
+                'enums.transactionType.' + TransactionType.INCOME | translate
               "
               tooltipPosition="top"
             ></i>
 
             <i
-              *ngIf="
-                transaction.transactionType === TransactionType.EXPENSE
-              "
+              *ngIf="transaction.transactionType === TransactionType.EXPENSE"
               class="fa-solid fa-arrow-trend-down type-icon expense"
               [pTooltip]="
-                'enums.transactionType.' + TransactionType.EXPENSE
-                  | translate
+                'enums.transactionType.' + TransactionType.EXPENSE | translate
               "
               tooltipPosition="top"
             ></i>
@@ -63,8 +75,7 @@
                 <span class="wallet-names">
                   <ng-container
                     *ngIf="
-                      transaction.transactionType ===
-                      TransactionType.TRANSFER
+                      transaction.transactionType === TransactionType.TRANSFER
                     "
                   >
                     <span class="wallet-from">{{
@@ -77,8 +88,7 @@
                   </ng-container>
                   <ng-container
                     *ngIf="
-                      transaction.transactionType ===
-                      TransactionType.EXPENSE
+                      transaction.transactionType === TransactionType.EXPENSE
                     "
                   >
                     <span class="wallet-from">{{
@@ -105,8 +115,7 @@
                   class="amount-negative"
                 >
                   {{
-                    transaction.amount * -1
-                      | pockitoCurrency : wallet?.currency
+                    transaction.amount * -1 | pockitoCurrency : wallet?.currency
                   }}
                 </span>
                 <span

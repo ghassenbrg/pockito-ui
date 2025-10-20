@@ -1,0 +1,16 @@
+<div class="transactions-container">
+  <app-page-header>
+    <div slot="title">
+      <h1>{{ "transactions.title" | translate }}</h1>
+    </div>
+  </app-page-header>
+
+  <div class="transactions-content">
+
+    <app-transaction-list
+      [pageableTransactions]="pageableTransactions"
+      (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+    ></app-transaction-list>
+  </div>
+</div>

@@ -1,0 +1,169 @@
+/* ---------- Design Tokens ---------- */
+@import '../../styles/tokens';
+
+// Component-specific variables
+$empty-state-icon-size: 80px;
+$empty-state-icon-size-mobile: 64px;
+
+/* ---------- Empty State ---------- */
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: $spacing-3xl;
+  background: $surface;
+  border-radius: 12px;
+  box-shadow: $shadow-sm;
+  border: 2px dashed rgba(15, 23, 42, 0.08);
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: rgba(15, 23, 42, 0.12);
+    box-shadow: $shadow-lg;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    min-height: 250px;
+    padding: $spacing-3xl;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    min-height: 200px;
+    padding: $spacing-2xl;
+  }
+}
+
+.empty-state-content {
+  text-align: center;
+  max-width: 400px;
+  animation: fadeInUp 0.6s ease-out;
+
+  @media (max-width: $breakpoint-mobile) {
+    max-width: 300px;
+  }
+}
+
+.empty-state-icon {
+  margin-bottom: $spacing-xl;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: $empty-state-icon-size;
+  height: $empty-state-icon-size;
+  margin-left: auto;
+  margin-right: auto;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.04) 0%, rgba(15, 23, 42, 0.08) 100%);
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+
+  @media (max-width: $breakpoint-tablet) {
+    width: $empty-state-icon-size-mobile;
+    height: $empty-state-icon-size-mobile;
+    margin-bottom: $spacing-lg;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    width: 56px;
+    height: 56px;
+    margin-bottom: $spacing-md;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(15, 23, 42, 0.05), transparent);
+    animation: shimmer 3s infinite;
+  }
+
+  i {
+    font-size: 32px;
+    color: $text-500;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+
+    @media (max-width: $breakpoint-tablet) {
+      font-size: 28px;
+    }
+
+    @media (max-width: $breakpoint-mobile) {
+      font-size: 24px;
+    }
+  }
+
+  &:hover i {
+    color: $text-500;
+    transform: scale(1.1);
+  }
+}
+
+.empty-state-title {
+  margin: 0 0 $spacing-md 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: $text-700;
+  line-height: 1.3;
+
+  @media (max-width: $breakpoint-tablet) {
+    font-size: 18px;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    font-size: 16px;
+    margin-bottom: $spacing-sm;
+  }
+}
+
+.empty-state-message {
+  margin: 0;
+  font-size: 15px;
+  color: $text-500;
+  line-height: 1.5;
+  font-weight: 400;
+
+  @media (max-width: $breakpoint-tablet) {
+    font-size: 14px;
+  }
+
+  @media (max-width: $breakpoint-mobile) {
+    font-size: 13px;
+  }
+}
+
+/* ---------- Empty State Animations ---------- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+
+/* ---------- Accessibility ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .empty-state-content {
+    animation: none;
+  }
+
+  .empty-state-icon i {
+    transition: none;
+  }
+}

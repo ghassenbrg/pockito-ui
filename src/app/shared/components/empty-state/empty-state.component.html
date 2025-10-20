@@ -1,0 +1,13 @@
+<div class="empty-state" *ngIf="show">
+  <div class="empty-state-content">
+    <div class="empty-state-icon">
+      <i [class]="icon"></i>
+    </div>
+    <h3 class="empty-state-title" *ngIf="title">
+      {{ title | translate }}
+    </h3>
+    <p class="empty-state-message" *ngIf="message">
+      {{ message | translate }}
+    </p>
+  </div>
+</div>

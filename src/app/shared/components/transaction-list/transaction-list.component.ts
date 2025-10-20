@@ -5,6 +5,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { PockitoCurrencyPipe } from '../../pipes/pockito-currency.pipe';
+import { EmptyStateComponent } from '../empty-state/empty-state.component';
 
 @Component({
   selector: 'app-transaction-list',
@@ -14,7 +15,8 @@ import { PockitoCurrencyPipe } from '../../pipes/pockito-currency.pipe';
     TranslatePipe,
     PockitoCurrencyPipe,
     ButtonModule,
-    TooltipModule
+    TooltipModule,
+    EmptyStateComponent
   ],
   templateUrl: './transaction-list.component.html',
   styleUrl: './transaction-list.component.scss'

@@ -30,12 +30,22 @@
       "testLanguageSwitcher": "言語切り替えのテスト"
     }
   },
+  "transactions": {
+    "title": "取引",
+    "loading": "取引を読み込み中...",
+    "loadingError": "取引の読み込みに失敗しました",
+    "loadingErrorMessage": "取引の読み込みに失敗しました。もう一度お試しください。",
+    "noTransactions": "取引が見つかりません",
+    "noTransactionsMessage": "まだ取引がありません。"
+  },
   "wallets": {
     "title": "ウォレット",
     "loading": "ウォレットを読み込み中...",
     "loadingWalletError": "ウォレットの読み込みに失敗しました",
     "loadingError": "ウォレットの読み込みに失敗しました",
     "loadingErrorMessage": "ウォレットの読み込みに失敗しました。もう一度お試しください。",
+    "noWallets": "ウォレットが見つかりません",
+    "noWalletsMessage": "まだウォレットがありません。最初のウォレットを作成して始めましょう。",
     "addWallet": "ウォレットを追加",
     "editWallet": "ウォレットを編集",
     "transactions": "取引",
@@ -98,7 +108,8 @@
     "deleteSuccessMessage": "アイテムが正常に削除されました。",
     "deleteError": "削除失敗",
     "deleteErrorMessage": "削除失敗しました。もう一度お試しください。",
-    "paginatorTemplate": "{first}から{last}までの{totalRecords}件を表示"
+    "paginatorTemplate": "{first}から{last}までの{totalRecords}件を表示",
+    "rowsPerPage": "ページあたりの行数"
   },
   "enums": {
     "walletType": {

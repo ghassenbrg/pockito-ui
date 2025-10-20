@@ -33,12 +33,12 @@ export const routes: Routes = [
         path: 'wallets/:id',
         loadComponent: () => import('./features/wallet/wallet-detail/wallet-detail.component').then(m => m.WalletDetailComponent)
       },
-      /*
+
       {
         path: 'transactions',
         loadComponent: () => import('./features/transaction/transactions/transactions.component').then(m => m.TransactionsComponent)
       },
-      },
+      /*
       {
         path: 'transactions/create',
         loadComponent: () => import('./features/transactions/create-transaction/create-transaction.component').then(m => m.CreateTransactionComponent)
@@ -87,7 +87,7 @@ export const routes: Routes = [
         path: 'account',
         loadComponent: () => import('./features/account/account.component').then(m => m.AccountComponent)
       }
-        */
+      */
     ],
   },
   {

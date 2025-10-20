@@ -30,12 +30,22 @@
       "testLanguageSwitcher": "Test language switcher"
     }
   },
+  "transactions": {
+    "title": "Transactions",
+    "loading": "Loading transactions...",
+    "loadingError": "Error loading transactions",
+    "loadingErrorMessage": "Error loading transactions. Please try again.",
+    "noTransactions": "No transactions found",
+    "noTransactionsMessage": "You don't have any transactions yet."
+  },
   "wallets": {
     "title": "Wallets",
     "loading": "Loading wallets...",
     "loadingError": "Error loading wallets",
     "loadingWalletError": "Error loading wallet",
     "loadingErrorMessage": "Error loading wallets. Please try again.",
+    "noWallets": "No wallets found",
+    "noWalletsMessage": "You don't have any wallets yet. Create your first wallet to get started.",
     "addWallet": "Add Wallet",
     "editWallet": "Edit Wallet",
     "transactions": "Transactions",
@@ -98,7 +108,8 @@
     "deleteSuccessMessage": "The item has been deleted successfully.",
     "deleteError": "Delete failed",
     "deleteErrorMessage": "Delete failed. Please try again.",
-    "paginatorTemplate": "Showing {first} to {last} of {totalRecords} entries"
+    "paginatorTemplate": "Showing {first} to {last} of {totalRecords} entries",
+    "rowsPerPage": "Rows per page"
   },
   "enums": {
     "walletType": {

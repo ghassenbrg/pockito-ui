@@ -6,12 +6,6 @@ $wallet-card-radius: 22px;
 $wallet-icon-size: 56px;
 $wallet-icon-radius: 16px;
 
-/* ---------- Page Shell ---------- */
-.wallets-container {
-  min-height: 100%;
-  padding: clamp(20px, 3vw, 40px);
-  box-sizing: border-box;
-}
 
 /* ---------- Wallet Specific Styles ---------- */
 .add-wallet-btn {
