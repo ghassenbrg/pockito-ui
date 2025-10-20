@@ -1,0 +1,409 @@
+/* ---------- Design Tokens ---------- */
+@import '../../styles/tokens';
+
+// Component-specific variables
+$transaction-border-radius: 12px;
+$transaction-icon-size: 32px;
+$transaction-icon-size-mobile: 28px;
+
+/* ---------- Transactions Section ---------- */
+.wallets-transactions-content {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3xl;
+}
+
+/* ---------- Transaction List ---------- */
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2xl;
+}
+
+/* ---------- Date Sections ---------- */
+.date-section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.date-header {
+  padding: $spacing-md 0 $spacing-sm 0;
+  border-bottom: 1px solid $stroke;
+  margin-bottom: $spacing-xs;
+
+  h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-500;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+}
+
+.transactions-for-date {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: $surface;
+  border-radius: $transaction-border-radius;
+  overflow: hidden;
+  box-shadow: $shadow-sm;
+}
+
+/* ---------- Transaction Items ---------- */
+.transaction-item {
+  background: $surface;
+  padding: $spacing-lg $spacing-xl;
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  transition: background-color 0.15s ease;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.04);
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: rgba(15, 23, 42, 0.02); }
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: 14px $spacing-lg;
+    gap: $spacing-md;
+  }
+}
+
+.transaction-icon {
+  flex-shrink: 0;
+  width: $transaction-icon-size;
+  height: $transaction-icon-size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-sm;
+  background: rgba(15, 23, 42, 0.04);
+
+  @media (max-width: $breakpoint-tablet) {
+    width: $transaction-icon-size-mobile;
+    height: $transaction-icon-size-mobile;
+  }
+
+  .type-icon {
+    font-size: 14px;
+    transition: transform 0.2s ease;
+
+    @media (max-width: $breakpoint-tablet) {
+      font-size: 12px;
+    }
+
+    &.income { color: $success; }
+    &.expense { color: $danger; }
+    &.transfer { color: $text-500; }
+  }
+}
+
+.transaction-details {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: $spacing-lg;
+}
+
+.transaction-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.transaction-wallets {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  .transaction-category {
+    font-size: 15px;
+    font-weight: 600;
+    color: $text-700;
+    line-height: 1.4;
+
+    @media (max-width: $breakpoint-tablet) {
+      font-size: 14px;
+    }
+  }
+
+  .wallet-names {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: $text-500;
+    font-weight: 400;
+
+    @media (max-width: $breakpoint-tablet) {
+      font-size: 12px;
+      gap: $spacing-xs;
+    }
+
+    .wallet-from,
+    .wallet-to {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .wallet-separator {
+      color: $text-500;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+  }
+}
+
+.transaction-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.transaction-amount {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.2;
+
+  @media (max-width: $breakpoint-tablet) {
+    font-size: 15px;
+  }
+
+  .amount-positive { color: $success; }
+  .amount-negative { color: $danger; }
+}
+
+/* ---------- Pagination ---------- */
+.pagination-container {
+  background: $surface;
+  border-radius: $transaction-border-radius;
+  padding: $spacing-xl;
+  box-shadow: $shadow-sm;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+
+  @media (min-width: $breakpoint-tablet) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-2xl;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    padding: $spacing-lg;
+  }
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: $text-500;
+  text-align: center;
+
+  @media (min-width: $breakpoint-tablet) {
+    text-align: left;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    font-size: 13px;
+  }
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-tablet) {
+    gap: $spacing-sm;
+  }
+
+  .page-info {
+    font-size: 14px;
+    color: $text-700;
+    font-weight: 500;
+    min-width: 60px;
+    text-align: center;
+    padding: 6px $spacing-md;
+    background: rgba(15, 23, 42, 0.04);
+    border-radius: $radius-sm;
+
+    @media (max-width: $breakpoint-tablet) {
+      font-size: 13px;
+      min-width: 50px;
+      padding: $spacing-xs $spacing-sm;
+    }
+  }
+}
+
+.page-size-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+
+  @media (min-width: $breakpoint-tablet) {
+    justify-content: flex-end;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    gap: 6px;
+  }
+
+  label {
+    font-size: 14px;
+    color: $text-700;
+    font-weight: 500;
+
+    @media (max-width: $breakpoint-tablet) {
+      font-size: 13px;
+    }
+  }
+
+  .page-size-select {
+    padding: 6px 10px;
+    border: 1px solid $stroke;
+    border-radius: $radius-sm;
+    background: $surface;
+    font-size: 14px;
+    color: $text-700;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+    font-weight: 400;
+
+    @media (max-width: $breakpoint-tablet) {
+      font-size: 13px;
+      padding: $spacing-xs $spacing-sm;
+    }
+
+    &:hover,
+    &:focus {
+      border-color: rgba(15, 23, 42, 0.16);
+      outline: none;
+    }
+  }
+}
+
+/* ---------- Responsive Design ---------- */
+@media (max-width: $breakpoint-tablet) {
+  .transactions-list {
+    gap: $spacing-xl;
+  }
+
+  .date-section {
+    gap: $spacing-sm;
+  }
+
+  .date-header {
+    padding: $spacing-sm 0 6px 0;
+
+    h3 {
+      font-size: 13px;
+    }
+  }
+
+  .transactions-for-date {
+    gap: 0;
+    border-radius: $radius-sm;
+  }
+
+  .transaction-item {
+    &:first-child {
+      border-radius: $radius-sm $radius-sm 0 0;
+    }
+
+    &:last-child {
+      border-radius: 0 0 $radius-sm $radius-sm;
+    }
+
+    &:only-child {
+      border-radius: $radius-sm;
+    }
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .transaction-item {
+    padding: $spacing-md 14px;
+  }
+
+  .transaction-icon {
+    width: 24px;
+    height: 24px;
+
+    .type-icon {
+      font-size: 11px;
+    }
+  }
+
+  .transaction-wallets {
+    .wallet-from {
+      font-size: 13px;
+    }
+
+    .wallet-to {
+      font-size: 11px;
+    }
+  }
+
+  .transaction-amount {
+    font-size: 14px;
+  }
+
+  .pagination-container {
+    padding: $spacing-md;
+    gap: $spacing-md;
+  }
+
+  .pagination-info {
+    font-size: 12px;
+  }
+
+  .page-info {
+    font-size: 12px;
+    min-width: 40px;
+    padding: 3px 6px;
+  }
+
+  .page-size-selector {
+    label {
+      font-size: 12px;
+    }
+
+    .page-size-select {
+      font-size: 12px;
+      padding: 3px 6px;
+    }
+  }
+}
+
+/* ---------- Accessibility ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .transaction-item,
+  .type-icon,
+  .page-size-select {
+    transition: none;
+  }
+}
+
+/* ---------- Print Styles ---------- */
+@media print {
+  .pagination-container {
+    display: none;
+  }
+
+  .transaction-item {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  .date-header {
+    border-bottom: 2px solid #333;
+  }
+}
