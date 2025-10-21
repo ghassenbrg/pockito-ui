@@ -27,7 +27,8 @@
     "dialogs": {
       "moreOptions": "More Options",
       "switchLanguage": "Switch Language",
-      "testLanguageSwitcher": "Test language switcher"
+      "testLanguageSwitcher": "Test language switcher",
+      "addTransaction": "Add Transaction"
     }
   },
   "transactions": {
@@ -36,7 +37,58 @@
     "loadingError": "Error loading transactions",
     "loadingErrorMessage": "Error loading transactions. Please try again.",
     "noTransactions": "No transactions found",
-    "noTransactionsMessage": "You don't have any transactions yet."
+    "noTransactionsMessage": "You don't have any transactions yet.",
+    "loadingCategoriesError": "Error loading categories",
+    "loadingWalletsError": "Error loading wallets",
+    "loadingTransactionError": "Error loading transaction",
+    "createTransactionSuccess": "Transaction created successfully",
+    "createTransactionSuccessMessage": "Your transaction has been created successfully.",
+    "updateTransactionSuccess": "Transaction updated successfully",
+    "updateTransactionSuccessMessage": "Your transaction has been updated successfully.",
+    "createTransactionError": "Failed to create transaction",
+    "updateTransactionError": "Failed to update transaction",
+    "form": {
+      "type": "Transaction Type",
+      "typeRequired": "Transaction type is required",
+      "typePlaceholder": "Select transaction type",
+      "category": "Category",
+      "categoryRequired": "Category is required",
+      "categoryPlaceholder": "Select category",
+      "fromWallet": "From Wallet",
+      "fromWalletPlaceholder": "Select source wallet or 'Out of Pockito'",
+      "toWallet": "To Wallet",
+      "toWalletPlaceholder": "Select destination wallet or 'Out of Pockito'",
+      "amount": "Amount",
+      "amountRequired": "Amount is required",
+      "amountPlaceholder": "0.00",
+      "amountTo": "Amount To",
+      "amountToPlaceholder": "0.00",
+      "exchangeRate": "Exchange Rate",
+      "exchangeRateRequired": "Exchange rate is required",
+      "exchangeRatePlaceholder": "1.0000",
+      "note": "Note",
+      "notePlaceholder": "Optional note or description",
+      "effectiveDate": "Effective Date",
+      "effectiveDateRequired": "Effective date is required",
+      "effectiveDatePlaceholder": "Select date",
+      "required": "*",
+      "actions": {
+        "cancel": "Cancel",
+        "create": "Create Transaction",
+        "update": "Update Transaction"
+      },
+      "errors": {
+        "transactionTypeRequired": "Transaction type is required",
+        "categoryIdRequired": "Category is required",
+        "amountRequired": "Amount is required",
+        "amountMin": "Amount must be at least 0.01",
+        "amountToMin": "Amount to must be at least 0.01",
+        "exchangeRateRequired": "Exchange rate is required",
+        "exchangeRateMin": "Exchange rate must be at least 0.0001",
+        "effectiveDateRequired": "Effective date is required",
+        "noteMaxLength": "Note must not exceed 500 characters"
+      }
+    }
   },
   "wallets": {
     "title": "Wallets",

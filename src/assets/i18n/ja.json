@@ -27,7 +27,8 @@
     "dialogs": {
       "moreOptions": "その他のオプション",
       "switchLanguage": "言語を切り替え",
-      "testLanguageSwitcher": "言語切り替えのテスト"
+      "testLanguageSwitcher": "言語切り替えのテスト",
+      "addTransaction": "取引を追加"
     }
   },
   "transactions": {

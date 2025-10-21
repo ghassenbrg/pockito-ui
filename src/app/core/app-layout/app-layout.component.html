@@ -2,12 +2,13 @@
 <div class="app-shell">
   <!-- TOAST COMPONENT -->
   <app-toast></app-toast>
-  
+
   <!-- GLOBAL LOADING SPINNER -->
-  <app-loading-spinner 
+  <app-loading-spinner
     [isLoading]="(loading$ | async)?.isLoading || false"
     [messages]="(loadingMessages$ | async) || []"
-    [fullscreen]="true">
+    [fullscreen]="true"
+  >
   </app-loading-spinner>
 
   <!-- MOBILE NAVIGATION COMPONENTS -->
@@ -157,10 +158,38 @@
     [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
     [style]="{ width: '30vw' }"
     [modal]="true"
-    [header]="'appLayout.dialogs.switchLanguage' | translate"
     [closable]="true"
     [closeOnEscape]="true"
   >
-    <app-language-switcher (languageChanged)="onLanguageChanged($event)"></app-language-switcher>
+    <app-language-switcher
+      (languageChanged)="onLanguageChanged($event)"
+    ></app-language-switcher>
   </p-dialog>
+
+  <!-- Transaction Form Dialog -->
+  <p-dialog
+    [maximizable]="true"
+    [(visible)]="displayTransactionForm"
+    [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
+    [style]="{ width: '30vw' }"
+    [modal]="true"
+    [header]="'appLayout.dialogs.addTransaction' | translate"
+    [closable]="true"
+    [closeOnEscape]="true"
+  >
+    <app-transaction-form
+      (transactionSaved)="onTransactionSaved()"
+      (formCancelled)="onTransactionFormCancelled()"
+    ></app-transaction-form>
+  </p-dialog>
+
+  <!-- Floating Action Button -->
+  <button
+    class="floating-action-button"
+    (click)="openTransactionForm()"
+    [attr.aria-label]="'appLayout.floatingButton.addTransaction' | translate"
+    title="Add Transaction"
+  >
+    <i class="pi pi-plus"></i>
+  </button>
 </div>

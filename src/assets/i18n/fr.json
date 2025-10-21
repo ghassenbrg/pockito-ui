@@ -27,7 +27,8 @@
     "dialogs": {
       "moreOptions": "Plus d'Options",
       "switchLanguage": "Changer de Langue",
-      "testLanguageSwitcher": "Test du sélecteur de langue"
+      "testLanguageSwitcher": "Test du sélecteur de langue",
+      "addTransaction": "Ajouter une Transaction"
     }
   },
   "transactions": {

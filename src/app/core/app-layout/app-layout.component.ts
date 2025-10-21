@@ -8,22 +8,23 @@ import {
   Renderer2,
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { UserDto } from '@api/models';
+import { UserService } from '@api/services';
 import { KeycloakService } from '@core/security/keycloak.service';
-import { ResponsiveService } from '@core/services/responsive.service';
 import { MobileService } from '@core/services/mobile.service';
+import { ResponsiveService } from '@core/services/responsive.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageSwitcherComponent } from '@shared/components/language-switcher/language-switcher.component';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
 import { ToastComponent } from '@shared/components/toast/toast.component';
+import { TransactionFormComponent } from '@shared/components/transaction-form/transaction-form.component';
 import { LoadingService } from '@shared/services/loading.service';
 import { MenuItem, MessageService } from 'primeng/api';
 import { DialogModule } from 'primeng/dialog';
 import { DockModule } from 'primeng/dock';
 import { TerminalModule, TerminalService } from 'primeng/terminal';
 import { Subscription } from 'rxjs';
-import { filter, map, distinctUntilChanged } from 'rxjs/operators';
-import { UserDto } from '@api/models';
-import { UserService } from '@api/services';
+import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-layout',
@@ -37,6 +38,7 @@ import { UserService } from '@api/services';
     LanguageSwitcherComponent,
     LoadingSpinnerComponent,
     ToastComponent,
+    TransactionFormComponent,
   ],
   providers: [MessageService, TerminalService],
   templateUrl: './app-layout.component.html',
@@ -46,6 +48,7 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
   displayTerminal: boolean = false;
   displayMore: boolean = false;
   displaySwitchLanguage: boolean = false;
+  displayTransactionForm: boolean = false;
 
   // Mobile navigation state
   mobileMenuOpen: boolean = false;
@@ -56,7 +59,7 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
   private touchEndX: number = 0;
   private touchEndY: number = 0;
   private readonly minSwipeDistance = 50;
-  
+
   // Mobile features
   private pullToRefreshCleanup?: () => void;
   private swipeGestureCleanup?: () => void;
@@ -80,14 +83,15 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
 
   // Loading messages observable - only emits when messages actually change
   loadingMessages$ = this.loading$.pipe(
-    map(state => {
+    map((state) => {
       if (state.activeLoadings && state.activeLoadings.size > 0) {
-        return Array.from(state.activeLoadings.values()).filter(msg => msg);
+        return Array.from(state.activeLoadings.values()).filter((msg) => msg);
       }
       return [];
     }),
-    distinctUntilChanged((prev, curr) => 
-      prev.length === curr.length && prev.every((msg, i) => msg === curr[i])
+    distinctUntilChanged(
+      (prev, curr) =>
+        prev.length === curr.length && prev.every((msg, i) => msg === curr[i])
     )
   );
 
@@ -137,12 +141,12 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
     if (this.responsiveSubscription) {
       this.responsiveSubscription.unsubscribe();
     }
-    
+
     // Cleanup mobile features
     if (this.pullToRefreshCleanup) {
       this.pullToRefreshCleanup();
     }
-    
+
     if (this.swipeGestureCleanup) {
       this.swipeGestureCleanup();
     }
@@ -424,7 +428,8 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
       });
 
       // Setup swipe gestures for navigation
-      const mainContent = this.elementRef.nativeElement.querySelector('.main-content-area');
+      const mainContent =
+        this.elementRef.nativeElement.querySelector('.main-content-area');
       if (mainContent) {
         this.swipeGestureCleanup = this.mobileService.setupSwipeGesture(
           mainContent,
@@ -440,7 +445,7 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
                 this.closeMobileMenu();
                 this.mobileService.hapticFeedback('light');
               }
-            }
+            },
           }
         );
       }
@@ -534,7 +539,10 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
 
   handleMobileNavigation(item: MenuItem, event?: Event): void {
     if (event) {
-      this.mobileService.createRippleEffect(event.target as HTMLElement, event as any);
+      this.mobileService.createRippleEffect(
+        event.target as HTMLElement,
+        event as any
+      );
     }
     this.mobileService.hapticFeedback('light');
     this.closeMobileMenu();
@@ -546,10 +554,13 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
   // Handle mobile bottom navigation clicks
   handleMobileBottomNavClick(item: MenuItem, event?: Event): void {
     if (event) {
-      this.mobileService.createRippleEffect(event.target as HTMLElement, event as any);
+      this.mobileService.createRippleEffect(
+        event.target as HTMLElement,
+        event as any
+      );
     }
     this.mobileService.hapticFeedback('light');
-    
+
     if (item.label === this.translate.instant('appLayout.navigation.more')) {
       // Open the more options dialog (same behavior as top bar)
       this.displayMore = true;
@@ -600,5 +611,21 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
     // The translation service has already been updated
     // The menu items will be refreshed automatically via the language change subscription
     // in ngOnInit()
+  }
+
+  // Handle floating action button click
+  openTransactionForm(): void {
+    this.displayTransactionForm = true;
+    this.mobileService.hapticFeedback('light');
+  }
+
+  // Handle transaction form events
+  onTransactionSaved(): void {
+    this.displayTransactionForm = false;
+    // Optionally refresh data or show success message
+  }
+
+  onTransactionFormCancelled(): void {
+    this.displayTransactionForm = false;
   }
 }

@@ -1,0 +1,86 @@
+/* ---------- Design Tokens ---------- */
+@import '../../../shared/styles/tokens';
+
+.transaction-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid $stroke;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &__label {
+    font-weight: 500;
+    color: $text-700;
+    font-size: 0.875rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .exchange-rate-label {
+      font-size: 0.75rem;
+      color: $text-500;
+      font-weight: 400;
+    }
+  }
+}
+
+.required {
+  color: $danger;
+  font-weight: 600;
+}
+
+// Override PrimeNG styles for consistency
+:host ::ng-deep {
+  .p-dropdown,
+  .p-inputtext,
+  .p-inputnumber,
+  .p-calendar {
+    width: 100%;
+  }
+
+  .p-error {
+    font-size: 0.75rem;
+    color: $danger;
+  }
+
+  .p-invalid {
+    border-color: $danger !important;
+  }
+
+  .p-calendar {
+    .p-inputtext {
+      width: 100%;
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: $breakpoint-tablet) {
+  .transaction-form {
+    padding: 1rem;
+  }
+
+  .transaction-form__actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
