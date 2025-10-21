@@ -516,7 +516,7 @@ export class TransactionFormComponent implements OnInit {
   }
 
   getWalletOptionsWithNull(): any[] {
-    return [{ label: 'Out of Pockito', value: null }, ...this.walletOptions];
+    return [{ label: this.translate.instant('common.outOfPockito'), value: null }, ...this.walletOptions];
   }
 
   getTransactionTypeLabel(type: TransactionType): string {

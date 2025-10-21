@@ -96,20 +96,29 @@ describe('WalletDetailComponent', () => {
     expect(mockTransactionService.getTransactionsByWallet).toHaveBeenCalledWith('test-wallet-id', { page: 0, size: 10 });
   });
 
-  it('should handle page change correctly', () => {
+  it('should handle load more correctly', () => {
     component.ngOnInit(); // Initialize walletId first
+    
+    // Set up existing pageable transactions
+    component.pageableTransactions = {
+      totalPages: 2,
+      totalElements: 20,
+      size: 10,
+      content: [],
+      number: 0,
+      first: true,
+      last: false,
+      numberOfElements: 10,
+      empty: false
+    };
     
     // Clear previous calls
     mockTransactionService.getTransactionsByWallet.calls.reset();
     
-    const pageChangeEvent = { first: 10, rows: 5 };
-    component.onPageChange(pageChangeEvent);
+    component.onLoadMore();
     
-    // Check that the API was called with correct parameters
-    expect(mockTransactionService.getTransactionsByWallet).toHaveBeenCalledWith('test-wallet-id', { page: 2, size: 5 });
-    
-    // The component properties will be updated by the API response, so we check the calculation logic
-    expect(Math.floor(10 / 5)).toBe(2);
+    // Check that the API was called with next page (0 + 1 = 1)
+    expect(mockTransactionService.getTransactionsByWallet).toHaveBeenCalledWith('test-wallet-id', { page: 1, size: 10 });
   });
 
   it('should show edit dialog when showEditWalletDialog is called', () => {

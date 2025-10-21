@@ -95,8 +95,7 @@ describe('TransactionsComponent', () => {
     it('should initialize with default values', () => {
       expect(component.pageableTransactions).toBeUndefined();
       expect(component.loading).toBeFalse();
-      expect(component.currentPage).toBe(0);
-      expect(component.pageSize).toBe(10);
+      expect(component.allTransactions).toEqual([]);
     });
   });
 
@@ -113,21 +112,14 @@ describe('TransactionsComponent', () => {
       transactionService.listTransactions.and.returnValue(of(mockPageableTransactions));
     });
 
-    it('should set loading to true and show loading service', () => {
-      // Use a delayed observable to test loading state
-      transactionService.listTransactions.and.returnValue(
-        of(mockPageableTransactions).pipe(delay(100))
-      );
-      
+    it('should show loading service on first load', () => {
       component.loadTransactions();
       
-      // Check loading state immediately after calling loadTransactions
-      expect(component.loading).toBeTrue();
       expect(loadingService.show).toHaveBeenCalledWith('Test Message');
       expect(translateService.instant).toHaveBeenCalledWith('transactions.loading');
     });
 
-    it('should call transactionService with correct parameters', () => {
+    it('should call transactionService with correct parameters on first load', () => {
       component.loadTransactions();
       
       expect(transactionService.listTransactions).toHaveBeenCalledWith({
@@ -137,12 +129,15 @@ describe('TransactionsComponent', () => {
       });
     });
 
-    it('should handle successful response', () => {
+    it('should handle successful response on first load', () => {
       component.loadTransactions();
       
-      expect(component.pageableTransactions).toEqual(mockPageableTransactions);
-      expect(component.loading).toBeFalse();
-      expect(loadingService.hide).toHaveBeenCalled();
+      expect(component.allTransactions).toEqual(mockTransactions);
+      expect(component.pageableTransactions).toEqual({
+        ...mockPageableTransactions,
+        content: mockTransactions
+      });
+      expect(loadingService.hide).toHaveBeenCalledWith('mock-loading-id');
     });
 
     it('should handle error response', () => {
@@ -151,90 +146,41 @@ describe('TransactionsComponent', () => {
       
       component.loadTransactions();
       
-      expect(component.loading).toBeFalse();
-      expect(loadingService.hide).toHaveBeenCalled();
+      expect(loadingService.hide).toHaveBeenCalledWith('mock-loading-id');
       expect(toastService.showError).toHaveBeenCalledWith(
         'transactions.loadingError',
         'transactions.loadingErrorMessage'
       );
     });
 
-    it('should use current page and page size when loading', () => {
-      component.currentPage = 2;
-      component.pageSize = 20;
+    it('should load next page when pageableTransactions exists', () => {
+      // Set up existing pageable transactions
+      component.pageableTransactions = mockPageableTransactions;
       
       component.loadTransactions();
       
       expect(transactionService.listTransactions).toHaveBeenCalledWith({
-        page: 2,
-        size: 20,
+        page: 1, // next page (0 + 1)
+        size: 10,
         sort: ['effectiveDate,desc']
       });
     });
   });
 
-  describe('onPageChange', () => {
+  describe('onLoadMore', () => {
     beforeEach(() => {
       spyOn(component, 'loadTransactions');
     });
 
-    it('should update currentPage and reload transactions', () => {
-      const event = { first: 20, rows: 10 };
+    it('should call loadTransactions when onLoadMore is called', () => {
+      component.onLoadMore();
       
-      component.onPageChange(event);
-      
-      expect(component.currentPage).toBe(2); // Math.floor(20 / 10)
-      expect(component.loadTransactions).toHaveBeenCalled();
-    });
-
-    it('should handle different page sizes correctly', () => {
-      const event = { first: 15, rows: 5 };
-      
-      component.onPageChange(event);
-      
-      expect(component.currentPage).toBe(3); // Math.floor(15 / 5)
-      expect(component.loadTransactions).toHaveBeenCalled();
-    });
-
-    it('should handle zero-based pagination', () => {
-      const event = { first: 0, rows: 10 };
-      
-      component.onPageChange(event);
-      
-      expect(component.currentPage).toBe(0);
-      expect(component.loadTransactions).toHaveBeenCalled();
-    });
-  });
-
-  describe('onPageSizeChange', () => {
-    beforeEach(() => {
-      spyOn(component, 'loadTransactions');
-    });
-
-    it('should update pageSize, reset currentPage to 0, and reload transactions', () => {
-      component.currentPage = 5;
-      component.pageSize = 10;
-      
-      component.onPageSizeChange(25);
-      
-      expect(component.pageSize).toBe(25);
-      expect(component.currentPage).toBe(0);
-      expect(component.loadTransactions).toHaveBeenCalled();
-    });
-
-    it('should handle page size change from any current page', () => {
-      component.currentPage = 3;
-      
-      component.onPageSizeChange(50);
-      
-      expect(component.pageSize).toBe(50);
-      expect(component.currentPage).toBe(0);
       expect(component.loadTransactions).toHaveBeenCalled();
     });
   });
 
   describe('Loading States', () => {
-    it('should show loading service with translated message', () => {
+    it('should show loading service with translated message on first load', () => {
       (translateService.instant as jasmine.Spy).and.returnValue('Loading transactions...');
       transactionService.listTransactions.and.returnValue(of(mockPageableTransactions));
       
@@ -249,7 +195,7 @@ describe('TransactionsComponent', () => {
       
       component.loadTransactions();
       
-      expect(loadingService.hide).toHaveBeenCalled();
+      expect(loadingService.hide).toHaveBeenCalledWith('mock-loading-id');
     });
 
     it('should hide loading service on error response', () => {
@@ -257,7 +203,16 @@ describe('TransactionsComponent', () => {
       
       component.loadTransactions();
       
-      expect(loadingService.hide).toHaveBeenCalled();
+      expect(loadingService.hide).toHaveBeenCalledWith('mock-loading-id');
+    });
+
+    it('should not show loading service when pageableTransactions exists', () => {
+      component.pageableTransactions = mockPageableTransactions;
+      transactionService.listTransactions.and.returnValue(of(mockPageableTransactions));
+      
+      component.loadTransactions();
+      
+      expect(loadingService.show).not.toHaveBeenCalled();
     });
   });
 
@@ -272,14 +227,7 @@ describe('TransactionsComponent', () => {
         'transactions.loadingError',
         'transactions.loadingErrorMessage'
       );
-    });
-
-    it('should reset loading state on error', () => {
-      transactionService.listTransactions.and.returnValue(throwError(() => new Error('API Error')));
-      
-      component.loadTransactions();
-      
-      expect(component.loading).toBeFalse();
+      expect(loadingService.hide).toHaveBeenCalledWith('mock-loading-id');
     });
   });
 
@@ -293,22 +241,12 @@ describe('TransactionsComponent', () => {
       expect(transactionListElement).toBeTruthy();
     });
 
-    it('should handle page change events from transaction-list component', () => {
-      spyOn(component, 'onPageChange');
-      const event = { first: 10, rows: 5 };
+    it('should handle load more events from transaction-list component', () => {
+      spyOn(component, 'onLoadMore');
       
-      component.onPageChange(event);
+      component.onLoadMore();
       
-      expect(component.onPageChange).toHaveBeenCalledWith(event);
-    });
-
-    it('should handle page size change events from transaction-list component', () => {
-      spyOn(component, 'onPageSizeChange');
-      const newPageSize = 25;
-      
-      component.onPageSizeChange(newPageSize);
-      
-      expect(component.onPageSizeChange).toHaveBeenCalledWith(newPageSize);
+      expect(component.onLoadMore).toHaveBeenCalled();
     });
   });
 
@@ -330,27 +268,41 @@ describe('TransactionsComponent', () => {
       
       component.loadTransactions();
       
-      expect(component.pageableTransactions).toEqual(emptyPageableTransactions);
-      expect(component.loading).toBeFalse();
+      expect(component.allTransactions).toEqual([]);
+      expect(component.pageableTransactions).toEqual({
+        ...emptyPageableTransactions,
+        content: []
+      });
     });
 
-    it('should handle very large page numbers', () => {
-      const event = { first: 999999, rows: 10 };
-      spyOn(component, 'loadTransactions');
+    it('should append new transactions to existing ones on load more', () => {
+      // Set up existing transactions
+      component.allTransactions = mockTransactions;
+      component.pageableTransactions = mockPageableTransactions;
       
-      component.onPageChange(event);
+      const newTransactions: TransactionDto[] = [
+        {
+          id: '3',
+          transactionType: TransactionType.EXPENSE,
+          amount: 300,
+          exchangeRate: 1,
+          effectiveDate: new Date('2024-01-03'),
+          note: 'New expense',
+          walletFromName: 'Test Wallet'
+        }
+      ];
       
-      expect(component.currentPage).toBe(99999); // Math.floor(999999 / 10)
-    });
-
-    it('should handle zero page size change', () => {
-      spyOn(component, 'loadTransactions');
+      const newPageableTransactions: PageTransactionDto = {
+        ...mockPageableTransactions,
+        content: newTransactions,
+        number: 1
+      };
       
-      component.onPageSizeChange(0);
+      transactionService.listTransactions.and.returnValue(of(newPageableTransactions));
       
-      expect(component.pageSize).toBe(0);
-      expect(component.currentPage).toBe(0);
-      expect(component.loadTransactions).toHaveBeenCalled();
+      component.loadTransactions();
+      
+      expect(component.allTransactions).toEqual([...mockTransactions, ...newTransactions]);
     });
   });
 });
