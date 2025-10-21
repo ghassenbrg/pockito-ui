@@ -31,7 +31,7 @@ export class TranslationService {
     return [
       { code: 'en', name: 'English',  flag: '/assets/flags/en.svg' },
       { code: 'fr', name: 'Français', flag: '/assets/flags/fr.svg' },
-      { code: 'jp', name: '日本語',     flag: '/assets/flags/jp.svg' }
+      { code: 'ja', name: '日本語',     flag: '/assets/flags/ja.svg' }
     ];
   }
 }

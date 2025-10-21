@@ -101,14 +101,14 @@ export class TransactionListComponent implements OnInit, OnChanges {
 
     // Check if it's this year
     if (date.getFullYear() === today.getFullYear()) {
-      return date.toLocaleDateString(this.translateService.currentLang || 'en', {
+      return date.toLocaleDateString(this.translateService.getCurrentLang() || 'en', {
         month: 'long',
         day: 'numeric'
       });
     }
 
     // Default format with year
-    return date.toLocaleDateString(this.translateService.currentLang || 'en', {
+    return date.toLocaleDateString(this.translateService.getCurrentLang() || 'en', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'

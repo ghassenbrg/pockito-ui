@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
       <div class="loading-spinner">
         <i class="pi pi-spin pi-spinner"></i>
         <div *ngIf="messages && messages.length > 0" class="loading-messages">
-          <span *ngFor="let message of messages" class="loading-message">{{ message }}</span>
+          <span *ngFor="let message of distinctMessages" class="loading-message">{{ message }}</span>
         </div>
         <span *ngIf="message && (!messages || messages.length === 0)" class="loading-message">{{ message }}</span>
       </div>
@@ -82,9 +82,25 @@ import { CommonModule } from '@angular/common';
     }
   `]
 })
-export class LoadingSpinnerComponent {
+export class LoadingSpinnerComponent implements OnChanges {
   @Input() isLoading: boolean = false;
   @Input() message: string = '';
   @Input() messages: string[] = [];
   @Input() fullscreen: boolean = true;
+
+  distinctMessages: string[] = [];
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['messages']) {
+      this.updateDistinctMessages();
+    }
+  }
+
+  private updateDistinctMessages(): void {
+    if (!this.messages || this.messages.length === 0) {
+      this.distinctMessages = [];
+    } else {
+      this.distinctMessages = [...new Set(this.messages)];
+    }
+  }
 }
