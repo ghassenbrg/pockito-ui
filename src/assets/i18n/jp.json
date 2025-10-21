@@ -109,7 +109,13 @@
     "deleteError": "削除失敗",
     "deleteErrorMessage": "削除失敗しました。もう一度お試しください。",
     "paginatorTemplate": "{first}から{last}までの{totalRecords}件を表示",
-    "rowsPerPage": "ページあたりの行数"
+    "rowsPerPage": "ページあたりの行数",
+    "showMore": "さらに表示",
+    "loadingMore": "さらに読み込み中...",
+    "today": "今日",
+    "yesterday": "昨日",
+    "unknownCategory": "不明なカテゴリ",
+    "outOfPockito": "Pockito外"
   },
   "enums": {
     "walletType": {

@@ -34,6 +34,7 @@ describe('WalletDetailComponent', () => {
     // Setup default return values
     mockTranslateService.instant.and.returnValue('Test Translation');
     mockTranslateService.get.and.returnValue(of('Test Translation'));
+    mockLoadingService.show.and.returnValue('mock-loading-id');
     mockWalletService.getWallet.and.returnValue(of({
       id: 'test-wallet-id',
       name: 'Test Wallet',

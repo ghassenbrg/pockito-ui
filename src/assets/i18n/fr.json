@@ -109,7 +109,13 @@
     "deleteError": "Suppression échouée",
     "deleteErrorMessage": "Suppression échouée. Veuillez réessayer.",
     "paginatorTemplate": "Afficher {first} à {last} sur {totalRecords} entrées",
-    "rowsPerPage": "Lignes par page"
+    "rowsPerPage": "Lignes par page",
+    "showMore": "Afficher Plus",
+    "loadingMore": "Chargement de plus...",
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "unknownCategory": "Catégorie Inconnue",
+    "outOfPockito": "Hors de Pockito"
   },
   "enums": {
     "walletType": {

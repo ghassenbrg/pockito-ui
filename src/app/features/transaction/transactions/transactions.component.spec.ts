@@ -83,6 +83,8 @@ describe('TransactionsComponent', () => {
     spyOn(translateService, 'get').and.returnValue(of('Test Message'));
     // Setup default transaction service to return an observable
     transactionService.listTransactions.and.returnValue(of(mockPageableTransactions));
+    // Setup loading service to return mock IDs
+    loadingService.show.and.returnValue('mock-loading-id');
   });
 
   describe('Component Creation', () => {

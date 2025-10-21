@@ -30,9 +30,9 @@ export interface Pageable {
 export interface PageTransactionDto {
   totalPages: number;
   totalElements: number;
-  size?: number;
+  size: number;
   content: TransactionDto[];
-  number?: number;
+  number: number;
   sort?: Sort;
   first?: boolean;
   last?: boolean;

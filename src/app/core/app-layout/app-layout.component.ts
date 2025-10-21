@@ -21,7 +21,7 @@ import { DialogModule } from 'primeng/dialog';
 import { DockModule } from 'primeng/dock';
 import { TerminalModule, TerminalService } from 'primeng/terminal';
 import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, map, distinctUntilChanged } from 'rxjs/operators';
 import { UserDto } from '@api/models';
 import { UserService } from '@api/services';
 
@@ -77,6 +77,19 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
 
   // Loading state observable
   loading$ = this.loadingService.loading$;
+
+  // Loading messages observable - only emits when messages actually change
+  loadingMessages$ = this.loading$.pipe(
+    map(state => {
+      if (state.activeLoadings && state.activeLoadings.size > 0) {
+        return Array.from(state.activeLoadings.values()).filter(msg => msg);
+      }
+      return [];
+    }),
+    distinctUntilChanged((prev, curr) => 
+      prev.length === curr.length && prev.every((msg, i) => msg === curr[i])
+    )
+  );
 
   constructor(
     private router: Router,

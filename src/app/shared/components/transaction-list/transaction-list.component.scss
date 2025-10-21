@@ -179,115 +179,53 @@ $transaction-icon-size-mobile: 28px;
   .amount-neutral { color: $text-500; }
 }
 
-/* ---------- Pagination ---------- */
-.pagination-container {
-  background: $surface;
-  border-radius: $transaction-border-radius;
-  padding: $spacing-xl;
-  box-shadow: $shadow-sm;
+/* ---------- Show More Button ---------- */
+.show-more-container {
   display: flex;
-  flex-direction: column;
-  gap: $spacing-lg;
-
-  @media (min-width: $breakpoint-tablet) {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: $spacing-2xl;
-  }
-
-  @media (max-width: $breakpoint-tablet) {
-    padding: $spacing-lg;
-  }
+  justify-content: center;
+  padding: $spacing-lg 0;
 }
 
-.pagination-info {
-  font-size: 14px;
-  color: $text-500;
-  text-align: center;
-
-  @media (min-width: $breakpoint-tablet) {
-    text-align: left;
-  }
-
-  @media (max-width: $breakpoint-tablet) {
-    font-size: 13px;
-  }
-}
-
-.pagination-controls {
+.show-more-btn {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: $spacing-md;
-
-  @media (max-width: $breakpoint-tablet) {
-    gap: $spacing-sm;
-  }
-
-  .page-info {
-    font-size: 14px;
-    color: $text-700;
-    font-weight: 500;
-    min-width: 60px;
-    text-align: center;
-    padding: 6px $spacing-md;
-    background: rgba(15, 23, 42, 0.04);
-    border-radius: $radius-sm;
-
-    @media (max-width: $breakpoint-tablet) {
-      font-size: 13px;
-      min-width: 50px;
-      padding: $spacing-xs $spacing-sm;
-    }
-  }
-}
-
-.page-size-selector {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  background: transparent;
+  border: 1px solid $stroke;
+  border-radius: $radius-lg;
+  color: $text-600;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 140px;
+  justify-content: center;
 
-  @media (min-width: $breakpoint-tablet) {
-    justify-content: flex-end;
+  &:hover:not(:disabled) {
+    background: $surface-100;
+    border-color: $primary-300;
+    color: $primary-600;
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  i {
+    font-size: 12px;
   }
 
   @media (max-width: $breakpoint-tablet) {
-    gap: 6px;
-  }
-
-  label {
-    font-size: 14px;
-    color: $text-700;
-    font-weight: 500;
-
-    @media (max-width: $breakpoint-tablet) {
-      font-size: 13px;
-    }
-  }
-
-  .page-size-select {
-    padding: 6px 10px;
-    border: 1px solid $stroke;
-    border-radius: $radius-sm;
-    background: $surface;
-    font-size: 14px;
-    color: $text-700;
-    cursor: pointer;
-    transition: border-color 0.15s ease;
-    font-weight: 400;
-
-    @media (max-width: $breakpoint-tablet) {
-      font-size: 13px;
-      padding: $spacing-xs $spacing-sm;
-    }
-
-    &:hover,
-    &:focus {
-      border-color: rgba(15, 23, 42, 0.16);
-      outline: none;
-    }
+    padding: $spacing-sm $spacing-lg;
+    font-size: 13px;
+    min-width: 120px;
   }
 }
 
@@ -357,30 +295,8 @@ $transaction-icon-size-mobile: 28px;
     font-size: 14px;
   }
 
-  .pagination-container {
+  .show-more-container {
     padding: $spacing-md;
-    gap: $spacing-md;
-  }
-
-  .pagination-info {
-    font-size: 12px;
-  }
-
-  .page-info {
-    font-size: 12px;
-    min-width: 40px;
-    padding: 3px 6px;
-  }
-
-  .page-size-selector {
-    label {
-      font-size: 12px;
-    }
-
-    .page-size-select {
-      font-size: 12px;
-      padding: 3px 6px;
-    }
   }
 }
 
@@ -395,7 +311,7 @@ $transaction-icon-size-mobile: 28px;
 
 /* ---------- Print Styles ---------- */
 @media print {
-  .pagination-container {
+  .show-more-container {
     display: none;
   }
 

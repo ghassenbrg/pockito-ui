@@ -41,6 +41,7 @@ export class WalletDetailComponent implements OnInit {
   Math = Math;
   menuItems: MenuItem[] = [];
   pageableTransactions?: PageTransactionDto;
+  allTransactions: any[] = [];
 
   constructor(
     private walletService: WalletService,
@@ -71,47 +72,59 @@ export class WalletDetailComponent implements OnInit {
   }
 
   getTransactions(page: number = 0, size: number = 10) {
-    this.loadingService.show(this.translateService.instant('common.loading'));
+    const loadingId = this.loadingService.show(this.translateService.instant('common.loading'));
+    
     this.transactionService
       .getTransactionsByWallet(this.walletId, { page, size })
       .subscribe({
         next: (transactions: PageTransactionDto) => {
-          this.pageableTransactions = transactions;
-          this.loadingService.hide(); 
+          if (page === 0) {
+            // First load - replace all transactions
+            this.allTransactions = transactions.content || [];
+          } else {
+            // Load more - append to existing transactions
+            this.allTransactions = [...this.allTransactions, ...(transactions.content || [])];
+          }
+          
+          // Update pageableTransactions with combined data
+          this.pageableTransactions = {
+            ...transactions,
+            content: this.allTransactions
+          };
+          
+          this.loadingService.hide(loadingId); 
         },
         error: () => {
           this.toastService.showError(
             'common.loadingError',
             'common.loadingErrorMessage'
           );
-          this.loadingService.hide();
+          this.loadingService.hide(loadingId);
         }
       });
   }
 
-  onPageChange(event: any) {
-    const currentPage = Math.floor(event.first / event.rows);
-    const pageSize = event.rows;
-    this.getTransactions(currentPage, pageSize);
-  }
-
-  onPageSizeChange(newPageSize: number) {
-    this.getTransactions(0, newPageSize);
+  onLoadMore() {
+    // Get current page from backend response and load next page
+    const currentPage = this.pageableTransactions?.number || 0;
+    const nextPage = currentPage + 1;
+    this.getTransactions(nextPage, 10);
   }
 
   getWallet() {
-    this.loadingService.show(this.translateService.instant('common.loading'));
+    const loadingId = this.loadingService.show(this.translateService.instant('common.loading'));
+    
     this.walletService.getWallet(this.walletId).subscribe({
       next: (wallet: WalletDto) => {
         this.wallet = wallet;
-        this.loadingService.hide();
+        this.loadingService.hide(loadingId);
       },
       error: () => {
         this.toastService.showError(
           'common.loadingError',
           'common.loadingErrorMessage'
         );
-        this.loadingService.hide();
+        this.loadingService.hide(loadingId);
       }
     });
   }
@@ -130,14 +143,15 @@ export class WalletDetailComponent implements OnInit {
   }
 
   deleteWallet() {
-    this.loadingService.show(this.translateService.instant('common.loading'));
+    const loadingId = this.loadingService.show(this.translateService.instant('common.loading'));
+    
     this.walletService.deleteWallet(this.walletId).subscribe({
       next: () => {
         this.toastService.showSuccess(
           'common.deleteSuccess',
           'common.deleteSuccessMessage'
         );
-        this.loadingService.hide();
+        this.loadingService.hide(loadingId);
         this.router.navigate(['../'], { relativeTo: this.route });
       },
       error: () => {
@@ -145,7 +159,7 @@ export class WalletDetailComponent implements OnInit {
           'common.deleteError',
           'common.deleteErrorMessage'
         );
-        this.loadingService.hide();
+        this.loadingService.hide(loadingId);
       }
     });
   }

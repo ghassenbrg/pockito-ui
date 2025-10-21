@@ -50,7 +50,8 @@ export class WalletsComponent implements OnInit {
   }
 
   getWallets() {
-    this.loadingService.show(this.translateService.instant('wallets.loading'));
+    const loadingId = this.loadingService.show(this.translateService.instant('wallets.loading'));
+    
     this.walletService.getUserWallets().subscribe({
       next: (wallets) => {
         this.wallets = wallets.slice().sort((a, b) => {
@@ -60,14 +61,14 @@ export class WalletsComponent implements OnInit {
           if (b.orderPosition == null) return -1;
           return a.orderPosition - b.orderPosition;
         });
-        this.loadingService.hide();
+        this.loadingService.hide(loadingId);
       },
       error: () => {
         this.toastService.showError(
           'wallets.loadingError',
           'wallets.loadingErrorMessage'
         );
-        this.loadingService.hide();
+        this.loadingService.hide(loadingId);
       }
     });
   }

@@ -79,11 +79,11 @@
                     "
                   >
                     <span class="wallet-from">{{
-                      transaction.walletFromName
+                      transaction.walletFromName || ('common.outOfPockito' | translate)
                     }}</span>
                     <span class="wallet-separator">→</span>
                     <span class="wallet-to">{{
-                      transaction.walletToName
+                      transaction.walletToName || ('common.outOfPockito' | translate)
                     }}</span>
                   </ng-container>
                   <ng-container
@@ -92,7 +92,7 @@
                     "
                   >
                     <span class="wallet-from">{{
-                      transaction.walletFromName
+                      transaction.walletFromName || ('common.outOfPockito' | translate)
                     }}</span>
                   </ng-container>
                   <ng-container
@@ -101,7 +101,7 @@
                     "
                   >
                     <span class="wallet-from">{{
-                      transaction.walletToName
+                      transaction.walletToName || ('common.outOfPockito' | translate)
                     }}</span>
                   </ng-container>
                 </span>
@@ -116,7 +116,8 @@
                   class="amount-negative"
                 >
                   {{
-                    transaction.amount * -1 | pockitoCurrency : wallet?.currency:'code':true
+                    transaction.amount * -1
+                      | pockitoCurrency : wallet?.currency : "code" : true
                   }}
                 </span>
                 <span
@@ -125,28 +126,76 @@
                 >
                   {{
                     transaction.walletToAmount
-                      | pockitoCurrency : wallet?.currency:'code':true
+                      | pockitoCurrency : wallet?.currency : "code" : true
                   }}
                 </span>
-                
+
                 <!-- When no walletId is provided (all transactions view) -->
                 <span
                   *ngIf="!walletId && transaction.transactionType === 'INCOME'"
                   class="amount-positive"
                 >
-                  {{ transaction.walletToAmount | pockitoCurrency:transaction.walletToCurrency:'code':true }}
+                  {{
+                    transaction.walletToAmount
+                      | pockitoCurrency
+                        : transaction.walletToCurrency
+                        : "code"
+                        : true
+                  }}
                 </span>
                 <span
                   *ngIf="!walletId && transaction.transactionType === 'EXPENSE'"
                   class="amount-negative"
                 >
-                  {{ transaction.amount | pockitoCurrency:transaction.walletFromCurrency:'code':true }}
+                  {{
+                    transaction.amount * -1
+                      | pockitoCurrency
+                        : transaction.walletFromCurrency
+                        : "code"
+                        : true
+                  }}
                 </span>
                 <span
-                  *ngIf="!walletId && transaction.transactionType === 'TRANSFER'"
-                  class="amount-neutral"
+                  *ngIf="
+                    !walletId && transaction.transactionType === 'TRANSFER'
+                  "
                 >
-                  {{ transaction.amount | pockitoCurrency:transaction.walletFromCurrency:'code':false }}
+                  <span
+                    *ngIf="transaction.walletFromId && transaction.walletToId"
+                    class="amount-neutral"
+                  >
+                    {{
+                      transaction.amount
+                        | pockitoCurrency
+                          : transaction.walletFromCurrency
+                          : "code"
+                          : false
+                    }}
+                  </span>
+                  <span
+                    *ngIf="!transaction.walletFromId && transaction.walletToId"
+                    class="amount-positive"
+                  >
+                    {{
+                      transaction.walletToAmount
+                        | pockitoCurrency
+                          : transaction.walletToCurrency
+                          : "code"
+                          : true
+                    }}
+                  </span>
+                  <span
+                    *ngIf="transaction.walletFromId && !transaction.walletToId"
+                    class="amount-negative"
+                  >
+                    {{
+                      transaction.amount * -1
+                        | pockitoCurrency
+                          : transaction.walletFromCurrency
+                          : "code"
+                          : false
+                    }}
+                  </span>
                 </span>
               </div>
             </div>
@@ -156,56 +205,16 @@
     </div>
   </div>
 
-  <!-- Pagination -->
-  <div class="pagination-container" *ngIf="totalRecords > pageSize">
-    <div class="pagination-info">
-      {{ getPaginatorTemplate() }}
-    </div>
-
-    <div class="pagination-controls">
-      <p-button
-        [disabled]="currentPage === 0"
-        (onClick)="
-          onPageChange({
-            first: (currentPage - 1) * pageSize,
-            rows: pageSize
-          })
-        "
-        icon="pi pi-chevron-left"
-        [text]="true"
-        size="small"
-      ></p-button>
-
-      <span class="page-info">
-        {{ currentPage + 1 }} / {{ Math.ceil(totalRecords / pageSize) }}
-      </span>
-
-      <p-button
-        [disabled]="currentPage >= Math.ceil(totalRecords / pageSize) - 1"
-        (onClick)="
-          onPageChange({
-            first: (currentPage + 1) * pageSize,
-            rows: pageSize
-          })
-        "
-        icon="pi pi-chevron-right"
-        [text]="true"
-        size="small"
-      ></p-button>
-    </div>
-
-    <div class="page-size-selector">
-      <label>{{ "common.rowsPerPage" | translate }}:</label>
-      <select
-        [value]="pageSize"
-        (change)="onPageSizeChange($event)"
-        class="page-size-select"
-      >
-        <option value="5">5</option>
-        <option value="10">10</option>
-        <option value="20">20</option>
-        <option value="50">50</option>
-      </select>
-    </div>
+  <!-- Show More Button -->
+  <div class="show-more-container" *ngIf="hasMorePages">
+    <button 
+      class="show-more-btn"
+      (click)="onLoadMore()"
+      [disabled]="isLoadingMore"
+    >
+      <i class="pi pi-chevron-down" *ngIf="!isLoadingMore"></i>
+      <i class="pi pi-spin pi-spinner" *ngIf="isLoadingMore"></i>
+      <span>{{ isLoadingMore ? ('common.loadingMore' | translate) : ('common.showMore' | translate) }}</span>
+    </button>
   </div>
 </div>

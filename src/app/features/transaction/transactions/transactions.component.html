@@ -9,8 +9,7 @@
 
     <app-transaction-list
       [pageableTransactions]="pageableTransactions"
-      (pageChange)="onPageChange($event)"
-      (pageSizeChange)="onPageSizeChange($event)"
+      (loadMore)="onLoadMore()"
     ></app-transaction-list>
   </div>
 </div>

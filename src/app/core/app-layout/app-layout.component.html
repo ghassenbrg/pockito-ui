@@ -6,7 +6,7 @@
   <!-- GLOBAL LOADING SPINNER -->
   <app-loading-spinner 
     [isLoading]="(loading$ | async)?.isLoading || false"
-    [message]="(loading$ | async)?.message || ''"
+    [messages]="(loadingMessages$ | async) || []"
     [fullscreen]="true">
   </app-loading-spinner>
 

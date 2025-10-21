@@ -48,6 +48,7 @@ describe('WalletsComponent', () => {
     // Setup default mock behaviors
     mockWalletService.getUserWallets.and.returnValue(of([]));
     mockTranslateService.instant.and.returnValue('Loading...');
+    mockLoadingService.show.and.returnValue('mock-loading-id');
   });
 
   it('should create', () => {

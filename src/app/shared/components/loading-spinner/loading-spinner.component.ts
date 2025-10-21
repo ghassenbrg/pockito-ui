@@ -9,7 +9,10 @@ import { CommonModule } from '@angular/common';
     <div *ngIf="isLoading" class="loading-overlay" [class.fullscreen]="fullscreen">
       <div class="loading-spinner">
         <i class="pi pi-spin pi-spinner"></i>
-        <span *ngIf="message" class="loading-message">{{ message }}</span>
+        <div *ngIf="messages && messages.length > 0" class="loading-messages">
+          <span *ngFor="let message of messages" class="loading-message">{{ message }}</span>
+        </div>
+        <span *ngIf="message && (!messages || messages.length === 0)" class="loading-message">{{ message }}</span>
       </div>
     </div>
   `,
@@ -49,6 +52,13 @@ import { CommonModule } from '@angular/common';
       color: #3b82f6;
     }
 
+    .loading-messages {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
     .loading-message {
       font-size: 1rem;
       color: #374151;
@@ -75,5 +85,6 @@ import { CommonModule } from '@angular/common';
 export class LoadingSpinnerComponent {
   @Input() isLoading: boolean = false;
   @Input() message: string = '';
+  @Input() messages: string[] = [];
   @Input() fullscreen: boolean = true;
 }

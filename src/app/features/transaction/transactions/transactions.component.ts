@@ -22,8 +22,7 @@ import { LoadingService, ToastService } from '@shared/services';
 export class TransactionsComponent implements OnInit {
   pageableTransactions?: PageTransactionDto;
   loading = false;
-  currentPage = 0;
-  pageSize = 10;
+  allTransactions: any[] = [];
 
   constructor(
     private transactionService: TransactionService,
@@ -37,40 +36,52 @@ export class TransactionsComponent implements OnInit {
   }
 
   loadTransactions(): void {
-    this.loading = true;
-    this.loadingService.show(this.translateService.instant('transactions.loading'));
+
+    let nextPage: number;
+    let loadingId: string = '';
+
+    if (this.pageableTransactions) {
+      nextPage = (this.pageableTransactions.number || 0) + 1;
+    } else {
+      loadingId = this.loadingService.show(this.translateService.instant('transactions.loading'));
+      nextPage = 0;
+    }
 
     const pageable: Pageable = {
-      page: this.currentPage,
-      size: this.pageSize,
+      page: nextPage,
+      size: 10,
       sort: ['effectiveDate,desc']
     };
 
     this.transactionService.listTransactions(pageable).subscribe({
       next: (transactions) => {
-        this.pageableTransactions = transactions;
-        this.loading = false;
-        this.loadingService.hide();
+        if (transactions.number === 0) {
+          // First load - replace all transactions
+          this.allTransactions = transactions.content || [];
+        } else {
+          // Load more - append to existing transactions
+          this.allTransactions = [...this.allTransactions, ...(transactions.content || [])];
+        }
+        
+        // Update pageableTransactions with combined data
+        this.pageableTransactions = {
+          ...transactions,
+          content: this.allTransactions
+        };
+        
+        this.loadingService.hide(loadingId);
       },
       error: () => {
-        this.loading = false;
-        this.loadingService.hide();
         this.toastService.showError(
           'transactions.loadingError',
           'transactions.loadingErrorMessage'
         );
+        this.loadingService.hide(loadingId);
       }
     });
   }
 
-  onPageChange(event: any): void {
-    this.currentPage = Math.floor(event.first / event.rows);
-    this.loadTransactions();
-  }
-
-  onPageSizeChange(pageSize: number): void {
-    this.pageSize = pageSize;
-    this.currentPage = 0; // Reset to first page when changing page size
+  onLoadMore(): void {
     this.loadTransactions();
   }
 }

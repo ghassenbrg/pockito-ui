@@ -109,7 +109,13 @@
     "deleteError": "Delete failed",
     "deleteErrorMessage": "Delete failed. Please try again.",
     "paginatorTemplate": "Showing {first} to {last} of {totalRecords} entries",
-    "rowsPerPage": "Rows per page"
+    "rowsPerPage": "Rows per page",
+    "showMore": "Show More",
+    "loadingMore": "Loading more...",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "unknownCategory": "Unknown Category",
+    "outOfPockito": "Out of Pockito"
   },
   "enums": {
     "walletType": {

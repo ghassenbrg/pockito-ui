@@ -26,17 +26,13 @@ export class TransactionListComponent implements OnInit, OnChanges {
   @Input() wallet?: WalletDto | null;
   @Input() walletId: string = '';
 
-  @Output() pageChange = new EventEmitter<any>();
-  @Output() pageSizeChange = new EventEmitter<number>();
+  @Output() loadMore = new EventEmitter<void>();
 
   // Internal properties
   groupedTransactions: { [date: string]: any[] } = {};
-  currentPage: number = 0;
-  pageSize: number = 10;
-  totalRecords: number = 0;
+  isLoadingMore: boolean = false;
 
   TransactionType = TransactionType;
-  Math = Math;
 
   constructor(private translateService: TranslateService) {}
 
@@ -47,6 +43,7 @@ export class TransactionListComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['pageableTransactions'] && this.pageableTransactions) {
       this.processTransactions();
+      this.isLoadingMore = false;
     }
   }
 
@@ -54,30 +51,37 @@ export class TransactionListComponent implements OnInit, OnChanges {
     if (!this.pageableTransactions) {
       return;
     }
-
-    this.totalRecords = this.pageableTransactions.totalElements || 0;
-    this.currentPage = this.pageableTransactions.number || 0;
-    this.pageSize = this.pageableTransactions.size || 10;
     
     this.groupTransactionsByDate(this.pageableTransactions.content || []);
   }
 
-  onPageChange(event: any) {
-    this.pageChange.emit(event);
+  get currentPage(): number {
+    return this.pageableTransactions?.number || 0;
   }
 
-  onPageSizeChange(event: any) {
-    const newPageSize = parseInt(event.target.value);
-    this.pageSizeChange.emit(newPageSize);
+  get pageSize(): number {
+    return this.pageableTransactions?.size || 10;
   }
 
-  getPaginatorTemplate() {
-    return this.translateService.instant('common.paginatorTemplate', {
-      first: this.currentPage * this.pageSize + 1,
-      last: Math.min((this.currentPage + 1) * this.pageSize, this.totalRecords),
-      totalRecords: this.totalRecords,
-    });
+  get totalRecords(): number {
+    return this.pageableTransactions?.totalElements || 0;
   }
+
+  get hasMorePages(): boolean {
+    if (!this.pageableTransactions) return false;
+    const currentPage = this.pageableTransactions.number || 0;
+    const totalPages = this.pageableTransactions.totalPages || 1;
+    return currentPage < totalPages - 1;
+  }
+
+
+  onLoadMore() {
+    if (!this.isLoadingMore && this.hasMorePages) {
+      this.isLoadingMore = true;
+      this.loadMore.emit();
+    }
+  }
+
 
   formatDisplayDate(dateString: string): string {
     const date = new Date(dateString);
@@ -125,11 +129,11 @@ export class TransactionListComponent implements OnInit, OnChanges {
 
   getTransactionDisplayName(transaction: any): string {
     if (transaction.transactionType === TransactionType.TRANSFER) {
-      return 'Transfer';
+      return this.translateService.instant('enums.transactionType.TRANSFER');
     }
     
     // For income and expense, show the category name
-    return transaction.categoryName || 'Unknown Category';
+    return transaction.categoryName || this.translateService.instant('common.unknownCategory');
   }
 
   private groupTransactionsByDate(transactions: any[]): void {
