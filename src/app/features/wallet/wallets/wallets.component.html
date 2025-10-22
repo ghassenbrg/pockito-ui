@@ -63,7 +63,7 @@
 
 
   <!-- Wallet Form Dialog -->
-  <p-dialog
+  <app-pockito-dialog
     [maximizable]="true"
     [(visible)]="displayCreateWalletDialog"
     [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
@@ -78,4 +78,4 @@
     (walletSaved)="onWalletSaved($event)"
     (formCancelled)="onFormCancelled()"
     ></app-wallet-form>
-  </p-dialog>
+  </app-pockito-dialog>

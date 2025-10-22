@@ -6,6 +6,7 @@ import { TransactionService, WalletService } from '@api/services';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PockitoButtonType } from '@shared/components/pockito-button/pockito-button.component';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
+import { PockitoDialogComponent } from '@shared/components/pockito-dialog/pockito-dialog.component';
 import { TransactionListComponent } from '@shared/components/transaction-list/transaction-list.component';
 import { LoadingService, ToastService } from '@shared/services';
 import { PockitoCurrencyPipe } from '@shared/pipes/pockito-currency.pipe';
@@ -24,7 +25,7 @@ import { WalletFormComponent } from '../wallet-form/wallet-form.component';
     WalletFormComponent,
     TranslatePipe,
     PockitoCurrencyPipe,
-    DialogModule,
+    PockitoDialogComponent,
     ButtonModule,
     PageHeaderComponent,
     TransactionListComponent,

@@ -1,0 +1,64 @@
+<div 
+  class="pockito-dialog-mask" 
+  *ngIf="isVisible"
+  [class.modal]="modal"
+  (click)="onMaskClick($event)"
+>
+  <div 
+    class="pockito-dialog"
+    #dialogElement
+    [class.maximized]="isMaximized"
+    [class.modal]="modal"
+    [style]="getDialogStyles()"
+    [style.width]="getResponsiveWidth()"
+    role="dialog"
+    [attr.aria-modal]="modal"
+    [attr.aria-labelledby]="header ? 'dialog-header' : null"
+  >
+    <!-- Dialog Header -->
+    <div class="pockito-dialog-header" *ngIf="header || headerTemplate || maximizable">
+      <div class="pockito-dialog-title" id="dialog-header">
+        <ng-container *ngIf="headerTemplate; else defaultHeader">
+          <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+        </ng-container>
+        <ng-template #defaultHeader>
+          <span *ngIf="header">{{ header }}</span>
+        </ng-template>
+      </div>
+      
+      <div class="pockito-dialog-header-actions">
+        <!-- Maximize/Minimize Button -->
+        <button 
+          *ngIf="maximizable"
+          class="pockito-dialog-maximize-btn"
+          (click)="toggleMaximize()"
+          [attr.aria-label]="isMaximized ? 'Minimize' : 'Maximize'"
+          type="button"
+        >
+          <i class="pi" [class.pi-window-minimize]="isMaximized" [class.pi-window-maximize]="!isMaximized"></i>
+        </button>
+        
+        <!-- Close Button -->
+        <button 
+          *ngIf="closable"
+          class="pockito-dialog-close-btn"
+          (click)="hide()"
+          aria-label="Close dialog"
+          type="button"
+        >
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Dialog Content -->
+    <div class="pockito-dialog-content">
+      <ng-content></ng-content>
+    </div>
+
+    <!-- Dialog Footer -->
+    <div class="pockito-dialog-footer" *ngIf="footerTemplate">
+      <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
+    </div>
+  </div>
+</div>

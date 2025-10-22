@@ -129,7 +129,7 @@
   <!-- DIALOG COMPONENTS -->
 
   <!-- More Options Dialog -->
-  <p-dialog
+  <app-pockito-dialog
     [maximizable]="true"
     [(visible)]="displayMore"
     [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
@@ -149,10 +149,10 @@
         <span>{{ item.label }}</span>
       </div>
     </div>
-  </p-dialog>
+  </app-pockito-dialog>
 
   <!-- Switch Language Dialog -->
-  <p-dialog
+  <app-pockito-dialog
     [maximizable]="true"
     [(visible)]="displaySwitchLanguage"
     [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
@@ -164,10 +164,10 @@
     <app-language-switcher
       (languageChanged)="onLanguageChanged($event)"
     ></app-language-switcher>
-  </p-dialog>
+  </app-pockito-dialog>
 
   <!-- Transaction Form Dialog -->
-  <p-dialog
+  <app-pockito-dialog
     [maximizable]="true"
     [(visible)]="displayTransactionForm"
     [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
@@ -181,7 +181,7 @@
       (transactionSaved)="onTransactionSaved()"
       (formCancelled)="onTransactionFormCancelled()"
     ></app-transaction-form>
-  </p-dialog>
+  </app-pockito-dialog>
 
   <!-- Floating Action Button -->
   <button

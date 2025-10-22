@@ -9,9 +9,9 @@ import {
   PockitoButtonType,
 } from '@shared/components/pockito-button/pockito-button.component';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
+import { PockitoDialogComponent } from '@shared/components/pockito-dialog/pockito-dialog.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { LoadingService, ToastService } from '@shared/services';
-import { DialogModule } from 'primeng/dialog';
 import { PockitoCurrencyPipe } from '../../../shared/pipes/pockito-currency.pipe';
 import { WalletFormComponent } from '../wallet-form/wallet-form.component';
 
@@ -24,7 +24,7 @@ import { WalletFormComponent } from '../wallet-form/wallet-form.component';
     WalletFormComponent,
     TranslatePipe,
     PockitoCurrencyPipe,
-    DialogModule,
+    PockitoDialogComponent,
     PageHeaderComponent,
     EmptyStateComponent,
   ],

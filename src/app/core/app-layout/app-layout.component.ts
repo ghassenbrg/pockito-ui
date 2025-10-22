@@ -16,11 +16,11 @@ import { ResponsiveService } from '@core/services/responsive.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { LanguageSwitcherComponent } from '@shared/components/language-switcher/language-switcher.component';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
+import { PockitoDialogComponent } from '@shared/components/pockito-dialog/pockito-dialog.component';
 import { ToastComponent } from '@shared/components/toast/toast.component';
 import { TransactionFormComponent } from '@shared/components/transaction-form/transaction-form.component';
 import { LoadingService } from '@shared/services/loading.service';
 import { MenuItem, MessageService } from 'primeng/api';
-import { DialogModule } from 'primeng/dialog';
 import { DockModule } from 'primeng/dock';
 import { TerminalModule, TerminalService } from 'primeng/terminal';
 import { Subscription } from 'rxjs';
@@ -32,11 +32,11 @@ import { distinctUntilChanged, filter, map } from 'rxjs/operators';
   imports: [
     CommonModule,
     DockModule,
-    DialogModule,
     TerminalModule,
     TranslatePipe,
     LanguageSwitcherComponent,
     LoadingSpinnerComponent,
+    PockitoDialogComponent,
     ToastComponent,
     TransactionFormComponent,
   ],
