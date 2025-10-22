@@ -47,7 +47,7 @@ export class PockitoDialogComponent implements OnInit, OnChanges {
   }
 
   @HostListener('document:keydown.escape', ['$event'])
-  onEscapeKey(event: KeyboardEvent) {
+  onEscapeKey() {
     if (this.closeOnEscape && this.visible) {
       this.hide();
     }

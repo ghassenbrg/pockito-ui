@@ -12,7 +12,6 @@ import { LoadingService, ToastService } from '@shared/services';
 import { PockitoCurrencyPipe } from '@shared/pipes/pockito-currency.pipe';
 import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
 import { MenuModule } from 'primeng/menu';
 import { WalletFormComponent } from '../wallet-form/wallet-form.component';
 
