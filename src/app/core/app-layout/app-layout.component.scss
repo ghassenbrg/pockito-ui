@@ -39,6 +39,10 @@
   overflow-x: hidden;
 }
 
+.app-content {
+  padding-bottom: 50px; // Add padding so final content isn't hidden behind navigation
+}
+
 // -----------------------------------------------------------------------------
 // MOBILE NAVIGATION COMPONENTS
 // -----------------------------------------------------------------------------
@@ -210,6 +214,10 @@
   box-shadow: var(--shadow-light);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-tap-highlight-color: transparent;
+  
+  // Ensure it always stays at the bottom and is always visible
+  will-change: transform;
+  transform: translateZ(0); // Force hardware acceleration
 
   .mobile-bottom-nav-items {
     display: flex;
@@ -281,6 +289,13 @@
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  
+  // Mobile: Set fixed height to prevent scrollbar from extending to bottom
+  @media (max-width: 1023px) {
+    height: calc(100vh - var(--mobile-bottom-nav-height));
+    max-height: calc(100vh - var(--mobile-bottom-nav-height));
+    overflow: hidden; // Prevent main area from scrolling
+  }
 
   @media (min-width: 1024px) {
     position: fixed;
@@ -292,6 +307,8 @@
     overflow-y: auto;
     z-index: 1;
     background: none; // Remove mobile background on desktop since desktop has its own
+    height: auto; // Reset height for desktop
+    max-height: none; // Reset max-height for desktop
   }
 }
 
@@ -302,6 +319,11 @@
   min-height: 100%;
   padding: clamp(20px, 3vw, 40px);
   box-sizing: border-box;
+  
+  // Mobile: Ensure proper spacing for scrollable content
+  @media (max-width: 1023px) {
+    padding-bottom: 20px; // Add some bottom padding for content
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -420,7 +442,10 @@
 // Mobile bottom padding for app content
 @media (max-width: 1023px) {
   .app-content {
-    padding-bottom: 80px !important;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch; // Smooth scrolling on iOS
   }
 }
 
@@ -531,10 +556,11 @@
 // -----------------------------------------------------------------------------
 @media (max-width: 1023px) {
   :host ::ng-deep {
-    // Ensure dialogs are full screen on mobile
+    // Ensure dialogs are full screen on mobile and appear above mobile navigation
     app-pockito-dialog {
       margin: 0;
       border-radius: 0;
+      z-index: 1001 !important; // Higher than mobile bottom nav (1000)
 
       @media (max-width: 640px) {
         width: 100vw !important;
@@ -548,8 +574,9 @@
       }
     }
 
-    // Ensure dialog mask covers full screen
+    // Ensure dialog mask covers full screen and has proper z-index
     .pockito-dialog-mask {
+      z-index: 1001 !important; // Higher than mobile bottom nav
       @media (max-width: 640px) {
         padding: 0 !important;
       }
@@ -557,6 +584,7 @@
 
     // Ensure dialog content fills full screen
     .pockito-dialog-content {
+      z-index: 1002 !important; // Higher than mask
       @media (max-width: 640px) {
         height: 100vh !important;
         border-radius: 0 !important;
