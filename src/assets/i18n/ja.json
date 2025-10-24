@@ -190,7 +190,8 @@
     "yesterday": "昨日",
     "unknownCategory": "不明なカテゴリ",
     "outOfPockito": "Pockito外",
-    "search": "検索"
+    "search": "検索",
+    "notAvailable": "N/A"
   },
   "enums": {
     "walletType": {

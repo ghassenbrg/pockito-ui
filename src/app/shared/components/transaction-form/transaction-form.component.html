@@ -50,15 +50,19 @@
         {{ "transactions.form.category" | translate }}
         <span class="required">{{ "transactions.form.required" | translate }}</span>
       </label>
-      <app-category-selector
-        [selectedCategoryId]="transactionForm.get('categoryId')?.value"
-        [transactionType]="transactionForm.get('transactionType')?.value"
+      <app-pockito-selector
+        [selectedId]="transactionForm.get('categoryId')?.value"
+        [selectedItem]="getSelectedCategory(transactionForm.get('categoryId')?.value)"
+        [options]="categoryOptions"
         [isInvalid]="(transactionForm.get('categoryId')?.invalid && transactionForm.get('categoryId')?.touched) || false"
         [placeholder]="'transactions.form.categoryPlaceholder'"
-        (categorySelected)="onCategorySelected($event)"
-        (categoryCleared)="onCategoryCleared()"
-        (categoryTouched)="onCategoryTouched()"
-      ></app-category-selector>
+        [title]="'transactions.form.selectCategory'"
+        [searchPlaceholder]="'transactions.form.searchCategories'"
+        [showBalance]="false"
+        (itemSelected)="onCategorySelected($event)"
+        (itemCleared)="onCategoryCleared()"
+        (itemTouched)="onCategoryTouched()"
+      ></app-pockito-selector>
       <small
         *ngIf="getFieldError('categoryId')"
         class="p-error"
@@ -74,15 +78,21 @@
         {{ "transactions.form.fromWallet" | translate }}
         <span class="required" *ngIf="shouldShowFromWalletRequired()">{{ "transactions.form.required" | translate }}</span>
       </label>
-      <app-wallet-selector
-        [selectedWalletId]="transactionForm.get('walletFromId')?.value"
+      <app-pockito-selector
+        [selectedId]="transactionForm.get('walletFromId')?.value"
+        [selectedItem]="getSelectedWallet(transactionForm.get('walletFromId')?.value)"
+        [options]="walletFromOptions"
         [isInvalid]="(transactionForm.get('walletFromId')?.invalid && transactionForm.get('walletFromId')?.touched) || false"
         [placeholder]="'transactions.form.fromWalletPlaceholder'"
-        [showAllWallets]="true"
-        (walletSelected)="onFromWalletSelected($event)"
-        (walletCleared)="onFromWalletCleared()"
-        (walletTouched)="onFromWalletTouched()"
-      ></app-wallet-selector>
+        [title]="'transactions.form.selectWallet'"
+        [searchPlaceholder]="'transactions.form.searchWallets'"
+        [showBalance]="true"
+        [balance]="getSelectedWallet(transactionForm.get('walletFromId')?.value)?.balance"
+        [currency]="getSelectedWallet(transactionForm.get('walletFromId')?.value)?.currency"
+        (itemSelected)="onFromWalletSelected($event)"
+        (itemCleared)="onFromWalletCleared()"
+        (itemTouched)="onFromWalletTouched()"
+      ></app-pockito-selector>
       <small
         *ngIf="getFieldError('walletFromId')"
         class="p-error"
@@ -98,15 +108,21 @@
         {{ "transactions.form.toWallet" | translate }}
         <span class="required" *ngIf="shouldShowToWalletRequired()">{{ "transactions.form.required" | translate }}</span>
       </label>
-      <app-wallet-selector
-        [selectedWalletId]="transactionForm.get('walletToId')?.value"
+      <app-pockito-selector
+        [selectedId]="transactionForm.get('walletToId')?.value"
+        [selectedItem]="getSelectedWallet(transactionForm.get('walletToId')?.value)"
+        [options]="walletToOptions"
         [isInvalid]="(transactionForm.get('walletToId')?.invalid && transactionForm.get('walletToId')?.touched) || false"
         [placeholder]="'transactions.form.toWalletPlaceholder'"
-        [showAllWallets]="true"
-        (walletSelected)="onToWalletSelected($event)"
-        (walletCleared)="onToWalletCleared()"
-        (walletTouched)="onToWalletTouched()"
-      ></app-wallet-selector>
+        [title]="'transactions.form.selectWallet'"
+        [searchPlaceholder]="'transactions.form.searchWallets'"
+        [showBalance]="true"
+        [balance]="getSelectedWallet(transactionForm.get('walletToId')?.value)?.balance"
+        [currency]="getSelectedWallet(transactionForm.get('walletToId')?.value)?.currency"
+        (itemSelected)="onToWalletSelected($event)"
+        (itemCleared)="onToWalletCleared()"
+        (itemTouched)="onToWalletTouched()"
+      ></app-pockito-selector>
       <small
         *ngIf="getFieldError('walletToId')"
         class="p-error"
@@ -128,7 +144,7 @@
             {{ 
             getCurrencySymbol(getWalletCurrency(transactionForm.get('walletFromId')?.value)) ||
             getCurrencySymbol(getWalletCurrency(transactionForm.get('walletToId')?.value)) ||
-            '-' }}
+            ('common.notAvailable' | translate) }}
           </span>
           <input
             id="transaction-amount"
@@ -173,6 +189,7 @@
         [useGrouping]="false"
         [minFractionDigits]="1"
         [maxFractionDigits]="6"
+        inputMode="decimal"
         [class.p-invalid]="
           transactionForm.get('exchangeRate')?.invalid &&
           transactionForm.get('exchangeRate')?.touched
@@ -197,7 +214,8 @@
       <div class="amount-input-container">
         <div class="amount-input-wrapper">
           <span class="amount-currency-symbol">
-            {{ getCurrencySymbol(getWalletCurrency(transactionForm.get('walletToId')?.value)) || '-' }}
+            {{ getCurrencySymbol(getWalletCurrency(transactionForm.get('walletToId')?.value))
+             || ('common.notAvailable' | translate) }}
           </span>
           <input
             id="transaction-amount-to"

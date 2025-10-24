@@ -7,10 +7,12 @@ import {
   Validators,
 } from '@angular/forms';
 import {
+  CategoryDto,
   CategoryType,
   TransactionDto,
   TransactionType,
   WalletDto,
+  WalletType,
 } from '@api/models';
 import {
   CategoryService,
@@ -18,13 +20,13 @@ import {
   WalletService,
 } from '@api/services';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CategorySelectorComponent } from '@shared/components/category-selector/category-selector.component';
 import {
   PockitoButtonComponent,
   PockitoButtonSize,
   PockitoButtonType,
 } from '@shared/components/pockito-button/pockito-button.component';
-import { WalletSelectorComponent } from '@shared/components/wallet-selector/wallet-selector.component';
+import { PockitoSelectorComponent } from '@shared/components/pockito-selector/pockito-selector.component';
+import { DialogOption } from '@shared/components/dialog-selector/dialog-selector.component';
 import { ToastService } from '@shared/services/toast.service';
 
 // PrimeNG imports
@@ -40,8 +42,7 @@ import { InputTextModule } from 'primeng/inputtext';
     ReactiveFormsModule,
     CommonModule,
     PockitoButtonComponent,
-    CategorySelectorComponent,
-    WalletSelectorComponent,
+    PockitoSelectorComponent,
     TranslateModule,
     // PrimeNG modules
     InputTextModule,
@@ -69,11 +70,19 @@ export class TransactionFormComponent implements OnInit {
 
   // PrimeNG dropdown options
   transactionTypeOptions: any[] = [];
-  categoryOptions: any[] = [];
-  walletOptions: any[] = [];
 
   // Data arrays
   wallets: WalletDto[] = [];
+  categories: CategoryDto[] = [];
+
+  // Dialog options for selectors
+  walletOptions: DialogOption[] = [];
+  walletFromOptions: DialogOption[] = [];
+  walletToOptions: DialogOption[] = [];
+  categoryOptions: DialogOption[] = [];
+
+  // Default wallet
+  defaultWallet: WalletDto | null = null;
 
   // Button types and sizes for template
   PockitoButtonType = PockitoButtonType;
@@ -130,13 +139,17 @@ export class TransactionFormComponent implements OnInit {
 
   private loadData(): void {
     this.loadWallets();
+    this.loadCategories();
   }
 
   private loadWallets(): void {
     this.walletService.getUserWallets().subscribe({
       next: (wallets: WalletDto[]) => {
         this.wallets = wallets;
+        // Find the wallet with isDefault flag set to true
+        this.defaultWallet = wallets.find(wallet => wallet.isDefault) || null;
         this.updateWalletOptions();
+        this.setDefaultWalletValues();
       },
       error: (error) => {
         console.error('Error loading wallets:', error);
@@ -148,10 +161,110 @@ export class TransactionFormComponent implements OnInit {
     });
   }
 
+  private loadCategories(): void {
+    // Load both income and expense categories
+    this.categoryService.getCategoriesByType(CategoryType.INCOME).subscribe({
+      next: (incomeCategories: CategoryDto[]) => {
+        this.categoryService.getCategoriesByType(CategoryType.EXPENSE).subscribe({
+          next: (expenseCategories: CategoryDto[]) => {
+            this.categories = [...incomeCategories, ...expenseCategories];
+            this.updateCategoryOptions();
+          },
+          error: (error) => {
+            console.error('Error loading expense categories:', error);
+            this.toastService.showError(
+              'transactions.loadingCategoriesError',
+              error.error?.message || 'Error loading categories'
+            );
+          },
+        });
+      },
+      error: (error) => {
+        console.error('Error loading income categories:', error);
+        this.toastService.showError(
+          'transactions.loadingCategoriesError',
+          error.error?.message || 'Error loading categories'
+        );
+      },
+    });
+  }
+
   private updateWalletOptions(): void {
-    this.walletOptions = this.wallets.map((wallet) => ({
-      label: wallet.name,
-      value: wallet.id,
+    // Add "Out of Pockito" option at the beginning
+    const outOfPockitoOption: DialogOption = {
+      id: null,
+      name: this.translate.instant('common.outOfPockito'),
+      fallbackIcon: 'pi pi-external-link',
+      type: 'OUT_OF_POCKITO',
+      typeLabel: this.translate.instant('common.outOfPockito')
+    };
+
+    const walletOptions = this.wallets.map(wallet => ({
+      id: wallet.id!,
+      name: wallet.name,
+      iconUrl: wallet.iconUrl,
+      fallbackIcon: this.getWalletIcon(wallet.type),
+      type: wallet.type,
+      typeLabel: this.getWalletTypeLabel(wallet.type),
+      currency: wallet.currency,
+      balance: wallet.balance
+    }));
+
+    this.walletOptions = [outOfPockitoOption, ...walletOptions];
+    this.updateWalletFromOptions();
+    this.updateWalletToOptions();
+  }
+
+  private updateWalletFromOptions(): void {
+    const walletToId = this.transactionForm.get('walletToId')?.value;
+    this.walletFromOptions = this.walletOptions.filter(option => 
+      option.id !== walletToId || option.id === null
+    );
+  }
+
+  private updateWalletToOptions(): void {
+    const walletFromId = this.transactionForm.get('walletFromId')?.value;
+    this.walletToOptions = this.walletOptions.filter(option => 
+      option.id !== walletFromId || option.id === null
+    );
+  }
+
+  private setDefaultWalletValues(): void {
+    const transactionType = this.transactionForm.get('transactionType')?.value;
+    
+    if (!transactionType || !this.defaultWallet) {
+      return;
+    }
+
+    if (transactionType === TransactionType.TRANSFER) {
+      // Transfer: default walletTo is default wallet, walletFrom is null
+      this.transactionForm.patchValue({
+        walletToId: this.defaultWallet.id,
+        walletFromId: null
+      }, { emitEvent: false });
+    } else if (transactionType === TransactionType.EXPENSE) {
+      // Expense: default walletFrom is default wallet, walletTo is undefined
+      this.transactionForm.patchValue({
+        walletFromId: this.defaultWallet.id,
+        walletToId: null
+      }, { emitEvent: false });
+    } else if (transactionType === TransactionType.INCOME) {
+      // Income: default walletTo is default wallet, walletFrom is undefined
+      this.transactionForm.patchValue({
+        walletToId: this.defaultWallet.id,
+        walletFromId: null
+      }, { emitEvent: false });
+    }
+  }
+
+  private updateCategoryOptions(): void {
+    this.categoryOptions = this.categories.map(category => ({
+      id: category.id!,
+      name: category.name!,
+      iconUrl: category.iconUrl,
+      fallbackIcon: this.getCategoryIcon(category.categoryType!),
+      type: category.categoryType,
+      typeLabel: this.getCategoryTypeLabel(category.categoryType!)
     }));
   }
 
@@ -233,6 +346,13 @@ export class TransactionFormComponent implements OnInit {
         { emitEvent: false }
       );
     }
+
+    // Set default wallet values based on transaction type
+    this.setDefaultWalletValues();
+    
+    // Update wallet options to exclude selected wallets
+    this.updateWalletFromOptions();
+    this.updateWalletToOptions();
 
     // Update validation
     this.transactionForm.get('walletFromId')?.updateValueAndValidity();
@@ -549,6 +669,56 @@ export class TransactionFormComponent implements OnInit {
     return this.translate.instant(`enums.categoryType.${type}`);
   }
 
+  getWalletIcon(walletType?: WalletType): string {
+    if (!walletType) return 'pi pi-circle';
+    
+    switch (walletType) {
+      case WalletType.BANK_ACCOUNT:
+        return 'pi pi-building';
+      case WalletType.CASH:
+        return 'pi pi-money-bill';
+      case WalletType.CREDIT_CARD:
+        return 'pi pi-credit-card';
+      case WalletType.SAVINGS:
+        return 'pi pi-piggy-bank';
+      case WalletType.CUSTOM:
+        return 'pi pi-wallet';
+      default:
+        return 'pi pi-circle';
+    }
+  }
+
+  getWalletTypeLabel(type?: WalletType): string {
+    if (!type) return '';
+    return this.translate.instant(`enums.walletType.${type}`);
+  }
+
+  getCategoryIcon(categoryType: CategoryType): string {
+    switch (categoryType) {
+      case CategoryType.INCOME:
+        return 'pi pi-arrow-up';
+      case CategoryType.EXPENSE:
+        return 'pi pi-arrow-down';
+      default:
+        return 'pi pi-circle';
+    }
+  }
+
+  getSelectedWallet(walletId?: string): any {
+    if (walletId === null) {
+      // Return the "Out of Pockito" option object
+      return this.walletOptions.find(option => option.id === null);
+    }
+    if (!walletId) {
+      return undefined;
+    }
+    return this.wallets.find(wallet => wallet.id === walletId);
+  }
+
+  getSelectedCategory(categoryId?: string): CategoryDto | undefined {
+    return this.categories.find(cat => cat.id === categoryId);
+  }
+
   /**
    * Formats a date as a local date string without timezone (YYYY-MM-DD format)
    * @param date - Date object
@@ -741,8 +911,8 @@ export class TransactionFormComponent implements OnInit {
   }
 
   // Category selector event handlers
-  onCategorySelected(categoryId: string): void {
-    this.transactionForm.patchValue({ categoryId });
+  onCategorySelected(categoryId: string | null): void {
+    this.transactionForm.patchValue({ categoryId: categoryId || undefined });
     // Mark field as touched to show validation errors
     this.transactionForm.get('categoryId')?.markAsTouched();
   }
@@ -759,7 +929,25 @@ export class TransactionFormComponent implements OnInit {
   }
 
   onFromWalletSelected(walletId: string | null): void {
+    const currentWalletToId = this.transactionForm.get('walletToId')?.value;
+    
+    // Handle wallet switching logic for transfers
+    if (this.transactionForm.get('transactionType')?.value === TransactionType.TRANSFER) {
+      if (walletId === null && currentWalletToId === null) {
+        // Both are null, switch the previous selected wallet
+        const previousWalletFromId = this.transactionForm.get('walletFromId')?.value;
+        if (previousWalletFromId && previousWalletFromId !== null) {
+          this.transactionForm.patchValue({ walletToId: previousWalletFromId });
+        }
+      }
+    }
+    
     this.transactionForm.patchValue({ walletFromId: walletId });
+    
+    // Update wallet options to exclude selected wallets
+    this.updateWalletFromOptions();
+    this.updateWalletToOptions();
+    
     // Trigger validation on both wallet fields for transfer transactions
     this.transactionForm.get('walletFromId')?.updateValueAndValidity();
     this.transactionForm.get('walletToId')?.updateValueAndValidity();
@@ -767,13 +955,36 @@ export class TransactionFormComponent implements OnInit {
 
   onFromWalletCleared(): void {
     this.transactionForm.patchValue({ walletFromId: undefined });
+    
+    // Update wallet options to exclude selected wallets
+    this.updateWalletFromOptions();
+    this.updateWalletToOptions();
+    
     // Trigger validation on both wallet fields for transfer transactions
     this.transactionForm.get('walletFromId')?.updateValueAndValidity();
     this.transactionForm.get('walletToId')?.updateValueAndValidity();
   }
 
   onToWalletSelected(walletId: string | null): void {
+    const currentWalletFromId = this.transactionForm.get('walletFromId')?.value;
+    
+    // Handle wallet switching logic for transfers
+    if (this.transactionForm.get('transactionType')?.value === TransactionType.TRANSFER) {
+      if (walletId === null && currentWalletFromId === null) {
+        // Both are null, switch the previous selected wallet
+        const previousWalletToId = this.transactionForm.get('walletToId')?.value;
+        if (previousWalletToId && previousWalletToId !== null) {
+          this.transactionForm.patchValue({ walletFromId: previousWalletToId });
+        }
+      }
+    }
+    
     this.transactionForm.patchValue({ walletToId: walletId });
+    
+    // Update wallet options to exclude selected wallets
+    this.updateWalletFromOptions();
+    this.updateWalletToOptions();
+    
     // Trigger validation on both wallet fields for transfer transactions
     this.transactionForm.get('walletFromId')?.updateValueAndValidity();
     this.transactionForm.get('walletToId')?.updateValueAndValidity();
@@ -781,6 +992,11 @@ export class TransactionFormComponent implements OnInit {
 
   onToWalletCleared(): void {
     this.transactionForm.patchValue({ walletToId: undefined });
+    
+    // Update wallet options to exclude selected wallets
+    this.updateWalletFromOptions();
+    this.updateWalletToOptions();
+    
     // Mark field as touched to show validation errors
     this.transactionForm.get('walletToId')?.markAsTouched();
     // Trigger validation on both wallet fields for transfer transactions

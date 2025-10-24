@@ -1,0 +1,51 @@
+<div class="pockito-selector">
+  <div 
+    class="pockito-selector__trigger"
+    [class.p-invalid]="isInvalid"
+    (click)="openDialog()"
+  >
+    <div class="pockito-selector__content">
+      <div class="pockito-selector__icon" *ngIf="selectedItem">
+        <img 
+          *ngIf="getItemIcon() && !getItemIcon().startsWith('pi pi-'); else fallbackIcon"
+          [src]="getItemIcon()" 
+          [alt]="getItemName()"
+          class="pockito-selector__icon-image"
+        />
+        <ng-template #fallbackIcon>
+          <i [class]="getItemIcon() || 'pi pi-circle'"></i>
+        </ng-template>
+      </div>
+      <div class="pockito-selector__text">
+        <span *ngIf="selectedItem; else noItem">
+          {{ getItemName() }}
+        </span>
+        <ng-template #noItem>
+          <span class="pockito-selector__placeholder">
+            {{ placeholder | translate }}
+          </span>
+        </ng-template>
+      </div>
+      <div class="pockito-selector__balance" 
+        *ngIf="showBalance && balance !== null && balance !== undefined">
+        <span class="pockito-selector__balance-amount">
+          {{ balance | pockitoCurrency:currency:'code' }}
+        </span>
+      </div>
+    </div>
+    <div class="pockito-selector__arrow">
+      <i class="pi pi-chevron-down"></i>
+    </div>
+  </div>
+</div>
+
+<!-- Selection Dialog -->
+<app-dialog-selector
+  [isOpen]="showDialog"
+  [title]="title"
+  [options]="options"
+  [selectedOptionId]="selectedId"
+  [searchPlaceholder]="searchPlaceholder"
+  (optionSelected)="onDialogOptionSelected($event)"
+  (dialogClosed)="onDialogClosed()"
+></app-dialog-selector>

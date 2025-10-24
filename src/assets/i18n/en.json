@@ -190,7 +190,8 @@
     "yesterday": "Yesterday",
     "unknownCategory": "Unknown Category",
     "outOfPockito": "Out of Pockito",
-    "search": "Search"
+    "search": "Search",
+    "notAvailable": "N/A"
   },
   "enums": {
     "walletType": {
