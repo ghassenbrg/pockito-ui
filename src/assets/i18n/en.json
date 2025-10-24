@@ -54,8 +54,9 @@
       "category": "Category",
       "categoryRequired": "Category is required",
       "categoryPlaceholder": "Select category",
+      "selectCategory": "Select Category",
       "fromWallet": "From Wallet",
-      "fromWalletPlaceholder": "Select source wallet'",
+      "fromWalletPlaceholder": "Select source wallet",
       "toWallet": "To Wallet",
       "toWalletPlaceholder": "Select destination wallet",
       "amount": "Amount",
@@ -72,10 +73,29 @@
       "effectiveDateRequired": "Effective date is required",
       "effectiveDatePlaceholder": "Select date",
       "required": "*",
+      "optional": "Optional",
+      "searchCategories": "Search categories",
+      "searchWallets": "Search wallets",
+      "selectWallet": "Select Wallet",
+      "quickNote": {
+        "groceries": "Groceries",
+        "transport": "Transport",
+        "food": "Food & Dining"
+      },
+      "quickDate": {
+        "today": "Today",
+        "yesterday": "Yesterday"
+      },
+      "typeDescription": {
+        "income": "Money coming in",
+        "expense": "Money going out",
+        "transfer": "Moving money between wallets"
+      },
       "actions": {
         "cancel": "Cancel",
         "create": "Create Transaction",
-        "update": "Update Transaction"
+        "update": "Update Transaction",
+        "select": "Select"
       },
       "errors": {
         "transactionTypeRequired": "Transaction type is required",
@@ -86,7 +106,9 @@
         "exchangeRateRequired": "Exchange rate is required",
         "exchangeRateMin": "Exchange rate must be at least 0.0001",
         "effectiveDateRequired": "Effective date is required",
-        "noteMaxLength": "Note must not exceed 500 characters"
+        "noteMaxLength": "Note must not exceed 500 characters",
+        "walletFromRequired": "From wallet is required",
+        "walletToRequired": "To wallet is required"
       }
     }
   },
@@ -167,7 +189,8 @@
     "today": "Today",
     "yesterday": "Yesterday",
     "unknownCategory": "Unknown Category",
-    "outOfPockito": "Out of Pockito"
+    "outOfPockito": "Out of Pockito",
+    "search": "Search"
   },
   "enums": {
     "walletType": {

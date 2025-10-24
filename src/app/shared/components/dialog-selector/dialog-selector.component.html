@@ -1,0 +1,75 @@
+<!-- Dialog Overlay -->
+<div class="dialog-selector" [class.dialog-selector--open]="isOpen">
+  <div class="dialog-selector__overlay" (click)="closeDialog()"></div>
+  <div class="dialog-selector__content" [style.max-width]="maxWidth" [style.max-height]="maxHeight">
+    <div class="dialog-selector__header">
+      <h3>{{ title | translate }}</h3>
+      <button 
+        type="button" 
+        class="dialog-selector__close"
+        (click)="closeDialog()"
+      >
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+    <div class="dialog-selector__body">
+      <!-- Search Input -->
+      <div class="dialog-selector__search" *ngIf="showSearch">
+        <div class="dialog-selector__search-input">
+          <i class="pi pi-search dialog-selector__search-icon"></i>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearchChange($event)"
+            [placeholder]="searchPlaceholder | translate"
+            class="dialog-selector__search-field"
+          />
+          <button
+            *ngIf="searchTerm"
+            type="button"
+            class="dialog-selector__search-clear"
+            (click)="clearSearch()"
+          >
+            <i class="pi pi-times"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Options Grid -->
+      <div class="dialog-selector__grid">
+        <div 
+          *ngFor="let option of getDisplayOptions()" 
+          class="dialog-selector__option"
+          [class.selected]="selectedOptionId === option.id"
+          (click)="selectOption(option.id)"
+        >
+          <div class="dialog-selector__option-icon">
+            <img 
+              *ngIf="option.iconUrl; else fallbackIcon"
+              [src]="option.iconUrl" 
+              [alt]="option.name"
+              class="dialog-selector__option-image"
+            />
+            <ng-template #fallbackIcon>
+              <i [class]="getOptionIcon(option)"></i>
+            </ng-template>
+          </div>
+          <div class="dialog-selector__option-content">
+            <div class="dialog-selector__option-name">{{ option.name }}</div>
+            <div class="dialog-selector__option-details">
+              <div class="dialog-selector__option-type" *ngIf="option.typeLabel">
+                {{ option.typeLabel | translate }}
+              </div>
+              <div class="dialog-selector__option-balance" *ngIf="option.balance !== undefined">
+                {{ option.balance | pockitoCurrency:option.currency:'code' }}
+              </div>
+            </div>
+          </div>
+          <div class="dialog-selector__option-radio">
+            <div class="radio-indicator"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

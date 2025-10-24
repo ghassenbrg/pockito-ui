@@ -54,6 +54,7 @@
       "category": "Catégorie",
       "categoryRequired": "La catégorie est requise",
       "categoryPlaceholder": "Sélectionner une catégorie",
+      "selectCategory": "Sélectionner une Catégorie",
       "fromWallet": "Portefeuille Source",
       "fromWalletPlaceholder": "Sélectionner le portefeuille source",
       "toWallet": "Portefeuille Destination",
@@ -72,10 +73,29 @@
       "effectiveDateRequired": "La date d'effet est requise",
       "effectiveDatePlaceholder": "Sélectionner une date",
       "required": "*",
+      "optional": "Optionnel",
+      "searchCategories": "Rechercher les catégories",
+      "searchWallets": "Rechercher les portefeuilles",
+      "selectWallet": "Sélectionner un Portefeuille",
+      "quickNote": {
+        "groceries": "Épicerie",
+        "transport": "Transport",
+        "food": "Nourriture & Restauration"
+      },
+      "quickDate": {
+        "today": "Aujourd'hui",
+        "yesterday": "Hier"
+      },
+      "typeDescription": {
+        "income": "Argent entrant",
+        "expense": "Argent sortant",
+        "transfer": "Déplacement d'argent entre portefeuilles"
+      },
       "actions": {
         "cancel": "Annuler",
         "create": "Créer la Transaction",
-        "update": "Mettre à jour la Transaction"
+        "update": "Mettre à jour la Transaction",
+        "select": "Sélectionner"
       },
       "errors": {
         "transactionTypeRequired": "Le type de transaction est requis",
@@ -86,7 +106,9 @@
         "exchangeRateRequired": "Le taux de change est requis",
         "exchangeRateMin": "Le taux de change doit être d'au moins 0,0001",
         "effectiveDateRequired": "La date d'effet est requise",
-        "noteMaxLength": "La note ne doit pas dépasser 500 caractères"
+        "noteMaxLength": "La note ne doit pas dépasser 500 caractères",
+        "walletFromRequired": "Le portefeuille source est requis",
+        "walletToRequired": "Le portefeuille de destination est requis"
       }
     }
   },
@@ -167,7 +189,8 @@
     "today": "Aujourd'hui",
     "yesterday": "Hier",
     "unknownCategory": "Catégorie Inconnue",
-    "outOfPockito": "Hors de Pockito"
+    "outOfPockito": "Hors de Pockito",
+    "search": "Rechercher"
   },
   "enums": {
     "walletType": {

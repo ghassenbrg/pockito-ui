@@ -6,23 +6,35 @@
   >
     <!-- Transaction Type Field -->
     <div class="form-field">
-      <label for="transaction-type" class="form-field__label">
+      <label class="form-field__label">
         {{ "transactions.form.type" | translate }}
         <span class="required">{{ "transactions.form.required" | translate }}</span>
       </label>
-      <p-dropdown
-        id="transaction-type"
-        formControlName="transactionType"
-        [options]="transactionTypeOptions"
-        [placeholder]="'transactions.form.typePlaceholder' | translate"
-        [showClear]="true"
-        [filter]="false"
-        [class.p-invalid]="
-          transactionForm.get('transactionType')?.invalid && 
-          transactionForm.get('transactionType')?.touched
-        "
-        styleClass="w-full"
-      />
+      <div class="transaction-type-selector transaction-type-selector--grid">
+        <div 
+          *ngFor="let option of transactionTypeOptions" 
+          class="transaction-type-option"
+          [class.selected]="transactionForm.get('transactionType')?.value === option.value"
+          (click)="selectTransactionType(option.value)"
+        >
+          <div class="transaction-type-option__icon">
+            <i [class]="getTransactionTypeIcon(option.value)"></i>
+          </div>
+          <div class="transaction-type-option__content">
+            <div class="transaction-type-option__label">{{ option.label }}</div>
+          </div>
+          <div class="transaction-type-option__radio">
+            <input 
+              type="radio" 
+              [value]="option.value"
+              formControlName="transactionType"
+              [id]="'transaction-type-' + option.value"
+              class="sr-only"
+            />
+            <div class="radio-indicator"></div>
+          </div>
+        </div>
+      </div>
       <small
         *ngIf="getFieldError('transactionType')"
         class="p-error"
@@ -38,20 +50,15 @@
         {{ "transactions.form.category" | translate }}
         <span class="required">{{ "transactions.form.required" | translate }}</span>
       </label>
-      <p-dropdown
-        id="transaction-category"
-        formControlName="categoryId"
-        [options]="categoryOptions"
-        [placeholder]="'transactions.form.categoryPlaceholder' | translate"
-        [showClear]="true"
-        [filter]="true"
-        filterBy="label"
-        [class.p-invalid]="
-          transactionForm.get('categoryId')?.invalid &&
-          transactionForm.get('categoryId')?.touched
-        "
-        styleClass="w-full"
-      />
+      <app-category-selector
+        [selectedCategoryId]="transactionForm.get('categoryId')?.value"
+        [transactionType]="transactionForm.get('transactionType')?.value"
+        [isInvalid]="(transactionForm.get('categoryId')?.invalid && transactionForm.get('categoryId')?.touched) || false"
+        [placeholder]="'transactions.form.categoryPlaceholder'"
+        (categorySelected)="onCategorySelected($event)"
+        (categoryCleared)="onCategoryCleared()"
+        (categoryTouched)="onCategoryTouched()"
+      ></app-category-selector>
       <small
         *ngIf="getFieldError('categoryId')"
         class="p-error"
@@ -65,21 +72,17 @@
     <div class="form-field" *ngIf="shouldShowFromWalletField()">
       <label for="wallet-from" class="form-field__label">
         {{ "transactions.form.fromWallet" | translate }}
+        <span class="required" *ngIf="shouldShowFromWalletRequired()">{{ "transactions.form.required" | translate }}</span>
       </label>
-      <p-dropdown
-        id="wallet-from"
-        formControlName="walletFromId"
-        [options]="getWalletOptionsWithNull()"
-        [placeholder]="'transactions.form.fromWalletPlaceholder' | translate"
-        [showClear]="true"
-        [filter]="true"
-        filterBy="label"
-        [class.p-invalid]="
-          transactionForm.get('walletFromId')?.invalid &&
-          transactionForm.get('walletFromId')?.touched
-        "
-        styleClass="w-full"
-      />
+      <app-wallet-selector
+        [selectedWalletId]="transactionForm.get('walletFromId')?.value"
+        [isInvalid]="(transactionForm.get('walletFromId')?.invalid && transactionForm.get('walletFromId')?.touched) || false"
+        [placeholder]="'transactions.form.fromWalletPlaceholder'"
+        [showAllWallets]="true"
+        (walletSelected)="onFromWalletSelected($event)"
+        (walletCleared)="onFromWalletCleared()"
+        (walletTouched)="onFromWalletTouched()"
+      ></app-wallet-selector>
       <small
         *ngIf="getFieldError('walletFromId')"
         class="p-error"
@@ -93,21 +96,17 @@
     <div class="form-field" *ngIf="shouldShowToWalletField()">
       <label for="wallet-to" class="form-field__label">
         {{ "transactions.form.toWallet" | translate }}
+        <span class="required" *ngIf="shouldShowToWalletRequired()">{{ "transactions.form.required" | translate }}</span>
       </label>
-      <p-dropdown
-        id="wallet-to"
-        formControlName="walletToId"
-        [options]="getWalletOptionsWithNull()"
-        [placeholder]="'transactions.form.toWalletPlaceholder' | translate"
-        [showClear]="true"
-        [filter]="true"
-        filterBy="label"
-        [class.p-invalid]="
-          transactionForm.get('walletToId')?.invalid &&
-          transactionForm.get('walletToId')?.touched
-        "
-        styleClass="w-full"
-      />
+      <app-wallet-selector
+        [selectedWalletId]="transactionForm.get('walletToId')?.value"
+        [isInvalid]="(transactionForm.get('walletToId')?.invalid && transactionForm.get('walletToId')?.touched) || false"
+        [placeholder]="'transactions.form.toWalletPlaceholder'"
+        [showAllWallets]="true"
+        (walletSelected)="onToWalletSelected($event)"
+        (walletCleared)="onToWalletCleared()"
+        (walletTouched)="onToWalletTouched()"
+      ></app-wallet-selector>
       <small
         *ngIf="getFieldError('walletToId')"
         class="p-error"
@@ -122,25 +121,31 @@
       <label for="transaction-amount" class="form-field__label">
         {{ "transactions.form.amount" | translate }}
         <span class="required">{{ "transactions.form.required" | translate }}</span>
-        <span *ngIf="transactionForm.get('walletFromId')?.value && getWalletCurrency(transactionForm.get('walletFromId')?.value)">
-          ({{ getWalletCurrency(transactionForm.get('walletFromId')?.value) }})
-        </span>
       </label>
-      <p-inputNumber
-        id="transaction-amount"
-        formControlName="amount"
-        [placeholder]="'transactions.form.amountPlaceholder' | translate"
-        [min]="0.01"
-        [step]="0.01"
-        [useGrouping]="true"
-        [minFractionDigits]="2"
-        [maxFractionDigits]="2"
-        [class.p-invalid]="
-          transactionForm.get('amount')?.invalid &&
-          transactionForm.get('amount')?.touched
-        "
-        styleClass="w-full"
-      />
+      <div class="amount-input-container">
+        <div class="amount-input-wrapper">
+          <span class="amount-currency-symbol">
+            {{ 
+            getCurrencySymbol(getWalletCurrency(transactionForm.get('walletFromId')?.value)) ||
+            getCurrencySymbol(getWalletCurrency(transactionForm.get('walletToId')?.value)) ||
+            '-' }}
+          </span>
+          <input
+            id="transaction-amount"
+            type="number"
+            formControlName="amount"
+            [placeholder]="'transactions.form.amountPlaceholder' | translate"
+            min="0.01"
+            step="0.01"
+            inputmode="decimal"
+            [class.p-invalid]="
+              transactionForm.get('amount')?.invalid &&
+              transactionForm.get('amount')?.touched
+            "
+            class="amount-input"
+          />
+        </div>
+      </div>
       <small
         *ngIf="getFieldError('amount')"
         class="p-error"
@@ -188,26 +193,29 @@
       <label for="transaction-amount-to" class="form-field__label">
         {{ "transactions.form.amountTo" | translate }}
         <span class="required">{{ "transactions.form.required" | translate }}</span>
-        <span *ngIf="transactionForm.get('walletToId')?.value && getWalletCurrency(transactionForm.get('walletToId')?.value)">
-          ({{ getWalletCurrency(transactionForm.get('walletToId')?.value) }})
-        </span>
       </label>
-      <p-inputNumber
-        id="transaction-amount-to"
-        formControlName="amountTo"
-        [placeholder]="'transactions.form.amountToPlaceholder' | translate"
-        [min]="0.01"
-        [step]="0.01"
-        [useGrouping]="true"
-        [minFractionDigits]="2"
-        [maxFractionDigits]="2"
-        [readonly]="true"
-        [class.p-invalid]="
-          transactionForm.get('amountTo')?.invalid &&
-          transactionForm.get('amountTo')?.touched
-        "
-        styleClass="w-full"
-      />
+      <div class="amount-input-container">
+        <div class="amount-input-wrapper">
+          <span class="amount-currency-symbol">
+            {{ getCurrencySymbol(getWalletCurrency(transactionForm.get('walletToId')?.value)) || '-' }}
+          </span>
+          <input
+            id="transaction-amount-to"
+            type="number"
+            formControlName="amountTo"
+            [placeholder]="'transactions.form.amountToPlaceholder' | translate"
+            min="0.01"
+            step="0.01"
+            inputmode="decimal"
+            readonly
+            [class.p-invalid]="
+              transactionForm.get('amountTo')?.invalid &&
+              transactionForm.get('amountTo')?.touched
+            "
+            class="amount-input"
+          />
+        </div>
+      </div>
       <small
         *ngIf="getFieldError('amountTo')"
         class="p-error"
@@ -221,21 +229,25 @@
     <div class="form-field">
       <label for="transaction-note" class="form-field__label">
         {{ "transactions.form.note" | translate }}
+        <span class="note-optional">{{ "transactions.form.optional" | translate }}</span>
       </label>
-      <textarea
-        id="transaction-note"
-        pInputText
-        formControlName="note"
-        [placeholder]="'transactions.form.notePlaceholder' | translate"
-        [maxlength]="500"
-        rows="3"
-        [class.p-invalid]="
-          transactionForm.get('note')?.invalid &&
-          transactionForm.get('note')?.touched
-        "
-        class="w-full"
-        style="resize: vertical; min-height: 80px"
-      ></textarea>
+      <div class="note-input-container">
+        <textarea
+          id="transaction-note"
+          formControlName="note"
+          [placeholder]="'transactions.form.notePlaceholder' | translate"
+          [maxlength]="500"
+          rows="3"
+          [class.p-invalid]="
+            transactionForm.get('note')?.invalid &&
+            transactionForm.get('note')?.touched
+          "
+          class="note-input"
+        ></textarea>
+        <div class="note-character-count">
+          {{ (transactionForm.get('note')?.value?.length || 0) }}/500
+        </div>
+      </div>
       <small
         *ngIf="getFieldError('note')"
         class="p-error"
@@ -251,19 +263,37 @@
         {{ "transactions.form.effectiveDate" | translate }}
         <span class="required">{{ "transactions.form.required" | translate }}</span>
       </label>
-      <p-calendar
-        id="transaction-date"
-        formControlName="effectiveDate"
-        [placeholder]="'transactions.form.effectiveDatePlaceholder' | translate"
-        [showIcon]="true"
-        [showTime]="false"
-        dateFormat="dd/mm/yy"
-        [class.p-invalid]="
-          transactionForm.get('effectiveDate')?.invalid &&
-          transactionForm.get('effectiveDate')?.touched
-        "
-        styleClass="w-full"
-      />
+      <div class="date-input-container">
+        <p-calendar
+          id="transaction-date"
+          formControlName="effectiveDate"
+          [placeholder]="'transactions.form.effectiveDatePlaceholder' | translate"
+          [showIcon]="true"
+          [showTime]="false"
+          dateFormat="dd/mm/yy"
+          [class.p-invalid]="
+            transactionForm.get('effectiveDate')?.invalid &&
+            transactionForm.get('effectiveDate')?.touched
+          "
+          styleClass="w-full date-picker-mobile"
+        />
+        <div class="date-quick-actions">
+          <button 
+            type="button" 
+            class="date-quick-btn"
+            (click)="setQuickDate('today')"
+          >
+            {{ "transactions.form.quickDate.today" | translate }}
+          </button>
+          <button 
+            type="button" 
+            class="date-quick-btn"
+            (click)="setQuickDate('yesterday')"
+          >
+            {{ "transactions.form.quickDate.yesterday" | translate }}
+          </button>
+        </div>
+      </div>
       <small
         *ngIf="getFieldError('effectiveDate')"
         class="p-error"
@@ -272,6 +302,7 @@
         {{ getFieldError('effectiveDate') }}
       </small>
     </div>
+
 
     <!-- Form Actions -->
     <div class="transaction-form__actions">

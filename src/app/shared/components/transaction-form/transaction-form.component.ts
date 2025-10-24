@@ -6,20 +6,25 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { 
-  CategoryDto, 
-  CategoryType, 
-  TransactionDto, 
-  TransactionType, 
-  WalletDto 
+import {
+  CategoryType,
+  TransactionDto,
+  TransactionType,
+  WalletDto,
 } from '@api/models';
-import { CategoryService, TransactionService, WalletService } from '@api/services';
+import {
+  CategoryService,
+  TransactionService,
+  WalletService,
+} from '@api/services';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { CategorySelectorComponent } from '@shared/components/category-selector/category-selector.component';
 import {
   PockitoButtonComponent,
   PockitoButtonSize,
   PockitoButtonType,
 } from '@shared/components/pockito-button/pockito-button.component';
+import { WalletSelectorComponent } from '@shared/components/wallet-selector/wallet-selector.component';
 import { ToastService } from '@shared/services/toast.service';
 
 // PrimeNG imports
@@ -35,6 +40,8 @@ import { InputTextModule } from 'primeng/inputtext';
     ReactiveFormsModule,
     CommonModule,
     PockitoButtonComponent,
+    CategorySelectorComponent,
+    WalletSelectorComponent,
     TranslateModule,
     // PrimeNG modules
     InputTextModule,
@@ -43,7 +50,7 @@ import { InputTextModule } from 'primeng/inputtext';
     CalendarModule,
   ],
   templateUrl: './transaction-form.component.html',
-  styleUrl: './transaction-form.component.scss'
+  styleUrl: './transaction-form.component.scss',
 })
 export class TransactionFormComponent implements OnInit {
   @Input() transactionId?: string;
@@ -66,7 +73,6 @@ export class TransactionFormComponent implements OnInit {
   walletOptions: any[] = [];
 
   // Data arrays
-  categories: CategoryDto[] = [];
   wallets: WalletDto[] = [];
 
   // Button types and sizes for template
@@ -86,7 +92,7 @@ export class TransactionFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.isEditMode = !!this.transactionId;
-    
+
     this.initializeDropdownOptions();
     this.loadData();
     this.setupFormSubscriptions();
@@ -100,38 +106,14 @@ export class TransactionFormComponent implements OnInit {
 
   private createForm(): FormGroup {
     const form = this.fb.group({
-      transactionType: [
-        undefined,
-        [Validators.required]
-      ],
+      transactionType: [undefined, [Validators.required]],
       walletFromId: [undefined],
       walletToId: [undefined],
-      amount: [
-        undefined,
-        [
-          Validators.required,
-          Validators.min(0.01)
-        ]
-      ],
-      amountTo: [
-        undefined,
-        [Validators.min(0.01)]
-      ],
-      exchangeRate: [
-        1,
-        [
-          Validators.required,
-          Validators.min(0.0001)
-        ]
-      ],
-      note: [
-        undefined,
-        Validators.maxLength(500)
-      ],
-      effectiveDate: [
-        new Date(),
-        Validators.required
-      ],
+      amount: [undefined, [Validators.required, Validators.min(0.01)]],
+      amountTo: [undefined, [Validators.min(0.01)]],
+      exchangeRate: [1, [Validators.required, Validators.min(0.0001)]],
+      note: [undefined, Validators.maxLength(500)],
+      effectiveDate: [new Date(), Validators.required],
       categoryId: [undefined],
     });
 
@@ -147,24 +129,7 @@ export class TransactionFormComponent implements OnInit {
   }
 
   private loadData(): void {
-    this.loadCategories();
     this.loadWallets();
-  }
-
-  private loadCategories(): void {
-    this.categoryService.getUserCategories().subscribe({
-      next: (categories: CategoryDto[]) => {
-        this.categories = categories;
-        this.updateCategoryOptions();
-      },
-      error: (error) => {
-        console.error('Error loading categories:', error);
-        this.toastService.showError(
-          'transactions.loadingCategoriesError',
-          error.error?.message || 'Error loading categories'
-        );
-      },
-    });
   }
 
   private loadWallets(): void {
@@ -183,33 +148,6 @@ export class TransactionFormComponent implements OnInit {
     });
   }
 
-  private updateCategoryOptions(): void {
-    const transactionType = this.transactionForm.get('transactionType')?.value;
-    if (!transactionType) {
-      this.categoryOptions = [];
-      return;
-    }
-
-    let filteredCategories: CategoryDto[] = [];
-    
-    if (transactionType === TransactionType.INCOME) {
-      filteredCategories = this.categories.filter(cat => cat.categoryType === CategoryType.INCOME);
-    } else if (transactionType === TransactionType.EXPENSE) {
-      filteredCategories = this.categories.filter(cat => cat.categoryType === CategoryType.EXPENSE);
-    }
-
-    this.categoryOptions = filteredCategories.map((category) => ({
-      label: category.name,
-      value: category.id,
-    }));
-
-    // Clear category selection if current category is not valid for selected type
-    const currentCategoryId = this.transactionForm.get('categoryId')?.value;
-    if (currentCategoryId && !filteredCategories.find(cat => cat.id === currentCategoryId)) {
-      this.transactionForm.patchValue({ categoryId: undefined });
-    }
-  }
-
   private updateWalletOptions(): void {
     this.walletOptions = this.wallets.map((wallet) => ({
       label: wallet.name,
@@ -220,7 +158,6 @@ export class TransactionFormComponent implements OnInit {
   private setupFormSubscriptions(): void {
     // Watch for transaction type changes
     this.transactionForm.get('transactionType')?.valueChanges.subscribe(() => {
-      this.updateCategoryOptions();
       this.updateFormFieldsVisibility();
     });
 
@@ -245,33 +182,56 @@ export class TransactionFormComponent implements OnInit {
 
   private updateFormFieldsVisibility(): void {
     const transactionType = this.transactionForm.get('transactionType')?.value;
-    
+
     if (transactionType === TransactionType.TRANSFER) {
       // Show both wallet fields for transfers
-      this.transactionForm.get('walletFromId')?.setValidators([]);
-      this.transactionForm.get('walletToId')?.setValidators([]);
+      // At least one wallet must be selected and not null
+      this.transactionForm
+        .get('walletFromId')
+        ?.setValidators([this.walletValidator('from')]);
+      this.transactionForm
+        .get('walletToId')
+        ?.setValidators([this.walletValidator('to')]);
       this.transactionForm.get('categoryId')?.setValidators([]);
       this.transactionForm.get('categoryId')?.setValue(undefined);
     } else if (transactionType === TransactionType.INCOME) {
       // Income: show "to wallet" field only
-      this.transactionForm.get('walletFromId')?.setValidators([]);
-      this.transactionForm.get('walletToId')?.setValidators([]);
-      this.transactionForm.get('categoryId')?.setValidators([Validators.required]);
-      
+      this.transactionForm
+        .get('walletFromId')
+        ?.setValidators([this.walletValidator('from')]);
+      this.transactionForm
+        .get('walletToId')
+        ?.setValidators([this.walletValidator('to')]);
+      this.transactionForm
+        .get('categoryId')
+        ?.setValidators([Validators.required]);
+
       // Clear from wallet, keep to wallet
-      this.transactionForm.patchValue({
-        walletFromId: undefined,
-      });
+      this.transactionForm.patchValue(
+        {
+          walletFromId: undefined,
+        },
+        { emitEvent: false }
+      );
     } else if (transactionType === TransactionType.EXPENSE) {
       // Expense: show "from wallet" field only
-      this.transactionForm.get('walletFromId')?.setValidators([]);
-      this.transactionForm.get('walletToId')?.setValidators([]);
-      this.transactionForm.get('categoryId')?.setValidators([Validators.required]);
-      
+      this.transactionForm
+        .get('walletFromId')
+        ?.setValidators([this.walletValidator('from')]);
+      this.transactionForm
+        .get('walletToId')
+        ?.setValidators([this.walletValidator('to')]);
+      this.transactionForm
+        .get('categoryId')
+        ?.setValidators([Validators.required]);
+
       // Clear to wallet, keep from wallet
-      this.transactionForm.patchValue({
-        walletToId: undefined,
-      });
+      this.transactionForm.patchValue(
+        {
+          walletToId: undefined,
+        },
+        { emitEvent: false }
+      );
     }
 
     // Update validation
@@ -283,45 +243,57 @@ export class TransactionFormComponent implements OnInit {
   private updateExchangeRateLogic(): void {
     const walletFromId = this.transactionForm.get('walletFromId')?.value;
     const walletToId = this.transactionForm.get('walletToId')?.value;
-    
+
     if (!walletFromId || !walletToId) {
       // One wallet is null (out of Pockito)
-      this.transactionForm.patchValue({
-        exchangeRate: 1,
-        amountTo: this.transactionForm.get('amount')?.value || undefined,
-      });
+      this.transactionForm.patchValue(
+        {
+          exchangeRate: 1,
+          amountTo: this.transactionForm.get('amount')?.value || undefined,
+        },
+        { emitEvent: false }
+      );
       return;
     }
 
-    const walletFrom = this.wallets.find(w => w.id === walletFromId);
-    const walletTo = this.wallets.find(w => w.id === walletToId);
+    const walletFrom = this.wallets.find((w) => w.id === walletFromId);
+    const walletTo = this.wallets.find((w) => w.id === walletToId);
 
     if (walletFrom && walletTo) {
       if (walletFrom.currency === walletTo.currency) {
         // Same currency - hide exchange rate, set to 1
-        this.transactionForm.patchValue({
-          exchangeRate: 1,
-          amountTo: this.transactionForm.get('amount')?.value || undefined,
-        });
+        this.transactionForm.patchValue(
+          {
+            exchangeRate: 1,
+            amountTo: this.transactionForm.get('amount')?.value || undefined,
+          },
+          { emitEvent: false }
+        );
       } else {
         // Different currencies - show exchange rate field
         const amount = this.transactionForm.get('amount')?.value;
         const exchangeRate = this.transactionForm.get('exchangeRate')?.value;
-        
+
         if (amount && exchangeRate) {
-          this.transactionForm.patchValue({
-            amountTo: amount * exchangeRate,
-          });
+          this.transactionForm.patchValue(
+            {
+              amountTo: amount * exchangeRate,
+            },
+            { emitEvent: false }
+          );
         }
       }
     }
   }
 
   private prefillInitialWallets(): void {
-    this.transactionForm.patchValue({
-      walletFromId: this.initialWalletFromId,
-      walletToId: this.initialWalletToId,
-    });
+    this.transactionForm.patchValue(
+      {
+        walletFromId: this.initialWalletFromId,
+        walletToId: this.initialWalletToId,
+      },
+      { emitEvent: false }
+    );
   }
 
   private loadTransaction(transactionId: string): void {
@@ -345,27 +317,30 @@ export class TransactionFormComponent implements OnInit {
   private patchTransactionForm(transaction: TransactionDto): void {
     // Convert API date to local date without timezone conversion
     const effectiveDate = this.parseLocalDate(transaction.effectiveDate);
-    
-    this.transactionForm.patchValue({
-      transactionType: transaction.transactionType,
-      walletFromId: transaction.walletFromId,
-      walletToId: transaction.walletToId,
-      amount: transaction.amount,
-      amountTo: transaction.walletToAmount,
-      exchangeRate: transaction.exchangeRate,
-      note: transaction.note || '',
-      effectiveDate: effectiveDate,
-      categoryId: transaction.categoryId,
-    });
+
+    this.transactionForm.patchValue(
+      {
+        transactionType: transaction.transactionType,
+        walletFromId: transaction.walletFromId,
+        walletToId: transaction.walletToId,
+        amount: transaction.amount,
+        amountTo: transaction.walletToAmount,
+        exchangeRate: transaction.exchangeRate,
+        note: transaction.note || '',
+        effectiveDate: effectiveDate,
+        categoryId: transaction.categoryId,
+      },
+      { emitEvent: false }
+    );
   }
 
   onSubmit(): void {
     if (this.transactionForm.valid) {
       const formValue = this.transactionForm.value;
-      
+
       // Convert date to local date string without timezone (YYYY-MM-DD format)
       const effectiveDate = this.formatLocalDateString(formValue.effectiveDate);
-      
+
       const transactionData: TransactionDto = {
         transactionType: formValue.transactionType,
         walletFromId: formValue.walletFromId,
@@ -413,24 +388,26 @@ export class TransactionFormComponent implements OnInit {
 
   private updateTransaction(transactionData: TransactionDto): void {
     this.isLoading = true;
-    this.transactionService.updateTransaction(transactionData.id!, transactionData).subscribe({
-      next: (updatedTransaction: TransactionDto) => {
-        this.transactionSaved.emit(updatedTransaction);
-        this.isLoading = false;
-        this.toastService.showSuccess(
-          'transactions.updateTransactionSuccess',
-          'transactions.updateTransactionSuccessMessage'
-        );
-      },
-      error: (error) => {
-        console.error('Error updating transaction:', error);
-        this.isLoading = false;
-        this.toastService.showError(
-          'transactions.updateTransactionError',
-          error.error?.message || 'Failed to update transaction'
-        );
-      },
-    });
+    this.transactionService
+      .updateTransaction(transactionData.id!, transactionData)
+      .subscribe({
+        next: (updatedTransaction: TransactionDto) => {
+          this.transactionSaved.emit(updatedTransaction);
+          this.isLoading = false;
+          this.toastService.showSuccess(
+            'transactions.updateTransactionSuccess',
+            'transactions.updateTransactionSuccessMessage'
+          );
+        },
+        error: (error) => {
+          console.error('Error updating transaction:', error);
+          this.isLoading = false;
+          this.toastService.showError(
+            'transactions.updateTransactionError',
+            error.error?.message || 'Failed to update transaction'
+          );
+        },
+      });
   }
 
   onCancel(): void {
@@ -453,11 +430,23 @@ export class TransactionFormComponent implements OnInit {
         );
       }
       if (control.errors['min']) {
-        return this.translate.instant(`transactions.form.errors.${fieldName}Min`);
+        return this.translate.instant(
+          `transactions.form.errors.${fieldName}Min`
+        );
       }
       if (control.errors['maxlength']) {
         return this.translate.instant(
           `transactions.form.errors.${fieldName}MaxLength`
+        );
+      }
+      if (control.errors['walletFromRequired']) {
+        return this.translate.instant(
+          'transactions.form.errors.walletFromRequired'
+        );
+      }
+      if (control.errors['walletToRequired']) {
+        return this.translate.instant(
+          'transactions.form.errors.walletToRequired'
         );
       }
     }
@@ -467,38 +456,75 @@ export class TransactionFormComponent implements OnInit {
   // Helper methods for template
   shouldShowCategoryField(): boolean {
     const transactionType = this.transactionForm.get('transactionType')?.value;
-    return transactionType === TransactionType.INCOME || transactionType === TransactionType.EXPENSE;
+    return (
+      transactionType === TransactionType.INCOME ||
+      transactionType === TransactionType.EXPENSE
+    );
   }
 
   shouldShowWalletFields(): boolean {
     const transactionType = this.transactionForm.get('transactionType')?.value;
-    return transactionType === TransactionType.TRANSFER || 
-           transactionType === TransactionType.INCOME || 
-           transactionType === TransactionType.EXPENSE;
+    return (
+      transactionType === TransactionType.TRANSFER ||
+      transactionType === TransactionType.INCOME ||
+      transactionType === TransactionType.EXPENSE
+    );
   }
 
   shouldShowFromWalletField(): boolean {
     const transactionType = this.transactionForm.get('transactionType')?.value;
-    return transactionType === TransactionType.TRANSFER || transactionType === TransactionType.EXPENSE;
+    return (
+      transactionType === TransactionType.TRANSFER ||
+      transactionType === TransactionType.EXPENSE
+    );
   }
 
   shouldShowToWalletField(): boolean {
     const transactionType = this.transactionForm.get('transactionType')?.value;
-    return transactionType === TransactionType.TRANSFER || transactionType === TransactionType.INCOME;
+    return (
+      transactionType === TransactionType.TRANSFER ||
+      transactionType === TransactionType.INCOME
+    );
+  }
+
+  shouldShowFromWalletRequired(): boolean {
+    const transactionType = this.transactionForm.get('transactionType')?.value;
+    if (transactionType === TransactionType.EXPENSE) {
+      return true;
+    }
+    if (transactionType === TransactionType.TRANSFER) {
+      return !this.transactionForm.get('walletToId')?.value;
+    }
+    return false;
+  }
+
+  shouldShowToWalletRequired(): boolean {
+    const transactionType = this.transactionForm.get('transactionType')?.value;
+    if (transactionType === TransactionType.INCOME) {
+      return true;
+    }
+    if (transactionType === TransactionType.TRANSFER) {
+      return !this.transactionForm.get('walletFromId')?.value;
+    }
+    return false;
   }
 
   shouldShowExchangeRateField(): boolean {
     const walletFromId = this.transactionForm.get('walletFromId')?.value;
     const walletToId = this.transactionForm.get('walletToId')?.value;
-    
+
     if (!walletFromId || !walletToId) {
       return false; // One wallet is null (out of Pockito)
     }
 
-    const walletFrom = this.wallets.find(w => w.id === walletFromId);
-    const walletTo = this.wallets.find(w => w.id === walletToId);
+    const walletFrom = this.wallets.find((w) => w.id === walletFromId);
+    const walletTo = this.wallets.find((w) => w.id === walletToId);
 
-    return !!(walletFrom && walletTo && walletFrom.currency !== walletTo.currency);
+    return !!(
+      walletFrom &&
+      walletTo &&
+      walletFrom.currency !== walletTo.currency
+    );
   }
 
   shouldShowAmountToField(): boolean {
@@ -506,17 +532,13 @@ export class TransactionFormComponent implements OnInit {
   }
 
   getWalletCurrency(walletId: string): string {
-    const wallet = this.wallets.find(w => w.id === walletId);
+    const wallet = this.wallets.find((w) => w.id === walletId);
     return wallet ? wallet.currency : '';
   }
 
   getWalletName(walletId: string): string {
-    const wallet = this.wallets.find(w => w.id === walletId);
+    const wallet = this.wallets.find((w) => w.id === walletId);
     return wallet ? wallet.name : '';
-  }
-
-  getWalletOptionsWithNull(): any[] {
-    return [{ label: this.translate.instant('common.outOfPockito'), value: null }, ...this.walletOptions];
   }
 
   getTransactionTypeLabel(type: TransactionType): string {
@@ -550,6 +572,272 @@ export class TransactionFormComponent implements OnInit {
       const date = new Date(dateString);
       return new Date(date.getFullYear(), date.getMonth(), date.getDate());
     }
-    return new Date(dateString.getFullYear(), dateString.getMonth(), dateString.getDate());
+    return new Date(
+      dateString.getFullYear(),
+      dateString.getMonth(),
+      dateString.getDate()
+    );
   }
+
+  // New methods for enhanced mobile-friendly form
+  selectTransactionType(type: TransactionType): void {
+    this.transactionForm.patchValue({ transactionType: type });
+  }
+
+  getTransactionTypeIcon(type: TransactionType): string {
+    switch (type) {
+      case TransactionType.INCOME:
+        return 'pi pi-arrow-up';
+      case TransactionType.EXPENSE:
+        return 'pi pi-arrow-down';
+      case TransactionType.TRANSFER:
+        return 'pi pi-arrows-h';
+      default:
+        return 'pi pi-circle';
+    }
+  }
+
+  getTransactionTypeDescription(type: TransactionType): string {
+    switch (type) {
+      case TransactionType.INCOME:
+        return 'transactions.form.typeDescription.income';
+      case TransactionType.EXPENSE:
+        return 'transactions.form.typeDescription.expense';
+      case TransactionType.TRANSFER:
+        return 'transactions.form.typeDescription.transfer';
+      default:
+        return '';
+    }
+  }
+
+  getCurrencySymbol(currency: string): string {
+    const currencySymbols: { [key: string]: string } = {
+      USD: '$',
+      EUR: '€',
+      GBP: '£',
+      JPY: '¥',
+      CAD: 'C$',
+      AUD: 'A$',
+      CHF: 'CHF',
+      CNY: '¥',
+      SEK: 'kr',
+      NOK: 'kr',
+      DKK: 'kr',
+      PLN: 'zł',
+      CZK: 'Kč',
+      HUF: 'Ft',
+      RUB: '₽',
+      BRL: 'R$',
+      MXN: '$',
+      INR: '₹',
+      KRW: '₩',
+      SGD: 'S$',
+      HKD: 'HK$',
+      NZD: 'NZ$',
+      ZAR: 'R',
+      TRY: '₺',
+      ILS: '₪',
+      AED: 'د.إ',
+      SAR: '﷼',
+      QAR: '﷼',
+      KWD: 'د.ك',
+      BHD: 'د.ب',
+      OMR: '﷼',
+      JOD: 'د.ا',
+      LBP: 'ل.ل',
+      EGP: '£',
+      MAD: 'د.م.',
+      TND: 'د.ت',
+      DZD: 'د.ج',
+      LYD: 'ل.د',
+      SDG: 'ج.س.',
+      ETB: 'Br',
+      KES: 'KSh',
+      UGX: 'USh',
+      TZS: 'TSh',
+      ZMW: 'ZK',
+      BWP: 'P',
+      SZL: 'L',
+      LSL: 'L',
+      NAD: 'N$',
+      MUR: '₨',
+      SCR: '₨',
+      MVR: 'ރ',
+      LKR: '₨',
+      NPR: '₨',
+      BDT: '৳',
+      PKR: '₨',
+      AFN: '؋',
+      UZS: 'лв',
+      KZT: '₸',
+      KGS: 'лв',
+      TJS: 'SM',
+      TMT: 'T',
+      UAH: '₴',
+      BYN: 'Br',
+      MDL: 'L',
+      RON: 'lei',
+      BGN: 'лв',
+      HRK: 'kn',
+      RSD: 'дин',
+      MKD: 'ден',
+      ALL: 'L',
+      BAM: 'КМ',
+      MNT: '₮',
+      KHR: '៛',
+      LAK: '₭',
+      VND: '₫',
+      THB: '฿',
+      MYR: 'RM',
+      IDR: 'Rp',
+      PHP: '₱',
+      MMK: 'K',
+      BND: 'B$',
+      FJD: 'FJ$',
+      PGK: 'K',
+      SBD: 'SI$',
+      VUV: 'Vt',
+      WST: 'WS$',
+      TOP: 'T$',
+      XPF: '₣',
+    };
+    return currencySymbols[currency] || currency;
+  }
+
+  setQuickAmount(amount: number): void {
+    this.transactionForm.patchValue({ amount: amount });
+  }
+
+  setQuickNote(type: string): void {
+    const noteTexts: { [key: string]: string } = {
+      groceries: 'Groceries',
+      transport: 'Transport',
+      food: 'Food & Dining',
+    };
+    const currentNote = this.transactionForm.get('note')?.value || '';
+    const newNote = currentNote
+      ? `${currentNote}, ${noteTexts[type]}`
+      : noteTexts[type];
+    this.transactionForm.patchValue({ note: newNote });
+  }
+
+  setQuickDate(type: string): void {
+    const today = new Date();
+    let targetDate: Date;
+
+    switch (type) {
+      case 'today':
+        targetDate = new Date(today);
+        break;
+      case 'yesterday':
+        targetDate = new Date(today);
+        targetDate.setDate(today.getDate() - 1);
+        break;
+      default:
+        targetDate = today;
+    }
+
+    this.transactionForm.patchValue({ effectiveDate: targetDate });
+  }
+
+  // Category selector event handlers
+  onCategorySelected(categoryId: string): void {
+    this.transactionForm.patchValue({ categoryId });
+    // Mark field as touched to show validation errors
+    this.transactionForm.get('categoryId')?.markAsTouched();
+  }
+
+  onCategoryCleared(): void {
+    this.transactionForm.patchValue({ categoryId: undefined });
+    // Mark field as touched to show validation errors
+    this.transactionForm.get('categoryId')?.markAsTouched();
+  }
+
+  onCategoryTouched(): void {
+    // Mark field as touched when dialog closes to show validation errors
+    this.transactionForm.get('categoryId')?.markAsTouched();
+  }
+
+  onFromWalletSelected(walletId: string | null): void {
+    this.transactionForm.patchValue({ walletFromId: walletId });
+    // Trigger validation on both wallet fields for transfer transactions
+    this.transactionForm.get('walletFromId')?.updateValueAndValidity();
+    this.transactionForm.get('walletToId')?.updateValueAndValidity();
+  }
+
+  onFromWalletCleared(): void {
+    this.transactionForm.patchValue({ walletFromId: undefined });
+    // Trigger validation on both wallet fields for transfer transactions
+    this.transactionForm.get('walletFromId')?.updateValueAndValidity();
+    this.transactionForm.get('walletToId')?.updateValueAndValidity();
+  }
+
+  onToWalletSelected(walletId: string | null): void {
+    this.transactionForm.patchValue({ walletToId: walletId });
+    // Trigger validation on both wallet fields for transfer transactions
+    this.transactionForm.get('walletFromId')?.updateValueAndValidity();
+    this.transactionForm.get('walletToId')?.updateValueAndValidity();
+  }
+
+  onToWalletCleared(): void {
+    this.transactionForm.patchValue({ walletToId: undefined });
+    // Mark field as touched to show validation errors
+    this.transactionForm.get('walletToId')?.markAsTouched();
+    // Trigger validation on both wallet fields for transfer transactions
+    this.transactionForm.get('walletFromId')?.updateValueAndValidity();
+    this.transactionForm.get('walletToId')?.updateValueAndValidity();
+  }
+
+  onFromWalletTouched(): void {
+    // Mark field as touched when dialog closes to show validation errors
+    this.transactionForm.get('walletFromId')?.markAsTouched();
+    // Trigger validation on both wallet fields for transfer transactions
+    this.transactionForm.get('walletFromId')?.updateValueAndValidity();
+    this.transactionForm.get('walletToId')?.updateValueAndValidity();
+  }
+
+  onToWalletTouched(): void {
+    // Mark field as touched when dialog closes to show validation errors
+    this.transactionForm.get('walletToId')?.markAsTouched();
+    // Trigger validation on both wallet fields for transfer transactions
+    this.transactionForm.get('walletFromId')?.updateValueAndValidity();
+    this.transactionForm.get('walletToId')?.updateValueAndValidity();
+  }
+
+  // Custom validator for transfer transactions
+  private walletValidator = (walletType: 'from' | 'to') => {
+    return (_control: any) => {
+      const transactionType = this.transactionForm.get('transactionType')?.value;
+
+      const walletFromId = this.transactionForm.get('walletFromId')?.value;
+      const walletToId = this.transactionForm.get('walletToId')?.value;
+
+      // At least one wallet must be selected and not null
+      const hasValidFromWallet = walletFromId && walletFromId !== null;
+      const hasValidToWallet = walletToId && walletToId !== null;
+
+      if (walletType === 'from' && transactionType === TransactionType.EXPENSE) {
+        if (!hasValidFromWallet) {
+          return { walletFromRequired: true };
+        }
+      }
+
+      if (walletType === 'to' && transactionType === TransactionType.INCOME) {
+        if (!hasValidToWallet) {
+          return { walletToRequired: true };
+        }
+      }
+
+      if (transactionType === TransactionType.TRANSFER) {
+        if (walletType === 'from' && !hasValidFromWallet && !hasValidToWallet) {
+          return { walletFromRequired: true };
+        }
+        if (walletType === 'to' && !hasValidFromWallet && !hasValidToWallet) {
+          return { walletToRequired: true };
+        }
+      }
+
+      return null;
+    };
+  };
 }
