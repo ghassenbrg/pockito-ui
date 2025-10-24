@@ -13,6 +13,7 @@ export interface TransactionDto {
   walletFromName?: string;
   walletToName?: string;
   categoryName?: string;
+  iconUrl?: string;
 }
 
 export enum TransactionType {

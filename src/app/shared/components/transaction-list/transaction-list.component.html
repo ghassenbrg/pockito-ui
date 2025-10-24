@@ -34,8 +34,19 @@
         >
           <!-- Transaction icon -->
           <div class="transaction-icon">
+            <!-- Use iconUrl if available -->
+            <img
+              *ngIf="transaction.iconUrl"
+              [src]="transaction.iconUrl"
+              [alt]="getTransactionDisplayName(transaction)"
+              class="type-icon custom-icon"
+              [pTooltip]="getTransactionDisplayName(transaction)"
+              tooltipPosition="top"
+            />
+            
+            <!-- Fallback to FontAwesome icons -->
             <i
-              *ngIf="transaction.transactionType === TransactionType.TRANSFER"
+              *ngIf="!transaction.iconUrl && transaction.transactionType === TransactionType.TRANSFER"
               class="fa-solid fa-right-left type-icon transfer"
               [pTooltip]="
                 'enums.transactionType.' + TransactionType.TRANSFER | translate
@@ -44,7 +55,7 @@
             ></i>
 
             <i
-              *ngIf="transaction.transactionType === TransactionType.INCOME"
+              *ngIf="!transaction.iconUrl && transaction.transactionType === TransactionType.INCOME"
               class="fa-solid fa-arrow-trend-up type-icon income"
               [pTooltip]="
                 'enums.transactionType.' + TransactionType.INCOME | translate
@@ -53,7 +64,7 @@
             ></i>
 
             <i
-              *ngIf="transaction.transactionType === TransactionType.EXPENSE"
+              *ngIf="!transaction.iconUrl && transaction.transactionType === TransactionType.EXPENSE"
               class="fa-solid fa-arrow-trend-down type-icon expense"
               [pTooltip]="
                 'enums.transactionType.' + TransactionType.EXPENSE | translate

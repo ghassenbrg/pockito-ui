@@ -3,8 +3,8 @@
 
 // Component-specific variables
 $transaction-border-radius: 12px;
-$transaction-icon-size: 32px;
-$transaction-icon-size-mobile: 28px;
+$transaction-icon-size: 34px;
+$transaction-icon-size-mobile: 34px;
 
 /* ---------- Transactions Section ---------- */
 .wallets-transactions-content {
@@ -98,6 +98,15 @@ $transaction-icon-size-mobile: 28px;
     &.income { color: $success; }
     &.expense { color: $danger; }
     &.transfer { color: $text-500; }
+
+    // Custom icon styles for iconUrl
+    &.custom-icon {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+      border-radius: 4px;
+
+    }
   }
 }
 
