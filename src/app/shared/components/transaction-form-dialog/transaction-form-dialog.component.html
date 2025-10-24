@@ -10,6 +10,7 @@
   (visibleChange)="onDialogVisibleChange($event)"
 >
   <app-transaction-form
+  *ngIf="visible"
     [transactionId]="transactionId"
     [initialWalletFromId]="initialWalletFromId"
     [initialWalletToId]="initialWalletToId"

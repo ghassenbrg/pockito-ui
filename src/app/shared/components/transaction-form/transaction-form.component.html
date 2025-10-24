@@ -17,7 +17,7 @@
           [class.selected]="transactionForm.get('transactionType')?.value === option.value"
           (click)="selectTransactionType(option.value)"
         >
-          <div class="transaction-type-option__icon">
+          <div class="transaction-type-option__icon" [class]="'transaction-type-option__icon--' + option.value.toLowerCase()">
             <i [class]="getTransactionTypeIcon(option.value)"></i>
           </div>
           <div class="transaction-type-option__content">

@@ -125,6 +125,22 @@
       height: 1.75rem;
       font-size: 0.875rem;
     }
+
+    // Transaction type specific icon colors
+    &--income {
+      background-color: #daf5ec;
+      color: #10b981; // Green color for income icon
+    }
+
+    &--expense {
+      background-color: #fde6e6;
+      color: #ef4444; // Red color for expense icon
+    }
+
+    &--transfer {
+      background-color: #f0f0f0;
+      color: #6b7280; // Grey color for transfer icon
+    }
   }
 
   &__content {
