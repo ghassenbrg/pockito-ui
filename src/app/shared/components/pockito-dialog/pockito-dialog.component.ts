@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, HostListener, ElementRef, ViewChild, TemplateRef, ContentChild, OnInit, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener, ElementRef, ViewChild, TemplateRef, ContentChild, OnInit, OnChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface DialogBreakpoints {
@@ -12,7 +12,7 @@ export interface DialogBreakpoints {
   templateUrl: './pockito-dialog.component.html',
   styleUrls: ['./pockito-dialog.component.scss']
 })
-export class PockitoDialogComponent implements OnInit, OnChanges {
+export class PockitoDialogComponent implements OnInit, OnChanges, OnDestroy {
   @Input() visible: boolean = false;
   @Input() header: string = '';
   @Input() modal: boolean = true;
@@ -38,6 +38,7 @@ export class PockitoDialogComponent implements OnInit, OnChanges {
 
   isMaximized: boolean = false;
   isVisible: boolean = false;
+  private originalBodyOverflow: string = '';
 
   ngOnInit() {
     this.isVisible = this.visible;
@@ -45,6 +46,11 @@ export class PockitoDialogComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.isVisible = this.visible;
+    this.manageBodyScroll();
+  }
+
+  ngOnDestroy() {
+    this.restoreBodyScroll();
   }
 
   @HostListener('document:keydown.escape', ['$event'])
@@ -57,6 +63,7 @@ export class PockitoDialogComponent implements OnInit, OnChanges {
   show() {
     this.visible = true;
     this.isVisible = true;
+    this.manageBodyScroll();
     this.visibleChange.emit(true);
     this.onShow.emit();
   }
@@ -64,6 +71,7 @@ export class PockitoDialogComponent implements OnInit, OnChanges {
   hide() {
     this.visible = false;
     this.isVisible = false;
+    this.manageBodyScroll();
     this.visibleChange.emit(false);
     this.onHide.emit();
   }
@@ -135,5 +143,29 @@ export class PockitoDialogComponent implements OnInit, OnChanges {
     }
 
     return this.width;
+  }
+
+  private manageBodyScroll(): void {
+    if (this.isVisible) {
+      this.disableBodyScroll();
+    } else {
+      this.restoreBodyScroll();
+    }
+  }
+
+  private disableBodyScroll(): void {
+    if (typeof document !== 'undefined') {
+      // Store the original overflow value
+      this.originalBodyOverflow = document.body.style.overflow;
+      // Disable scrolling
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  private restoreBodyScroll(): void {
+    if (typeof document !== 'undefined') {
+      // Restore the original overflow value
+      document.body.style.overflow = this.originalBodyOverflow;
+    }
   }
 }

@@ -261,7 +261,18 @@ export class TransactionFormComponent implements OnInit {
   }
 
   private updateCategoryOptions(): void {
-    this.categoryOptions = this.categories.map(category => ({
+    const transactionType = this.transactionForm.get('transactionType')?.value;
+    
+    // Filter categories based on transaction type
+    let filteredCategories = this.categories;
+    if (transactionType === TransactionType.INCOME) {
+      filteredCategories = this.categories.filter(category => category.categoryType === CategoryType.INCOME);
+    } else if (transactionType === TransactionType.EXPENSE) {
+      filteredCategories = this.categories.filter(category => category.categoryType === CategoryType.EXPENSE);
+    }
+    // For TRANSFER transactions, no categories are shown (categories array remains empty)
+    
+    this.categoryOptions = filteredCategories.map(category => ({
       id: category.id!,
       name: category.name!,
       iconUrl: category.iconUrl,
@@ -269,6 +280,28 @@ export class TransactionFormComponent implements OnInit {
       type: category.categoryType,
       typeLabel: this.getCategoryTypeLabel(category.categoryType!)
     }));
+  }
+
+  private clearInvalidCategorySelection(): void {
+    const selectedCategoryId = this.transactionForm.get('categoryId')?.value;
+    const transactionType = this.transactionForm.get('transactionType')?.value;
+    
+    if (!selectedCategoryId || transactionType === TransactionType.TRANSFER) {
+      return;
+    }
+    
+    // Check if the selected category is valid for the current transaction type
+    const selectedCategory = this.categories.find(category => category.id === selectedCategoryId);
+    if (selectedCategory) {
+      const isValidCategory = 
+        (transactionType === TransactionType.INCOME && selectedCategory.categoryType === CategoryType.INCOME) ||
+        (transactionType === TransactionType.EXPENSE && selectedCategory.categoryType === CategoryType.EXPENSE);
+      
+      if (!isValidCategory) {
+        // Clear the invalid category selection
+        this.transactionForm.patchValue({ categoryId: undefined }, { emitEvent: false });
+      }
+    }
   }
 
   private emitWalletChange(): void {
@@ -281,6 +314,10 @@ export class TransactionFormComponent implements OnInit {
     // Watch for transaction type changes
     this.transactionForm.get('transactionType')?.valueChanges.subscribe((transactionType) => {
       this.updateFormFieldsVisibility();
+      // Update category options when transaction type changes
+      this.updateCategoryOptions();
+      // Clear category selection if it's no longer valid for the new transaction type
+      this.clearInvalidCategorySelection();
       if (transactionType) {
         this.transactionTypeChanged.emit(transactionType);
       }
@@ -366,6 +403,9 @@ export class TransactionFormComponent implements OnInit {
     this.updateWalletFromOptions();
     this.updateWalletToOptions();
 
+    // Update category options based on transaction type
+    this.updateCategoryOptions();
+    
     // Update validation
     this.transactionForm.get('walletFromId')?.updateValueAndValidity();
     this.transactionForm.get('walletToId')?.updateValueAndValidity();

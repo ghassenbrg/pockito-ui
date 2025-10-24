@@ -5,17 +5,21 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background-color: rgba(15, 23, 42, 0.4);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 9999;
   padding: 1rem;
   box-sizing: border-box;
   animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  // Ensure the mask covers everything and prevents interaction
+  overflow: hidden;
+  touch-action: none;
+  -webkit-overflow-scrolling: touch;
 
   &.modal {
     background-color: rgba(15, 23, 42, 0.4);
@@ -351,13 +355,13 @@
   outline: none;
 }
 
-// Ensure proper stacking
+// Ensure proper stacking - increased z-index to be on top of everything
 .pockito-dialog-mask {
-  z-index: 1000;
+  z-index: 9999;
 }
 
 .pockito-dialog {
-  z-index: 1001;
+  z-index: 10000;
 }
 
 // Touch-friendly interactions
