@@ -165,20 +165,11 @@
   </app-pockito-dialog>
 
   <!-- Transaction Form Dialog -->
-  <app-pockito-dialog
+  <app-transaction-form-dialog
     [(visible)]="displayTransactionForm"
-    [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
-    [style]="{ width: '30vw' }"
-    [modal]="true"
-    [header]="'appLayout.dialogs.addTransaction' | translate"
-    [closable]="true"
-    [closeOnEscape]="true"
-  >
-    <app-transaction-form
-      (transactionSaved)="onTransactionSaved()"
-      (formCancelled)="onTransactionFormCancelled()"
-    ></app-transaction-form>
-  </app-pockito-dialog>
+    (transactionSaved)="onTransactionSaved()"
+    (formCancelled)="onTransactionFormCancelled()"
+  ></app-transaction-form-dialog>
 
   <!-- Floating Action Button -->
   <button

@@ -1,0 +1,21 @@
+<app-pockito-dialog
+  [(visible)]="visible"
+  [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
+  [style]="{ width: '30vw' }"
+  [modal]="true"
+  [header]="'appLayout.dialogs.addTransaction' | translate"
+  [closable]="true"
+  [closeOnEscape]="true"
+  [headerColor]="getDialogHeaderColor()"
+  (visibleChange)="onDialogVisibleChange($event)"
+>
+  <app-transaction-form
+    [transactionId]="transactionId"
+    [initialWalletFromId]="initialWalletFromId"
+    [initialWalletToId]="initialWalletToId"
+    (transactionSaved)="onTransactionSaved($event)"
+    (formCancelled)="onFormCancelled()"
+    (transactionTypeChanged)="onTransactionTypeChanged($event)"
+    (walletChanged)="onWalletChanged($event.walletFromId, $event.walletToId)"
+  ></app-transaction-form>
+</app-pockito-dialog>

@@ -292,6 +292,14 @@
   &:active {
     transform: translateY(1px);
   }
+
+  &.selected {
+    border-color: $primary-600;
+    background: rgba(37, 99, 235, 0.1);
+    color: $text-700;
+    font-weight: 600;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  }
 }
 
 /* ---------- Note Input ---------- */
@@ -392,10 +400,6 @@
     max-width: 100%;
   }
 
-  .transaction-form__actions {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
 
   .transaction-type-selector--grid {
     grid-template-columns: repeat(3, 1fr);
@@ -430,6 +434,26 @@
 
   .transaction-form__content {
     gap: 1rem;
+  }
+
+  .transaction-form__actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    
+    ::ng-deep pockito-button {
+      width: 100% !important;
+      display: block !important;
+      
+      button {
+        width: 100% !important;
+        display: block !important;
+      }
+    }
+    
+    // Hide cancel button on mobile
+    ::ng-deep pockito-button[ng-reflect-type="cancel"] {
+      display: none !important;
+    }
   }
 
   .transaction-type-selector--grid {

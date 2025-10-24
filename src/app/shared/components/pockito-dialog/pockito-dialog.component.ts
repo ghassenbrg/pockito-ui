@@ -24,6 +24,7 @@ export class PockitoDialogComponent implements OnInit, OnChanges {
   @Input() width: string = '50vw';
   @Input() height: string = 'auto';
   @Input() position: 'center' | 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' = 'center';
+  @Input() headerColor: string = 'default';
 
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() onShow = new EventEmitter<void>();

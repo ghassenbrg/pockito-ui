@@ -59,6 +59,8 @@ export class TransactionFormComponent implements OnInit {
   @Input() initialWalletToId?: string;
   @Output() transactionSaved = new EventEmitter<TransactionDto>();
   @Output() formCancelled = new EventEmitter<void>();
+  @Output() transactionTypeChanged = new EventEmitter<TransactionType>();
+  @Output() walletChanged = new EventEmitter<{walletFromId: string | null, walletToId: string | null}>();
 
   transactionForm: FormGroup;
   isEditMode: boolean = false;
@@ -255,6 +257,7 @@ export class TransactionFormComponent implements OnInit {
         walletFromId: null
       }, { emitEvent: false });
     }
+    this.emitWalletChange();
   }
 
   private updateCategoryOptions(): void {
@@ -268,10 +271,19 @@ export class TransactionFormComponent implements OnInit {
     }));
   }
 
+  private emitWalletChange(): void {
+    const walletFromId = this.transactionForm.get('walletFromId')?.value;
+    const walletToId = this.transactionForm.get('walletToId')?.value;
+    this.walletChanged.emit({ walletFromId, walletToId });
+  }
+
   private setupFormSubscriptions(): void {
     // Watch for transaction type changes
-    this.transactionForm.get('transactionType')?.valueChanges.subscribe(() => {
+    this.transactionForm.get('transactionType')?.valueChanges.subscribe((transactionType) => {
       this.updateFormFieldsVisibility();
+      if (transactionType) {
+        this.transactionTypeChanged.emit(transactionType);
+      }
     });
 
     // Watch for wallet changes to handle currency logic
@@ -910,6 +922,33 @@ export class TransactionFormComponent implements OnInit {
     this.transactionForm.patchValue({ effectiveDate: targetDate });
   }
 
+  isTodaySelected(): boolean {
+    const selectedDate = this.transactionForm.get('effectiveDate')?.value;
+    if (!selectedDate) return false;
+    
+    const today = new Date();
+    const selected = new Date(selectedDate);
+    
+    return selected.getFullYear() === today.getFullYear() &&
+           selected.getMonth() === today.getMonth() &&
+           selected.getDate() === today.getDate();
+  }
+
+  isYesterdaySelected(): boolean {
+    const selectedDate = this.transactionForm.get('effectiveDate')?.value;
+    if (!selectedDate) return false;
+    
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    
+    const selected = new Date(selectedDate);
+    
+    return selected.getFullYear() === yesterday.getFullYear() &&
+           selected.getMonth() === yesterday.getMonth() &&
+           selected.getDate() === yesterday.getDate();
+  }
+
   // Category selector event handlers
   onCategorySelected(categoryId: string | null): void {
     this.transactionForm.patchValue({ categoryId: categoryId || undefined });
@@ -944,6 +983,9 @@ export class TransactionFormComponent implements OnInit {
     
     this.transactionForm.patchValue({ walletFromId: walletId });
     
+    // Emit wallet change event
+    this.emitWalletChange();
+    
     // Update wallet options to exclude selected wallets
     this.updateWalletFromOptions();
     this.updateWalletToOptions();
@@ -955,6 +997,9 @@ export class TransactionFormComponent implements OnInit {
 
   onFromWalletCleared(): void {
     this.transactionForm.patchValue({ walletFromId: undefined });
+    
+    // Emit wallet change event
+    this.emitWalletChange();
     
     // Update wallet options to exclude selected wallets
     this.updateWalletFromOptions();
@@ -981,6 +1026,9 @@ export class TransactionFormComponent implements OnInit {
     
     this.transactionForm.patchValue({ walletToId: walletId });
     
+    // Emit wallet change event
+    this.emitWalletChange();
+    
     // Update wallet options to exclude selected wallets
     this.updateWalletFromOptions();
     this.updateWalletToOptions();
@@ -992,6 +1040,9 @@ export class TransactionFormComponent implements OnInit {
 
   onToWalletCleared(): void {
     this.transactionForm.patchValue({ walletToId: undefined });
+    
+    // Emit wallet change event
+    this.emitWalletChange();
     
     // Update wallet options to exclude selected wallets
     this.updateWalletFromOptions();

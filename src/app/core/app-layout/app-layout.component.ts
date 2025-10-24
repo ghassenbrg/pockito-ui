@@ -18,7 +18,7 @@ import { LanguageSwitcherComponent } from '@shared/components/language-switcher/
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
 import { PockitoDialogComponent } from '@shared/components/pockito-dialog/pockito-dialog.component';
 import { ToastComponent } from '@shared/components/toast/toast.component';
-import { TransactionFormComponent } from '@shared/components/transaction-form/transaction-form.component';
+import { TransactionFormDialogComponent } from '@shared/components/transaction-form-dialog/transaction-form-dialog.component';
 import { LoadingService } from '@shared/services/loading.service';
 import { MenuItem, MessageService } from 'primeng/api';
 import { DockModule } from 'primeng/dock';
@@ -38,7 +38,7 @@ import { distinctUntilChanged, filter, map } from 'rxjs/operators';
     LoadingSpinnerComponent,
     PockitoDialogComponent,
     ToastComponent,
-    TransactionFormComponent,
+    TransactionFormDialogComponent,
   ],
   providers: [MessageService, TerminalService],
   templateUrl: './app-layout.component.html',

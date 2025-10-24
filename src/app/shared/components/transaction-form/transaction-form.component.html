@@ -243,38 +243,6 @@
       </small>
     </div>
 
-    <!-- Note Field -->
-    <div class="form-field">
-      <label for="transaction-note" class="form-field__label">
-        {{ "transactions.form.note" | translate }}
-        <span class="note-optional">{{ "transactions.form.optional" | translate }}</span>
-      </label>
-      <div class="note-input-container">
-        <textarea
-          id="transaction-note"
-          formControlName="note"
-          [placeholder]="'transactions.form.notePlaceholder' | translate"
-          [maxlength]="500"
-          rows="3"
-          [class.p-invalid]="
-            transactionForm.get('note')?.invalid &&
-            transactionForm.get('note')?.touched
-          "
-          class="note-input"
-        ></textarea>
-        <div class="note-character-count">
-          {{ (transactionForm.get('note')?.value?.length || 0) }}/500
-        </div>
-      </div>
-      <small
-        *ngIf="getFieldError('note')"
-        class="p-error"
-        style="display: block; margin-top: 0.25rem"
-      >
-        {{ getFieldError('note') }}
-      </small>
-    </div>
-
     <!-- Effective Date Field -->
     <div class="form-field">
       <label for="transaction-date" class="form-field__label">
@@ -299,6 +267,7 @@
           <button 
             type="button" 
             class="date-quick-btn"
+            [class.selected]="isTodaySelected()"
             (click)="setQuickDate('today')"
           >
             {{ "transactions.form.quickDate.today" | translate }}
@@ -306,6 +275,7 @@
           <button 
             type="button" 
             class="date-quick-btn"
+            [class.selected]="isYesterdaySelected()"
             (click)="setQuickDate('yesterday')"
           >
             {{ "transactions.form.quickDate.yesterday" | translate }}
@@ -321,6 +291,37 @@
       </small>
     </div>
 
+        <!-- Note Field -->
+        <div class="form-field">
+          <label for="transaction-note" class="form-field__label">
+            {{ "transactions.form.note" | translate }}
+            <span class="note-optional">{{ "transactions.form.optional" | translate }}</span>
+          </label>
+          <div class="note-input-container">
+            <textarea
+              id="transaction-note"
+              formControlName="note"
+              [placeholder]="'transactions.form.notePlaceholder' | translate"
+              [maxlength]="500"
+              rows="3"
+              [class.p-invalid]="
+                transactionForm.get('note')?.invalid &&
+                transactionForm.get('note')?.touched
+              "
+              class="note-input"
+            ></textarea>
+            <div class="note-character-count">
+              {{ (transactionForm.get('note')?.value?.length || 0) }}/500
+            </div>
+          </div>
+          <small
+            *ngIf="getFieldError('note')"
+            class="p-error"
+            style="display: block; margin-top: 0.25rem"
+          >
+            {{ getFieldError('note') }}
+          </small>
+        </div>
 
     <!-- Form Actions -->
     <div class="transaction-form__actions">

@@ -16,7 +16,9 @@
     [attr.aria-labelledby]="header ? 'dialog-header' : null"
   >
     <!-- Dialog Header -->
-    <div class="pockito-dialog-header" *ngIf="header || headerTemplate || maximizable">
+    <div class="pockito-dialog-header" 
+         *ngIf="header || headerTemplate || maximizable"
+         [class]="'pockito-dialog-header header-color-' + headerColor">
       <div class="pockito-dialog-title" id="dialog-header">
         <ng-container *ngIf="headerTemplate; else defaultHeader">
           <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
