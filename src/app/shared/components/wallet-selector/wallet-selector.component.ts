@@ -84,13 +84,11 @@ export class WalletSelectorComponent implements OnInit, OnChanges {
     this.showWalletDialog = false;
   }
 
-  selectWallet(walletId: string): void {
-    // Convert 'null' string back to actual null for the form
-    const actualValue = walletId === 'null' ? null : walletId;
-    this.walletSelected.emit(actualValue);
+  selectWallet(walletId: string | null): void {
+    this.walletSelected.emit(walletId);
   }
 
-  onDialogOptionSelected(optionId: string): void {
+  onDialogOptionSelected(optionId: string | null): void {
     this.selectWallet(optionId);
   }
 

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { WalletSelectorComponent } from './wallet-selector.component';
@@ -14,10 +15,11 @@ describe('WalletSelectorComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         WalletSelectorComponent,
-        HttpClientTestingModule,
         TranslateModule.forRoot()
       ],
       providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
         WalletService,
         ToastService
       ]

@@ -91,8 +91,10 @@ export class CategorySelectorComponent implements OnInit, OnChanges {
     this.categorySelected.emit(categoryId);
   }
 
-  onDialogOptionSelected(optionId: string): void {
-    this.selectCategory(optionId);
+  onDialogOptionSelected(optionId: string | null): void {
+    if (optionId) {
+      this.selectCategory(optionId);
+    }
   }
 
   onDialogClosed(): void {
