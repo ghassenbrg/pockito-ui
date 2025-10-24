@@ -20,6 +20,8 @@
   overflow: hidden;
   touch-action: none;
   -webkit-overflow-scrolling: touch;
+  // Create new stacking context
+  isolation: isolate;
 
   &.modal {
     background-color: rgba(15, 23, 42, 0.4);
@@ -254,6 +256,8 @@
     padding: 0;
     align-items: flex-end;
     justify-content: center;
+    // Add safe area padding for iPhone
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .pockito-dialog {
@@ -264,10 +268,14 @@
     width: 100vw;
     min-width: 100vw;
     animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    // Ensure dialog is above safe area
+    margin-bottom: env(safe-area-inset-bottom);
 
     @media (max-width: 640px) {
       border-radius: 20px 20px 0 0;
       max-height: 95vh;
+      // Add extra margin for iPhone safe area
+      margin-bottom: max(env(safe-area-inset-bottom), 20px);
     }
   }
 
@@ -364,6 +372,19 @@
   z-index: 10000;
 }
 
+// iPhone specific z-index fix
+@supports (-webkit-touch-callout: none) {
+  @media (max-width: 1023px) {
+    .pockito-dialog-mask {
+      z-index: 10001; // Higher than mobile navigation (1000)
+    }
+    
+    .pockito-dialog {
+      z-index: 10002;
+    }
+  }
+}
+
 // Touch-friendly interactions
 @media (max-width: 1023px) {
   .pockito-dialog-maximize-btn,
@@ -420,5 +441,18 @@
   
   .pockito-dialog-content {
     -webkit-overflow-scrolling: touch;
+  }
+
+  // iPhone specific adjustments
+  @media (max-width: 1023px) {
+    .pockito-dialog-mask {
+      // Ensure proper positioning on iPhone
+      padding-bottom: max(env(safe-area-inset-bottom), 20px);
+    }
+    
+    .pockito-dialog {
+      // Additional margin for iPhone navigation bar
+      margin-bottom: max(env(safe-area-inset-bottom), 20px);
+    }
   }
 }

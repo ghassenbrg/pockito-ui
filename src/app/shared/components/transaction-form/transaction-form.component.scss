@@ -467,7 +467,7 @@
     }
     
     // Hide cancel button on mobile
-    ::ng-deep pockito-button[ng-reflect-type="cancel"] {
+    ::ng-deep .cancel-button {
       display: none !important;
     }
   }
