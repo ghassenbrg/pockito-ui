@@ -9,11 +9,10 @@ import {
   PockitoButtonType,
 } from '@shared/components/pockito-button/pockito-button.component';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
-import { PockitoDialogComponent } from '@shared/components/pockito-dialog/pockito-dialog.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { LoadingService, ToastService } from '@shared/services';
 import { PockitoCurrencyPipe } from '../../../shared/pipes/pockito-currency.pipe';
-import { WalletFormComponent } from '../wallet-form/wallet-form.component';
+import { WalletFormDialogComponent } from '@shared/components/wallet-form-dialog/wallet-form-dialog.component';
 
 @Component({
   selector: 'app-wallets',
@@ -21,10 +20,9 @@ import { WalletFormComponent } from '../wallet-form/wallet-form.component';
   imports: [
     CommonModule,
     PockitoButtonComponent,
-    WalletFormComponent,
+    WalletFormDialogComponent,
     TranslatePipe,
     PockitoCurrencyPipe,
-    PockitoDialogComponent,
     PageHeaderComponent,
     EmptyStateComponent,
   ],

@@ -372,15 +372,23 @@
   z-index: 10000;
 }
 
-// iPhone specific z-index fix
+// specific z-index fix
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 1023px) {
     .pockito-dialog-mask {
-      z-index: 10001; // Higher than mobile navigation (1000)
+      z-index: 10001 !important; // Higher than mobile navigation (1000)
+      // Ensure proper positioning on iPhone
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
     }
     
     .pockito-dialog {
-      z-index: 10002;
+      z-index: 10002 !important;
+      // Ensure dialog is positioned above safe area
+      margin-bottom: max(env(safe-area-inset-bottom), 20px) !important;
     }
   }
 }
@@ -448,11 +456,17 @@
     .pockito-dialog-mask {
       // Ensure proper positioning on iPhone
       padding-bottom: max(env(safe-area-inset-bottom), 20px);
+      // Force hardware acceleration for better performance
+      transform: translateZ(0);
+      will-change: transform;
     }
     
     .pockito-dialog {
       // Additional margin for iPhone navigation bar
       margin-bottom: max(env(safe-area-inset-bottom), 20px);
+      // Ensure dialog is above mobile navigation
+      position: relative;
+      z-index: 10002;
     }
   }
 }

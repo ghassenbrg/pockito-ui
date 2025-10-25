@@ -63,18 +63,8 @@
 
 
   <!-- Wallet Form Dialog -->
-  <app-pockito-dialog
+  <app-wallet-form-dialog
     [(visible)]="displayCreateWalletDialog"
-    [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
-    [style]="{ width: '60vw' }"
-    [modal]="true"
-    [header]="'wallets.createWallet' | translate"
-    [closable]="true"
-    [closeOnEscape]="true"
-  >
-    <app-wallet-form
-    *ngIf="displayCreateWalletDialog"
     (walletSaved)="onWalletSaved($event)"
     (formCancelled)="onFormCancelled()"
-    ></app-wallet-form>
-  </app-pockito-dialog>
+  ></app-wallet-form-dialog>
