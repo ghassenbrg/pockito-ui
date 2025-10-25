@@ -28,9 +28,9 @@ describe('WalletFormComponent', () => {
         firstName: 'Test',
         lastName: 'User',
         active: true,
-        createdAt: '2023-01-01T00:00:00Z',
-        updatedAt: '2023-01-01T00:00:00Z'
-      } as UserDto)
+        createdAt: new Date('2023-01-01T00:00:00Z'),
+        updatedAt: new Date('2023-01-01T00:00:00Z')
+      } as any)
     });
     mockTranslateService = jasmine.createSpyObj('TranslateService', ['instant']);
     mockToastService = jasmine.createSpyObj('ToastService', ['showSuccess', 'showError']);
