@@ -37,7 +37,9 @@ export class KeycloakService {
         onLoad: 'check-sso',
         silentCheckSsoRedirectUri: window.location.origin + '/assets/silent-check-sso.html',
         pkceMethod: 'S256',
-        enableLogging: false // Disable verbose logging
+        enableLogging: environment.features.debug, // Enable logging in development
+        checkLoginIframe: false, // Disable iframe checks in development
+        checkLoginIframeInterval: 0 // Disable iframe interval checks
       });
 
 
@@ -51,7 +53,7 @@ export class KeycloakService {
 
       return authenticated;
     } catch (error: any) {
-      console.error('Keycloak initialization failed:', error.message);
+      console.error('Keycloak initialization failed:', error?.message || error);
       this.initialized$.next(true);
       return false;
     }

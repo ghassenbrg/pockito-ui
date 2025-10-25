@@ -43,3 +43,13 @@ Thumbs.db
 
 .nx/cache
 .nx/workspace-data
+
+# SSL certificates and keys for development
+ssl/*.pem
+ssl/cert.pem
+ssl/key.pem
+*.pem
+mkcert.exe
+
+# Development certificates
+localhost+*
