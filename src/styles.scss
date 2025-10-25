@@ -33,6 +33,38 @@ body.mobile-menu-open {
   }
 }
 
+/* iOS Safari Dialog Fix: Prevent parent stacking contexts from interfering with dialogs */
+@supports (-webkit-touch-callout: none) {
+  /* Ensure app-root and app-layout don't create stacking contexts that interfere with dialogs */
+  app-root,
+  app-layout,
+  .app-shell {
+    /* Prevent these from creating stacking contexts on iOS */
+    transform: none !important;
+    opacity: 1 !important;
+    isolation: unset !important;
+  }
+
+  /* Ensure dialogs are always rendered at the correct z-index on iOS */
+  .pockito-dialog-mask {
+    /* Force dialog to be above everything */
+    position: fixed !important;
+    z-index: 2147483647 !important;
+    /* Prevent any parent from interfering */
+    transform: none !important;
+  }
+
+  /* When a dialog is open, avoid nav overlay effects interfering on iOS */
+  body.dialog-open .mobile-bottom-nav {
+    /* Remove blur which can create a new stacking context */
+    backdrop-filter: none !important;
+    /* Ensure it doesn't capture touches above the dialog */
+    pointer-events: none !important;
+    /* Optional: visually dim nav under the dialog */
+    opacity: 0.85 !important;
+  }
+}
+
 /* Global PrimeNG customizations */
 :root {
   --primary-color: #2563eb;
@@ -392,7 +424,7 @@ body {
   // Disable pull-to-refresh behavior
   body {
     overscroll-behavior-y: contain;
-    -webkit-overflow-scrolling: touch;
+    /* REMOVED: -webkit-overflow-scrolling: touch; - Avoid stacking contexts on iOS */
     overflow-x: hidden;
     touch-action: manipulation;
   }
@@ -425,9 +457,8 @@ body {
   }
 
   // Improve scrolling performance
-  * {
-    -webkit-overflow-scrolling: touch;
-  }
+  /* REMOVED wildcard -webkit-overflow-scrolling to avoid stacking contexts on iOS */
+  /* If needed, apply -webkit-overflow-scrolling on inner scroll containers only */
 
   // Disable text selection on interactive elements
   button,
@@ -487,7 +518,7 @@ body {
 
   // Additional iOS pull-to-refresh prevention
   body {
-    -webkit-overflow-scrolling: touch;
+    /* REMOVED: -webkit-overflow-scrolling: touch; - Avoid stacking contexts on iOS */
     overscroll-behavior: contain;
     overscroll-behavior-y: contain;
     touch-action: manipulation;

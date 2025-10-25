@@ -19,9 +19,8 @@
   // Ensure the mask covers everything and prevents interaction
   overflow: hidden;
   touch-action: pan-y pan-x;
-  -webkit-overflow-scrolling: touch;
-  // Create new stacking context
-  isolation: isolate;
+  // REMOVED: -webkit-overflow-scrolling: touch; - Creates stacking context on iOS
+  // REMOVED: isolation: isolate; - Creates stacking context, prevents proper z-index on iOS
 
   &.modal {
     background-color: rgba(15, 23, 42, 0.4);
@@ -239,7 +238,7 @@
   flex: 1;
   overflow-y: auto;
   background: rgba(255, 255, 255, 0.9);
-  -webkit-overflow-scrolling: touch;
+  // REMOVED: -webkit-overflow-scrolling: touch; - Can create stacking context on iOS
   touch-action: pan-y pan-x pinch-zoom;
 }
 
@@ -418,18 +417,28 @@
 // iOS-specific optimizations (additional to the above)
 @supports (-webkit-touch-callout: none) {
   @media (max-width: 1023px) {
+    // Ensure dialog mask is above everything on iOS
     .pockito-dialog-mask {
-      z-index: 10001 !important; // Higher than mobile navigation (1000)
+      z-index: 2147483647 !important; // Use maximum z-index to ensure it's always on top
       // Ensure proper positioning on iPhone
       position: fixed !important;
       top: 0 !important;
       left: 0 !important;
       right: 0 !important;
       bottom: 0 !important;
+      // Avoid iOS backdrop-filter compositing bugs
+      backdrop-filter: none !important;
+      background-color: rgba(15, 23, 42, 0.5) !important;
+      // Ensure no parent stacking context interferes
+      transform: none !important;
+      opacity: 1 !important;
+      isolation: unset !important;
+      // Ensure touch events work properly
+      pointer-events: auto !important;
     }
     
     .pockito-dialog {
-      z-index: 10002 !important;
+      z-index: 2147483647 !important;
       // Ensure dialog is positioned above safe area
       margin-bottom: max(env(safe-area-inset-bottom), 20px) !important;
     }
@@ -487,11 +496,11 @@
 // iOS-specific optimizations
 @supports (-webkit-touch-callout: none) {
   .pockito-dialog {
-    -webkit-overflow-scrolling: touch;
+    // REMOVED: -webkit-overflow-scrolling: touch; - Avoid stacking contexts on iOS
   }
   
   .pockito-dialog-content {
-    -webkit-overflow-scrolling: touch;
+    // REMOVED: -webkit-overflow-scrolling: touch; - Avoid stacking contexts on iOS
   }
 
   // iPhone specific adjustments
@@ -499,9 +508,8 @@
     .pockito-dialog-mask {
       // Ensure proper positioning on iPhone
       padding-bottom: max(env(safe-area-inset-bottom), 20px);
-      // Force hardware acceleration for better performance
-      transform: translateZ(0);
-      will-change: transform;
+      // REMOVED: transform: translateZ(0) and will-change: transform
+      // These create stacking context that prevents proper z-index on iOS
     }
     
     .pockito-dialog {
@@ -509,7 +517,7 @@
       margin-bottom: max(env(safe-area-inset-bottom), 20px);
       // Ensure dialog is above mobile navigation
       position: relative;
-      z-index: 10002;
+      z-index: 2147483647 !important;
     }
   }
 }

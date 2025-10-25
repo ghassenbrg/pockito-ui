@@ -209,15 +209,14 @@
   background: var(--surface-color);
   backdrop-filter: blur(20px);
   border-top: 1px solid rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+  z-index: 999; // Lower than dialog to ensure dialog appears on top on iOS
   padding-bottom: env(safe-area-inset-bottom);
   box-shadow: var(--shadow-light);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-tap-highlight-color: transparent;
   
-  // Ensure it always stays at the bottom and is always visible
-  will-change: transform;
-  transform: translateZ(0); // Force hardware acceleration
+  // REMOVED: will-change: transform; and transform: translateZ(0)
+  // These create a stacking context that causes iOS Safari stacking issues
 
   .mobile-bottom-nav-items {
     display: flex;
@@ -243,7 +242,7 @@
       }
 
       &:active {
-        transform: scale(0.95);
+        // REMOVED: transform: scale(0.95) to avoid stacking context on iOS
         background: rgba(0, 0, 0, 0.1);
       }
 

@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, HostListener, ElementRef, ViewChild, TemplateRef, ContentChild, OnInit, OnChanges, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, Output, EventEmitter, HostListener, ElementRef, ViewChild, TemplateRef, ContentChild, OnInit, OnChanges, OnDestroy, Renderer2, Inject, SimpleChanges } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
 
 export interface DialogBreakpoints {
   [key: string]: string;
@@ -39,18 +39,38 @@ export class PockitoDialogComponent implements OnInit, OnChanges, OnDestroy {
   isMaximized: boolean = false;
   isVisible: boolean = false;
   private originalBodyOverflow: string = '';
+  private originalParent: Node | null = null;
+  private nextSibling: Node | null = null;
+  private movedToBody: boolean = false;
+
+  constructor(
+    private renderer: Renderer2,
+    private hostElementRef: ElementRef,
+    @Inject(DOCUMENT) private document: Document
+  ) {}
 
   ngOnInit() {
     this.isVisible = this.visible;
+    if (this.visible) {
+      this.moveHostToBody();
+    }
   }
 
-  ngOnChanges() {
+  ngOnChanges(changes: SimpleChanges) {
     this.isVisible = this.visible;
     this.manageBodyScroll();
+    if (changes['visible']) {
+      if (this.visible) {
+        this.moveHostToBody();
+      } else {
+        this.restoreHostPosition();
+      }
+    }
   }
 
   ngOnDestroy() {
     this.restoreBodyScroll();
+    this.restoreHostPosition();
   }
 
   @HostListener('document:keydown.escape', ['$event'])
@@ -64,6 +84,7 @@ export class PockitoDialogComponent implements OnInit, OnChanges, OnDestroy {
     this.visible = true;
     this.isVisible = true;
     this.manageBodyScroll();
+    this.moveHostToBody();
     this.visibleChange.emit(true);
     this.onShow.emit();
   }
@@ -72,6 +93,7 @@ export class PockitoDialogComponent implements OnInit, OnChanges, OnDestroy {
     this.visible = false;
     this.isVisible = false;
     this.manageBodyScroll();
+    this.restoreHostPosition();
     this.visibleChange.emit(false);
     this.onHide.emit();
   }
@@ -159,6 +181,8 @@ export class PockitoDialogComponent implements OnInit, OnChanges, OnDestroy {
       this.originalBodyOverflow = document.body.style.overflow;
       // Disable scrolling
       document.body.style.overflow = 'hidden';
+      // Mark body as having an open dialog (used for iOS-specific CSS fixes)
+      document.body.classList.add('dialog-open');
     }
   }
 
@@ -166,6 +190,36 @@ export class PockitoDialogComponent implements OnInit, OnChanges, OnDestroy {
     if (typeof document !== 'undefined') {
       // Restore the original overflow value
       document.body.style.overflow = this.originalBodyOverflow;
+      document.body.classList.remove('dialog-open');
     }
+  }
+
+  private moveHostToBody(): void {
+    if (this.movedToBody) {
+      return;
+    }
+    const hostEl = this.hostElementRef.nativeElement as HTMLElement;
+    if (!hostEl || !this.document?.body) {
+      return;
+    }
+    this.originalParent = hostEl.parentNode;
+    this.nextSibling = hostEl.nextSibling;
+    this.renderer.appendChild(this.document.body, hostEl);
+    this.movedToBody = true;
+  }
+
+  private restoreHostPosition(): void {
+    if (!this.movedToBody || !this.originalParent) {
+      return;
+    }
+    const hostEl = this.hostElementRef.nativeElement as HTMLElement;
+    if (this.nextSibling) {
+      this.originalParent.insertBefore(hostEl, this.nextSibling);
+    } else {
+      this.originalParent.appendChild(hostEl);
+    }
+    this.movedToBody = false;
+    this.originalParent = null;
+    this.nextSibling = null;
   }
 }
