@@ -18,7 +18,7 @@
   animation: fadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   // Ensure the mask covers everything and prevents interaction
   overflow: hidden;
-  touch-action: none;
+  touch-action: pan-y pan-x;
   -webkit-overflow-scrolling: touch;
   // Create new stacking context
   isolation: isolate;
@@ -240,6 +240,7 @@
   overflow-y: auto;
   background: rgba(255, 255, 255, 0.9);
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y pan-x pinch-zoom;
 }
 
 .pockito-dialog-footer {

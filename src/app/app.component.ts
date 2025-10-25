@@ -44,52 +44,6 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     // Keycloak initialization is handled in app.config.ts via APP_INITIALIZER
     // This ensures the app doesn't start until Keycloak is ready
-
-    // Disable pull-to-refresh behavior on mobile devices
-    this.disablePullToRefresh();
-  }
-
-  /**
-   * Disable pull-to-refresh behavior on mobile devices
-   * This prevents the browser from refreshing when user scrolls down at the top
-   */
-  private disablePullToRefresh(): void {
-    // Prevent pull-to-refresh on touch devices
-    let startY = 0;
-    let isAtTop = false;
-
-    // Touch start handler
-    const handleTouchStart = (e: TouchEvent) => {
-      startY = e.touches[0].clientY;
-      isAtTop = window.scrollY === 0;
-    };
-
-    // Touch move handler - prevent pull-to-refresh
-    const handleTouchMove = (e: TouchEvent) => {
-      const currentY = e.touches[0].clientY;
-      const deltaY = currentY - startY;
-
-      // If we're at the top and trying to scroll down (pull-to-refresh gesture)
-      if (isAtTop && deltaY > 0) {
-        e.preventDefault();
-      }
-    };
-
-    // Add event listeners
-    document.addEventListener('touchstart', handleTouchStart, {
-      passive: false,
-    });
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-
-    // Also prevent the default behavior on the document
-    document.addEventListener(
-      'touchstart',
-      (e) => {
-        if (window.scrollY === 0) {
-          e.preventDefault();
-        }
-      },
-      { passive: false }
-    );
+    // Pull-to-refresh prevention is handled via CSS (overscroll-behavior) in styles.scss
   }
 }

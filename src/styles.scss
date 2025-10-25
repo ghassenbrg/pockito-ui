@@ -53,16 +53,12 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
   overflow-x: hidden;
   /* Disable pull-to-refresh on mobile */
   overscroll-behavior: contain;
   overscroll-behavior-y: contain;
+  /* Enable touch interactions */
+  touch-action: manipulation;
 }
 
 /* Prevent aria-hidden on focused elements */
@@ -398,6 +394,7 @@ body {
     overscroll-behavior-y: contain;
     -webkit-overflow-scrolling: touch;
     overflow-x: hidden;
+    touch-action: manipulation;
   }
 
   // Prevent pull-to-refresh on the main content area
@@ -493,25 +490,7 @@ body {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
     overscroll-behavior-y: contain;
-  }
-
-  // Prevent bounce effect on iOS
-  html, body {
-    position: fixed;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-  }
-
-  // Allow scrolling within the app content
-  app-root {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    touch-action: manipulation;
   }
 }
 
