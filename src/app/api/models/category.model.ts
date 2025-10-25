@@ -9,6 +9,8 @@ export interface CategoryDto {
   parentCategoryName?: string;
   active?: boolean;
   childCount?: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export enum CategoryType {

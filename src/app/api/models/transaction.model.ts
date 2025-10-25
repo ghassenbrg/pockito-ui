@@ -14,6 +14,8 @@ export interface TransactionDto {
   walletToName?: string;
   categoryName?: string;
   iconUrl?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export enum TransactionType {

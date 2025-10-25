@@ -2,8 +2,8 @@ export interface UserDto {
   username?: string;
   country?: Country;
   defaultCurrency?: Currency;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export enum Country {
