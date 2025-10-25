@@ -2,6 +2,16 @@
 @import "primeng/resources/primeng.css";
 @import "primeicons/primeicons.css";
 
+body {
+  overflow: hidden;
+}
+
+#app-root-container {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+
 /* Safe area utilities for mobile devices */
 :root {
   --safe-area-inset-top: env(safe-area-inset-top);

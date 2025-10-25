@@ -443,16 +443,28 @@
 
 }
 
-@media (max-width: $breakpoint-mobile) {
+@media (max-width: 1023px) {
   .transaction-form {
     padding: 0.75rem;
+    padding-bottom: 0; // Remove bottom padding to accommodate sticky button
   }
 
   .transaction-form__content {
     gap: 1rem;
+    padding-bottom: 1rem; // Add padding at the bottom of content to prevent content from being hidden behind sticky button
   }
 
   .transaction-form__actions {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    padding: 1rem 0.75rem;
+    margin: 0 -0.75rem;
+    border-top: 1px solid $stroke;
     flex-direction: column;
     gap: 0.75rem;
     
