@@ -91,6 +91,11 @@ export class WalletsComponent implements OnInit {
     this.displayCreateWalletDialog = false;
   }
 
+  onWalletDeleted(walletId: string) {
+    this.wallets = this.wallets.filter((w) => w.id !== walletId);
+    this.displayCreateWalletDialog = false;
+  }
+
   viewWallet(wallet: WalletDto) {
     this.router.navigate([wallet.id], { relativeTo: this.route });
   }

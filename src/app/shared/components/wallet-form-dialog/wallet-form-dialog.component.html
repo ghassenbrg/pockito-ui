@@ -3,11 +3,24 @@
   [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
   [style]="{ width: '60vw' }"
   [modal]="true"
-  [header]="'wallets.createWallet' | translate"
   [closable]="true"
   [closeOnEscape]="true"
   (visibleChange)="onDialogVisibleChange($event)"
 >
+  <ng-template #header>
+    <div class="dialog-header-content">
+      <span>{{ getDialogHeader() | translate }}</span>
+      <button 
+        *ngIf="isEditMode()"
+        class="delete-button"
+        (click)="deleteWallet()"
+        [attr.aria-label]="'wallets.delete.button' | translate"
+        type="button"
+      >
+        <i class="pi pi-trash"></i>
+      </button>
+    </div>
+  </ng-template>
   <app-wallet-form
     *ngIf="visible"
     [walletId]="walletId"

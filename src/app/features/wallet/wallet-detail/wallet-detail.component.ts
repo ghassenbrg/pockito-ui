@@ -140,6 +140,12 @@ export class WalletDetailComponent implements OnInit {
     this.displayEditWalletDialog = false;
   }
 
+  onWalletDeleted() {
+    this.displayEditWalletDialog = false;
+    // Navigate back to wallets list since the wallet was deleted
+    this.router.navigate(['../'], { relativeTo: this.route });
+  }
+
   deleteWallet() {
     const loadingId = this.loadingService.show(this.translateService.instant('common.loading'));
     

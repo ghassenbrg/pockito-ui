@@ -4,6 +4,9 @@ import { WalletDto } from '@api/models';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PockitoDialogComponent } from '@shared/components/pockito-dialog/pockito-dialog.component';
 import { WalletFormComponent } from '@features/wallet/wallet-form/wallet-form.component';
+import { WalletService } from '@api/services';
+import { ToastService } from '@shared/services/toast.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-wallet-form-dialog',
@@ -24,6 +27,13 @@ export class WalletFormDialogComponent {
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() walletSaved = new EventEmitter<WalletDto>();
   @Output() formCancelled = new EventEmitter<void>();
+  @Output() walletDeleted = new EventEmitter<string>();
+
+  constructor(
+    private walletService: WalletService,
+    private toastService: ToastService,
+    private translate: TranslateService
+  ) {}
 
   onWalletSaved(wallet: WalletDto): void {
     this.walletSaved.emit(wallet);
@@ -42,5 +52,41 @@ export class WalletFormDialogComponent {
   private closeDialog(): void {
     this.visible = false;
     this.visibleChange.emit(false);
+  }
+
+  // Check if we're in edit mode
+  isEditMode(): boolean {
+    return !!this.walletId;
+  }
+
+  // Get dialog header text
+  getDialogHeader(): string {
+    return this.walletId ? 'wallets.editWallet' : 'wallets.createWallet';
+  }
+
+  // Delete wallet
+  deleteWallet(): void {
+    if (!this.walletId) {
+      return;
+    }
+
+    if (confirm(this.translate.instant('wallets.delete.confirm'))) {
+      this.walletService.deleteWallet(this.walletId).subscribe({
+        next: () => {
+          this.toastService.showSuccess(
+            'wallets.delete.success',
+            'wallets.delete.successMessage'
+          );
+          this.walletDeleted.emit(this.walletId!);
+          this.closeDialog();
+        },
+        error: () => {
+          this.toastService.showError(
+            'wallets.delete.error',
+            'wallets.delete.errorMessage'
+          );
+        }
+      });
+    }
   }
 }

@@ -109,6 +109,13 @@ export class TransactionListComponent implements OnInit, OnChanges {
     this.selectedTransactionId = undefined;
   }
 
+  onTransactionDeleted(transactionId: string): void {
+    this.displayTransactionForm = false;
+    this.selectedTransactionId = undefined;
+    // Emit the deleted transaction ID to parent components
+    this.transactionSaved.emit({} as TransactionDto); // Trigger refresh
+  }
+
 
   formatDisplayDate(dateString: string): string {
     const date = new Date(dateString);

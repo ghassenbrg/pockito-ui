@@ -28,7 +28,8 @@
       "moreOptions": "More Options",
       "switchLanguage": "Switch Language",
       "testLanguageSwitcher": "Test language switcher",
-      "addTransaction": "Add Transaction"
+      "addTransaction": "Add Transaction",
+      "editTransaction": "Edit Transaction"
     }
   },
   "transactions": {
@@ -47,6 +48,14 @@
     "updateTransactionSuccessMessage": "Your transaction has been updated successfully.",
     "createTransactionError": "Failed to create transaction",
     "updateTransactionError": "Failed to update transaction",
+    "delete": {
+      "confirm": "Are you sure you want to delete this transaction?",
+      "button": "Delete Transaction",
+      "success": "Transaction deleted successfully",
+      "successMessage": "The transaction has been deleted successfully.",
+      "error": "Failed to delete transaction",
+      "errorMessage": "Failed to delete transaction. Please try again."
+    },
     "form": {
       "type": "Transaction Type",
       "typeRequired": "Transaction type is required",
@@ -134,6 +143,14 @@
     "createWalletErrorMessage": "Failed to create wallet. Please try again.",
     "updateWalletError": "Failed to update wallet",
     "updateWalletErrorMessage": "Failed to update wallet. Please try again.",
+    "delete": {
+      "confirm": "Are you sure you want to delete this wallet?",
+      "button": "Delete Wallet",
+      "success": "Wallet deleted successfully",
+      "successMessage": "The wallet has been deleted successfully.",
+      "error": "Failed to delete wallet",
+      "errorMessage": "Failed to delete wallet. Please try again."
+    },
     "form": {
       "name": "Name",
       "nameRequired": "Name is required",

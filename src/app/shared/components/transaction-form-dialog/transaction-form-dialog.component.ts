@@ -4,6 +4,9 @@ import { TransactionType, TransactionDto } from '@api/models';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PockitoDialogComponent } from '@shared/components/pockito-dialog/pockito-dialog.component';
 import { TransactionFormComponent } from '@shared/components/transaction-form/transaction-form.component';
+import { TransactionService } from '@api/services';
+import { ToastService } from '@shared/services/toast.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-transaction-form-dialog',
@@ -26,10 +29,17 @@ export class TransactionFormDialogComponent {
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() transactionSaved = new EventEmitter<TransactionDto>();
   @Output() formCancelled = new EventEmitter<void>();
+  @Output() transactionDeleted = new EventEmitter<string>();
 
   currentTransactionType: TransactionType | null = null;
   currentWalletFromId: string | null = null;
   currentWalletToId: string | null = null;
+
+  constructor(
+    private transactionService: TransactionService,
+    private toastService: ToastService,
+    private translate: TranslateService
+  ) {}
 
   onTransactionSaved(transaction: TransactionDto): void {
     this.transactionSaved.emit(transaction);
@@ -108,5 +118,36 @@ export class TransactionFormDialogComponent {
   // Determine dialog header text based on edit mode
   getDialogHeader(): string {
     return this.transactionId ? 'appLayout.dialogs.editTransaction' : 'appLayout.dialogs.addTransaction';
+  }
+
+  // Check if we're in edit mode
+  isEditMode(): boolean {
+    return !!this.transactionId;
+  }
+
+  // Delete transaction
+  deleteTransaction(): void {
+    if (!this.transactionId) {
+      return;
+    }
+
+    if (confirm(this.translate.instant('transactions.delete.confirm'))) {
+      this.transactionService.deleteTransaction(this.transactionId).subscribe({
+        next: () => {
+          this.toastService.showSuccess(
+            'transactions.delete.success',
+            'transactions.delete.successMessage'
+          );
+          this.transactionDeleted.emit(this.transactionId!);
+          this.closeDialog();
+        },
+        error: () => {
+          this.toastService.showError(
+            'transactions.delete.error',
+            'transactions.delete.errorMessage'
+          );
+        }
+      });
+    }
   }
 }

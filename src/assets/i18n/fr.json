@@ -28,7 +28,8 @@
       "moreOptions": "Plus d'Options",
       "switchLanguage": "Changer de Langue",
       "testLanguageSwitcher": "Test du sélecteur de langue",
-      "addTransaction": "Ajouter une Transaction"
+      "addTransaction": "Ajouter une Transaction",
+      "editTransaction": "Modifier la Transaction"
     }
   },
   "transactions": {
@@ -47,6 +48,14 @@
     "updateTransactionSuccessMessage": "Votre transaction a été mise à jour avec succès.",
     "createTransactionError": "Échec de la création de la transaction",
     "updateTransactionError": "Échec de la mise à jour de la transaction",
+    "delete": {
+      "confirm": "Êtes-vous sûr de vouloir supprimer cette transaction ?",
+      "button": "Supprimer la Transaction",
+      "success": "Transaction supprimée avec succès",
+      "successMessage": "La transaction a été supprimée avec succès.",
+      "error": "Échec de la suppression de la transaction",
+      "errorMessage": "Échec de la suppression de la transaction. Veuillez réessayer."
+    },
     "form": {
       "type": "Type de Transaction",
       "typeRequired": "Le type de transaction est requis",
@@ -134,6 +143,14 @@
     "createWalletErrorMessage": "Erreur lors de la création du portefeuille. Veuillez réessayer.",
     "updateWalletError": "Erreur lors de la mise à jour du portefeuille",
     "updateWalletErrorMessage": "Erreur lors de la mise à jour du portefeuille. Veuillez réessayer.",
+    "delete": {
+      "confirm": "Êtes-vous sûr de vouloir supprimer ce portefeuille ?",
+      "button": "Supprimer le Portefeuille",
+      "success": "Portefeuille supprimé avec succès",
+      "successMessage": "Le portefeuille a été supprimé avec succès.",
+      "error": "Échec de la suppression du portefeuille",
+      "errorMessage": "Échec de la suppression du portefeuille. Veuillez réessayer."
+    },
     "form": {
       "name": "Nom",
       "nameRequired": "Le nom est requis",
