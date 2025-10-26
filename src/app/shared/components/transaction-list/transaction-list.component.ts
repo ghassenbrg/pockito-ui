@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
-import { PageTransactionDto, TransactionType, WalletDto } from '@api/models';
+import { PageTransactionDto, TransactionType, WalletDto, TransactionDto } from '@api/models';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { PockitoCurrencyPipe } from '../../pipes/pockito-currency.pipe';
 import { EmptyStateComponent } from '../empty-state/empty-state.component';
+import { TransactionFormDialogComponent } from '../transaction-form-dialog/transaction-form-dialog.component';
 
 @Component({
   selector: 'app-transaction-list',
@@ -16,7 +17,8 @@ import { EmptyStateComponent } from '../empty-state/empty-state.component';
     PockitoCurrencyPipe,
     ButtonModule,
     TooltipModule,
-    EmptyStateComponent
+    EmptyStateComponent,
+    TransactionFormDialogComponent
   ],
   templateUrl: './transaction-list.component.html',
   styleUrl: './transaction-list.component.scss'
@@ -27,10 +29,16 @@ export class TransactionListComponent implements OnInit, OnChanges {
   @Input() walletId: string = '';
 
   @Output() loadMore = new EventEmitter<void>();
+  @Output() transactionClick = new EventEmitter<any>();
+  @Output() transactionSaved = new EventEmitter<TransactionDto>();
 
   // Internal properties
   groupedTransactions: { [date: string]: any[] } = {};
   isLoadingMore: boolean = false;
+  
+  // Transaction form dialog properties
+  displayTransactionForm = false;
+  selectedTransactionId?: string;
 
   TransactionType = TransactionType;
 
@@ -80,6 +88,25 @@ export class TransactionListComponent implements OnInit, OnChanges {
       this.isLoadingMore = true;
       this.loadMore.emit();
     }
+  }
+
+  onTransactionClick(transaction: any): void {
+    this.selectedTransactionId = transaction.id;
+    this.displayTransactionForm = true;
+    // Still emit the event for backward compatibility
+    this.transactionClick.emit(transaction);
+  }
+
+  onTransactionSaved(transaction: TransactionDto): void {
+    this.displayTransactionForm = false;
+    this.selectedTransactionId = undefined;
+    // Emit the saved transaction to parent components
+    this.transactionSaved.emit(transaction);
+  }
+
+  onTransactionFormCancelled(): void {
+    this.displayTransactionForm = false;
+    this.selectedTransactionId = undefined;
   }
 
 

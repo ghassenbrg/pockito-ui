@@ -31,6 +31,7 @@
         <div
           class="transaction-item"
           *ngFor="let transaction of groupedTransactions[dateKey]"
+          (click)="onTransactionClick(transaction)"
         >
           <!-- Transaction icon -->
           <div class="transaction-icon">
@@ -228,4 +229,12 @@
       <span>{{ isLoadingMore ? ('common.loadingMore' | translate) : ('common.showMore' | translate) }}</span>
     </button>
   </div>
+
+  <!-- Transaction Form Dialog -->
+  <app-transaction-form-dialog
+    [(visible)]="displayTransactionForm"
+    [transactionId]="selectedTransactionId"
+    (transactionSaved)="onTransactionSaved($event)"
+    (formCancelled)="onTransactionFormCancelled()"
+  ></app-transaction-form-dialog>
 </div>

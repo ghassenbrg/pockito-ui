@@ -104,4 +104,9 @@ export class TransactionFormDialogComponent {
     // Default case - return grey for transfers
     return 'grey';
   }
+
+  // Determine dialog header text based on edit mode
+  getDialogHeader(): string {
+    return this.transactionId ? 'appLayout.dialogs.editTransaction' : 'appLayout.dialogs.addTransaction';
+  }
 }

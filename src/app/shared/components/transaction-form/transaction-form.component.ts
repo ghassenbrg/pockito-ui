@@ -151,7 +151,11 @@ export class TransactionFormComponent implements OnInit {
         // Find the wallet with isDefault flag set to true
         this.defaultWallet = wallets.find(wallet => wallet.isDefault) || null;
         this.updateWalletOptions();
-        this.setDefaultWalletValues();
+        
+        // Only set default values if not in edit mode
+        if (!this.isEditMode) {
+          this.setDefaultWalletValues();
+        }
       },
       error: (error) => {
         console.error('Error loading wallets:', error);
@@ -234,7 +238,8 @@ export class TransactionFormComponent implements OnInit {
   private setDefaultWalletValues(): void {
     const transactionType = this.transactionForm.get('transactionType')?.value;
     
-    if (!transactionType || !this.defaultWallet) {
+    // Skip setting default values in edit mode to preserve loaded transaction data
+    if (this.isEditMode || !transactionType || !this.defaultWallet) {
       return;
     }
 
@@ -504,6 +509,10 @@ export class TransactionFormComponent implements OnInit {
       },
       { emitEvent: false }
     );
+
+    // Update wallet options after patching the form to ensure proper filtering
+    this.updateWalletFromOptions();
+    this.updateWalletToOptions();
   }
 
   onSubmit(): void {

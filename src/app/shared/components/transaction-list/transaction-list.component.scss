@@ -62,6 +62,7 @@ $transaction-icon-size-mobile: 34px;
   gap: $spacing-lg;
   transition: background-color 0.15s ease;
   border-bottom: 1px solid rgba(15, 23, 42, 0.04);
+  cursor: pointer;
 
   &:last-child { border-bottom: none; }
   &:hover { background: rgba(15, 23, 42, 0.02); }

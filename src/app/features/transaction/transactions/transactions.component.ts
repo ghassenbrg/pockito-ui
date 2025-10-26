@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { PageTransactionDto, Pageable } from '@api/models';
+import { PageTransactionDto, Pageable, TransactionDto } from '@api/models';
 import { TransactionService } from '@api/services';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -82,6 +82,11 @@ export class TransactionsComponent implements OnInit {
   }
 
   onLoadMore(): void {
+    this.loadTransactions();
+  }
+
+  onTransactionSaved(_transaction: TransactionDto): void {
+    // Reload transactions to show updated data
     this.loadTransactions();
   }
 }

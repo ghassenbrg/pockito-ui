@@ -3,7 +3,7 @@
   [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
   [style]="{ width: '30vw' }"
   [modal]="true"
-  [header]="'appLayout.dialogs.addTransaction' | translate"
+  [header]="getDialogHeader() | translate"
   [closable]="true"
   [closeOnEscape]="true"
   [headerColor]="getDialogHeaderColor()"
