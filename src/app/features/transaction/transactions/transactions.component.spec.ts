@@ -25,7 +25,7 @@ describe('TransactionsComponent', () => {
       amount: 100,
       exchangeRate: 1,
       effectiveDate: new Date('2024-01-01'),
-      description: 'Test expense',
+      note: 'Test expense',
       walletFromName: 'Test Wallet',
       createdAt: new Date('2024-01-01T00:00:00Z'),
       updatedAt: new Date('2024-01-01T00:00:00Z')
@@ -37,7 +37,7 @@ describe('TransactionsComponent', () => {
       amount: 200,
       exchangeRate: 1,
       effectiveDate: new Date('2024-01-02'),
-      description: 'Test income',
+      note: 'Test income',
       walletToName: 'Test Wallet',
       createdAt: new Date('2024-01-02T00:00:00Z'),
       updatedAt: new Date('2024-01-02T00:00:00Z')
@@ -312,7 +312,7 @@ describe('TransactionsComponent', () => {
           amount: 300,
           exchangeRate: 1,
           effectiveDate: new Date('2024-01-03'),
-          description: 'New expense',
+          note: 'New expense',
           walletFromName: 'Test Wallet',
           createdAt: new Date('2024-01-03T00:00:00Z'),
           updatedAt: new Date('2024-01-03T00:00:00Z')

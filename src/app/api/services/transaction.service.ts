@@ -1,18 +1,17 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { 
-  TransactionRequest, 
-  Transaction, 
-  TransactionDto, 
+import {
+  Pageable,
+  PageTransactionDto,
+  Transaction,
   TransactionList,
-  TransactionType, 
-  Pageable, 
-  PageTransactionDto 
+  TransactionRequest,
+  TransactionType
 } from '../models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TransactionService {
   private readonly baseUrl = '/api/transactions';
@@ -30,7 +29,7 @@ export class TransactionService {
     transactionType?: TransactionType
   ): Observable<PageTransactionDto> {
     let params = new HttpParams();
-    
+
     // Add pageable parameters
     if (pageable.page !== undefined) {
       params = params.set('page', pageable.page.toString());
@@ -39,7 +38,7 @@ export class TransactionService {
       params = params.set('size', pageable.size.toString());
     }
     if (pageable.sort) {
-      pageable.sort.forEach(sort => {
+      pageable.sort.forEach((sort) => {
         params = params.append('sort', sort);
       });
     }
@@ -78,8 +77,14 @@ export class TransactionService {
   /**
    * Update an existing transaction
    */
-  updateTransaction(transactionId: string, transaction: TransactionRequest): Observable<Transaction> {
-    return this.http.put<Transaction>(`${this.baseUrl}/${transactionId}`, transaction);
+  updateTransaction(
+    transactionId: string,
+    transaction: TransactionRequest
+  ): Observable<Transaction> {
+    return this.http.put<Transaction>(
+      `${this.baseUrl}/${transactionId}`,
+      transaction
+    );
   }
 
   /**
@@ -92,9 +97,12 @@ export class TransactionService {
   /**
    * Get transactions by wallet with pagination
    */
-  getTransactionsByWallet(walletId: string, pageable: Pageable): Observable<PageTransactionDto> {
+  getTransactionsByWallet(
+    walletId: string,
+    pageable: Pageable
+  ): Observable<PageTransactionDto> {
     let params = new HttpParams();
-    
+
     if (pageable.page !== undefined) {
       params = params.set('page', pageable.page.toString());
     }
@@ -102,20 +110,26 @@ export class TransactionService {
       params = params.set('size', pageable.size.toString());
     }
     if (pageable.sort) {
-      pageable.sort.forEach(sort => {
+      pageable.sort.forEach((sort) => {
         params = params.append('sort', sort);
       });
     }
 
-    return this.http.get<PageTransactionDto>(`${this.baseUrl}/wallet/${walletId}`, { params });
+    return this.http.get<PageTransactionDto>(
+      `${this.baseUrl}/wallet/${walletId}`,
+      { params }
+    );
   }
 
   /**
    * Get transactions by type with pagination
    */
-  getTransactionsByType(transactionType: TransactionType, pageable: Pageable): Observable<PageTransactionDto> {
+  getTransactionsByType(
+    transactionType: TransactionType,
+    pageable: Pageable
+  ): Observable<PageTransactionDto> {
     let params = new HttpParams();
-    
+
     if (pageable.page !== undefined) {
       params = params.set('page', pageable.page.toString());
     }
@@ -123,23 +137,30 @@ export class TransactionService {
       params = params.set('size', pageable.size.toString());
     }
     if (pageable.sort) {
-      pageable.sort.forEach(sort => {
+      pageable.sort.forEach((sort) => {
         params = params.append('sort', sort);
       });
     }
 
-    return this.http.get<PageTransactionDto>(`${this.baseUrl}/type/${transactionType}`, { params });
+    return this.http.get<PageTransactionDto>(
+      `${this.baseUrl}/type/${transactionType}`,
+      { params }
+    );
   }
 
   /**
    * Get transactions by date range with pagination
    */
-  getTransactionsByDateRange(startDate: string, endDate: string, pageable: Pageable): Observable<PageTransactionDto> {
+  getTransactionsByDateRange(
+    startDate: string,
+    endDate: string,
+    pageable: Pageable
+  ): Observable<PageTransactionDto> {
     let params = new HttpParams();
-    
+
     params = params.set('startDate', startDate);
     params = params.set('endDate', endDate);
-    
+
     if (pageable.page !== undefined) {
       params = params.set('page', pageable.page.toString());
     }
@@ -147,12 +168,14 @@ export class TransactionService {
       params = params.set('size', pageable.size.toString());
     }
     if (pageable.sort) {
-      pageable.sort.forEach(sort => {
+      pageable.sort.forEach((sort) => {
         params = params.append('sort', sort);
       });
     }
 
-    return this.http.get<PageTransactionDto>(`${this.baseUrl}/date-range`, { params });
+    return this.http.get<PageTransactionDto>(`${this.baseUrl}/date-range`, {
+      params,
+    });
   }
 
   /**

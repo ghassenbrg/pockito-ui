@@ -28,7 +28,7 @@ export interface Transaction {
   categoryName?: string;
   iconUrl?: string;
   note?: string;
-  effectiveDate: string;
+  effectiveDate: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -50,7 +50,7 @@ export interface TransactionDto {
   categoryName?: string;
   iconUrl?: string;
   note?: string;
-  effectiveDate: string;
+  effectiveDate: Date;
   createdAt: Date;
   updatedAt: Date;
 }
