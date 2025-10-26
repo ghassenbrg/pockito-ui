@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import { WalletFormComponent } from './wallet-form.component';
 import { WalletService, UserService } from '@api/services';
 import { ToastService } from '@shared/services';
-import { Currency, WalletType, UserDto, WalletDto } from '@api/models';
+import { Currency, WalletType, User, Wallet } from '@api/models';
 
 describe('WalletFormComponent', () => {
   let component: WalletFormComponent;
@@ -49,7 +49,7 @@ describe('WalletFormComponent', () => {
       iconUrl: '',
       isDefault: false,
       goalAmount: 0
-    } as WalletDto));
+    } as Wallet));
     mockWalletService.createWallet.and.returnValue(of({
       id: 'new-wallet-id',
       name: 'New Wallet',
@@ -62,7 +62,7 @@ describe('WalletFormComponent', () => {
       iconUrl: '',
       isDefault: false,
       goalAmount: 0
-    } as WalletDto));
+    } as Wallet));
     mockWalletService.updateWallet.and.returnValue(of({
       id: 'test-wallet-id',
       name: 'Updated Wallet',
@@ -75,7 +75,7 @@ describe('WalletFormComponent', () => {
       iconUrl: '',
       isDefault: false,
       goalAmount: 0
-    } as WalletDto));
+    } as Wallet));
 
     await TestBed.configureTestingModule({
       imports: [

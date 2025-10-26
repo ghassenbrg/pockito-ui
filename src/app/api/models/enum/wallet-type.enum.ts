@@ -1,0 +1,7 @@
+export enum WalletType {
+  BANK_ACCOUNT = 'BANK_ACCOUNT',
+  CASH = 'CASH',
+  CREDIT_CARD = 'CREDIT_CARD',
+  SAVINGS = 'SAVINGS',
+  CUSTOM = 'CUSTOM'
+}

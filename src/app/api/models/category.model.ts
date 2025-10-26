@@ -1,19 +1,30 @@
-export interface CategoryDto {
-  id?: string;
-  username?: string;
+import { CategoryType } from './enum';
+
+export interface CategoryRequest {
   name: string;
   color: string;
   categoryType: CategoryType;
   iconUrl?: string;
   parentCategoryId?: string;
-  parentCategoryName?: string;
-  active?: boolean;
-  childCount?: number;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
-export enum CategoryType {
-  EXPENSE = 'EXPENSE',
-  INCOME = 'INCOME'
+export interface Category {
+  id: string;
+  username: string;
+  name: string;
+  description?: string;
+  color: string;
+  categoryType: CategoryType;
+  iconUrl?: string;
+  parentCategoryId?: string;
+  parentCategoryName?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  active: boolean;
+  childCount: number;
+}
+
+export interface CategoryList {
+  categories: Category[];
+  totalCount: number;
 }

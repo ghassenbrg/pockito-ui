@@ -37,6 +37,7 @@ describe('WalletDetailComponent', () => {
     mockLoadingService.show.and.returnValue('mock-loading-id');
     mockWalletService.getWallet.and.returnValue(of({
       id: 'test-wallet-id',
+      username: 'testuser',
       name: 'Test Wallet',
       balance: 1000,
       currency: Currency.USD,
@@ -46,7 +47,11 @@ describe('WalletDetailComponent', () => {
       color: '#1d4ed8',
       iconUrl: '',
       isDefault: false,
-      goalAmount: 0
+      goalAmount: 0,
+      orderPosition: 0,
+      createdAt: new Date('2024-01-01T00:00:00Z'),
+      updatedAt: new Date('2024-01-01T00:00:00Z'),
+      active: true
     }));
     mockTransactionService.getTransactionsByWallet.and.returnValue(of({
       totalPages: 1,
@@ -57,7 +62,16 @@ describe('WalletDetailComponent', () => {
       first: true,
       last: true,
       numberOfElements: 0,
-      empty: true
+      empty: true,
+      sort: { empty: false, unsorted: false, sorted: true },
+      pageable: {
+        offset: 0,
+        sort: { empty: false, unsorted: false, sorted: true },
+        unpaged: false,
+        paged: true,
+        pageNumber: 0,
+        pageSize: 10
+      }
     }));
 
     await TestBed.configureTestingModule({
@@ -109,7 +123,16 @@ describe('WalletDetailComponent', () => {
       first: true,
       last: false,
       numberOfElements: 10,
-      empty: false
+      empty: false,
+      sort: { empty: false, unsorted: false, sorted: true },
+      pageable: {
+        offset: 0,
+        sort: { empty: false, unsorted: false, sorted: true },
+        unpaged: false,
+        paged: true,
+        pageNumber: 0,
+        pageSize: 10
+      }
     };
     
     // Clear previous calls
@@ -135,6 +158,7 @@ describe('WalletDetailComponent', () => {
   it('should update wallet when onWalletSaved is called', () => {
     const updatedWallet = {
       id: 'test-wallet-id',
+      username: 'testuser',
       name: 'Updated Wallet',
       balance: 2000,
       currency: Currency.USD,
@@ -144,7 +168,11 @@ describe('WalletDetailComponent', () => {
       color: '#1d4ed8',
       iconUrl: '',
       isDefault: false,
-      goalAmount: 0
+      goalAmount: 0,
+      orderPosition: 0,
+      createdAt: new Date('2024-01-01T00:00:00Z'),
+      updatedAt: new Date('2024-01-01T00:00:00Z'),
+      active: true
     };
     
     component.onWalletSaved(updatedWallet);

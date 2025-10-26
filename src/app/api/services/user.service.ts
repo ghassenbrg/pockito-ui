@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { UserDto, Currency, Country } from '../models';
+import { UserDto, User, Currency, Country } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -9,26 +9,30 @@ import { UserDto, Currency, Country } from '../models';
 export class UserService {
   private readonly baseUrl = '/api/users';
 
-  private currentUserSubject = new BehaviorSubject< UserDto | null >(null);
+  // <keep this when geenrating from prompt.md>
+  private currentUserSubject = new BehaviorSubject<UserDto | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
-  
+  // </end of keep this when geenrating from prompt.md>
+
   constructor(private http: HttpClient) {}
 
   /**
    * Get or create current user
    * Retrieves the current authenticated user or creates a new one if it doesn't exist
    */
-  getOrCreateCurrentUser(): Observable<UserDto> {
-    return this.http.get<UserDto>(`${this.baseUrl}/me`).pipe(
+  getOrCreateCurrentUser(): Observable<User> {
+    return this.http.get<User>(`${this.baseUrl}/me`).pipe(
+      // <keep this when geenrating from prompt.md>
       tap((user) => this.currentUserSubject.next(user))
+      // </end of keep this when geenrating from prompt.md>
     );
   }
 
   /**
    * Get user by username
    */
-  getUserByUsername(username: string): Observable<UserDto> {
-    return this.http.get<UserDto>(`${this.baseUrl}/${username}`);
+  getUserByUsername(username: string): Observable<User> {
+    return this.http.get<User>(`${this.baseUrl}/${username}`);
   }
 
   /**
@@ -42,17 +46,17 @@ export class UserService {
    * Update user default currency
    * Updates the default currency for a specific user. Accepts 3-letter ISO currency codes.
    */
-  updateUserCurrency(username: string, currencyCode: Currency): Observable<UserDto> {
+  updateUserCurrency(username: string, currencyCode: Currency): Observable<User> {
     const params = new HttpParams().set('currencyCode', currencyCode);
-    return this.http.put<UserDto>(`${this.baseUrl}/${username}/currency`, {}, { params });
+    return this.http.put<User>(`${this.baseUrl}/${username}/currency`, {}, { params });
   }
 
   /**
    * Update user country
    * Updates the country for a specific user. Accepts both alpha-2 and alpha-3 country codes.
    */
-  updateUserCountry(username: string, countryCode: Country): Observable<UserDto> {
+  updateUserCountry(username: string, countryCode: Country): Observable<User> {
     const params = new HttpParams().set('countryCode', countryCode);
-    return this.http.put<UserDto>(`${this.baseUrl}/${username}/country`, {}, { params });
+    return this.http.put<User>(`${this.baseUrl}/${username}/country`, {}, { params });
   }
 }

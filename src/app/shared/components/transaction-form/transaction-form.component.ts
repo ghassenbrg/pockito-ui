@@ -7,12 +7,15 @@ import {
   Validators,
 } from '@angular/forms';
 import {
-  CategoryDto,
+  Category,
   CategoryType,
   TransactionDto,
   TransactionType,
-  WalletDto,
+  Wallet,
   WalletType,
+  WalletList,
+  CategoryList,
+  TransactionRequest,
 } from '@api/models';
 import {
   CategoryService,
@@ -74,8 +77,8 @@ export class TransactionFormComponent implements OnInit {
   transactionTypeOptions: any[] = [];
 
   // Data arrays
-  wallets: WalletDto[] = [];
-  categories: CategoryDto[] = [];
+  wallets: Wallet[] = [];
+  categories: Category[] = [];
 
   // Dialog options for selectors
   walletOptions: DialogOption[] = [];
@@ -84,7 +87,7 @@ export class TransactionFormComponent implements OnInit {
   categoryOptions: DialogOption[] = [];
 
   // Default wallet
-  defaultWallet: WalletDto | null = null;
+  defaultWallet: Wallet | null = null;
 
   // Button types and sizes for template
   PockitoButtonType = PockitoButtonType;
@@ -146,10 +149,10 @@ export class TransactionFormComponent implements OnInit {
 
   private loadWallets(): void {
     this.walletService.getUserWallets().subscribe({
-      next: (wallets: WalletDto[]) => {
-        this.wallets = wallets;
+      next: (response: WalletList) => {
+        this.wallets = response.wallets;
         // Find the wallet with isDefault flag set to true
-        this.defaultWallet = wallets.find(wallet => wallet.isDefault) || null;
+        this.defaultWallet = response.wallets.find(wallet => wallet.isDefault) || null;
         this.updateWalletOptions();
         
         // Only set default values if not in edit mode
@@ -170,10 +173,10 @@ export class TransactionFormComponent implements OnInit {
   private loadCategories(): void {
     // Load both income and expense categories
     this.categoryService.getCategoriesByType(CategoryType.INCOME).subscribe({
-      next: (incomeCategories: CategoryDto[]) => {
+      next: (response: CategoryList) => {
         this.categoryService.getCategoriesByType(CategoryType.EXPENSE).subscribe({
-          next: (expenseCategories: CategoryDto[]) => {
-            this.categories = [...incomeCategories, ...expenseCategories];
+          next: (expenseResponse: CategoryList) => {
+            this.categories = [...response.categories, ...expenseResponse.categories];
             this.updateCategoryOptions();
           },
           error: (error) => {
@@ -493,7 +496,7 @@ export class TransactionFormComponent implements OnInit {
 
   private patchTransactionForm(transaction: TransactionDto): void {
     // Convert API date to local date without timezone conversion
-    const effectiveDate = this.parseLocalDate(transaction.effectiveDate);
+    const effectiveDate = transaction.effectiveDate ? this.parseLocalDate(transaction.effectiveDate) : undefined;
 
     this.transactionForm.patchValue(
       {
@@ -522,21 +525,19 @@ export class TransactionFormComponent implements OnInit {
       // Convert date to local date string without timezone (YYYY-MM-DD format)
       const effectiveDate = this.formatLocalDateString(formValue.effectiveDate);
 
-      const transactionData: TransactionDto = {
+      const transactionData: TransactionRequest = {
         transactionType: formValue.transactionType,
         walletFromId: formValue.walletFromId,
         walletToId: formValue.walletToId,
         amount: formValue.amount,
         exchangeRate: formValue.exchangeRate,
-        walletToAmount: formValue.amountTo,
         note: formValue.note || '',
         effectiveDate: effectiveDate as any, // Send as string in YYYY-MM-DD format
         categoryId: formValue.categoryId,
       };
 
       if (this.isEditMode && this.transactionId) {
-        transactionData.id = this.transactionId;
-        this.updateTransaction(transactionData);
+        this.updateTransaction(this.transactionId, transactionData);
       } else {
         this.createTransaction(transactionData);
       }
@@ -545,7 +546,7 @@ export class TransactionFormComponent implements OnInit {
     }
   }
 
-  private createTransaction(transactionData: TransactionDto): void {
+  private createTransaction(transactionData: TransactionRequest): void {
     this.isLoading = true;
     this.transactionService.createTransaction(transactionData).subscribe({
       next: (createdTransaction: TransactionDto) => {
@@ -567,10 +568,10 @@ export class TransactionFormComponent implements OnInit {
     });
   }
 
-  private updateTransaction(transactionData: TransactionDto): void {
+  private updateTransaction(transactionId: string, transactionData: TransactionRequest): void {
     this.isLoading = true;
     this.transactionService
-      .updateTransaction(transactionData.id!, transactionData)
+      .updateTransaction(transactionId, transactionData)
       .subscribe({
         next: (updatedTransaction: TransactionDto) => {
           this.transactionSaved.emit(updatedTransaction);
@@ -776,7 +777,7 @@ export class TransactionFormComponent implements OnInit {
     return this.wallets.find(wallet => wallet.id === walletId);
   }
 
-  getSelectedCategory(categoryId?: string): CategoryDto | undefined {
+  getSelectedCategory(categoryId?: string): Category | undefined {
     return this.categories.find(cat => cat.id === categoryId);
   }
 

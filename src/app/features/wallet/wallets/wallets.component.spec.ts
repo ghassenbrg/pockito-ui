@@ -46,7 +46,7 @@ describe('WalletsComponent', () => {
     mockTranslateService = TestBed.inject(TranslateService) as jasmine.SpyObj<TranslateService>;
 
     // Setup default mock behaviors
-    mockWalletService.getUserWallets.and.returnValue(of([]));
+    mockWalletService.getUserWallets.and.returnValue(of({ wallets: [], totalCount: 0 }));
     mockTranslateService.instant.and.returnValue('Loading...');
     mockLoadingService.show.and.returnValue('mock-loading-id');
   });

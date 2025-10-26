@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { WalletDto } from '@api/models';
+import { Wallet } from '@api/models';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PockitoDialogComponent } from '@shared/components/pockito-dialog/pockito-dialog.component';
 import { WalletFormComponent } from '@features/wallet/wallet-form/wallet-form.component';
@@ -25,7 +25,7 @@ export class WalletFormDialogComponent {
   @Input() walletId?: string;
   
   @Output() visibleChange = new EventEmitter<boolean>();
-  @Output() walletSaved = new EventEmitter<WalletDto>();
+  @Output() walletSaved = new EventEmitter<Wallet>();
   @Output() formCancelled = new EventEmitter<void>();
   @Output() walletDeleted = new EventEmitter<string>();
 
@@ -35,7 +35,7 @@ export class WalletFormDialogComponent {
     private translate: TranslateService
   ) {}
 
-  onWalletSaved(wallet: WalletDto): void {
+  onWalletSaved(wallet: Wallet): void {
     this.walletSaved.emit(wallet);
     this.closeDialog();
   }

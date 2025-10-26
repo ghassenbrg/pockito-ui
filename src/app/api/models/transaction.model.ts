@@ -1,27 +1,63 @@
-export interface TransactionDto {
-  id?: string;
-  username?: string;
+import { TransactionType, Currency } from './enum';
+
+export interface TransactionRequest {
   transactionType: TransactionType;
   walletFromId?: string;
   walletToId?: string;
   amount: number;
   exchangeRate: number;
-  walletToAmount?: number;
-  note?: string;
-  effectiveDate: Date;
   categoryId?: string;
-  walletFromName?: string;
-  walletToName?: string;
-  categoryName?: string;
-  iconUrl?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  note?: string;
+  effectiveDate: string;
 }
 
-export enum TransactionType {
-  TRANSFER = 'TRANSFER',
-  EXPENSE = 'EXPENSE',
-  INCOME = 'INCOME',
+export interface Transaction {
+  id: string;
+  username: string;
+  transactionType: TransactionType;
+  walletFromId?: string;
+  walletFromName?: string;
+  walletToId?: string;
+  walletToName?: string;
+  walletFromCurrency?: Currency;
+  walletToCurrency?: Currency;
+  amount: number;
+  exchangeRate: number;
+  walletToAmount?: number;
+  categoryId?: string;
+  categoryName?: string;
+  iconUrl?: string;
+  note?: string;
+  effectiveDate: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface TransactionDto {
+  id: string;
+  username: string;
+  transactionType: TransactionType;
+  walletFromId?: string;
+  walletFromName?: string;
+  walletToId?: string;
+  walletToName?: string;
+  walletFromCurrency?: Currency;
+  walletToCurrency?: Currency;
+  amount: number;
+  exchangeRate: number;
+  walletToAmount?: number;
+  categoryId?: string;
+  categoryName?: string;
+  iconUrl?: string;
+  note?: string;
+  effectiveDate: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface TransactionList {
+  transactions: Transaction[];
+  totalCount: number;
 }
 
 export interface Pageable {
@@ -33,28 +69,28 @@ export interface Pageable {
 export interface PageTransactionDto {
   totalPages: number;
   totalElements: number;
+  first: boolean;
+  last: boolean;
   size: number;
   content: TransactionDto[];
   number: number;
   sort?: Sort;
-  first?: boolean;
-  last?: boolean;
-  numberOfElements?: number;
+  numberOfElements: number;
   pageable?: PageableInfo;
-  empty?: boolean;
+  empty: boolean;
 }
 
 export interface Sort {
-  empty?: boolean;
-  sorted?: boolean;
-  unsorted?: boolean;
+  empty: boolean;
+  unsorted: boolean;
+  sorted: boolean;
 }
 
 export interface PageableInfo {
-  offset?: number;
+  offset: number;
   sort?: Sort;
-  pageSize?: number;
-  pageNumber?: number;
-  paged?: boolean;
-  unpaged?: boolean;
+  unpaged: boolean;
+  paged: boolean;
+  pageNumber: number;
+  pageSize: number;
 }

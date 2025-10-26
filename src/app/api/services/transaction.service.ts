@@ -1,7 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { TransactionDto, TransactionType, Pageable, PageTransactionDto } from '../models';
+import { 
+  TransactionRequest, 
+  Transaction, 
+  TransactionDto, 
+  TransactionList,
+  TransactionType, 
+  Pageable, 
+  PageTransactionDto 
+} from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -56,22 +64,22 @@ export class TransactionService {
   /**
    * Create a new transaction
    */
-  createTransaction(transaction: TransactionDto): Observable<TransactionDto> {
-    return this.http.post<TransactionDto>(this.baseUrl, transaction);
+  createTransaction(transaction: TransactionRequest): Observable<Transaction> {
+    return this.http.post<Transaction>(this.baseUrl, transaction);
   }
 
   /**
    * Get a specific transaction by ID
    */
-  getTransaction(transactionId: string): Observable<TransactionDto> {
-    return this.http.get<TransactionDto>(`${this.baseUrl}/${transactionId}`);
+  getTransaction(transactionId: string): Observable<Transaction> {
+    return this.http.get<Transaction>(`${this.baseUrl}/${transactionId}`);
   }
 
   /**
    * Update an existing transaction
    */
-  updateTransaction(transactionId: string, transaction: TransactionDto): Observable<TransactionDto> {
-    return this.http.put<TransactionDto>(`${this.baseUrl}/${transactionId}`, transaction);
+  updateTransaction(transactionId: string, transaction: TransactionRequest): Observable<Transaction> {
+    return this.http.put<Transaction>(`${this.baseUrl}/${transactionId}`, transaction);
   }
 
   /**
@@ -151,7 +159,7 @@ export class TransactionService {
    * Get all transactions for the current user (without pagination)
    * Use with caution for users with large transaction volumes
    */
-  getAllTransactions(): Observable<TransactionDto[]> {
-    return this.http.get<TransactionDto[]>(`${this.baseUrl}/all`);
+  getAllTransactions(): Observable<TransactionList> {
+    return this.http.get<TransactionList>(`${this.baseUrl}/all`);
   }
 }

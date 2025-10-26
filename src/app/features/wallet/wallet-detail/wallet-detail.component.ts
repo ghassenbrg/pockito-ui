@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PageTransactionDto, TransactionType, WalletDto } from '@api/models';
+import { PageTransactionDto, TransactionType, Wallet } from '@api/models';
 import { TransactionService, WalletService } from '@api/services';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PockitoButtonType } from '@shared/components/pockito-button/pockito-button.component';
@@ -31,7 +31,7 @@ import { WalletFormDialogComponent } from '@shared/components/wallet-form-dialog
   styleUrl: './wallet-detail.component.scss',
 })
 export class WalletDetailComponent implements OnInit {
-  wallet: WalletDto | null = null;
+  wallet: Wallet | null = null;
   walletId: string = '';
   PockitoButtonType = PockitoButtonType;
   TransactionType = TransactionType;
@@ -113,7 +113,7 @@ export class WalletDetailComponent implements OnInit {
     const loadingId = this.loadingService.show(this.translateService.instant('common.loading'));
     
     this.walletService.getWallet(this.walletId).subscribe({
-      next: (wallet: WalletDto) => {
+      next: (wallet: Wallet) => {
         this.wallet = wallet;
         this.loadingService.hide(loadingId);
       },
@@ -131,7 +131,7 @@ export class WalletDetailComponent implements OnInit {
     this.displayEditWalletDialog = true;
   }
 
-  onWalletSaved(wallet: WalletDto) {
+  onWalletSaved(wallet: Wallet) {
     this.wallet = wallet;
     this.displayEditWalletDialog = false;
   }

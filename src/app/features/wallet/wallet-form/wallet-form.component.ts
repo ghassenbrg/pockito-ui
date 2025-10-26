@@ -6,7 +6,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Currency, UserDto, WalletDto, WalletType } from '@api/models';
+import { Currency, User, Wallet, WalletType, WalletRequest } from '@api/models';
 import { UserService, WalletService } from '@api/services';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -43,11 +43,11 @@ import { InputTextModule } from 'primeng/inputtext';
 })
 export class WalletFormComponent implements OnInit {
   @Input() walletId?: string;
-  @Output() walletSaved = new EventEmitter<WalletDto>();
+  @Output() walletSaved = new EventEmitter<Wallet>();
   @Output() formCancelled = new EventEmitter<void>();
 
   walletForm: FormGroup;
-  currentUser: UserDto | null = null;
+  currentUser: User | null = null;
   isEditMode: boolean = false;
   isLoading: boolean = false;
 
@@ -81,7 +81,7 @@ export class WalletFormComponent implements OnInit {
 
     this.initializeDropdownOptions();
 
-    this.userService.currentUser$.subscribe((user: UserDto | null) => {
+    this.userService.currentUser$.subscribe((user: User | null) => {
       if (user) {
         this.currentUser = user;
         if (!this.isEditMode) {
@@ -129,7 +129,7 @@ export class WalletFormComponent implements OnInit {
   private loadWallet(walletId: string): void {
     this.isLoading = true;
     this.walletService.getWallet(walletId).subscribe({
-      next: (wallet: WalletDto) => {
+      next: (wallet: Wallet) => {
         this.patchWalletForm(wallet);
         this.isLoading = false;
       },
@@ -144,7 +144,7 @@ export class WalletFormComponent implements OnInit {
     });
   }
 
-  private patchWalletForm(wallet: WalletDto): void {
+  private patchWalletForm(wallet: Wallet): void {
     this.walletForm.patchValue({
       name: wallet.name,
       currency: wallet.currency,
@@ -160,7 +160,7 @@ export class WalletFormComponent implements OnInit {
   onSubmit(): void {
     if (this.walletForm.valid) {
       const formValue = this.walletForm.value;
-      const walletData: WalletDto = {
+      const walletData: WalletRequest = {
         name: formValue.name,
         currency: formValue.currency,
         type: formValue.type,
@@ -173,8 +173,7 @@ export class WalletFormComponent implements OnInit {
       };
 
       if (this.isEditMode && this.walletId) {
-        walletData.id = this.walletId;
-        this.updateWallet(walletData);
+        this.updateWallet(this.walletId, walletData);
       } else {
         this.createWallet(walletData);
       }
@@ -183,10 +182,10 @@ export class WalletFormComponent implements OnInit {
     }
   }
 
-  private createWallet(walletData: WalletDto): void {
+  private createWallet(walletData: WalletRequest): void {
     this.isLoading = true;
     this.walletService.createWallet(walletData).subscribe({
-      next: (createdWallet: WalletDto) => {
+      next: (createdWallet: Wallet) => {
         this.walletSaved.emit(createdWallet);
         this.isLoading = false;
         this.toastService.showSuccess(
@@ -206,10 +205,10 @@ export class WalletFormComponent implements OnInit {
     });
   }
 
-  private updateWallet(walletData: WalletDto): void {
+  private updateWallet(walletId: string, walletData: WalletRequest): void {
     this.isLoading = true;
-    this.walletService.updateWallet(walletData.id!, walletData).subscribe({
-      next: (updatedWallet: WalletDto) => {
+    this.walletService.updateWallet(walletId, walletData).subscribe({
+      next: (updatedWallet: Wallet) => {
         this.walletSaved.emit(updatedWallet);
         this.isLoading = false;
         this.toastService.showSuccess(

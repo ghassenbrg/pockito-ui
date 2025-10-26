@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WalletDto } from '@api/models';
+import { Wallet, WalletList } from '@api/models';
 import { WalletService } from '@api/services';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
@@ -30,7 +30,7 @@ import { WalletFormDialogComponent } from '@shared/components/wallet-form-dialog
   styleUrl: './wallets.component.scss',
 })
 export class WalletsComponent implements OnInit {
-  wallets: WalletDto[] = [];
+  wallets: Wallet[] = [];
   PockitoButtonType = PockitoButtonType;
   displayCreateWalletDialog = false;
 
@@ -51,8 +51,8 @@ export class WalletsComponent implements OnInit {
     const loadingId = this.loadingService.show(this.translateService.instant('wallets.loading'));
     
     this.walletService.getUserWallets().subscribe({
-      next: (wallets) => {
-        this.wallets = wallets.slice().sort((a, b) => {
+      next: (response: WalletList) => {
+        this.wallets = response.wallets.slice().sort((a, b) => {
           // If either orderPosition is undefined, sort it after those with defined positions
           if (a.orderPosition == null && b.orderPosition == null) return 0;
           if (a.orderPosition == null) return 1;
@@ -75,7 +75,7 @@ export class WalletsComponent implements OnInit {
     this.displayCreateWalletDialog = true;
   }
 
-  onWalletSaved(wallet: WalletDto) {
+  onWalletSaved(wallet: Wallet) {
     this.wallets = this.wallets.filter((w) => w.id !== wallet.id);
     this.wallets.push(wallet);
     this.wallets = this.wallets.sort((a, b) => {
@@ -96,7 +96,7 @@ export class WalletsComponent implements OnInit {
     this.displayCreateWalletDialog = false;
   }
 
-  viewWallet(wallet: WalletDto) {
+  viewWallet(wallet: Wallet) {
     this.router.navigate([wallet.id], { relativeTo: this.route });
   }
 }

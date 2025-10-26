@@ -20,21 +20,27 @@ describe('TransactionsComponent', () => {
   const mockTransactions: TransactionDto[] = [
     {
       id: '1',
+      username: 'testuser',
       transactionType: TransactionType.EXPENSE,
       amount: 100,
       exchangeRate: 1,
       effectiveDate: new Date('2024-01-01'),
-      note: 'Test expense',
-      walletFromName: 'Test Wallet'
+      description: 'Test expense',
+      walletFromName: 'Test Wallet',
+      createdAt: new Date('2024-01-01T00:00:00Z'),
+      updatedAt: new Date('2024-01-01T00:00:00Z')
     },
     {
       id: '2',
+      username: 'testuser',
       transactionType: TransactionType.INCOME,
       amount: 200,
       exchangeRate: 1,
       effectiveDate: new Date('2024-01-02'),
-      note: 'Test income',
-      walletToName: 'Test Wallet'
+      description: 'Test income',
+      walletToName: 'Test Wallet',
+      createdAt: new Date('2024-01-02T00:00:00Z'),
+      updatedAt: new Date('2024-01-02T00:00:00Z')
     }
   ];
 
@@ -47,7 +53,16 @@ describe('TransactionsComponent', () => {
     first: true,
     last: false,
     numberOfElements: 10,
-    empty: false
+    empty: false,
+    sort: { empty: false, unsorted: false, sorted: true },
+    pageable: {
+      offset: 0,
+      sort: { empty: false, unsorted: false, sorted: true },
+      unpaged: false,
+      paged: true,
+      pageNumber: 0,
+      pageSize: 10
+    }
   };
 
   beforeEach(async () => {
@@ -261,7 +276,16 @@ describe('TransactionsComponent', () => {
         first: true,
         last: true,
         numberOfElements: 0,
-        empty: true
+        empty: true,
+        sort: { empty: false, unsorted: false, sorted: true },
+        pageable: {
+          offset: 0,
+          sort: { empty: false, unsorted: false, sorted: true },
+          unpaged: false,
+          paged: true,
+          pageNumber: 0,
+          pageSize: 10
+        }
       };
       
       transactionService.listTransactions.and.returnValue(of(emptyPageableTransactions));
@@ -283,12 +307,15 @@ describe('TransactionsComponent', () => {
       const newTransactions: TransactionDto[] = [
         {
           id: '3',
+          username: 'testuser',
           transactionType: TransactionType.EXPENSE,
           amount: 300,
           exchangeRate: 1,
           effectiveDate: new Date('2024-01-03'),
-          note: 'New expense',
-          walletFromName: 'Test Wallet'
+          description: 'New expense',
+          walletFromName: 'Test Wallet',
+          createdAt: new Date('2024-01-03T00:00:00Z'),
+          updatedAt: new Date('2024-01-03T00:00:00Z')
         }
       ];
       

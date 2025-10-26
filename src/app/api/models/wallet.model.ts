@@ -1,170 +1,39 @@
-export interface WalletDto {
-  id?: string;
-  username?: string;
+import { Currency, WalletType } from './enum';
+
+export interface WalletRequest {
   name: string;
+  description?: string;
+  color?: string;
   initialBalance: number;
-  balance?: number;
   currency: Currency;
   iconUrl?: string;
   goalAmount?: number;
   type: WalletType;
   isDefault: boolean;
-  orderPosition?: number;
+}
+
+export interface Wallet {
+  id: string;
+  username: string;
+  name: string;
   description?: string;
   color?: string;
-  active?: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  initialBalance: number;
+  balance: number;
+  currency: Currency;
+  iconUrl?: string;
+  goalAmount?: number;
+  type: WalletType;
+  isDefault: boolean;
+  orderPosition: number;
+  createdAt: Date;
+  updatedAt: Date;
+  active: boolean;
 }
 
-export enum Currency {
-  USD = 'USD',
-  EUR = 'EUR',
-  GBP = 'GBP',
-  JPY = 'JPY',
-  CHF = 'CHF',
-  CAD = 'CAD',
-  AUD = 'AUD',
-  CNY = 'CNY',
-  HKD = 'HKD',
-  SEK = 'SEK',
-  NOK = 'NOK',
-  DKK = 'DKK',
-  PLN = 'PLN',
-  CZK = 'CZK',
-  HUF = 'HUF',
-  RON = 'RON',
-  BGN = 'BGN',
-  HRK = 'HRK',
-  RUB = 'RUB',
-  TRY = 'TRY',
-  BRL = 'BRL',
-  MXN = 'MXN',
-  ARS = 'ARS',
-  CLP = 'CLP',
-  COP = 'COP',
-  PEN = 'PEN',
-  UYU = 'UYU',
-  VES = 'VES',
-  KRW = 'KRW',
-  SGD = 'SGD',
-  TWD = 'TWD',
-  THB = 'THB',
-  MYR = 'MYR',
-  IDR = 'IDR',
-  PHP = 'PHP',
-  VND = 'VND',
-  INR = 'INR',
-  PKR = 'PKR',
-  BDT = 'BDT',
-  LKR = 'LKR',
-  NPR = 'NPR',
-  MMK = 'MMK',
-  KHR = 'KHR',
-  LAK = 'LAK',
-  MNT = 'MNT',
-  KZT = 'KZT',
-  UZS = 'UZS',
-  TJS = 'TJS',
-  TMT = 'TMT',
-  AZN = 'AZN',
-  GEL = 'GEL',
-  AMD = 'AMD',
-  KGS = 'KGS',
-  UAH = 'UAH',
-  BYN = 'BYN',
-  MDL = 'MDL',
-  RSD = 'RSD',
-  BAM = 'BAM',
-  MKD = 'MKD',
-  ALL = 'ALL',
-  XCD = 'XCD',
-  BBD = 'BBD',
-  JMD = 'JMD',
-  TTD = 'TTD',
-  BZD = 'BZD',
-  GYD = 'GYD',
-  SRD = 'SRD',
-  FJD = 'FJD',
-  WST = 'WST',
-  TOP = 'TOP',
-  VUV = 'VUV',
-  PGK = 'PGK',
-  SBD = 'SBD',
-  KID = 'KID',
-  TVD = 'TVD',
-  NIO = 'NIO',
-  GTQ = 'GTQ',
-  HNL = 'HNL',
-  SVC = 'SVC',
-  PAB = 'PAB',
-  CRC = 'CRC',
-  BOB = 'BOB',
-  EGP = 'EGP',
-  MAD = 'MAD',
-  TND = 'TND',
-  DZD = 'DZD',
-  LYD = 'LYD',
-  SDG = 'SDG',
-  NGN = 'NGN',
-  KES = 'KES',
-  GHS = 'GHS',
-  XOF = 'XOF',
-  XAF = 'XAF',
-  XPF = 'XPF',
-  ZAR = 'ZAR',
-  BWP = 'BWP',
-  NAM = 'NAM',
-  LSL = 'LSL',
-  SZL = 'SZL',
-  ZMW = 'ZMW',
-  ZWL = 'ZWL',
-  MWK = 'MWK',
-  TZS = 'TZS',
-  UGX = 'UGX',
-  RWF = 'RWF',
-  BIF = 'BIF',
-  KMF = 'KMF',
-  DJF = 'DJF',
-  SOS = 'SOS',
-  ERN = 'ERN',
-  STN = 'STN',
-  CVE = 'CVE',
-  GMD = 'GMD',
-  GNF = 'GNF',
-  SLL = 'SLL',
-  LRD = 'LRD',
-  GIP = 'GIP',
-  FKP = 'FKP',
-  SHP = 'SHP',
-  IMP = 'IMP',
-  JEP = 'JEP',
-  GGP = 'GGP',
-  ANG = 'ANG',
-  AWG = 'AWG',
-  BMD = 'BMD',
-  KYD = 'KYD',
-  BND = 'BND',
-  MOP = 'MOP',
-  BTN = 'BTN',
-  MVR = 'MVR',
-  SCR = 'SCR',
-  MUR = 'MUR',
-  CDF = 'CDF',
-  ETB = 'ETB',
-  XDR = 'XDR',
-  XAU = 'XAU',
-  XAG = 'XAG',
-  XPT = 'XPT',
-  XPD = 'XPD'
-}
-
-export enum WalletType {
-  BANK_ACCOUNT = 'BANK_ACCOUNT',
-  CASH = 'CASH',
-  CREDIT_CARD = 'CREDIT_CARD',
-  SAVINGS = 'SAVINGS',
-  CUSTOM = 'CUSTOM'
+export interface WalletList {
+  wallets: Wallet[];
+  totalCount: number;
 }
 
 export interface ReorderWalletsRequest {

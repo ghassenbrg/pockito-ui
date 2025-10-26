@@ -8,7 +8,7 @@ import {
   Renderer2,
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { UserDto } from '@api/models';
+import { User } from '@api/models';
 import { UserService } from '@api/services';
 import { KeycloakService } from '@core/security/keycloak.service';
 import { MobileService } from '@core/services/mobile.service';
@@ -74,7 +74,7 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
   activeRoute: string = '';
 
   // Current user info
-  currentUser: UserDto | null = null;
+  currentUser: User | null = null;
 
   private responsiveSubscription!: Subscription;
 
@@ -405,7 +405,7 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
    */
   private loadCurrentUser(): void {
     this.userService.getOrCreateCurrentUser().subscribe({
-      next: (user: UserDto) => {
+      next: (user: User) => {
         this.currentUser = user;
       },
       error: (error) => {

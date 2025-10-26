@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
-import { PageTransactionDto, TransactionType, WalletDto, TransactionDto } from '@api/models';
+import { PageTransactionDto, TransactionType, Wallet, TransactionDto } from '@api/models';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
@@ -25,7 +25,7 @@ import { TransactionFormDialogComponent } from '../transaction-form-dialog/trans
 })
 export class TransactionListComponent implements OnInit, OnChanges {
   @Input() pageableTransactions?: PageTransactionDto;
-  @Input() wallet?: WalletDto | null;
+  @Input() wallet?: Wallet | null;
   @Input() walletId: string = '';
 
   @Output() loadMore = new EventEmitter<void>();

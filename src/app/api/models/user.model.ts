@@ -1,110 +1,17 @@
+import { Country, Currency } from './enum';
+
 export interface UserDto {
-  username?: string;
+  username: string;
   country?: Country;
   defaultCurrency?: Currency;
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export enum Country {
-  US = 'US',
-  CA = 'CA',
-  GB = 'GB',
-  DE = 'DE',
-  FR = 'FR',
-  IT = 'IT',
-  ES = 'ES',
-  NL = 'NL',
-  BE = 'BE',
-  CH = 'CH',
-  AT = 'AT',
-  SE = 'SE',
-  NO = 'NO',
-  DK = 'DK',
-  FI = 'FI',
-  PL = 'PL',
-  CZ = 'CZ',
-  HU = 'HU',
-  RO = 'RO',
-  BG = 'BG',
-  HR = 'HR',
-  SI = 'SI',
-  SK = 'SK',
-  LT = 'LT',
-  LV = 'LV',
-  EE = 'EE',
-  IE = 'IE',
-  PT = 'PT',
-  GR = 'GR',
-  CY = 'CY',
-  MT = 'MT',
-  LU = 'LU',
-  JP = 'JP',
-  CN = 'CN',
-  KR = 'KR',
-  IN = 'IN',
-  AU = 'AU',
-  NZ = 'NZ',
-  SG = 'SG',
-  HK = 'HK',
-  TW = 'TW',
-  TH = 'TH',
-  MY = 'MY',
-  ID = 'ID',
-  PH = 'PH',
-  VN = 'VN',
-  MX = 'MX',
-  BR = 'BR',
-  AR = 'AR',
-  CL = 'CL',
-  CO = 'CO',
-  PE = 'PE',
-  VE = 'VE',
-  UY = 'UY',
-  PY = 'PY',
-  BO = 'BO',
-  EC = 'EC',
-  GT = 'GT',
-  HN = 'HN',
-  SV = 'SV',
-  NI = 'NI',
-  CR = 'CR',
-  PA = 'PA',
-  IL = 'IL',
-  AE = 'AE',
-  SA = 'SA',
-  TR = 'TR',
-  EG = 'EG',
-  ZA = 'ZA',
-  NG = 'NG',
-  KE = 'KE',
-  MA = 'MA',
-  TN = 'TN',
-  DZ = 'DZ',
-  LY = 'LY',
-  SD = 'SD',
-  ET = 'ET',
-  GH = 'GH',
-  CI = 'CI',
-  SN = 'SN',
-  RU = 'RU',
-  UA = 'UA',
-  BY = 'BY',
-  MD = 'MD',
-  RS = 'RS',
-  ME = 'ME',
-  BA = 'BA',
-  MK = 'MK',
-  AL = 'AL',
-  XK = 'XK',
-  IS = 'IS',
-  GL = 'GL',
-  FO = 'FO',
-  AD = 'AD',
-  MC = 'MC',
-  LI = 'LI',
-  SM = 'SM',
-  VA = 'VA'
+export interface User {
+  username: string;
+  country?: Country;
+  defaultCurrency?: Currency;
+  createdAt: Date;
+  updatedAt: Date;
 }
-
-import { Currency } from './wallet.model';

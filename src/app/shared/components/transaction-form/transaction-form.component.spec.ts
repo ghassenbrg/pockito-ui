@@ -27,8 +27,8 @@ describe('TransactionFormComponent', () => {
     // Setup default return values
     mockTranslateService.instant.and.returnValue('Test Translation');
     mockTranslateService.get.and.returnValue(of('Test Translation'));
-    mockCategoryService.getUserCategories.and.returnValue(of([]));
-    mockWalletService.getUserWallets.and.returnValue(of([]));
+    mockCategoryService.getUserCategories.and.returnValue(of({ categories: [], totalCount: 0 }));
+    mockWalletService.getUserWallets.and.returnValue(of({ wallets: [], totalCount: 0 }));
 
     await TestBed.configureTestingModule({
       imports: [
