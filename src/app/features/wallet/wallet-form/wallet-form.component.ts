@@ -6,14 +6,17 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Currency, User, Wallet, WalletType, WalletRequest } from '@api/models';
+import { Currency, User, Wallet, WalletRequest, WalletType } from '@api/models';
 import { UserService, WalletService } from '@api/services';
+import { getCurrencyFlagIcon, getCurrencySymbol } from '@core/utils/currency-country.mapping';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DialogOption } from '@shared/components/dialog-selector/dialog-selector.component';
 import {
   PockitoButtonComponent,
   PockitoButtonSize,
   PockitoButtonType,
 } from '@shared/components/pockito-button/pockito-button.component';
+import { PockitoSelectorComponent } from '@shared/components/pockito-selector/pockito-selector.component';
 import { ToastService } from '@shared/services/toast.service';
 
 // PrimeNG imports
@@ -30,6 +33,7 @@ import { InputTextModule } from 'primeng/inputtext';
     ReactiveFormsModule,
     CommonModule,
     PockitoButtonComponent,
+    PockitoSelectorComponent,
     TranslateModule,
     // PrimeNG modules
     InputTextModule,
@@ -58,6 +62,10 @@ export class WalletFormComponent implements OnInit {
   // PrimeNG dropdown options
   currencyOptions: any[] = [];
   walletTypeOptions: any[] = [];
+
+  // Dialog options for selectors
+  currencyDialogOptions: DialogOption[] = [];
+  walletTypeDialogOptions: DialogOption[] = [];
 
   // Button types and sizes for template
   PockitoButtonType = PockitoButtonType;
@@ -277,7 +285,9 @@ export class WalletFormComponent implements OnInit {
   }
 
   getCurrencyLabel(currency: Currency): string {
-    return this.translate.instant(`enums.currency.${currency}`);
+    const label = this.translate.instant(`enums.currency.${currency}`);
+    const symbol = getCurrencySymbol(currency);
+    return `${label} (${symbol})`;
   }
 
   getIconUrl(): string {
@@ -296,17 +306,85 @@ export class WalletFormComponent implements OnInit {
     console.warn('Failed to load image:', this.getIconUrl());
   }
 
+  onWalletTypeIconError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+    console.warn('Failed to load wallet type icon:', img.src);
+  }
+
+  // Currency selector event handlers
+  onCurrencySelected(currency: string | null): void {
+    this.walletForm.patchValue({ currency: currency || undefined });
+    this.walletForm.get('currency')?.markAsTouched();
+  }
+
+  onCurrencyCleared(): void {
+    this.walletForm.patchValue({ currency: undefined });
+    this.walletForm.get('currency')?.markAsTouched();
+  }
+
+  onCurrencyTouched(): void {
+    this.walletForm.get('currency')?.markAsTouched();
+  }
+
+  // Wallet type selector event handlers
+  onWalletTypeSelected(walletType: string | null): void {
+    this.walletForm.patchValue({ type: walletType || undefined });
+    this.walletForm.get('type')?.markAsTouched();
+  }
+
+  onWalletTypeCleared(): void {
+    this.walletForm.patchValue({ type: undefined });
+    this.walletForm.get('type')?.markAsTouched();
+  }
+
+  onWalletTypeTouched(): void {
+    this.walletForm.get('type')?.markAsTouched();
+  }
+
+  // Helper methods for template
+  getSelectedCurrency(currency?: string): DialogOption | undefined {
+    if (!currency) return undefined;
+    return this.currencyDialogOptions.find((option) => option.id === currency);
+  }
+
+  getSelectedWalletType(walletType?: string): DialogOption | undefined {
+    if (!walletType) return undefined;
+    return this.walletTypeDialogOptions.find(
+      (option) => option.id === walletType
+    );
+  }
+
   private initializeDropdownOptions(): void {
-    // Initialize currency options
+    // Initialize currency options for PrimeNG dropdown (keeping for compatibility)
     this.currencyOptions = this.currencies.map((currency) => ({
       label: this.getCurrencyLabel(currency),
       value: currency,
     }));
 
-    // Initialize wallet type options
+    // Initialize wallet type options for PrimeNG dropdown (keeping for compatibility)
     this.walletTypeOptions = this.walletTypes.map((type) => ({
       label: this.getWalletTypeLabel(type),
       value: type,
+      icon: `/assets/icons/${type}.png`,
+    }));
+
+    // Initialize dialog options for pockito selectors
+    this.currencyDialogOptions = this.currencies.map((currency) => ({
+      id: currency,
+      name: this.getCurrencyLabel(currency),
+      iconUrl: getCurrencyFlagIcon(currency) || 'pi pi-money-bill',
+      type: 'CURRENCY',
+      typeLabel: this.translate.instant('common.currency'),
+    }));
+
+    this.walletTypeDialogOptions = this.walletTypes.map((type) => ({
+      id: type,
+      name: this.getWalletTypeLabel(type),
+      iconUrl: `/assets/icons/${type}.png`,
+      fallbackIcon: 'pi pi-circle',
+      type: 'WALLET_TYPE',
+      typeLabel: this.translate.instant('common.walletType'),
     }));
   }
 }

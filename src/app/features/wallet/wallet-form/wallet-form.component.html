@@ -37,20 +37,19 @@
         {{ "wallets.form.currency" | translate }}
         <span class="required">{{ "wallets.form.required" | translate }}</span>
       </label>
-      <p-dropdown
-        id="wallet-currency"
-        formControlName="currency"
-        [options]="currencyOptions"
-        [placeholder]="'wallets.form.currencyPlaceholder' | translate"
-        [showClear]="true"
-        [filter]="true"
-        filterBy="label"
-        [class.p-invalid]="
-          walletForm.get('currency')?.invalid &&
-          walletForm.get('currency')?.touched
-        "
-        styleClass="w-full"
-      />
+      <app-pockito-selector
+        [selectedId]="walletForm.get('currency')?.value"
+        [selectedItem]="getSelectedCurrency(walletForm.get('currency')?.value)"
+        [options]="currencyDialogOptions"
+        [isInvalid]="(walletForm.get('currency')?.invalid && walletForm.get('currency')?.touched) || false"
+        [placeholder]="'wallets.form.currencyPlaceholder'"
+        [title]="'wallets.form.selectCurrency'"
+        [searchPlaceholder]="'wallets.form.searchCurrencies'"
+        [showBalance]="false"
+        (itemSelected)="onCurrencySelected($event)"
+        (itemCleared)="onCurrencyCleared()"
+        (itemTouched)="onCurrencyTouched()"
+      ></app-pockito-selector>
       <small
         *ngIf="getFieldError('currency')"
         class="p-error"
@@ -66,19 +65,19 @@
         {{ "wallets.form.type" | translate }}
         <span class="required">{{ "wallets.form.required" | translate }}</span>
       </label>
-      <p-dropdown
-        id="wallet-type"
-        formControlName="type"
-        [options]="walletTypeOptions"
-        [placeholder]="'wallets.form.typePlaceholder' | translate"
-        [showClear]="true"
-        [filter]="false"
-        filterBy="label"
-        [class.p-invalid]="
-          walletForm.get('type')?.invalid && walletForm.get('type')?.touched
-        "
-        styleClass="w-full"
-      />
+      <app-pockito-selector
+        [selectedId]="walletForm.get('type')?.value"
+        [selectedItem]="getSelectedWalletType(walletForm.get('type')?.value)"
+        [options]="walletTypeDialogOptions"
+        [isInvalid]="(walletForm.get('type')?.invalid && walletForm.get('type')?.touched) || false"
+        [placeholder]="'wallets.form.typePlaceholder'"
+        [title]="'wallets.form.selectType'"
+        [searchPlaceholder]="'wallets.form.searchTypes'"
+        [showBalance]="false"
+        (itemSelected)="onWalletTypeSelected($event)"
+        (itemCleared)="onWalletTypeCleared()"
+        (itemTouched)="onWalletTypeTouched()"
+      ></app-pockito-selector>
       <small
         *ngIf="getFieldError('type')"
         class="p-error"

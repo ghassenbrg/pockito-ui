@@ -203,6 +203,7 @@ export class TransactionFormComponent implements OnInit {
     const outOfPockitoOption: DialogOption = {
       id: null,
       name: this.translate.instant('common.outOfPockito'),
+      iconUrl: '/assets/icons/out-of-pockito.png',
       fallbackIcon: 'pi pi-external-link',
       type: 'OUT_OF_POCKITO',
       typeLabel: this.translate.instant('common.outOfPockito')
@@ -211,8 +212,7 @@ export class TransactionFormComponent implements OnInit {
     const walletOptions = this.wallets.map(wallet => ({
       id: wallet.id!,
       name: wallet.name,
-      iconUrl: wallet.iconUrl,
-      fallbackIcon: this.getWalletIcon(wallet.type),
+      iconUrl: wallet.iconUrl || this.getWalletIcon(wallet.type),
       type: wallet.type,
       typeLabel: this.getWalletTypeLabel(wallet.type),
       currency: wallet.currency,
@@ -736,17 +736,17 @@ export class TransactionFormComponent implements OnInit {
     
     switch (walletType) {
       case WalletType.BANK_ACCOUNT:
-        return 'pi pi-building';
+        return `/assets/icons/${walletType}.png`;
       case WalletType.CASH:
-        return 'pi pi-money-bill';
+        return `/assets/icons/${walletType}.png`;
       case WalletType.CREDIT_CARD:
-        return 'pi pi-credit-card';
+        return `/assets/icons/${walletType}.png`;
       case WalletType.SAVINGS:
-        return 'pi pi-piggy-bank';
+        return `/assets/icons/${walletType}.png`;
       case WalletType.CUSTOM:
-        return 'pi pi-wallet';
+        return `/assets/icons/${walletType}.png`;
       default:
-        return 'pi pi-circle';
+        return `/assets/icons/CUSTOM.png`;
     }
   }
 
@@ -774,7 +774,12 @@ export class TransactionFormComponent implements OnInit {
     if (!walletId) {
       return undefined;
     }
-    return this.wallets.find(wallet => wallet.id === walletId);
+    const wallet = this.wallets.find(wallet => wallet.id === walletId);
+    if(wallet) {
+      wallet.iconUrl = wallet.iconUrl || this.getWalletIcon(wallet.type);
+    }
+    
+    return wallet;
   }
 
   getSelectedCategory(categoryId?: string): Category | undefined {

@@ -9,9 +9,7 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
 import { TransactionListComponent } from '@shared/components/transaction-list/transaction-list.component';
 import { LoadingService, ToastService } from '@shared/services';
 import { PockitoCurrencyPipe } from '@shared/pipes/pockito-currency.pipe';
-import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { MenuModule } from 'primeng/menu';
 import { WalletFormDialogComponent } from '@shared/components/wallet-form-dialog/wallet-form-dialog.component';
 
 @Component({
@@ -19,7 +17,6 @@ import { WalletFormDialogComponent } from '@shared/components/wallet-form-dialog
   standalone: true,
   imports: [
     CommonModule,
-    MenuModule,
     WalletFormDialogComponent,
     TranslatePipe,
     PockitoCurrencyPipe,
@@ -37,7 +34,6 @@ export class WalletDetailComponent implements OnInit {
   TransactionType = TransactionType;
   displayEditWalletDialog = false;
   Math = Math;
-  menuItems: MenuItem[] = [];
   pageableTransactions?: PageTransactionDto;
   allTransactions: any[] = [];
 
@@ -53,18 +49,6 @@ export class WalletDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.walletId = this.route.snapshot.params['id'];
-    this.menuItems = [
-      {
-        label: this.translateService.instant('common.edit'),
-        icon: 'pi pi-pencil',
-        command: () => this.showEditWalletDialog(),
-      },
-      {
-        label: this.translateService.instant('common.delete'),
-        icon: 'pi pi-trash',
-        command: () => this.deleteWallet(),
-      },
-    ];
     this.getWallet();
     this.getTransactions(0, 10);
   }
@@ -146,26 +130,5 @@ export class WalletDetailComponent implements OnInit {
     this.router.navigate(['../'], { relativeTo: this.route });
   }
 
-  deleteWallet() {
-    const loadingId = this.loadingService.show(this.translateService.instant('common.loading'));
-    
-    this.walletService.deleteWallet(this.walletId).subscribe({
-      next: () => {
-        this.toastService.showSuccess(
-          'common.deleteSuccess',
-          'common.deleteSuccessMessage'
-        );
-        this.loadingService.hide(loadingId);
-        this.router.navigate(['../'], { relativeTo: this.route });
-      },
-      error: () => {
-        this.toastService.showError(
-          'common.deleteError',
-          'common.deleteErrorMessage'
-        );
-        this.loadingService.hide(loadingId);
-      }
-    });
-  }
 
 }

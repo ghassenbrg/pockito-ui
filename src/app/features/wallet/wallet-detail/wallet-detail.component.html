@@ -16,8 +16,13 @@
     </div>
 
     <div slot="actions">
-      <p-menu #menu [model]="menuItems" [popup]="true" appendTo="body" />
-      <p-button (onClick)="menu.toggle($event)" icon="pi pi-ellipsis-v" />
+      <p-button 
+        (onClick)="showEditWalletDialog()" 
+        icon="pi pi-pencil" 
+        [text]="true"
+        [rounded]="true"
+        [attr.aria-label]="'common.edit' | translate"
+      />
     </div>
   </app-page-header>
 
