@@ -63,7 +63,6 @@ export enum Country {
   SY = 'SY',
   LB = 'LB',
   JO = 'JO',
-  IL = 'IL',
   PS = 'PS',
   SA = 'SA',
   AE = 'AE',

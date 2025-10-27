@@ -873,7 +873,6 @@ export class TransactionFormComponent implements OnInit {
       NZD: 'NZ$',
       ZAR: 'R',
       TRY: '₺',
-      ILS: '₪',
       AED: 'د.إ',
       SAR: '﷼',
       QAR: '﷼',

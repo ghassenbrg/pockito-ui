@@ -36,7 +36,6 @@ export enum Currency {
   SYP = 'SYP',
   LBP = 'LBP',
   JOD = 'JOD',
-  ILS = 'ILS',
   EGP = 'EGP',
   LYD = 'LYD',
   TND = 'TND',

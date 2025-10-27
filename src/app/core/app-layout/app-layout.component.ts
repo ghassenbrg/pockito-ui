@@ -356,12 +356,12 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
       this.responsiveService.isTabletView() ||
       this.responsiveService.isMobileView()
     ) {
-      // Add subscriptions (dockItems[3]) and agreements (dockItems[5]) to moreItems
+      // Add budgets (dockItems[4]) and agreements (dockItems[5]) to moreItems
       if (this.dockItems && this.dockItems.length >= 6) {
         // Insert subscriptions at the beginning
         this.moreItems.unshift({
-          ...this.dockItems[3], // Subscriptions
-          icon: '/assets/icons/subscription-no-bg.png',
+          ...this.dockItems[4], // Budgets
+          icon: '/assets/icons/budget-no-bg.png',
         });
 
         // Insert agreements after subscriptions
@@ -387,8 +387,8 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         icon: '/assets/icons/transaction-no-bg.png',
       },
       {
-        ...this.dockItems[4], // Budgets
-        icon: '/assets/icons/budget-no-bg.png',
+        ...this.dockItems[3], // Subscriptions
+        icon: '/assets/icons/subscription-no-bg.png',
       },
       {
         ...this.dockItems[6], // More

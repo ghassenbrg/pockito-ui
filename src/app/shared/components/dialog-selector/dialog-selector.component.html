@@ -45,7 +45,7 @@
         >
           <div class="dialog-selector__option-icon">
             <img 
-              *ngIf="option.iconUrl; else fallbackIcon"
+            *ngIf="option.iconUrl && !option.iconUrl.startsWith('pi pi-'); else fallbackIcon"
               [src]="option.iconUrl" 
               [alt]="option.name"
               class="dialog-selector__option-image"
