@@ -24,7 +24,7 @@
   <nav class="mobile-side-nav" [class.active]="mobileMenuOpen">
     <div class="mobile-nav-header">
       <div class="mobile-nav-logo">
-        <img src="/assets/favicon.png" alt="Pockito" width="40" height="40" />
+        <img src="/assets/favicon.png" alt="Pockito" width="40" height="40" onerror="this.src='/assets/images/placeholder.png'" />
         <span>{{ "appLayout.common.appName" | translate }}</span>
       </div>
       <button
@@ -45,7 +45,7 @@
             *ngFor="let item of dockItems"
             (click)="handleMobileNavigation(item, $event)"
           >
-            <img [src]="item.icon" [alt]="item.label" />
+            <img [src]="item.icon" [alt]="item.label" onerror="this.src='/assets/images/placeholder.png'" />
             <span>{{ item.label }}</span>
           </div>
         </div>
@@ -59,7 +59,7 @@
             *ngFor="let item of moreItems"
             (click)="handleMobileNavigation(item, $event)"
           >
-            <img [src]="item.icon" [alt]="item.label" />
+            <img [src]="item.icon" [alt]="item.label" onerror="this.src='/assets/images/placeholder.png'" />
             <span>{{ item.label }}</span>
           </div>
         </div>
@@ -81,6 +81,7 @@
               [src]="item.icon"
               [alt]="item.label"
               width="100%"
+              onerror="this.src='/assets/images/placeholder.png'"
             />
           </ng-template>
         </p-dock>
@@ -120,7 +121,7 @@
         (click)="handleMobileBottomNavClick(item, $event)"
         [class.active]="isActiveTab(item)"
       >
-        <img [src]="item.icon" [alt]="item.label" />
+        <img [src]="item.icon" [alt]="item.label" onerror="this.src='/assets/images/placeholder.png'" />
         <span>{{ item.label }}</span>
       </div>
     </div>
@@ -144,7 +145,7 @@
         *ngFor="let item of moreItems"
         (click)="commandHandler(item.command)"
       >
-        <img [src]="item.icon" [alt]="item.label" />
+        <img [src]="item.icon" [alt]="item.label" onerror="this.src='/assets/images/placeholder.png'" />
         <span>{{ item.label }}</span>
       </div>
     </div>

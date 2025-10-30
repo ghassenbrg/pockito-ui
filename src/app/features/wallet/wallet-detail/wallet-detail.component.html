@@ -1,7 +1,7 @@
 <div class="wallet-container" *ngIf="wallet">
   <app-page-header>
     <div class="wallet-info" slot="title">
-      <img [src]="wallet.iconUrl || 'assets/icons/' + wallet.type + '.png'" alt="{{ wallet.name }} icon" />
+      <img [src]="wallet.iconUrl || 'assets/icons/' + wallet.type + '.png'" alt="{{ wallet.name }} icon" onerror="this.src='/assets/images/placeholder.png'" />
       <h1 class="wallet-name">
         {{ wallet.name }}
       </h1>

@@ -42,6 +42,7 @@
             <img
               [src]="wallet.iconUrl || 'assets/icons/' + wallet.type + '.png'"
               alt="{{ wallet.name }} icon"
+              onerror="this.src='/assets/images/placeholder.png'"
             />
           </span>
 

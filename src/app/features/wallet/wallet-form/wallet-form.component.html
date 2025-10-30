@@ -179,6 +179,7 @@
             [alt]="'wallets.form.iconPreview' | translate"
             class="icon-preview__image"
             (error)="onImageError($event)"
+            onerror="this.src='/assets/images/placeholder.png'"
           />
           <div class="icon-preview__label">
             {{ "wallets.form.iconPreview" | translate }}

@@ -11,6 +11,7 @@
           [src]="getItemIcon()" 
           [alt]="getItemName()"
           class="pockito-selector__icon-image"
+          onerror="this.src='/assets/images/placeholder.png'"
         />
         <ng-template #fallbackIcon>
           <i [class]="getItemIcon() || 'pi pi-circle'"></i>

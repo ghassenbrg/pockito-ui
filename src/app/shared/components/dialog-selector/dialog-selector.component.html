@@ -49,6 +49,7 @@
               [src]="option.iconUrl" 
               [alt]="option.name"
               class="dialog-selector__option-image"
+              onerror="this.src='/assets/images/placeholder.png'"
             />
             <ng-template #fallbackIcon>
               <i [class]="getOptionIcon(option)"></i>
