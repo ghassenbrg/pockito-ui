@@ -4,26 +4,73 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 import { WalletDetailComponent } from './wallet-detail.component';
-import { WalletService, TransactionService } from '@api/services';
 import { LoadingService, ToastService } from '@shared/services';
-import { Currency, WalletType } from '@api/models';
+import { Currency, PageTransactionDto, Wallet, WalletType } from '@api/models';
+import { WalletStateService } from '../../../state/wallet/wallet-state.service';
+import { TransactionsStateService } from '../../../state/transaction/transactions-state.service';
 
 describe('WalletDetailComponent', () => {
   let component: WalletDetailComponent;
   let fixture: ComponentFixture<WalletDetailComponent>;
-  let mockWalletService: jasmine.SpyObj<WalletService>;
-  let mockTransactionService: jasmine.SpyObj<TransactionService>;
+  let mockWalletStateService: jasmine.SpyObj<WalletStateService>;
+  let mockTransactionsStateService: jasmine.SpyObj<TransactionsStateService>;
   let mockLoadingService: jasmine.SpyObj<LoadingService>;
   let mockToastService: jasmine.SpyObj<ToastService>;
   let mockTranslateService: jasmine.SpyObj<TranslateService>;
   let mockRouter: jasmine.SpyObj<Router>;
   let mockActivatedRoute: jasmine.SpyObj<ActivatedRoute>;
+  
+  const mockWallet: Wallet = {
+    id: 'test-wallet-id',
+    username: 'testuser',
+    name: 'Test Wallet',
+    balance: 1000,
+    currency: Currency.USD,
+    type: WalletType.CASH,
+    initialBalance: 0,
+    description: 'Test Description',
+    color: '#1d4ed8',
+    iconUrl: '',
+    isDefault: false,
+    goalAmount: 0,
+    orderPosition: 0,
+    createdAt: new Date('2024-01-01T00:00:00Z'),
+    updatedAt: new Date('2024-01-01T00:00:00Z'),
+    active: true
+  };
+  
+  const mockPageableTransactions: PageTransactionDto = {
+    totalPages: 1,
+    totalElements: 0,
+    size: 10,
+    content: [],
+    number: 0,
+    first: true,
+    last: true,
+    numberOfElements: 0,
+    empty: true,
+    sort: { empty: false, unsorted: false, sorted: true },
+    pageable: {
+      offset: 0,
+      sort: { empty: false, unsorted: false, sorted: true },
+      unpaged: false,
+      paged: true,
+      pageNumber: 0,
+      pageSize: 10
+    }
+  };
 
   beforeEach(async () => {
     // Create spies for all services
-    mockWalletService = jasmine.createSpyObj('WalletService', ['getWallet', 'deleteWallet']);
-    mockTransactionService = jasmine.createSpyObj('TransactionService', ['getTransactionsByWallet']);
-    mockLoadingService = jasmine.createSpyObj('LoadingService', ['show', 'hide']);
+    mockWalletStateService = jasmine.createSpyObj('WalletStateService', 
+      ['loadWallet'], 
+      ['currentWallet$', 'isLoading$']
+    );
+    mockTransactionsStateService = jasmine.createSpyObj('TransactionsStateService', 
+      ['loadFirstPage', 'loadNextPage'], 
+      ['pageable$', 'isLoading$']
+    );
+    mockLoadingService = jasmine.createSpyObj('LoadingService', ['showWithId', 'hide', 'hideAll']);
     mockToastService = jasmine.createSpyObj('ToastService', ['showSuccess', 'showError']);
     mockTranslateService = jasmine.createSpyObj('TranslateService', ['instant', 'get']);
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
@@ -34,45 +81,24 @@ describe('WalletDetailComponent', () => {
     // Setup default return values
     mockTranslateService.instant.and.returnValue('Test Translation');
     mockTranslateService.get.and.returnValue(of('Test Translation'));
-    mockLoadingService.show.and.returnValue('mock-loading-id');
-    mockWalletService.getWallet.and.returnValue(of({
-      id: 'test-wallet-id',
-      username: 'testuser',
-      name: 'Test Wallet',
-      balance: 1000,
-      currency: Currency.USD,
-      type: WalletType.CASH,
-      initialBalance: 0,
-      description: 'Test Description',
-      color: '#1d4ed8',
-      iconUrl: '',
-      isDefault: false,
-      goalAmount: 0,
-      orderPosition: 0,
-      createdAt: new Date('2024-01-01T00:00:00Z'),
-      updatedAt: new Date('2024-01-01T00:00:00Z'),
-      active: true
-    }));
-    mockTransactionService.getTransactionsByWallet.and.returnValue(of({
-      totalPages: 1,
-      totalElements: 0,
-      size: 10,
-      content: [],
-      number: 0,
-      first: true,
-      last: true,
-      numberOfElements: 0,
-      empty: true,
-      sort: { empty: false, unsorted: false, sorted: true },
-      pageable: {
-        offset: 0,
-        sort: { empty: false, unsorted: false, sorted: true },
-        unpaged: false,
-        paged: true,
-        pageNumber: 0,
-        pageSize: 10
-      }
-    }));
+    
+    // Setup observables
+    Object.defineProperty(mockWalletStateService, 'currentWallet$', {
+      value: of(mockWallet),
+      writable: true
+    });
+    Object.defineProperty(mockWalletStateService, 'isLoading$', {
+      value: of(false),
+      writable: true
+    });
+    Object.defineProperty(mockTransactionsStateService, 'pageable$', {
+      value: of(mockPageableTransactions),
+      writable: true
+    });
+    Object.defineProperty(mockTransactionsStateService, 'isLoading$', {
+      value: of(false),
+      writable: true
+    });
 
     await TestBed.configureTestingModule({
       imports: [
@@ -80,8 +106,8 @@ describe('WalletDetailComponent', () => {
         TranslateModule.forRoot()
       ],
       providers: [
-        { provide: WalletService, useValue: mockWalletService },
-        { provide: TransactionService, useValue: mockTransactionService },
+        { provide: WalletStateService, useValue: mockWalletStateService },
+        { provide: TransactionsStateService, useValue: mockTransactionsStateService },
         { provide: LoadingService, useValue: mockLoadingService },
         { provide: ToastService, useValue: mockToastService },
         { provide: TranslateService, useValue: mockTranslateService },
@@ -106,42 +132,23 @@ describe('WalletDetailComponent', () => {
 
   it('should load wallet and transactions on init', () => {
     component.ngOnInit();
-    expect(mockWalletService.getWallet).toHaveBeenCalledWith('test-wallet-id');
-    expect(mockTransactionService.getTransactionsByWallet).toHaveBeenCalledWith('test-wallet-id', { page: 0, size: 10 });
+    expect(mockWalletStateService.loadWallet).toHaveBeenCalledWith('test-wallet-id');
+    expect(mockTransactionsStateService.loadFirstPage).toHaveBeenCalledWith(
+      { page: 0, size: 10, sort: ['effectiveDate,desc'] },
+      { walletId: 'test-wallet-id' }
+    );
   });
 
   it('should handle load more correctly', () => {
     component.ngOnInit(); // Initialize walletId first
     
-    // Set up existing pageable transactions
-    component.pageableTransactions = {
-      totalPages: 2,
-      totalElements: 20,
-      size: 10,
-      content: [],
-      number: 0,
-      first: true,
-      last: false,
-      numberOfElements: 10,
-      empty: false,
-      sort: { empty: false, unsorted: false, sorted: true },
-      pageable: {
-        offset: 0,
-        sort: { empty: false, unsorted: false, sorted: true },
-        unpaged: false,
-        paged: true,
-        pageNumber: 0,
-        pageSize: 10
-      }
-    };
-    
     // Clear previous calls
-    mockTransactionService.getTransactionsByWallet.calls.reset();
+    mockTransactionsStateService.loadNextPage.calls.reset();
     
     component.onLoadMore();
     
-    // Check that the API was called with next page (0 + 1 = 1)
-    expect(mockTransactionService.getTransactionsByWallet).toHaveBeenCalledWith('test-wallet-id', { page: 1, size: 10 });
+    // Check that loadNextPage was called
+    expect(mockTransactionsStateService.loadNextPage).toHaveBeenCalled();
   });
 
   it('should show edit dialog when showEditWalletDialog is called', () => {

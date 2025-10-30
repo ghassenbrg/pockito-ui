@@ -5,22 +5,35 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 import { WalletsComponent } from './wallets.component';
-import { WalletService } from '@api/services';
 import { LoadingService, ToastService } from '@shared/services';
+import { WalletStateService } from '../../../state/wallet/wallet-state.service';
 
 describe('WalletsComponent', () => {
   let component: WalletsComponent;
   let fixture: ComponentFixture<WalletsComponent>;
-  let mockWalletService: jasmine.SpyObj<WalletService>;
+  let mockWalletStateService: jasmine.SpyObj<WalletStateService>;
   let mockLoadingService: jasmine.SpyObj<LoadingService>;
   let mockToastService: jasmine.SpyObj<ToastService>;
   let mockTranslateService: jasmine.SpyObj<TranslateService>;
 
   beforeEach(async () => {
-    const walletServiceSpy = jasmine.createSpyObj('WalletService', ['getUserWallets']);
-    const loadingServiceSpy = jasmine.createSpyObj('LoadingService', ['show', 'hide']);
+    const walletStateServiceSpy = jasmine.createSpyObj('WalletStateService', 
+      ['loadWallets'], 
+      ['wallets$', 'isLoading$']
+    );
+    const loadingServiceSpy = jasmine.createSpyObj('LoadingService', ['show', 'hide', 'hideAll', 'showWithId']);
     const toastServiceSpy = jasmine.createSpyObj('ToastService', ['showError', 'showSuccess']);
     const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['instant']);
+
+    // Setup observables
+    Object.defineProperty(walletStateServiceSpy, 'wallets$', {
+      value: of([]),
+      writable: true
+    });
+    Object.defineProperty(walletStateServiceSpy, 'isLoading$', {
+      value: of(false),
+      writable: true
+    });
 
     await TestBed.configureTestingModule({
       imports: [
@@ -30,7 +43,7 @@ describe('WalletsComponent', () => {
         TranslateModule.forRoot()
       ],
       providers: [
-        { provide: WalletService, useValue: walletServiceSpy },
+        { provide: WalletStateService, useValue: walletStateServiceSpy },
         { provide: LoadingService, useValue: loadingServiceSpy },
         { provide: ToastService, useValue: toastServiceSpy },
         { provide: TranslateService, useValue: translateServiceSpy }
@@ -40,13 +53,12 @@ describe('WalletsComponent', () => {
     
     fixture = TestBed.createComponent(WalletsComponent);
     component = fixture.componentInstance;
-    mockWalletService = TestBed.inject(WalletService) as jasmine.SpyObj<WalletService>;
+    mockWalletStateService = TestBed.inject(WalletStateService) as jasmine.SpyObj<WalletStateService>;
     mockLoadingService = TestBed.inject(LoadingService) as jasmine.SpyObj<LoadingService>;
     mockToastService = TestBed.inject(ToastService) as jasmine.SpyObj<ToastService>;
     mockTranslateService = TestBed.inject(TranslateService) as jasmine.SpyObj<TranslateService>;
 
     // Setup default mock behaviors
-    mockWalletService.getUserWallets.and.returnValue(of({ wallets: [], totalCount: 0 }));
     mockTranslateService.instant.and.returnValue('Loading...');
     mockLoadingService.show.and.returnValue('mock-loading-id');
   });
