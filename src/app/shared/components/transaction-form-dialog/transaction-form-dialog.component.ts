@@ -4,7 +4,8 @@ import { TransactionType, TransactionDto } from '@api/models';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PockitoDialogComponent } from '@shared/components/pockito-dialog/pockito-dialog.component';
 import { TransactionFormComponent } from '@shared/components/transaction-form/transaction-form.component';
-import { TransactionService } from '@api/services';
+import { TransactionsStateService } from '../../../state/transaction/transactions-state.service';
+import { LoadingService } from '@shared/services/loading.service';
 import { ToastService } from '@shared/services/toast.service';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -36,9 +37,10 @@ export class TransactionFormDialogComponent {
   currentWalletToId: string | null = null;
 
   constructor(
-    private transactionService: TransactionService,
+    private transactionsState: TransactionsStateService,
     private toastService: ToastService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private loadingService: LoadingService
   ) {}
 
   onTransactionSaved(transaction: TransactionDto): void {
@@ -132,20 +134,16 @@ export class TransactionFormDialogComponent {
     }
 
     if (confirm(this.translate.instant('transactions.delete.confirm'))) {
-      this.transactionService.deleteTransaction(this.transactionId).subscribe({
-        next: () => {
-          this.toastService.showSuccess(
-            'transactions.delete.success',
-            'transactions.delete.successMessage'
-          );
-          this.transactionDeleted.emit(this.transactionId!);
+      const id = this.transactionId;
+      const loadingId = this.loadingService.show(this.translate.instant('common.loading'));
+      this.transactionsState.deleteTransaction(id);
+      const sub = this.transactionsState.transactions$.subscribe((list) => {
+        if (!list.find((t) => t.id === id)) {
+          this.toastService.showSuccess('transactions.delete.success','transactions.delete.successMessage');
+          this.transactionDeleted.emit(id);
           this.closeDialog();
-        },
-        error: () => {
-          this.toastService.showError(
-            'transactions.delete.error',
-            'transactions.delete.errorMessage'
-          );
+          this.loadingService.hide(loadingId);
+          sub.unsubscribe();
         }
       });
     }

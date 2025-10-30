@@ -8,29 +8,27 @@ import {
 } from '@angular/forms';
 import {
   Category,
+  CategoryList,
   CategoryType,
   TransactionDto,
+  TransactionRequest,
   TransactionType,
   Wallet,
-  WalletType,
-  WalletList,
-  CategoryList,
-  TransactionRequest,
+  WalletType
 } from '@api/models';
-import {
-  CategoryService,
-  TransactionService,
-  WalletService,
-} from '@api/services';
+import { CategoryService } from '@api/services';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { DialogOption } from '@shared/components/dialog-selector/dialog-selector.component';
 import {
   PockitoButtonComponent,
   PockitoButtonSize,
   PockitoButtonType,
 } from '@shared/components/pockito-button/pockito-button.component';
 import { PockitoSelectorComponent } from '@shared/components/pockito-selector/pockito-selector.component';
-import { DialogOption } from '@shared/components/dialog-selector/dialog-selector.component';
 import { ToastService } from '@shared/services/toast.service';
+import { TransactionsStateService } from '../../../state/transaction/transactions-state.service';
+import { WalletStateService } from '../../../state/wallet/wallet-state.service';
+import { filter, take } from 'rxjs/operators';
 
 // PrimeNG imports
 import { CalendarModule } from 'primeng/calendar';
@@ -95,9 +93,9 @@ export class TransactionFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private transactionService: TransactionService,
+    private transactionsState: TransactionsStateService,
     private categoryService: CategoryService,
-    private walletService: WalletService,
+    private walletState: WalletStateService,
     private translate: TranslateService,
     private toastService: ToastService
   ) {
@@ -148,26 +146,17 @@ export class TransactionFormComponent implements OnInit {
   }
 
   private loadWallets(): void {
-    this.walletService.getUserWallets().subscribe({
-      next: (response: WalletList) => {
-        this.wallets = response.wallets;
-        // Find the wallet with isDefault flag set to true
-        this.defaultWallet = response.wallets.find(wallet => wallet.isDefault) || null;
-        this.updateWalletOptions();
-        
-        // Only set default values if not in edit mode
-        if (!this.isEditMode) {
-          this.setDefaultWalletValues();
-        }
-      },
-      error: (error) => {
-        console.error('Error loading wallets:', error);
-        this.toastService.showError(
-          'transactions.loadingWalletsError',
-          error.error?.message || 'Error loading wallets'
-        );
-      },
+    this.walletState.wallets$.subscribe((wallets) => {
+      const list = wallets ?? [];
+      this.wallets = list;
+      this.defaultWallet = list.find((w) => w.isDefault) || null;
+      this.updateWalletOptions();
+      if (!this.isEditMode) {
+        this.setDefaultWalletValues();
+      }
     });
+    // Ensure wallets are loaded
+    this.walletState.loadWallets();
   }
 
   private loadCategories(): void {
@@ -478,19 +467,13 @@ export class TransactionFormComponent implements OnInit {
 
   private loadTransaction(transactionId: string): void {
     this.isLoading = true;
-    this.transactionService.getTransaction(transactionId).subscribe({
-      next: (transaction: TransactionDto) => {
-        this.patchTransactionForm(transaction);
+    this.transactionsState.loadTransactionById(transactionId);
+    const sub = this.transactionsState.currentTransaction$.subscribe((tx) => {
+      if (tx && tx.id === transactionId) {
+        this.patchTransactionForm(tx);
         this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading transaction:', error);
-        this.toastService.showError(
-          'transactions.loadingTransactionError',
-          error.error?.message || 'Error loading transaction'
-        );
-        this.isLoading = false;
-      },
+        sub.unsubscribe();
+      }
     });
   }
 
@@ -548,48 +531,35 @@ export class TransactionFormComponent implements OnInit {
 
   private createTransaction(transactionData: TransactionRequest): void {
     this.isLoading = true;
-    this.transactionService.createTransaction(transactionData).subscribe({
-      next: (createdTransaction: TransactionDto) => {
-        this.transactionSaved.emit(createdTransaction);
+    const beforeIds = new Set(this.transactionsState['transactionsSubject'].value.map(t => t.id));
+    this.transactionsState.createTransaction(transactionData);
+    this.transactionsState.transactions$.pipe(
+      filter((list) => list.some((t) => !beforeIds.has(t.id))),
+      take(1)
+    ).subscribe((list) => {
+      const created = list.find((t) => !beforeIds.has(t.id));
+      if (created) {
+        this.transactionSaved.emit(created);
         this.isLoading = false;
-        this.toastService.showSuccess(
-          'transactions.createTransactionSuccess',
-          'transactions.createTransactionSuccessMessage'
-        );
-      },
-      error: (error) => {
-        console.error('Error creating transaction:', error);
-        this.isLoading = false;
-        this.toastService.showError(
-          'transactions.createTransactionError',
-          error.error?.message || 'Failed to create transaction'
-        );
-      },
+        this.toastService.showSuccess('transactions.createTransactionSuccess','transactions.createTransactionSuccessMessage');
+      }
     });
   }
 
   private updateTransaction(transactionId: string, transactionData: TransactionRequest): void {
     this.isLoading = true;
-    this.transactionService
-      .updateTransaction(transactionId, transactionData)
-      .subscribe({
-        next: (updatedTransaction: TransactionDto) => {
-          this.transactionSaved.emit(updatedTransaction);
-          this.isLoading = false;
-          this.toastService.showSuccess(
-            'transactions.updateTransactionSuccess',
-            'transactions.updateTransactionSuccessMessage'
-          );
-        },
-        error: (error) => {
-          console.error('Error updating transaction:', error);
-          this.isLoading = false;
-          this.toastService.showError(
-            'transactions.updateTransactionError',
-            error.error?.message || 'Failed to update transaction'
-          );
-        },
-      });
+    this.transactionsState.updateTransaction(transactionId, transactionData);
+    this.transactionsState.transactions$.pipe(
+      filter((list) => list.some((t) => t.id === transactionId)),
+      take(1)
+    ).subscribe((list) => {
+      const updated = list.find((t) => t.id === transactionId);
+      if (updated) {
+        this.transactionSaved.emit(updated);
+        this.isLoading = false;
+        this.toastService.showSuccess('transactions.updateTransactionSuccess','transactions.updateTransactionSuccessMessage');
+      }
+    });
   }
 
   onCancel(): void {

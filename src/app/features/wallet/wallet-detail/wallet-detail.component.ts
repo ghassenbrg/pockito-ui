@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PageTransactionDto, TransactionType, Wallet } from '@api/models';
-import { TransactionService } from '@api/services';
+import { PageTransactionDto, Pageable, TransactionDto, TransactionType, Wallet } from '@api/models';
 import { WalletStateService } from '../../../state/wallet/wallet-state.service';
+import { TransactionsStateService } from '../../../state/transaction/transactions-state.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PockitoButtonType } from '@shared/components/pockito-button/pockito-button.component';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -12,6 +12,8 @@ import { LoadingService, ToastService } from '@shared/services';
 import { PockitoCurrencyPipe } from '@shared/pipes/pockito-currency.pipe';
 import { ButtonModule } from 'primeng/button';
 import { WalletFormDialogComponent } from '@shared/components/wallet-form-dialog/wallet-form-dialog.component';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-wallet-detail',
@@ -28,19 +30,20 @@ import { WalletFormDialogComponent } from '@shared/components/wallet-form-dialog
   templateUrl: './wallet-detail.component.html',
   styleUrl: './wallet-detail.component.scss',
 })
-export class WalletDetailComponent implements OnInit {
+export class WalletDetailComponent implements OnInit, OnDestroy {
   wallet: Wallet | null = null;
   walletId: string = '';
   PockitoButtonType = PockitoButtonType;
   TransactionType = TransactionType;
   displayEditWalletDialog = false;
   Math = Math;
-  pageableTransactions?: PageTransactionDto;
-  allTransactions: any[] = [];
+  pageableTransactions$!: Observable<PageTransactionDto | null>;
+  
+  private destroy$ = new Subject<void>();
 
   constructor(
     private walletState: WalletStateService,
-    private transactionService: TransactionService,
+    private transactionsState: TransactionsStateService,
     private loadingService: LoadingService,
     private toastService: ToastService,
     private translateService: TranslateService,
@@ -53,73 +56,65 @@ export class WalletDetailComponent implements OnInit {
     this.bindLoading();
     this.bindWallet();
     this.walletState.loadWallet(this.walletId);
-    this.getTransactions(0, 10);
+    this.pageableTransactions$ = this.transactionsState.pageable$;
+    this.loadFirstPage();
   }
 
-  getTransactions(page: number = 0, size: number = 10) {
-    const loadingId = this.loadingService.show(this.translateService.instant('common.loading'));
-    
-    this.transactionService
-      .getTransactionsByWallet(this.walletId, { page, size })
+  private loadFirstPage(): void {
+    const pageable: Pageable = { page: 0, size: 10, sort: ['effectiveDate,desc'] };
+    this.transactionsState.loadFirstPage(pageable, { walletId: this.walletId });
+  }
+
+  onLoadMore(): void {
+    this.transactionsState.loadNextPage();
+  }
+
+  onTransactionSaved(_transaction: TransactionDto): void {
+    // The state will merge the updated transaction when it matches current filters
+  }
+
+  private bindWallet() {
+    this.walletState.currentWallet$
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (transactions: PageTransactionDto) => {
-          if (page === 0) {
-            // First load - replace all transactions
-            this.allTransactions = transactions.content || [];
-          } else {
-            // Load more - append to existing transactions
-            this.allTransactions = [...this.allTransactions, ...(transactions.content || [])];
-          }
-          
-          // Update pageableTransactions with combined data
-          this.pageableTransactions = {
-            ...transactions,
-            content: this.allTransactions
-          };
-          
-          this.loadingService.hide(loadingId); 
+        next: (wallet) => {
+          this.wallet = wallet ?? null;
         },
         error: () => {
           this.toastService.showError(
             'common.loadingError',
             'common.loadingErrorMessage'
           );
-          this.loadingService.hide(loadingId);
         }
       });
   }
 
-  onLoadMore() {
-    // Get current page from backend response and load next page
-    const currentPage = this.pageableTransactions?.number || 0;
-    const nextPage = currentPage + 1;
-    this.getTransactions(nextPage, 10);
-  }
-
-  private bindWallet() {
-    this.walletState.currentWallet$.subscribe({
-      next: (wallet) => {
-        this.wallet = wallet ?? null;
-      },
-      error: () => {
-        this.toastService.showError(
-          'common.loadingError',
-          'common.loadingErrorMessage'
-        );
-      }
-    });
-  }
-
   private bindLoading() {
-    let loadingId: string | null = null;
-    this.walletState.isLoading$.subscribe((isLoading) => {
-      if (isLoading && !loadingId) {
-        loadingId = this.loadingService.show(this.translateService.instant('common.loading'));
-      } else if (!isLoading && loadingId) {
-        this.loadingService.hide(loadingId);
-        loadingId = null;
-      }
-    });
+    // Use fixed IDs for wallet and transactions loading states
+    const WALLET_LOADING_ID = 'wallet-detail-wallet';
+    const TRANSACTION_LOADING_ID = 'wallet-detail-transactions';
+    
+    // Subscribe to wallet loading state
+    this.walletState.isLoading$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isLoading) => {
+        if (isLoading) {
+          this.loadingService.showWithId(WALLET_LOADING_ID, this.translateService.instant('common.loading'));
+        } else {
+          this.loadingService.hide(WALLET_LOADING_ID);
+        }
+      });
+    
+    // Subscribe to transactions loading state
+    this.transactionsState.isLoading$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isLoading) => {
+        if (isLoading) {
+          this.loadingService.showWithId(TRANSACTION_LOADING_ID, this.translateService.instant('common.loading'));
+        } else {
+          this.loadingService.hide(TRANSACTION_LOADING_ID);
+        }
+      });
   }
 
   showEditWalletDialog() {
@@ -141,5 +136,13 @@ export class WalletDetailComponent implements OnInit {
     this.router.navigate(['../'], { relativeTo: this.route });
   }
 
+  ngOnDestroy(): void {
+    // Clean up all subscriptions to prevent memory leaks
+    this.destroy$.next();
+    this.destroy$.complete();
+    
+    // Clean up any lingering loading indicators
+    this.loadingService.hideAll();
+  }
 
 }

@@ -8,7 +8,7 @@
   <div class="transactions-content">
 
     <app-transaction-list
-      [pageableTransactions]="pageableTransactions"
+      [pageableTransactions]="pageableTransactions$ | async"
       (loadMore)="onLoadMore()"
       (transactionSaved)="onTransactionSaved($event)"
     ></app-transaction-list>

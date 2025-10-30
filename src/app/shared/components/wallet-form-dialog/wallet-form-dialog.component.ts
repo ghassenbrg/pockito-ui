@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Wallet } from '@api/models';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -8,6 +8,8 @@ import { WalletStateService } from '../../../state/wallet/wallet-state.service';
 import { ToastService } from '@shared/services/toast.service';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadingService } from '@shared/services/loading.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-wallet-form-dialog',
@@ -21,7 +23,7 @@ import { LoadingService } from '@shared/services/loading.service';
   templateUrl: './wallet-form-dialog.component.html',
   styleUrls: ['./wallet-form-dialog.component.scss']
 })
-export class WalletFormDialogComponent {
+export class WalletFormDialogComponent implements OnDestroy {
   @Input() visible: boolean = false;
   @Input() walletId?: string;
   
@@ -29,6 +31,8 @@ export class WalletFormDialogComponent {
   @Output() walletSaved = new EventEmitter<Wallet>();
   @Output() formCancelled = new EventEmitter<void>();
   @Output() walletDeleted = new EventEmitter<string>();
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private walletState: WalletStateService,
@@ -93,14 +97,22 @@ export class WalletFormDialogComponent {
   }
 
   private bindLoading(): void {
-    let loadingId: string | null = null;
-    this.walletState.isLoading$.subscribe((isLoading) => {
-      if (isLoading && !loadingId) {
-        loadingId = this.loadingService.show(this.translate.instant('common.loading'));
-      } else if (!isLoading && loadingId) {
-        this.loadingService.hide(loadingId);
-        loadingId = null;
-      }
-    });
+    const LOADING_ID = 'wallet-form-dialog';
+    
+    this.walletState.isLoading$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isLoading) => {
+        if (isLoading) {
+          this.loadingService.showWithId(LOADING_ID, this.translate.instant('common.loading'));
+        } else {
+          this.loadingService.hide(LOADING_ID);
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.loadingService.hideAll();
   }
 }

@@ -32,10 +32,11 @@
       <h2>{{ "wallets.transactions" | translate }}</h2>
     </div>
     <app-transaction-list
-      [pageableTransactions]="pageableTransactions"
+      [pageableTransactions]="pageableTransactions$ | async"
       [wallet]="wallet"
       [walletId]="walletId"
       (loadMore)="onLoadMore()"
+      (transactionSaved)="onTransactionSaved($event)"
     ></app-transaction-list>
   </div>
 </div>

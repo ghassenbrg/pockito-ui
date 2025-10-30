@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PageTransactionDto, Pageable, TransactionDto } from '@api/models';
-import { TransactionService } from '@api/services';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
 import { TransactionListComponent } from '@shared/components/transaction-list/transaction-list.component';
 import { LoadingService, ToastService } from '@shared/services';
+import { TransactionsStateService } from '../../../state/transaction/transactions-state.service';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-transactions',
@@ -19,74 +21,58 @@ import { LoadingService, ToastService } from '@shared/services';
   templateUrl: './transactions.component.html',
   styleUrl: './transactions.component.scss'
 })
-export class TransactionsComponent implements OnInit {
-  pageableTransactions?: PageTransactionDto;
-  loading = false;
-  allTransactions: any[] = [];
+export class TransactionsComponent implements OnInit, OnDestroy {
+  pageableTransactions$!: Observable<PageTransactionDto | null>;
+  
+  private destroy$ = new Subject<void>();
 
   constructor(
-    private transactionService: TransactionService,
+    private transactionsState: TransactionsStateService,
     private loadingService: LoadingService,
     private toastService: ToastService,
     private translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
-    this.loadTransactions();
+    this.bindLoading();
+    this.pageableTransactions$ = this.transactionsState.pageable$;
+    this.loadFirstPage();
   }
 
-  loadTransactions(): void {
-
-    let nextPage: number;
-    let loadingId: string = '';
-
-    if (this.pageableTransactions) {
-      nextPage = (this.pageableTransactions.number || 0) + 1;
-    } else {
-      loadingId = this.loadingService.show(this.translateService.instant('transactions.loading'));
-      nextPage = 0;
-    }
-
-    const pageable: Pageable = {
-      page: nextPage,
-      size: 10,
-      sort: ['effectiveDate,desc']
-    };
-
-    this.transactionService.listTransactions(pageable).subscribe({
-      next: (transactions) => {
-        if (transactions.number === 0) {
-          // First load - replace all transactions
-          this.allTransactions = transactions.content || [];
-        } else {
-          // Load more - append to existing transactions
-          this.allTransactions = [...this.allTransactions, ...(transactions.content || [])];
-        }
-        
-        // Update pageableTransactions with combined data
-        this.pageableTransactions = {
-          ...transactions,
-          content: this.allTransactions
-        };
-        
-        this.loadingService.hide(loadingId);
-      },
-      error: () => {
-        this.toastService.showError(
-          'transactions.loadingError',
-          'transactions.loadingErrorMessage'
-        );
-        this.loadingService.hide(loadingId);
-      }
-    });
+  private loadFirstPage(): void {
+    const pageable: Pageable = { page: 0, size: 10, sort: ['effectiveDate,desc'] };
+    this.transactionsState.loadFirstPage(pageable);
   }
 
   onLoadMore(): void {
-    this.loadTransactions();
+    this.transactionsState.loadNextPage();
   }
 
   onTransactionSaved(_transaction: TransactionDto): void {
-    // Reload transactions to show updated data
-    this.loadTransactions();
+    // The state will merge the created transaction when it matches current filters
+  }
+
+  private bindLoading() {
+    // Use fixed ID for transactions loading state
+    const TRANSACTION_LOADING_ID = 'transactions-page';
+    
+    this.transactionsState.isLoading$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isLoading) => {
+        if (isLoading) {
+          this.loadingService.showWithId(TRANSACTION_LOADING_ID, this.translateService.instant('transactions.loading'));
+        } else {
+          this.loadingService.hide(TRANSACTION_LOADING_ID);
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    // Clean up all subscriptions to prevent memory leaks
+    this.destroy$.next();
+    this.destroy$.complete();
+    
+    // Clean up any lingering loading indicators
+    this.loadingService.hideAll();
   }
 }

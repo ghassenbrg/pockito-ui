@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Wallet } from '@api/models';
 import { WalletStateService } from '../../../state/wallet/wallet-state.service';
@@ -31,10 +31,12 @@ import { WalletFormDialogComponent } from '@shared/components/wallet-form-dialog
   templateUrl: './wallets.component.html',
   styleUrl: './wallets.component.scss',
 })
-export class WalletsComponent implements OnInit {
+export class WalletsComponent implements OnInit, OnDestroy {
   walletsSorted$!: Observable<Wallet[]>;
   PockitoButtonType = PockitoButtonType;
   displayCreateWalletDialog = false;
+  
+  private destroy$ = new Subject<void>();
 
   constructor(
     private walletState: WalletStateService,
@@ -64,15 +66,23 @@ export class WalletsComponent implements OnInit {
   // Data is now bound via async pipe; errors are surfaced via toasts on load failure at state layer
 
   private bindLoading() {
-    let loadingId: string | null = null;
-    this.walletState.isLoading$.subscribe((isLoading) => {
-      if (isLoading && !loadingId) {
-        loadingId = this.loadingService.show(this.translateService.instant('wallets.loading'));
-      } else if (!isLoading && loadingId) {
-        this.loadingService.hide(loadingId);
-        loadingId = null;
-      }
-    });
+    const WALLETS_LOADING_ID = 'wallets-page';
+    
+    this.walletState.isLoading$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isLoading) => {
+        if (isLoading) {
+          this.loadingService.showWithId(WALLETS_LOADING_ID, this.translateService.instant('wallets.loading'));
+        } else {
+          this.loadingService.hide(WALLETS_LOADING_ID);
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.loadingService.hideAll();
   }
 
   showCreateWalletDialog() {

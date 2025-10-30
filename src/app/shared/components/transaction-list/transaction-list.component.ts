@@ -24,7 +24,7 @@ import { TransactionFormDialogComponent } from '../transaction-form-dialog/trans
   styleUrl: './transaction-list.component.scss'
 })
 export class TransactionListComponent implements OnInit, OnChanges {
-  @Input() pageableTransactions?: PageTransactionDto;
+  @Input() pageableTransactions?: PageTransactionDto | null;
   @Input() wallet?: Wallet | null;
   @Input() walletId: string = '';
 
