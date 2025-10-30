@@ -23,8 +23,8 @@ import { LoadingService } from '@shared/services/loading.service';
 import { MenuItem, MessageService } from 'primeng/api';
 import { DockModule } from 'primeng/dock';
 import { TerminalModule, TerminalService } from 'primeng/terminal';
-import { Subscription } from 'rxjs';
-import { distinctUntilChanged, filter, map } from 'rxjs/operators';
+import { Subscription, asyncScheduler } from 'rxjs';
+import { distinctUntilChanged, filter, map, observeOn } from 'rxjs/operators';
 
 @Component({
   selector: 'app-layout',
@@ -78,8 +78,8 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
 
   private responsiveSubscription!: Subscription;
 
-  // Loading state observable
-  loading$ = this.loadingService.loading$;
+  // Loading state observable (deferred to next microtask to avoid NG0100)
+  loading$ = this.loadingService.loading$.pipe(observeOn(asyncScheduler));
 
   // Loading messages observable - only emits when messages actually change
   loadingMessages$ = this.loading$.pipe(

@@ -20,18 +20,18 @@
   <div class="wallets-content">
     <!-- Empty State -->
     <app-empty-state
-      *ngIf="wallets.length === 0"
+      *ngIf="(walletsSorted$ | async)?.length === 0"
       icon="fa-solid fa-wallet"
       title="wallets.noWallets"
       message="wallets.noWalletsMessage"
     ></app-empty-state>
 
     <!-- Wallets List -->
-    <div class="wallets-list" *ngIf="wallets.length > 0">
+    <div class="wallets-list" *ngIf="(walletsSorted$ | async)?.length! > 0">
       <div
         class="wallet-item"
         (click)="viewWallet(wallet)"
-        *ngFor="let wallet of wallets"
+        *ngFor="let wallet of (walletsSorted$ | async)"
         [ngClass]="{
           'is-positive': wallet.balance && wallet.balance >= 0,
           'is-negative': wallet.balance && wallet.balance < 0

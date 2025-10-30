@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PageTransactionDto, TransactionType, Wallet } from '@api/models';
-import { TransactionService, WalletService } from '@api/services';
+import { TransactionService } from '@api/services';
+import { WalletStateService } from '../../../state/wallet/wallet-state.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PockitoButtonType } from '@shared/components/pockito-button/pockito-button.component';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
@@ -38,7 +39,7 @@ export class WalletDetailComponent implements OnInit {
   allTransactions: any[] = [];
 
   constructor(
-    private walletService: WalletService,
+    private walletState: WalletStateService,
     private transactionService: TransactionService,
     private loadingService: LoadingService,
     private toastService: ToastService,
@@ -49,7 +50,9 @@ export class WalletDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.walletId = this.route.snapshot.params['id'];
-    this.getWallet();
+    this.bindLoading();
+    this.bindWallet();
+    this.walletState.loadWallet(this.walletId);
     this.getTransactions(0, 10);
   }
 
@@ -93,20 +96,28 @@ export class WalletDetailComponent implements OnInit {
     this.getTransactions(nextPage, 10);
   }
 
-  getWallet() {
-    const loadingId = this.loadingService.show(this.translateService.instant('common.loading'));
-    
-    this.walletService.getWallet(this.walletId).subscribe({
-      next: (wallet: Wallet) => {
-        this.wallet = wallet;
-        this.loadingService.hide(loadingId);
+  private bindWallet() {
+    this.walletState.currentWallet$.subscribe({
+      next: (wallet) => {
+        this.wallet = wallet ?? null;
       },
       error: () => {
         this.toastService.showError(
           'common.loadingError',
           'common.loadingErrorMessage'
         );
+      }
+    });
+  }
+
+  private bindLoading() {
+    let loadingId: string | null = null;
+    this.walletState.isLoading$.subscribe((isLoading) => {
+      if (isLoading && !loadingId) {
+        loadingId = this.loadingService.show(this.translateService.instant('common.loading'));
+      } else if (!isLoading && loadingId) {
         this.loadingService.hide(loadingId);
+        loadingId = null;
       }
     });
   }

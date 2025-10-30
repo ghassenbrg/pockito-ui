@@ -53,3 +53,6 @@ mkcert.exe
 
 # Development certificates
 localhost+*
+
+# Other
+/src/prompts

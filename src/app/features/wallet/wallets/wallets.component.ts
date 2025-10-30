@@ -1,8 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Wallet, WalletList } from '@api/models';
-import { WalletService } from '@api/services';
+import { Wallet } from '@api/models';
+import { WalletStateService } from '../../../state/wallet/wallet-state.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import {
   PockitoButtonComponent,
@@ -30,12 +32,12 @@ import { WalletFormDialogComponent } from '@shared/components/wallet-form-dialog
   styleUrl: './wallets.component.scss',
 })
 export class WalletsComponent implements OnInit {
-  wallets: Wallet[] = [];
+  walletsSorted$!: Observable<Wallet[]>;
   PockitoButtonType = PockitoButtonType;
   displayCreateWalletDialog = false;
 
   constructor(
-    private walletService: WalletService,
+    private walletState: WalletStateService,
     private loadingService: LoadingService,
     private toastService: ToastService,
     private translateService: TranslateService,
@@ -44,29 +46,31 @@ export class WalletsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getWallets();
-  }
-
-  getWallets() {
-    const loadingId = this.loadingService.show(this.translateService.instant('wallets.loading'));
-    
-    this.walletService.getUserWallets().subscribe({
-      next: (response: WalletList) => {
-        this.wallets = response.wallets.slice().sort((a, b) => {
-          // If either orderPosition is undefined, sort it after those with defined positions
+    this.bindLoading();
+    this.walletsSorted$ = this.walletState.wallets$.pipe(
+      map((wallets) => {
+        const list = wallets ?? [];
+        return list.slice().sort((a, b) => {
           if (a.orderPosition == null && b.orderPosition == null) return 0;
           if (a.orderPosition == null) return 1;
           if (b.orderPosition == null) return -1;
           return a.orderPosition - b.orderPosition;
         });
+      })
+    );
+    this.walletState.loadWallets();
+  }
+
+  // Data is now bound via async pipe; errors are surfaced via toasts on load failure at state layer
+
+  private bindLoading() {
+    let loadingId: string | null = null;
+    this.walletState.isLoading$.subscribe((isLoading) => {
+      if (isLoading && !loadingId) {
+        loadingId = this.loadingService.show(this.translateService.instant('wallets.loading'));
+      } else if (!isLoading && loadingId) {
         this.loadingService.hide(loadingId);
-      },
-      error: () => {
-        this.toastService.showError(
-          'wallets.loadingError',
-          'wallets.loadingErrorMessage'
-        );
-        this.loadingService.hide(loadingId);
+        loadingId = null;
       }
     });
   }
@@ -75,15 +79,7 @@ export class WalletsComponent implements OnInit {
     this.displayCreateWalletDialog = true;
   }
 
-  onWalletSaved(wallet: Wallet) {
-    this.wallets = this.wallets.filter((w) => w.id !== wallet.id);
-    this.wallets.push(wallet);
-    this.wallets = this.wallets.sort((a, b) => {
-      if (a.orderPosition == null && b.orderPosition == null) return 0;
-      if (a.orderPosition == null) return 1;
-      if (b.orderPosition == null) return -1;
-      return a.orderPosition - b.orderPosition;
-    });
+  onWalletSaved(_wallet: Wallet) {
     this.displayCreateWalletDialog = false;
   }
 
@@ -91,8 +87,7 @@ export class WalletsComponent implements OnInit {
     this.displayCreateWalletDialog = false;
   }
 
-  onWalletDeleted(walletId: string) {
-    this.wallets = this.wallets.filter((w) => w.id !== walletId);
+  onWalletDeleted(_walletId: string) {
     this.displayCreateWalletDialog = false;
   }
 

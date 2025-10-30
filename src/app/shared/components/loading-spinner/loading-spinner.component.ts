@@ -27,7 +27,8 @@ import { CommonModule } from '@angular/common';
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 9999;
+      /* Ensure loading overlay is always above dialogs and overlays */
+      z-index: 2147483647;
     }
 
     .loading-overlay:not(.fullscreen) {

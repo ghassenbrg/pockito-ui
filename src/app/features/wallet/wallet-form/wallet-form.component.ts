@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Currency, User, Wallet, WalletRequest, WalletType } from '@api/models';
-import { UserService, WalletService } from '@api/services';
+import { UserService } from '@api/services';
 import { getCurrencyFlagIcon, getCurrencySymbol } from '@core/utils/currency-country.mapping';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DialogOption } from '@shared/components/dialog-selector/dialog-selector.component';
@@ -18,6 +18,9 @@ import {
 } from '@shared/components/pockito-button/pockito-button.component';
 import { PockitoSelectorComponent } from '@shared/components/pockito-selector/pockito-selector.component';
 import { ToastService } from '@shared/services/toast.service';
+import { WalletStateService } from '../../../state/wallet/wallet-state.service';
+import { LoadingService } from '@shared/services/loading.service';
+import { filter, take } from 'rxjs/operators';
 
 // PrimeNG imports
 import { CheckboxModule } from 'primeng/checkbox';
@@ -73,10 +76,11 @@ export class WalletFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private walletService: WalletService,
+    private walletState: WalletStateService,
     private userService: UserService,
     private translate: TranslateService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private loadingService: LoadingService
   ) {
     this.walletForm = this.createForm();
   }
@@ -135,21 +139,24 @@ export class WalletFormComponent implements OnInit {
   }
 
   private loadWallet(walletId: string): void {
-    this.isLoading = true;
-    this.walletService.getWallet(walletId).subscribe({
-      next: (wallet: Wallet) => {
-        this.patchWalletForm(wallet);
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error loading wallet:', error);
-        this.toastService.showError(
-          'wallets.loadingWalletError',
-          error.error.message
-        );
-        this.isLoading = false;
-      },
-    });
+    const loadingId = this.loadingService.show(this.translate.instant('common.loading'));
+    this.walletState.loadWallet(walletId);
+    this.walletState.currentWallet$
+      .pipe(
+        filter((wallet): wallet is Wallet => !!wallet && wallet.id === walletId),
+        take(1)
+      )
+      .subscribe({
+        next: (wallet) => {
+          this.patchWalletForm(wallet);
+          this.loadingService.hide(loadingId);
+        },
+        error: (error) => {
+          console.error('Error loading wallet:', error);
+          this.toastService.showError('wallets.loadingWalletError', 'common.loadingErrorMessage');
+          this.loadingService.hide(loadingId);
+        },
+      });
   }
 
   private patchWalletForm(wallet: Wallet): void {
@@ -191,49 +198,55 @@ export class WalletFormComponent implements OnInit {
   }
 
   private createWallet(walletData: WalletRequest): void {
-    this.isLoading = true;
-    this.walletService.createWallet(walletData).subscribe({
-      next: (createdWallet: Wallet) => {
-        this.walletSaved.emit(createdWallet);
-        this.isLoading = false;
-        this.toastService.showSuccess(
-          'wallets.createWalletSuccess',
-          'wallets.createWalletSuccessMessage',
-          { name: walletData.name }
-        );
-      },
-      error: (error) => {
-        console.error('Error creating wallet:', error);
-        this.isLoading = false;
-        this.toastService.showError(
-          'wallets.createWalletError',
-          error.error.message
-        );
-      },
-    });
+    const loadingId = this.loadingService.show(this.translate.instant('common.loading'));
+    this.walletState.wallets$
+      .pipe(take(1))
+      .subscribe((wallets) => {
+        const previousIds = new Set((wallets ?? []).map((w) => w.id));
+        this.walletState.createWallet(walletData);
+        this.walletState.wallets$
+          .pipe(
+            filter((walletsAfter) => {
+              const list = walletsAfter ?? [];
+              return list.some((w) => !previousIds.has(w.id) && w.name === walletData.name);
+            }),
+            take(1)
+          )
+          .subscribe((walletsAfter) => {
+            const newWallet = (walletsAfter ?? []).find((w) => !previousIds.has(w.id) && w.name === walletData.name);
+            if (newWallet) {
+              this.walletSaved.emit(newWallet);
+              this.toastService.showSuccess(
+                'wallets.createWalletSuccess',
+                'wallets.createWalletSuccessMessage',
+                { name: walletData.name }
+              );
+              this.loadingService.hide(loadingId);
+            }
+          });
+      });
   }
 
   private updateWallet(walletId: string, walletData: WalletRequest): void {
-    this.isLoading = true;
-    this.walletService.updateWallet(walletId, walletData).subscribe({
-      next: (updatedWallet: Wallet) => {
-        this.walletSaved.emit(updatedWallet);
-        this.isLoading = false;
-        this.toastService.showSuccess(
-          'wallets.updateWalletSuccess',
-          'wallets.updateWalletSuccessMessage',
-          { name: updatedWallet.name }
-        );
-      },
-      error: (error) => {
-        console.error('Error updating wallet:', error);
-        this.isLoading = false;
-        this.toastService.showError(
-          'wallets.updateWalletError',
-          error.error.message
-        );
-      },
-    });
+    const loadingId = this.loadingService.show(this.translate.instant('common.loading'));
+    this.walletState.updateWallet(walletId, walletData);
+    this.walletState.wallets$
+      .pipe(
+        filter((wallets) => (wallets ?? []).some((w) => w.id === walletId)),
+        take(1)
+      )
+      .subscribe((wallets) => {
+        const updated = (wallets ?? []).find((w) => w.id === walletId);
+        if (updated) {
+          this.walletSaved.emit(updated);
+          this.toastService.showSuccess(
+            'wallets.updateWalletSuccess',
+            'wallets.updateWalletSuccessMessage',
+            { name: updated.name }
+          );
+          this.loadingService.hide(loadingId);
+        }
+      });
   }
 
   onCancel(): void {
