@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { catchError, finalize, tap } from 'rxjs/operators';
+import { catchError, finalize, map, tap } from 'rxjs/operators';
 import { TransactionService } from '../../api/services/transaction.service';
 import { PageTransactionDto, Pageable, Transaction, TransactionDto, TransactionRequest, TransactionType } from '../../api/models';
+import { WalletStateService } from '../wallet/wallet-state.service';
 
 @Injectable({ providedIn: 'root' })
 export class TransactionsStateService {
@@ -24,7 +25,10 @@ export class TransactionsStateService {
   private currentStartDate: string | undefined;
   private currentEndDate: string | undefined;
 
-  constructor(private readonly txApi: TransactionService) {}
+  constructor(
+    private readonly txApi: TransactionService,
+    private readonly walletState: WalletStateService
+  ) {}
 
   /** Reset state and load first page with optional filters. */
   loadFirstPage(pageable: Pageable, options?: {
@@ -85,9 +89,9 @@ export class TransactionsStateService {
   }
 
   /** Create transaction then prepend to current list if it matches filters. */
-  createTransaction(request: TransactionRequest): void {
+  createTransaction(request: TransactionRequest): Observable<Transaction> {
     this.beginLoading();
-    this.txApi
+    return this.txApi
       .createTransaction(request)
       .pipe(
         tap((created: Transaction) => {
@@ -103,15 +107,17 @@ export class TransactionsStateService {
               this.pageableSubject.next({ ...page, content: next });
             }
           }
-          // TODO: Consider refreshing affected wallet balance via WalletStateService.refreshWallet
+          // Refresh affected wallet balances silently (don't show loading)
+          createdWalletIds.forEach(walletId => {
+            this.walletState.refreshWalletSilently(walletId);
+          });
         }),
         catchError((err) => {
           this.setError(this.humanizeError(err));
-          return [] as unknown as Observable<never>;
+          throw err;
         }),
         finalize(() => this.endLoading())
-      )
-      .subscribe();
+      );
   }
 
   /** Fetch a transaction by id and expose on currentTransaction$. */
@@ -138,9 +144,9 @@ export class TransactionsStateService {
   }
 
   /** Update an existing transaction and merge into caches. */
-  updateTransaction(transactionId: string, request: TransactionRequest): void {
+  updateTransaction(transactionId: string, request: TransactionRequest): Observable<Transaction> {
     this.beginLoading();
-    this.txApi
+    return this.txApi
       .updateTransaction(transactionId, request)
       .pipe(
         tap((updated) => {
@@ -155,19 +161,29 @@ export class TransactionsStateService {
           if (this.currentTransactionSubject.value?.id === updated.id) {
             this.currentTransactionSubject.next(updated as unknown as TransactionDto);
           }
+          // Refresh affected wallet balances silently
+          const affectedWalletIds = [updated.walletFromId, updated.walletToId].filter(Boolean) as string[];
+          affectedWalletIds.forEach(walletId => {
+            this.walletState.refreshWalletSilently(walletId);
+          });
         }),
         catchError((err) => {
           this.setError(this.humanizeError(err));
-          return [] as unknown as Observable<never>;
+          throw err;
         }),
         finalize(() => this.endLoading())
-      )
-      .subscribe();
+      );
   }
   /** Delete transaction and remove from local list. */
-  deleteTransaction(transactionId: string): void {
+  deleteTransaction(transactionId: string): Observable<void> {
+    // Get affected wallets before deletion
+    const existingTx = this.transactionsSubject.value.find((t) => t.id === transactionId);
+    const affectedWalletIds = existingTx 
+      ? [existingTx.walletFromId, existingTx.walletToId].filter(Boolean) as string[]
+      : [];
+    
     this.beginLoading();
-    this.txApi
+    return this.txApi
       .deleteTransaction(transactionId)
       .pipe(
         tap(() => {
@@ -177,14 +193,18 @@ export class TransactionsStateService {
           if (page) {
             this.pageableSubject.next({ ...page, content: next });
           }
+          // Refresh affected wallet balances silently
+          affectedWalletIds.forEach(walletId => {
+            this.walletState.refreshWalletSilently(walletId);
+          });
         }),
         catchError((err) => {
           this.setError(this.humanizeError(err));
-          return [] as unknown as Observable<never>;
+          throw err;
         }),
-        finalize(() => this.endLoading())
-      )
-      .subscribe();
+        finalize(() => this.endLoading()),
+        map(() => void 0)
+      );
   }
 
   private beginLoading(): void {

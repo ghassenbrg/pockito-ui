@@ -85,9 +85,9 @@ export class WalletStateService {
   }
 
   /** Create a new wallet and merge into local state. */
-  createWallet(request: WalletRequest): void {
+  createWallet(request: WalletRequest): Observable<Wallet> {
     this.beginLoading();
-    this.walletApi
+    return this.walletApi
       .createWallet(request)
       .pipe(
         tap((created) => {
@@ -96,21 +96,19 @@ export class WalletStateService {
           if (created.isDefault) {
             this.currentWalletSubject.next(created);
           }
-          // TODO: After transaction creation affects wallet balances, we should refresh balances here if needed.
         }),
         catchError((err) => {
           this.setError(this.humanizeError(err));
-          return [] as unknown as Observable<never>;
+          throw err;
         }),
         finalize(() => this.endLoading())
-      )
-      .subscribe();
+      );
   }
 
   /** Update an existing wallet and update local state. */
-  updateWallet(walletId: string, request: WalletRequest): void {
+  updateWallet(walletId: string, request: WalletRequest): Observable<Wallet> {
     this.beginLoading();
-    this.walletApi
+    return this.walletApi
       .updateWallet(walletId, request)
       .pipe(
         tap((updated) => {
@@ -127,17 +125,16 @@ export class WalletStateService {
         }),
         catchError((err) => {
           this.setError(this.humanizeError(err));
-          return [] as unknown as Observable<never>;
+          throw err;
         }),
         finalize(() => this.endLoading())
-      )
-      .subscribe();
+      );
   }
 
   /** Delete a wallet and remove it from local state. */
-  deleteWallet(walletId: string): void {
+  deleteWallet(walletId: string): Observable<void> {
     this.beginLoading();
-    this.walletApi
+    return this.walletApi
       .deleteWallet(walletId)
       .pipe(
         tap(() => {
@@ -150,11 +147,11 @@ export class WalletStateService {
         }),
         catchError((err) => {
           this.setError(this.humanizeError(err));
-          return [] as unknown as Observable<never>;
+          throw err;
         }),
-        finalize(() => this.endLoading())
-      )
-      .subscribe();
+        finalize(() => this.endLoading()),
+        map(() => void 0)
+      );
   }
 
   /** Set the current wallet explicitly (local only). */
@@ -257,6 +254,30 @@ export class WalletStateService {
           return [] as unknown as Observable<never>;
         }),
         finalize(() => this.endLoading())
+      )
+      .subscribe();
+  }
+
+  /** Refresh a wallet silently without affecting loading state. */
+  refreshWalletSilently(walletId: string): void {
+    this.walletApi
+      .getWallet(walletId)
+      .pipe(
+        tap((wallet) => {
+          const wallets = this.walletsSubject.value ?? [];
+          const idx = wallets.findIndex((w) => w.id === wallet.id);
+          const next = idx >= 0
+            ? [...wallets.slice(0, idx), wallet, ...wallets.slice(idx + 1)]
+            : [wallet, ...wallets];
+          this.walletsSubject.next(next);
+          if (this.currentWalletSubject.value?.id === wallet.id) {
+            this.currentWalletSubject.next(wallet);
+          }
+        }),
+        catchError(() => {
+          // Silently fail - balance refresh shouldn't break transaction flows
+          return [];
+        })
       )
       .subscribe();
   }

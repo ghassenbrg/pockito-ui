@@ -1,13 +1,12 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TransactionType, TransactionDto } from '@api/models';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PockitoDialogComponent } from '@shared/components/pockito-dialog/pockito-dialog.component';
 import { TransactionFormComponent } from '@shared/components/transaction-form/transaction-form.component';
 import { TransactionsStateService } from '../../../state/transaction/transactions-state.service';
 import { LoadingService } from '@shared/services/loading.service';
 import { ToastService } from '@shared/services/toast.service';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-transaction-form-dialog',
@@ -136,14 +135,17 @@ export class TransactionFormDialogComponent {
     if (confirm(this.translate.instant('transactions.delete.confirm'))) {
       const id = this.transactionId;
       const loadingId = this.loadingService.show(this.translate.instant('common.loading'));
-      this.transactionsState.deleteTransaction(id);
-      const sub = this.transactionsState.transactions$.subscribe((list) => {
-        if (!list.find((t) => t.id === id)) {
+      
+      this.transactionsState.deleteTransaction(id).subscribe({
+        next: () => {
+          this.loadingService.hide(loadingId);
           this.toastService.showSuccess('transactions.delete.success','transactions.delete.successMessage');
           this.transactionDeleted.emit(id);
           this.closeDialog();
+        },
+        error: () => {
           this.loadingService.hide(loadingId);
-          sub.unsubscribe();
+          this.toastService.showError('transactions.delete.error', 'transactions.delete.errorMessage');
         }
       });
     }

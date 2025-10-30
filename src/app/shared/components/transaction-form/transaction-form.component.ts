@@ -28,7 +28,6 @@ import { PockitoSelectorComponent } from '@shared/components/pockito-selector/po
 import { ToastService } from '@shared/services/toast.service';
 import { TransactionsStateService } from '../../../state/transaction/transactions-state.service';
 import { WalletStateService } from '../../../state/wallet/wallet-state.service';
-import { filter, take } from 'rxjs/operators';
 
 // PrimeNG imports
 import { CalendarModule } from 'primeng/calendar';
@@ -531,33 +530,32 @@ export class TransactionFormComponent implements OnInit {
 
   private createTransaction(transactionData: TransactionRequest): void {
     this.isLoading = true;
-    const beforeIds = new Set(this.transactionsState['transactionsSubject'].value.map(t => t.id));
-    this.transactionsState.createTransaction(transactionData);
-    this.transactionsState.transactions$.pipe(
-      filter((list) => list.some((t) => !beforeIds.has(t.id))),
-      take(1)
-    ).subscribe((list) => {
-      const created = list.find((t) => !beforeIds.has(t.id));
-      if (created) {
-        this.transactionSaved.emit(created);
+    
+    this.transactionsState.createTransaction(transactionData).subscribe({
+      next: (created) => {
         this.isLoading = false;
+        this.transactionSaved.emit(created as TransactionDto);
         this.toastService.showSuccess('transactions.createTransactionSuccess','transactions.createTransactionSuccessMessage');
+      },
+      error: () => {
+        this.isLoading = false;
+        this.toastService.showError('transactions.createTransactionError', 'transactions.createTransactionErrorMessage');
       }
     });
   }
 
   private updateTransaction(transactionId: string, transactionData: TransactionRequest): void {
     this.isLoading = true;
-    this.transactionsState.updateTransaction(transactionId, transactionData);
-    this.transactionsState.transactions$.pipe(
-      filter((list) => list.some((t) => t.id === transactionId)),
-      take(1)
-    ).subscribe((list) => {
-      const updated = list.find((t) => t.id === transactionId);
-      if (updated) {
-        this.transactionSaved.emit(updated);
+    
+    this.transactionsState.updateTransaction(transactionId, transactionData).subscribe({
+      next: (updated) => {
         this.isLoading = false;
+        this.transactionSaved.emit(updated as TransactionDto);
         this.toastService.showSuccess('transactions.updateTransactionSuccess','transactions.updateTransactionSuccessMessage');
+      },
+      error: () => {
+        this.isLoading = false;
+        this.toastService.showError('transactions.updateTransactionError', 'transactions.updateTransactionErrorMessage');
       }
     });
   }

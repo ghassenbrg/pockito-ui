@@ -12,7 +12,7 @@ import { ToastService } from '../../services/toast.service';
   template: `
     <p-toast
       position="top-right"
-      [baseZIndex]="5000"
+      [baseZIndex]="2147483648"
       [showTransformOptions]="'translateX(100%)'"
       [hideTransformOptions]="'translateX(100%)'"
     ></p-toast>

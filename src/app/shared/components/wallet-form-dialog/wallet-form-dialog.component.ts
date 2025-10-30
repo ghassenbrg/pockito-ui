@@ -80,17 +80,18 @@ export class WalletFormDialogComponent implements OnDestroy {
 
     if (confirm(this.translate.instant('wallets.delete.confirm'))) {
       const targetId = this.walletId;
-      this.walletState.deleteWallet(targetId);
-      // Wait for wallets$ to reflect deletion before confirming success
-      const sub = this.walletState.wallets$.subscribe((wallets) => {
-        if (wallets && !wallets.find((w) => w.id === targetId)) {
+      
+      this.walletState.deleteWallet(targetId).subscribe({
+        next: () => {
           this.toastService.showSuccess(
             'wallets.delete.success',
             'wallets.delete.successMessage'
           );
           this.walletDeleted.emit(targetId);
           this.closeDialog();
-          sub.unsubscribe();
+        },
+        error: () => {
+          this.toastService.showError('wallets.delete.error', 'wallets.delete.errorMessage');
         }
       });
     }

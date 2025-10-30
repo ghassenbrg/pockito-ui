@@ -199,54 +199,42 @@ export class WalletFormComponent implements OnInit {
 
   private createWallet(walletData: WalletRequest): void {
     const loadingId = this.loadingService.show(this.translate.instant('common.loading'));
-    this.walletState.wallets$
-      .pipe(take(1))
-      .subscribe((wallets) => {
-        const previousIds = new Set((wallets ?? []).map((w) => w.id));
-        this.walletState.createWallet(walletData);
-        this.walletState.wallets$
-          .pipe(
-            filter((walletsAfter) => {
-              const list = walletsAfter ?? [];
-              return list.some((w) => !previousIds.has(w.id) && w.name === walletData.name);
-            }),
-            take(1)
-          )
-          .subscribe((walletsAfter) => {
-            const newWallet = (walletsAfter ?? []).find((w) => !previousIds.has(w.id) && w.name === walletData.name);
-            if (newWallet) {
-              this.walletSaved.emit(newWallet);
-              this.toastService.showSuccess(
-                'wallets.createWalletSuccess',
-                'wallets.createWalletSuccessMessage',
-                { name: walletData.name }
-              );
-              this.loadingService.hide(loadingId);
-            }
-          });
-      });
+    
+    this.walletState.createWallet(walletData).subscribe({
+      next: (created) => {
+        this.loadingService.hide(loadingId);
+        this.walletSaved.emit(created);
+        this.toastService.showSuccess(
+          'wallets.createWalletSuccess',
+          'wallets.createWalletSuccessMessage',
+          { name: created.name }
+        );
+      },
+      error: () => {
+        this.loadingService.hide(loadingId);
+        this.toastService.showError('wallets.createWalletError', 'wallets.createWalletErrorMessage');
+      }
+    });
   }
 
   private updateWallet(walletId: string, walletData: WalletRequest): void {
     const loadingId = this.loadingService.show(this.translate.instant('common.loading'));
-    this.walletState.updateWallet(walletId, walletData);
-    this.walletState.wallets$
-      .pipe(
-        filter((wallets) => (wallets ?? []).some((w) => w.id === walletId)),
-        take(1)
-      )
-      .subscribe((wallets) => {
-        const updated = (wallets ?? []).find((w) => w.id === walletId);
-        if (updated) {
-          this.walletSaved.emit(updated);
-          this.toastService.showSuccess(
-            'wallets.updateWalletSuccess',
-            'wallets.updateWalletSuccessMessage',
-            { name: updated.name }
-          );
-          this.loadingService.hide(loadingId);
-        }
-      });
+    
+    this.walletState.updateWallet(walletId, walletData).subscribe({
+      next: (updated) => {
+        this.loadingService.hide(loadingId);
+        this.walletSaved.emit(updated);
+        this.toastService.showSuccess(
+          'wallets.updateWalletSuccess',
+          'wallets.updateWalletSuccessMessage',
+          { name: updated.name }
+        );
+      },
+      error: () => {
+        this.loadingService.hide(loadingId);
+        this.toastService.showError('wallets.updateWalletError', 'wallets.updateWalletErrorMessage');
+      }
+    });
   }
 
   onCancel(): void {
