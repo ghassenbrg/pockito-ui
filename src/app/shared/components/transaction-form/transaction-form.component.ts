@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   FormBuilder,
   FormGroup,
@@ -96,7 +97,9 @@ export class TransactionFormComponent implements OnInit {
     private categoryService: CategoryService,
     private walletState: WalletStateService,
     private translate: TranslateService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.transactionForm = this.createForm();
   }
@@ -230,27 +233,48 @@ export class TransactionFormComponent implements OnInit {
     const transactionType = this.transactionForm.get('transactionType')?.value;
     
     // Skip setting default values in edit mode to preserve loaded transaction data
-    if (this.isEditMode || !transactionType || !this.defaultWallet) {
+    if (this.isEditMode || !transactionType) {
       return;
     }
 
-    if (transactionType === TransactionType.TRANSFER) {
-      // Transfer: default walletTo is default wallet, walletFrom is null
+    // Determine the default wallet to use
+    let defaultWalletToUse: Wallet | null = null;
+    
+    // Check if we're on the Wallet Detail page by checking the current URL
+    const currentUrl = this.router.url;
+    const walletDetailMatch = currentUrl.match(/\/app\/wallets\/([^/?]+)/);
+    
+    if (walletDetailMatch) {
+      // On Wallet Detail page: use the current wallet from URL
+      const walletId = walletDetailMatch[1];
+      defaultWalletToUse = this.wallets.find(w => w.id === walletId) || null;
+    } else {
+      // Otherwise: use the wallet where isDefault = true
+      defaultWalletToUse = this.defaultWallet;
+    }
+
+    if (!defaultWalletToUse) {
+      return;
+    }
+
+    // Set wallet based on transaction type
+    if (transactionType === TransactionType.EXPENSE) {
+      // Expense: set walletFrom to the default wallet
       this.transactionForm.patchValue({
-        walletToId: this.defaultWallet.id,
-        walletFromId: null
-      }, { emitEvent: false });
-    } else if (transactionType === TransactionType.EXPENSE) {
-      // Expense: default walletFrom is default wallet, walletTo is undefined
-      this.transactionForm.patchValue({
-        walletFromId: this.defaultWallet.id,
+        walletFromId: defaultWalletToUse.id,
         walletToId: null
       }, { emitEvent: false });
     } else if (transactionType === TransactionType.INCOME) {
-      // Income: default walletTo is default wallet, walletFrom is undefined
+      // Income: set walletTo to the default wallet
       this.transactionForm.patchValue({
-        walletToId: this.defaultWallet.id,
+        walletToId: defaultWalletToUse.id,
         walletFromId: null
+      }, { emitEvent: false });
+    } else if (transactionType === TransactionType.TRANSFER) {
+      // Transfer: set walletFrom to the default wallet
+      this.transactionForm.patchValue({
+        walletFromId: defaultWalletToUse.id,
+        walletToId: null
       }, { emitEvent: false });
     }
     this.emitWalletChange();
