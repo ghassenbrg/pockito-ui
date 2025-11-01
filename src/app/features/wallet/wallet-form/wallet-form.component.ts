@@ -139,7 +139,7 @@ export class WalletFormComponent implements OnInit {
   }
 
   private loadWallet(walletId: string): void {
-    const loadingId = this.loadingService.show(this.translate.instant('common.loading'));
+    // Loading is handled by the parent page component subscription to isLoading$
     this.walletState.loadWallet(walletId);
     this.walletState.currentWallet$
       .pipe(
@@ -149,12 +149,10 @@ export class WalletFormComponent implements OnInit {
       .subscribe({
         next: (wallet) => {
           this.patchWalletForm(wallet);
-          this.loadingService.hide(loadingId);
         },
         error: (error) => {
           console.error('Error loading wallet:', error);
           this.toastService.showError('wallets.loadingWalletError', 'common.loadingErrorMessage');
-          this.loadingService.hide(loadingId);
         },
       });
   }

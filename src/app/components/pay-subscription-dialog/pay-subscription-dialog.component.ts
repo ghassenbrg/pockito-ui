@@ -12,7 +12,6 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SubscriptionStateService } from '../../state/subscription/subscription-state.service';
 import { WalletStateService } from '../../state/wallet/wallet-state.service';
 import { ToastService } from '@shared/services/toast.service';
-import { LoadingService } from '@shared/services/loading.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -53,15 +52,13 @@ export class PaySubscriptionDialogComponent implements OnInit, OnDestroy, OnChan
     private subscriptionState: SubscriptionStateService,
     private walletState: WalletStateService,
     private toastService: ToastService,
-    private translate: TranslateService,
-    private loadingService: LoadingService
+    private translate: TranslateService
   ) {
     this.payForm = this.createForm();
   }
 
   ngOnInit(): void {
     this.loadWallets();
-    this.bindLoading();
     this.payForm.valueChanges.subscribe(() => this.updateExchangeRateLogic());
   }
 
@@ -75,7 +72,6 @@ export class PaySubscriptionDialogComponent implements OnInit, OnDestroy, OnChan
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    this.loadingService.hideAll();
   }
 
   private createForm(): FormGroup {
@@ -289,17 +285,4 @@ export class PaySubscriptionDialogComponent implements OnInit, OnDestroy, OnChan
     this.visibleChange.emit(false);
   }
 
-  private bindLoading(): void {
-    const LOADING_ID = 'pay-subscription-dialog';
-    
-    this.subscriptionState.isLoading$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((isLoading) => {
-        if (isLoading) {
-          this.loadingService.showWithId(LOADING_ID, this.translate.instant('common.loading'));
-        } else {
-          this.loadingService.hide(LOADING_ID);
-        }
-      });
-  }
 }

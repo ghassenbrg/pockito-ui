@@ -7,9 +7,6 @@ import { SubscriptionFormComponent } from '@app/components/subscription-form/sub
 import { SubscriptionStateService } from '../../state/subscription/subscription-state.service';
 import { ToastService } from '@shared/services/toast.service';
 import { TranslateService } from '@ngx-translate/core';
-import { LoadingService } from '@shared/services/loading.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-subscription-form-dialog',
@@ -32,16 +29,11 @@ export class SubscriptionFormDialogComponent implements OnDestroy {
   @Output() formCancelled = new EventEmitter<void>();
   @Output() subscriptionDeleted = new EventEmitter<string>();
 
-  private destroy$ = new Subject<void>();
-
   constructor(
     private subscriptionState: SubscriptionStateService,
     private toastService: ToastService,
-    private translate: TranslateService,
-    private loadingService: LoadingService
-  ) {
-    this.bindLoading();
-  }
+    private translate: TranslateService
+  ) {}
 
   onSubscriptionSaved(subscription: Subscription): void {
     this.subscriptionSaved.emit(subscription);
@@ -97,24 +89,8 @@ export class SubscriptionFormDialogComponent implements OnDestroy {
     }
   }
 
-  private bindLoading(): void {
-    const LOADING_ID = 'subscription-form-dialog';
-    
-    this.subscriptionState.isLoading$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((isLoading) => {
-        if (isLoading) {
-          this.loadingService.showWithId(LOADING_ID, this.translate.instant('common.loading'));
-        } else {
-          this.loadingService.hide(LOADING_ID);
-        }
-      });
-  }
-
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-    this.loadingService.hideAll();
+    // Component cleaned up
   }
 }
 

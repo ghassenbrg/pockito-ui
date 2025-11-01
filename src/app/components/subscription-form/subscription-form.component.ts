@@ -184,7 +184,7 @@ export class SubscriptionFormComponent implements OnInit {
     if (frequency === SubscriptionFrequency.MONTHLY) {
       dayOfMonthControl?.setValidators([Validators.required, Validators.min(1), Validators.max(31)]);
     } else if (frequency === SubscriptionFrequency.WEEKLY) {
-      dayOfWeekControl?.setValidators([Validators.required, Validators.min(0), Validators.max(6)]);
+      dayOfWeekControl?.setValidators([Validators.required, Validators.min(1), Validators.max(7)]);
     } else if (frequency === SubscriptionFrequency.YEARLY) {
       monthOfYearControl?.setValidators([Validators.required, Validators.min(1), Validators.max(12)]);
       dayOfMonthControl?.setValidators([Validators.required, Validators.min(1), Validators.max(31)]);
@@ -196,7 +196,7 @@ export class SubscriptionFormComponent implements OnInit {
   }
 
   private loadSubscription(subscriptionId: string): void {
-    const loadingId = this.loadingService.show(this.translate.instant('common.loading'));
+    // Loading is handled by the parent page component subscription to isLoading$
     this.subscriptionState.loadSubscription(subscriptionId);
     this.subscriptionState.currentSubscription$
       .pipe(
@@ -206,12 +206,10 @@ export class SubscriptionFormComponent implements OnInit {
       .subscribe({
         next: (subscription) => {
           this.patchSubscriptionForm(subscription);
-          this.loadingService.hide(loadingId);
         },
         error: (error) => {
           console.error('Error loading subscription:', error);
           this.toastService.showError('subscriptions.loadingSubscriptionError', 'common.loadingErrorMessage');
-          this.loadingService.hide(loadingId);
         },
       });
   }

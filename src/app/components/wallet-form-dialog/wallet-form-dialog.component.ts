@@ -7,9 +7,6 @@ import { WalletFormComponent } from '@features/wallet/wallet-form/wallet-form.co
 import { WalletStateService } from '../../state/wallet/wallet-state.service';
 import { ToastService } from '@shared/services/toast.service';
 import { TranslateService } from '@ngx-translate/core';
-import { LoadingService } from '@shared/services/loading.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-wallet-form-dialog',
@@ -32,16 +29,11 @@ export class WalletFormDialogComponent implements OnDestroy {
   @Output() formCancelled = new EventEmitter<void>();
   @Output() walletDeleted = new EventEmitter<string>();
 
-  private destroy$ = new Subject<void>();
-
   constructor(
     private walletState: WalletStateService,
     private toastService: ToastService,
-    private translate: TranslateService,
-    private loadingService: LoadingService
-  ) {
-    this.bindLoading();
-  }
+    private translate: TranslateService
+  ) {}
 
   onWalletSaved(wallet: Wallet): void {
     this.walletSaved.emit(wallet);
@@ -97,23 +89,7 @@ export class WalletFormDialogComponent implements OnDestroy {
     }
   }
 
-  private bindLoading(): void {
-    const LOADING_ID = 'wallet-form-dialog';
-    
-    this.walletState.isLoading$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((isLoading) => {
-        if (isLoading) {
-          this.loadingService.showWithId(LOADING_ID, this.translate.instant('common.loading'));
-        } else {
-          this.loadingService.hide(LOADING_ID);
-        }
-      });
-  }
-
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-    this.loadingService.hideAll();
+    // Component cleaned up
   }
 }
