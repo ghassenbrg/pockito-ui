@@ -21,9 +21,9 @@ import { ToastService } from '@shared/services/toast.service';
 import { WalletStateService } from '../../../state/wallet/wallet-state.service';
 import { LoadingService } from '@shared/services/loading.service';
 import { filter, take } from 'rxjs/operators';
+import { PockitoToggleComponent } from '@shared/components/pockito-toggle/pockito-toggle.component';
 
 // PrimeNG imports
-import { CheckboxModule } from 'primeng/checkbox';
 import { ColorPickerModule } from 'primeng/colorpicker';
 import { DropdownModule } from 'primeng/dropdown';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -37,13 +37,13 @@ import { InputTextModule } from 'primeng/inputtext';
     CommonModule,
     PockitoButtonComponent,
     PockitoSelectorComponent,
+    PockitoToggleComponent,
     TranslateModule,
     // PrimeNG modules
     InputTextModule,
     InputNumberModule,
     DropdownModule,
     ColorPickerModule,
-    CheckboxModule,
   ],
   templateUrl: './wallet-form.component.html',
   styleUrl: './wallet-form.component.scss',

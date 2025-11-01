@@ -97,4 +97,21 @@
       (payClick)="onPayClick($event)"
     ></app-subscription-list>
   </div>
+
+  <!-- Subscription Form Dialog -->
+  <app-subscription-form-dialog
+    [(visible)]="displaySubscriptionDialog"
+    [subscriptionId]="selectedSubscriptionId"
+    (subscriptionSaved)="onSubscriptionSaved($event)"
+    (formCancelled)="onFormCancelled()"
+    (subscriptionDeleted)="onSubscriptionDeleted($event)"
+  ></app-subscription-form-dialog>
+
+  <!-- Pay Subscription Dialog -->
+  <app-pay-subscription-dialog
+    [(visible)]="displayPayDialog"
+    [subscription]="selectedSubscriptionForPayment"
+    (paymentCompleted)="onPaymentCompleted()"
+    (visibleChange)="onPayDialogVisibleChange($event)"
+  ></app-pay-subscription-dialog>
 </div>

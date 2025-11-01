@@ -165,8 +165,11 @@ export class TransactionListComponent implements OnInit, OnChanges {
     if (transaction.transactionType === TransactionType.TRANSFER) {
       return this.translateService.instant('enums.transactionType.TRANSFER');
     }
-    
-    // For income and expense, show the category name
+
+    if(transaction.subscriptionId && transaction.subscriptionName) {
+      return transaction.subscriptionName;
+    }
+
     return transaction.categoryName || this.translateService.instant('common.unknownCategory');
   }
 

@@ -93,10 +93,10 @@
               class="pay-btn"
               *ngIf="subscription.isActive && subscription.nextDueDate"
               (click)="onPayClick(subscription, $event)"
-              [attr.aria-label]="'subscriptions.pay' | translate"
+              [attr.aria-label]="'subscriptions.payBtn' | translate"
             >
               <i class="fa-solid fa-credit-card"></i>
-              <span class="btn-label">{{ 'subscriptions.pay' | translate }}</span>
+              <span class="btn-label">{{ 'subscriptions.payBtn' | translate }}</span>
             </button>
           </div>
         </div>

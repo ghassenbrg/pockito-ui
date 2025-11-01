@@ -1,0 +1,150 @@
+<app-pockito-dialog
+  [(visible)]="visible"
+  [breakpoints]="{ '960px': '90vw', '640px': '100vw' }"
+  [style]="{ width: '50vw' }"
+  [modal]="true"
+  [closable]="true"
+  [closeOnEscape]="true"
+  (visibleChange)="onDialogVisibleChange($event)"
+>
+  <ng-template #header>
+    <div class="dialog-header-content">
+      <span>{{ "subscriptions.pay.title" | translate }}</span>
+    </div>
+  </ng-template>
+
+  <div class="pay-subscription-content" *ngIf="subscription">
+    <!-- Subscription Info -->
+    <div class="subscription-info">
+      <div class="subscription-name">
+        <span class="subscription-icon">
+          <img
+            *ngIf="subscription.iconUrl"
+            [src]="subscription.iconUrl"
+            [alt]="subscription.name"
+            onerror="this.src='/assets/images/placeholder.png'"
+          />
+          <i
+            *ngIf="!subscription.iconUrl"
+            class="fa-solid fa-calendar-days"
+          ></i>
+        </span>
+        <span>{{ subscription.name }}</span>
+      </div>
+      <div class="subscription-amount">
+        <span class="amount-label"
+          >{{ "subscriptions.pay.amount" | translate }}:</span
+        >
+        <span class="amount-value">{{
+          subscription.amount | pockitoCurrency : subscription.currency
+        }}</span>
+      </div>
+    </div>
+
+    <form [formGroup]="payForm" class="pay-form">
+      <!-- Wallet Selection -->
+      <div class="form-field">
+        <label for="wallet" class="form-field__label">
+          {{ "subscriptions.pay.selectWallet" | translate }}
+          <span class="required">*</span>
+        </label>
+        <app-pockito-selector
+          [selectedId]="payForm.get('walletId')?.value"
+          [selectedItem]="getSelectedWallet(payForm.get('walletId')?.value)"
+          [options]="walletOptions"
+          [isInvalid]="
+            (payForm.get('walletId')?.invalid &&
+              payForm.get('walletId')?.touched) ||
+            false
+          "
+          [placeholder]="'subscriptions.pay.walletPlaceholder'"
+          [title]="'subscriptions.pay.selectWallet'"
+          [searchPlaceholder]="'subscriptions.pay.searchWallets'"
+          [showBalance]="true"
+          [balance]="getSelectedWallet(payForm.get('walletId')?.value)?.balance"
+          [currency]="
+            getSelectedWallet(payForm.get('walletId')?.value)?.currency
+          "
+          (itemSelected)="onWalletSelected($event)"
+          (itemCleared)="onWalletCleared()"
+          (itemTouched)="onWalletTouched()"
+        ></app-pockito-selector>
+        <small
+          *ngIf="getFieldError('walletId')"
+          class="p-error"
+          style="display: block; margin-top: 0.25rem"
+        >
+          {{ getFieldError("walletId") }}
+        </small>
+      </div>
+
+      <!-- Exchange Rate Field (for different currencies) -->
+      <div class="form-field" *ngIf="shouldShowExchangeRateField()">
+        <label for="exchange-rate" class="form-field__label">
+          {{ "subscriptions.pay.exchangeRate" | translate }}
+          <span class="required">*</span>
+          <span class="exchange-rate-label">
+            {{ subscription.currency }} →
+            {{ getWalletCurrency(payForm.get("walletId")?.value) }}
+          </span>
+        </label>
+        <p-inputNumber
+          id="exchange-rate"
+          formControlName="exchangeRate"
+          [placeholder]="
+            'subscriptions.pay.exchangeRatePlaceholder' | translate
+          "
+          [min]="0.0001"
+          [step]="0.0001"
+          [useGrouping]="false"
+          [minFractionDigits]="1"
+          [maxFractionDigits]="6"
+          inputMode="decimal"
+          [class.p-invalid]="
+            payForm.get('exchangeRate')?.invalid &&
+            payForm.get('exchangeRate')?.touched
+          "
+          styleClass="w-full"
+        />
+        <small
+          *ngIf="getFieldError('exchangeRate')"
+          class="p-error"
+          style="display: block; margin-top: 0.25rem"
+        >
+          {{ getFieldError("exchangeRate") }}
+        </small>
+        <div class="exchange-rate-info" *ngIf="shouldShowExchangeRateField()">
+          <span class="calculated-amount">
+            {{ "subscriptions.pay.payingAmount" | translate }}:
+            <strong>
+              {{
+                subscription.amount * (payForm.get("exchangeRate")?.value || 1)
+                  | pockitoCurrency
+                    : getWalletCurrency(payForm.get("walletId")?.value)
+              }}
+            </strong>
+          </span>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="dialog-footer">
+    <pockito-button
+      [type]="PockitoButtonType.CANCEL"
+      [size]="PockitoButtonSize.MEDIUM"
+      (click)="onCancel()"
+      class="cancel-button"
+    >
+      {{ "common.cancel" | translate }}
+    </pockito-button>
+    <pockito-button
+      [type]="PockitoButtonType.SUBMIT"
+      [size]="PockitoButtonSize.MEDIUM"
+      (click)="onConfirm()"
+      [disabled]="payForm.invalid"
+    >
+      {{ "subscriptions.pay.confirm" | translate }}
+    </pockito-button>
+  </div>
+</app-pockito-dialog>

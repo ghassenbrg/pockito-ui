@@ -1,1 +1,470 @@
-<p>subscription-form works!</p>
+<div class="subscription-form">
+  <form
+    [formGroup]="subscriptionForm"
+    (ngSubmit)="onSubmit()"
+    class="subscription-form__content"
+  >
+    <!-- Name Field -->
+    <div class="form-field">
+      <label for="subscription-name" class="form-field__label">
+        {{ "subscriptions.form.name" | translate }}
+        <span class="required">{{ "subscriptions.form.required" | translate }}</span>
+      </label>
+      <input
+        id="subscription-name"
+        type="text"
+        pInputText
+        formControlName="name"
+        [placeholder]="'subscriptions.form.namePlaceholder' | translate"
+        [maxlength]="100"
+        [class.p-invalid]="
+          subscriptionForm.get('name')?.invalid && subscriptionForm.get('name')?.touched
+        "
+        class="w-full"
+      />
+      <small
+        *ngIf="getFieldError('name')"
+        class="p-error"
+        style="display: block; margin-top: 0.25rem"
+      >
+        {{ getFieldError("name") }}
+      </small>
+    </div>
+
+    <!-- Currency Field -->
+    <div class="form-field">
+      <label for="subscription-currency" class="form-field__label">
+        {{ "subscriptions.form.currency" | translate }}
+        <span class="required">{{ "subscriptions.form.required" | translate }}</span>
+      </label>
+      <app-pockito-selector
+        [selectedId]="subscriptionForm.get('currency')?.value"
+        [selectedItem]="getSelectedCurrency(subscriptionForm.get('currency')?.value)"
+        [options]="currencyDialogOptions"
+        [isInvalid]="(subscriptionForm.get('currency')?.invalid && subscriptionForm.get('currency')?.touched) || false"
+        [placeholder]="'subscriptions.form.currencyPlaceholder'"
+        [title]="'subscriptions.form.selectCurrency'"
+        [searchPlaceholder]="'subscriptions.form.searchCurrencies'"
+        [showBalance]="false"
+        (itemSelected)="onCurrencySelected($event)"
+        (itemCleared)="onCurrencyCleared()"
+        (itemTouched)="onCurrencyTouched()"
+      ></app-pockito-selector>
+      <small
+        *ngIf="getFieldError('currency')"
+        class="p-error"
+        style="display: block; margin-top: 0.25rem"
+      >
+        {{ getFieldError("currency") }}
+      </small>
+    </div>
+
+    <!-- Amount Field -->
+    <div class="form-field">
+      <label for="subscription-amount" class="form-field__label">
+        {{ "subscriptions.form.amount" | translate }}
+        <span class="required">{{ "subscriptions.form.required" | translate }}</span>
+      </label>
+      <p-inputNumber
+        id="subscription-amount"
+        formControlName="amount"
+        [placeholder]="'subscriptions.form.amountPlaceholder' | translate"
+        [min]="0"
+        [step]="0.01"
+        [useGrouping]="true"
+        inputMode="decimal"
+        [class.p-invalid]="
+          subscriptionForm.get('amount')?.invalid &&
+          subscriptionForm.get('amount')?.touched
+        "
+        styleClass="w-full"
+      />
+      <small
+        *ngIf="getFieldError('amount')"
+        class="p-error"
+        style="display: block; margin-top: 0.25rem"
+      >
+        {{ getFieldError("amount") }}
+      </small>
+    </div>
+
+    <!-- Frequency Field -->
+    <div class="form-field">
+      <label for="subscription-frequency" class="form-field__label">
+        {{ "subscriptions.form.frequency" | translate }}
+        <span class="required">{{ "subscriptions.form.required" | translate }}</span>
+      </label>
+      <app-pockito-selector
+        [selectedId]="subscriptionForm.get('frequency')?.value"
+        [selectedItem]="getSelectedFrequency(subscriptionForm.get('frequency')?.value)"
+        [options]="frequencyDialogOptions"
+        [isInvalid]="(subscriptionForm.get('frequency')?.invalid && subscriptionForm.get('frequency')?.touched) || false"
+        [placeholder]="'subscriptions.form.frequencyPlaceholder'"
+        [title]="'subscriptions.form.selectFrequency'"
+        [searchPlaceholder]="'subscriptions.form.searchFrequencies'"
+        [showBalance]="false"
+        (itemSelected)="onFrequencySelected($event)"
+        (itemCleared)="onFrequencyCleared()"
+        (itemTouched)="onFrequencyTouched()"
+      ></app-pockito-selector>
+      <small
+        *ngIf="getFieldError('frequency')"
+        class="p-error"
+        style="display: block; margin-top: 0.25rem"
+      >
+        {{ getFieldError("frequency") }}
+      </small>
+    </div>
+
+    <!-- Interval Field -->
+    <div class="form-field">
+      <label for="subscription-interval" class="form-field__label">
+        {{ "subscriptions.form.interval" | translate }}
+        <span class="required">{{ "subscriptions.form.required" | translate }}</span>
+      </label>
+      <p-inputNumber
+        id="subscription-interval"
+        formControlName="interval"
+        [placeholder]="'subscriptions.form.intervalPlaceholder' | translate"
+        [min]="1"
+        [step]="1"
+        [useGrouping]="false"
+        inputMode="numeric"
+        [class.p-invalid]="
+          subscriptionForm.get('interval')?.invalid &&
+          subscriptionForm.get('interval')?.touched
+        "
+        styleClass="w-full"
+      />
+      <small
+        *ngIf="getFieldError('interval')"
+        class="p-error"
+        style="display: block; margin-top: 0.25rem"
+      >
+        {{ getFieldError("interval") }}
+      </small>
+    </div>
+
+    <!-- Day of Month Field (for MONTHLY and YEARLY) -->
+    <div class="form-field" *ngIf="shouldShowDayOfMonth()">
+      <label for="subscription-day-of-month" class="form-field__label">
+        {{ "subscriptions.form.dayOfMonth" | translate }}
+        <span class="required">{{ "subscriptions.form.required" | translate }}</span>
+      </label>
+      <p-inputNumber
+        id="subscription-day-of-month"
+        formControlName="dayOfMonth"
+        [placeholder]="'subscriptions.form.dayOfMonthPlaceholder' | translate"
+        [min]="1"
+        [max]="31"
+        [step]="1"
+        [useGrouping]="false"
+        inputMode="numeric"
+        [class.p-invalid]="
+          subscriptionForm.get('dayOfMonth')?.invalid &&
+          subscriptionForm.get('dayOfMonth')?.touched
+        "
+        styleClass="w-full"
+      />
+      <small
+        *ngIf="getFieldError('dayOfMonth')"
+        class="p-error"
+        style="display: block; margin-top: 0.25rem"
+      >
+        {{ getFieldError("dayOfMonth") }}
+      </small>
+    </div>
+
+    <!-- Day of Week Field (for WEEKLY) -->
+    <div class="form-field" *ngIf="shouldShowDayOfWeek()">
+      <label for="subscription-day-of-week" class="form-field__label">
+        {{ "subscriptions.form.dayOfWeek" | translate }}
+        <span class="required">{{ "subscriptions.form.required" | translate }}</span>
+      </label>
+      <p-inputNumber
+        id="subscription-day-of-week"
+        formControlName="dayOfWeek"
+        [placeholder]="'subscriptions.form.dayOfWeekPlaceholder' | translate"
+        [min]="0"
+        [max]="6"
+        [step]="1"
+        [useGrouping]="false"
+        inputMode="numeric"
+        [class.p-invalid]="
+          subscriptionForm.get('dayOfWeek')?.invalid &&
+          subscriptionForm.get('dayOfWeek')?.touched
+        "
+        styleClass="w-full"
+      />
+      <small
+        *ngIf="getFieldError('dayOfWeek')"
+        class="p-error"
+        style="display: block; margin-top: 0.25rem"
+      >
+        {{ getFieldError("dayOfWeek") }}
+      </small>
+    </div>
+
+    <!-- Month of Year Field (for YEARLY) -->
+    <div class="form-field" *ngIf="shouldShowMonthOfYear()">
+      <label for="subscription-month-of-year" class="form-field__label">
+        {{ "subscriptions.form.monthOfYear" | translate }}
+        <span class="required">{{ "subscriptions.form.required" | translate }}</span>
+      </label>
+      <p-inputNumber
+        id="subscription-month-of-year"
+        formControlName="monthOfYear"
+        [placeholder]="'subscriptions.form.monthOfYearPlaceholder' | translate"
+        [min]="1"
+        [max]="12"
+        [step]="1"
+        [useGrouping]="false"
+        inputMode="numeric"
+        [class.p-invalid]="
+          subscriptionForm.get('monthOfYear')?.invalid &&
+          subscriptionForm.get('monthOfYear')?.touched
+        "
+        styleClass="w-full"
+      />
+      <small
+        *ngIf="getFieldError('monthOfYear')"
+        class="p-error"
+        style="display: block; margin-top: 0.25rem"
+      >
+        {{ getFieldError("monthOfYear") }}
+      </small>
+    </div>
+
+    <!-- Start Date Field -->
+    <div class="form-field">
+      <label for="subscription-start-date" class="form-field__label">
+        {{ "subscriptions.form.startDate" | translate }}
+        <span class="required">{{ "subscriptions.form.required" | translate }}</span>
+      </label>
+      <div class="date-input-container">
+        <p-calendar
+          id="subscription-start-date"
+          formControlName="startDate"
+          [placeholder]="'subscriptions.form.startDatePlaceholder' | translate"
+          [showIcon]="true"
+          [showTime]="false"
+          dateFormat="dd/mm/yy"
+          [class.p-invalid]="
+            subscriptionForm.get('startDate')?.invalid &&
+            subscriptionForm.get('startDate')?.touched
+          "
+          styleClass="w-full date-picker-mobile"
+        />
+        <div class="date-quick-actions">
+          <button
+            type="button"
+            class="date-quick-btn"
+            [class.selected]="isTodaySelected()"
+            (click)="setQuickDate('today')"
+          >
+            {{ "subscriptions.form.quickDate.today" | translate }}
+          </button>
+        </div>
+      </div>
+      <small
+        *ngIf="getFieldError('startDate')"
+        class="p-error"
+        style="display: block; margin-top: 0.25rem"
+      >
+        {{ getFieldError("startDate") }}
+      </small>
+    </div>
+
+    <!-- End Date Field -->
+    <div class="form-field">
+      <label for="subscription-end-date" class="form-field__label">
+        {{ "subscriptions.form.endDate" | translate }}
+      </label>
+      <p-calendar
+        id="subscription-end-date"
+        formControlName="endDate"
+        [placeholder]="'subscriptions.form.endDatePlaceholder' | translate"
+        [showIcon]="true"
+        [showTime]="false"
+        dateFormat="dd/mm/yy"
+        [class.p-invalid]="
+          subscriptionForm.get('endDate')?.invalid &&
+          subscriptionForm.get('endDate')?.touched
+        "
+        styleClass="w-full date-picker-mobile"
+      />
+      <small
+        *ngIf="getFieldError('endDate')"
+        class="p-error"
+        style="display: block; margin-top: 0.25rem"
+      >
+        {{ getFieldError("endDate") }}
+      </small>
+    </div>
+
+    <!-- Category Field -->
+    <div class="form-field">
+      <label for="subscription-category" class="form-field__label">
+        {{ "subscriptions.form.category" | translate }}
+        <span class="required">{{ "subscriptions.form.required" | translate }}</span>
+      </label>
+      <app-pockito-selector
+        [selectedId]="subscriptionForm.get('categoryId')?.value"
+        [selectedItem]="getSelectedCategory(subscriptionForm.get('categoryId')?.value)"
+        [options]="categoryDialogOptions"
+        [isInvalid]="(subscriptionForm.get('categoryId')?.invalid && subscriptionForm.get('categoryId')?.touched) || false"
+        [placeholder]="'subscriptions.form.categoryPlaceholder'"
+        [title]="'subscriptions.form.selectCategory'"
+        [searchPlaceholder]="'subscriptions.form.searchCategories'"
+        [showBalance]="false"
+        (itemSelected)="onCategorySelected($event)"
+        (itemCleared)="onCategoryCleared()"
+        (itemTouched)="onCategoryTouched()"
+      ></app-pockito-selector>
+      <small
+        *ngIf="getFieldError('categoryId')"
+        class="p-error"
+        style="display: block; margin-top: 0.25rem"
+      >
+        {{ getFieldError("categoryId") }}
+      </small>
+    </div>
+
+    <!-- Default Wallet Field -->
+    <div class="form-field">
+      <label for="subscription-wallet" class="form-field__label">
+        {{ "subscriptions.form.defaultWallet" | translate }}
+        <span class="required">{{ "subscriptions.form.required" | translate }}</span>
+      </label>
+      <app-pockito-selector
+        [selectedId]="subscriptionForm.get('defaultWalletId')?.value"
+        [selectedItem]="getSelectedWallet(subscriptionForm.get('defaultWalletId')?.value)"
+        [options]="walletDialogOptions"
+        [isInvalid]="(subscriptionForm.get('defaultWalletId')?.invalid && subscriptionForm.get('defaultWalletId')?.touched) || false"
+        [placeholder]="'subscriptions.form.defaultWalletPlaceholder'"
+        [title]="'subscriptions.form.selectWallet'"
+        [searchPlaceholder]="'subscriptions.form.searchWallets'"
+        [showBalance]="false"
+        (itemSelected)="onWalletSelected($event)"
+        (itemCleared)="onWalletCleared()"
+        (itemTouched)="onWalletTouched()"
+      ></app-pockito-selector>
+      <small
+        *ngIf="getFieldError('defaultWalletId')"
+        class="p-error"
+        style="display: block; margin-top: 0.25rem"
+      >
+        {{ getFieldError("defaultWalletId") }}
+      </small>
+    </div>
+
+    <!-- Icon URL Field -->
+    <div class="form-field">
+      <label for="subscription-icon" class="form-field__label">
+        {{ "subscriptions.form.icon" | translate }}
+      </label>
+      <input
+        id="subscription-icon"
+        type="url"
+        pInputText
+        formControlName="iconUrl"
+        [placeholder]="'subscriptions.form.iconPlaceholder' | translate"
+        [class.p-invalid]="
+          subscriptionForm.get('iconUrl')?.invalid &&
+          subscriptionForm.get('iconUrl')?.touched
+        "
+        class="w-full"
+      />
+      <small
+        *ngIf="getFieldError('iconUrl')"
+        class="p-error"
+        style="display: block; margin-top: 0.25rem"
+      >
+        {{ getFieldError("iconUrl") }}
+      </small>
+
+      <!-- Icon Preview -->
+      <div
+        class="icon-preview"
+        *ngIf="getIconUrl() && isValidImageUrl(getIconUrl())"
+      >
+        <div class="icon-preview__container">
+          <img
+            [src]="getIconUrl()"
+            [alt]="'subscriptions.form.iconPreview' | translate"
+            class="icon-preview__image"
+            (error)="onImageError($event)"
+            onerror="this.src='/assets/images/placeholder.png'"
+          />
+          <div class="icon-preview__label">
+            {{ "subscriptions.form.iconPreview" | translate }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Note Field -->
+    <div class="form-field">
+      <label for="subscription-note" class="form-field__label">
+        {{ "subscriptions.form.note" | translate }}
+      </label>
+      <textarea
+        id="subscription-note"
+        pInputText
+        formControlName="note"
+        [placeholder]="'subscriptions.form.notePlaceholder' | translate"
+        [maxlength]="500"
+        rows="3"
+        [class.p-invalid]="
+          subscriptionForm.get('note')?.invalid &&
+          subscriptionForm.get('note')?.touched
+        "
+        class="w-full"
+        style="resize: vertical; min-height: 100px"
+      ></textarea>
+      <small
+        *ngIf="getFieldError('note')"
+        class="p-error"
+        style="display: block; margin-top: 0.25rem"
+      >
+        {{ getFieldError("note") }}
+      </small>
+    </div>
+
+    <!-- Is Active Toggle -->
+    <div class="form-field">
+      <app-pockito-toggle
+        formControlName="isActive"
+        [label]="'subscriptions.form.isActive' | translate"
+      />
+    </div>
+
+    <!-- Form Actions -->
+    <div class="subscription-form__actions">
+      <pockito-button
+        [type]="PockitoButtonType.CANCEL"
+        [size]="PockitoButtonSize.MEDIUM"
+        (click)="onCancel()"
+        [disabled]="isLoading"
+        class="cancel-button"
+      >
+        {{ "subscriptions.form.actions.cancel" | translate }}
+      </pockito-button>
+
+      <pockito-button
+        [type]="PockitoButtonType.SUBMIT"
+        [size]="PockitoButtonSize.MEDIUM"
+        buttonType="submit"
+        [loading]="isLoading"
+        [disabled]="subscriptionForm.invalid || isLoading"
+      >
+        {{
+          isEditMode
+            ? ("subscriptions.form.actions.update" | translate)
+            : ("subscriptions.form.actions.create" | translate)
+        }}
+      </pockito-button>
+    </div>
+  </form>
+</div>
+

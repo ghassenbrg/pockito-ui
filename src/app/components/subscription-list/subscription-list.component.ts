@@ -72,9 +72,8 @@ export class SubscriptionListComponent implements OnInit, OnChanges {
 
   onPayClick(subscription: Subscription, event: Event): void {
     event.stopPropagation();
-    // Emit pay event - parent will open edit dialog with pay action
+    // Emit pay event - parent will open pay dialog
     this.payClick.emit(subscription);
-    this.subscriptionClick.emit(subscription);
   }
 
 

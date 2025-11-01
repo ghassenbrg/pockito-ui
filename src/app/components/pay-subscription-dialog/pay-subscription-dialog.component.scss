@@ -1,0 +1,168 @@
+/* ---------- Design Tokens ---------- */
+@import '../../shared/styles/tokens';
+
+:host {
+  display: block;
+}
+
+.dialog-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.pay-subscription-content {
+  padding: 1rem 0;
+}
+
+.subscription-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(37, 99, 235, 0.05);
+  border: 1px solid $stroke;
+  border-radius: $radius-md;
+  margin-bottom: 1.5rem;
+
+  .subscription-name {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: $text-700;
+
+    .subscription-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: $radius-sm;
+      }
+
+      i {
+        font-size: 1.25rem;
+        color: $primary-600;
+      }
+    }
+  }
+
+  .subscription-amount {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+
+    .amount-label {
+      color: $text-500;
+      font-weight: 500;
+    }
+
+    .amount-value {
+      color: $text-700;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+  }
+}
+
+.pay-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &__label {
+    font-weight: 500;
+    color: $text-700;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+
+    .exchange-rate-label {
+      font-size: 0.75rem;
+      color: $text-500;
+      font-weight: 400;
+      display: block;
+      margin-top: 0.25rem;
+      width: 100%;
+    }
+  }
+}
+
+.required {
+  color: $danger;
+  font-weight: 600;
+}
+
+.exchange-rate-info {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(37, 99, 235, 0.05);
+  border: 1px solid $stroke;
+  border-radius: $radius-sm;
+  font-size: 0.875rem;
+
+  .calculated-amount {
+    color: $text-700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    strong {
+      color: $primary-600;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+  }
+}
+
+.dialog-footer {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid $stroke;
+}
+
+// Override PrimeNG styles for consistency
+:host ::ng-deep {
+  .p-inputnumber {
+    width: 100%;
+  }
+
+  .p-error {
+    font-size: 0.75rem;
+    color: $danger;
+  }
+
+  .p-invalid {
+    border-color: $danger !important;
+  }
+}
+
+// Responsive design
+@media (max-width: $breakpoint-tablet) {
+  .subscription-info {
+    .subscription-name {
+      font-size: 1rem;
+    }
+  }
+}
+

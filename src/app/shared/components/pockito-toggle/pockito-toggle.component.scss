@@ -1,0 +1,72 @@
+@import '../../styles/tokens';
+
+.pockito-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  &__switch {
+    position: relative;
+    width: 48px;
+    height: 28px;
+    background-color: $light-grey;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+
+    &:focus-visible {
+      outline: 2px solid $primary-600;
+      outline-offset: 2px;
+    }
+
+    &--checked {
+      background-color: $success;
+    }
+
+    &--disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__slider {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 24px;
+    height: 24px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  &__switch--checked &__slider {
+    transform: translateX(20px);
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    color: $text-700;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+
+    &--disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .pockito-toggle {
+    &__switch,
+    &__slider {
+      transition: none;
+    }
+  }
+}

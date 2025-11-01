@@ -208,13 +208,11 @@
       </div>
     </div>
 
-    <!-- Default Wallet Checkbox -->
-    <div class="form-field form-field--checkbox">
-      <p-checkbox
+    <!-- Default Wallet Toggle -->
+    <div class="form-field">
+      <app-pockito-toggle
         formControlName="isDefault"
-        [binary]="true"
         [label]="'wallets.form.isDefault' | translate"
-        styleClass="w-full"
       />
     </div>
 

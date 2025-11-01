@@ -1,0 +1,25 @@
+<div class="pockito-toggle">
+  <div
+    class="pockito-toggle__switch"
+    [class.pockito-toggle__switch--checked]="value"
+    [class.pockito-toggle__switch--disabled]="disabled"
+    [attr.aria-checked]="value"
+    [attr.aria-disabled]="disabled"
+    [attr.aria-label]="label"
+    [attr.role]="'switch'"
+    [attr.tabindex]="disabled ? '-1' : '0'"
+    (click)="toggle()"
+    (keydown.enter)="toggle()"
+    (keydown.space)="toggle()"
+  >
+    <span class="pockito-toggle__slider"></span>
+  </div>
+  <label
+    *ngIf="label"
+    class="pockito-toggle__label"
+    [class.pockito-toggle__label--disabled]="disabled"
+    (click)="!disabled && toggle()"
+  >
+    {{ label }}
+  </label>
+</div>
