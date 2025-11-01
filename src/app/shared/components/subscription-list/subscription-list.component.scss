@@ -1,0 +1,318 @@
+/* ---------- Design Tokens ---------- */
+@import '../../styles/tokens';
+
+// Component-specific variables
+$subscription-card-radius: 22px;
+$subscription-icon-size: 56px;
+$subscription-icon-radius: 16px;
+
+/* ---------- Subscriptions Content ---------- */
+.subscriptions-content {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Grid ---------- */
+.subscriptions-content .subscriptions-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: clamp(12px, 2vw, 22px);
+
+  @media (max-width: $breakpoint-mobile) {
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: $breakpoint-mobile + 1px) and (max-width: 1366px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1367px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ---------- Subscription Item ---------- */
+.subscription-item {
+  background: $surface;
+  border: 1px solid $stroke;
+  border-radius: $subscription-card-radius;
+  padding: clamp(16px, 2.2vw, 22px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), $shadow-sm;
+  backdrop-filter: blur(6px);
+  transition: box-shadow 160ms ease, border-color 160ms ease;
+  position: relative;
+
+  &.inactive {
+    opacity: 0.65;
+  }
+
+  /* Remove cursor pointer since card is no longer clickable */
+  cursor: default;
+
+  .status-indicator {
+    position: absolute;
+    top: clamp(16px, 2.2vw, 22px);
+    right: clamp(16px, 2.2vw, 22px);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: help;
+    z-index: 1;
+
+    &.active-indicator {
+      background: $success;
+      box-shadow: 0 0 0 2px rgba($success, 0.2);
+    }
+
+    &.inactive-indicator {
+      background: $text-500;
+      box-shadow: 0 0 0 2px rgba($text-500, 0.1);
+    }
+  }
+
+  /* Header row */
+  .subscription-item-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    column-gap: 16px;
+  }
+
+  /* Icon bubble */
+  .subscription-icon {
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    width: $subscription-icon-size;
+    height: $subscription-icon-size;
+    border-radius: $subscription-icon-radius;
+    background: linear-gradient(145deg, #f6f9ff, #ffffff);
+    border: 1px solid $stroke;
+    box-shadow: $shadow-sm, inset 0 1px 0 rgba(255, 255, 255, 0.85);
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    i {
+      font-size: 24px;
+      color: $primary-600;
+    }
+  }
+
+  /* Subscription info */
+  .subscription-info {
+    min-width: 0;
+  }
+
+  .subscription-name-row {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+
+  .subscription-name {
+    margin: 0;
+    font-size: clamp(18px, 2.2vw, 20px);
+    font-weight: 700;
+    color: $text-700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.2px;
+    flex: 1;
+    min-width: 0;
+  }
+
+
+  .subscription-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: $text-500;
+    font-weight: 400;
+    flex-wrap: wrap;
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+
+      i {
+        font-size: 11px;
+        color: $primary-600;
+      }
+
+      &.due-date-item {
+        padding: 4px 8px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(59, 130, 246, 0.05));
+        transition: all 0.2s ease;
+
+        i {
+          font-size: 11px;
+          color: $primary-600;
+          transition: color 0.2s ease;
+        }
+
+        &.overdue {
+          background: rgba($danger, 0.1);
+          
+          i {
+            color: $danger;
+          }
+        }
+
+        &.due-soon {
+          background: rgba(245, 158, 11, 0.15);
+          
+          i {
+            color: #d97706;
+          }
+        }
+      }
+    }
+
+    .meta-separator {
+      color: $text-500;
+      flex-shrink: 0;
+      opacity: 0.6;
+    }
+  }
+
+  /* Amount and actions */
+  .subscription-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: $spacing-sm;
+    flex-shrink: 0;
+  }
+
+  .subscription-amount {
+    text-align: right;
+
+    .amount {
+      display: inline-block;
+      font-size: clamp(18px, 2.6vw, 22px);
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      color: $danger;
+    }
+  }
+
+  .action-buttons {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .pay-btn,
+  .edit-btn {
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    i {
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .btn-label {
+      font-size: 13px;
+      font-weight: 600;
+    }
+  }
+
+  .pay-btn {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(59, 130, 246, 0.05));
+    color: $primary-600;
+
+    &:hover {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(59, 130, 246, 0.1));
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    }
+  }
+
+  .edit-btn {
+    background: rgba(15, 23, 42, 0.04);
+    color: $text-600;
+
+    &:hover {
+      background: rgba(15, 23, 42, 0.08);
+      color: $text-700;
+    }
+  }
+}
+
+
+/* ---------- Responsive ---------- */
+@media (max-width: $breakpoint-mobile) {
+  .subscription-item {
+    .subscription-item-header {
+      grid-template-columns: auto 1fr;
+      row-gap: $spacing-md;
+    }
+    
+    .subscription-actions {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+}
+
+/* ---------- Accessibility ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .subscription-item,
+  .pay-btn,
+  .edit-btn,
+  .subscription-icon {
+    transition: none;
+  }
+}
+
+/* ---------- Print Styles ---------- */
+@media print {
+  .subscription-item {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+
+  .pay-btn,
+  .edit-btn {
+    display: none;
+  }
+}
+

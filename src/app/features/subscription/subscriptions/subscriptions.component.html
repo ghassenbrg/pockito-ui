@@ -1,1 +1,100 @@
-<p>subscriptions works!</p>
+<div class="subscriptions-container">
+  <app-page-header>
+    <div slot="title">
+      <h1>{{ "subscriptions.title" | translate }}</h1>
+    </div>
+
+    <div slot="actions">
+      <pockito-button
+        [type]="PockitoButtonType.PRIMARY"
+        icon="fa-solid fa-plus"
+        iconPosition="left"
+        (click)="showCreateSubscriptionDialog()"
+        class="add-subscription-btn"
+      >
+        {{ "subscriptions.addSubscription" | translate }}
+      </pockito-button>
+    </div>
+  </app-page-header>
+
+  <div class="subscriptions-content">
+    <!-- Total Monthly -->
+    <div class="total-monthly-container" *ngIf="(totalMonthlyAmounts$ | async)?.length">
+      <!-- Single currency: show directly -->
+      <div 
+        class="total-monthly-wrapper" 
+        *ngIf="(totalMonthlyCount$ | async) === 1"
+      >
+        <div 
+          class="currency-item" 
+          *ngFor="let item of totalMonthlyAmounts$ | async"
+        >
+          <div class="currency-main">
+            <div class="currency-info">
+              <div class="currency-icon">
+                <i class="fa-solid fa-coins"></i>
+              </div>
+              <div class="currency-details">
+                <span class="currency-code">{{ item.currency }}</span>
+                <span class="currency-label">{{ "subscriptions.monthlyTotal" | translate }}</span>
+              </div>
+            </div>
+            <div class="currency-amount-wrapper">
+              <span class="currency-amount">
+                {{ item.total | pockitoCurrency : item.currency }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Multiple currencies: show expand/collapse -->
+      <ng-container *ngIf="(totalMonthlyCount$ | async) as count">
+        <div 
+          class="total-monthly-expandable" 
+          *ngIf="count > 1"
+        >
+        <div class="totals-toggle" (click)="toggleTotalsExpanded()">
+          <div class="totals-toggle-info">
+            <i class="fa-solid fa-coins"></i>
+            <span class="totals-toggle-label">{{ "subscriptions.monthlyTotal" | translate }}</span>
+            <span class="totals-count">({{ count }} {{ "subscriptions.currencies" | translate }})</span>
+          </div>
+          <button class="expand-btn" [class.expanded]="isTotalsExpanded">
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+        </div>
+        <div class="total-monthly-wrapper" *ngIf="isTotalsExpanded">
+          <div 
+            class="currency-item" 
+            *ngFor="let item of totalMonthlyAmounts$ | async"
+          >
+            <div class="currency-main">
+              <div class="currency-info">
+                <div class="currency-icon">
+                  <i class="fa-solid fa-coins"></i>
+                </div>
+                <div class="currency-details">
+                  <span class="currency-code">{{ item.currency }}</span>
+                  <span class="currency-label">{{ "subscriptions.monthlyTotal" | translate }}</span>
+                </div>
+              </div>
+              <div class="currency-amount-wrapper">
+                <span class="currency-amount">
+                  {{ item.total | pockitoCurrency : item.currency }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <app-subscription-list
+      [subscriptions]="subscriptions$ | async"
+      (subscriptionClick)="onSubscriptionClick($event)"
+      (payClick)="onPayClick($event)"
+    ></app-subscription-list>
+  </div>
+</div>

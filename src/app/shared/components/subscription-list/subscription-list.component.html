@@ -1,0 +1,106 @@
+<div class="subscriptions-content">
+  <!-- Empty State -->
+  <app-empty-state
+    *ngIf="!subscriptions || subscriptions.length === 0"
+    icon="fa-solid fa-calendar-days"
+    title="subscriptions.noSubscriptions"
+    message="subscriptions.noSubscriptionsMessage"
+  ></app-empty-state>
+
+  <!-- Subscriptions List -->
+  <div
+    class="subscriptions-list"
+    *ngIf="sortedSubscriptions && sortedSubscriptions.length > 0"
+  >
+    <div
+      class="subscription-item"
+      *ngFor="let subscription of sortedSubscriptions"
+      [class.inactive]="!subscription.isActive"
+    >
+      <span 
+        class="status-indicator"
+        [class.active-indicator]="subscription.isActive"
+        [class.inactive-indicator]="!subscription.isActive"
+        [pTooltip]="subscription.isActive ? ('subscriptions.active' | translate) : ('subscriptions.inactive' | translate)"
+        tooltipPosition="bottom"
+      ></span>
+      
+      <div class="subscription-item-header">
+        <span class="subscription-icon">
+          <img
+            *ngIf="subscription.iconUrl"
+            [src]="subscription.iconUrl"
+            [alt]="subscription.name"
+            onerror="this.src='/assets/images/placeholder.png'"
+          />
+          <i
+            *ngIf="!subscription.iconUrl"
+            class="fa-solid fa-calendar-days"
+          ></i>
+        </span>
+
+        <div class="subscription-info">
+          <div class="subscription-name-row">
+            <h2 class="subscription-name" title="{{ subscription.name }}">
+              {{ subscription.name }}
+            </h2>
+          </div>
+          
+          <div class="subscription-meta-row">
+            <span class="meta-item">
+              <i class="fa-solid fa-repeat"></i>
+              {{ getFrequencyDisplay(subscription) }}
+            </span>
+            <span class="meta-separator">•</span>
+            <span class="meta-item" *ngIf="subscription.categoryName">
+              {{ subscription.categoryName }}
+            </span>
+            <span class="meta-separator" *ngIf="subscription.categoryName">•</span>
+            <span 
+              class="meta-item due-date-item" 
+              *ngIf="subscription.nextDueDate && subscription.isActive"
+              [class.overdue]="isOverdue(subscription)"
+              [class.due-soon]="isDueSoon(subscription)"
+            >
+              <i class="fa-solid fa-calendar-check"></i>
+              {{ formatDate(subscription.nextDueDate) }}
+            </span>
+          </div>
+        </div>
+
+        <div class="subscription-actions">
+          <div class="subscription-amount">
+            <span class="amount">
+              {{
+                subscription.amount
+                  | pockitoCurrency
+                    : subscription.currency
+              }}
+            </span>
+          </div>
+          
+          <div class="action-buttons">
+            <button
+              class="edit-btn"
+              (click)="onSubscriptionClick(subscription)"
+              [attr.aria-label]="'subscriptions.edit' | translate"
+            >
+              <i class="fa-solid fa-pencil"></i>
+              <span class="btn-label">{{ 'subscriptions.edit' | translate }}</span>
+            </button>
+            
+            <button
+              class="pay-btn"
+              *ngIf="subscription.isActive && subscription.nextDueDate"
+              (click)="onPayClick(subscription, $event)"
+              [attr.aria-label]="'subscriptions.pay' | translate"
+            >
+              <i class="fa-solid fa-credit-card"></i>
+              <span class="btn-label">{{ 'subscriptions.pay' | translate }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

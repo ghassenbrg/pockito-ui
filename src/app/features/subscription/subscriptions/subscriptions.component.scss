@@ -1,0 +1,373 @@
+/* ---------- Design Tokens ---------- */
+@import '../../../shared/styles/tokens';
+
+/* ---------- Subscriptions Container ---------- */
+.subscriptions-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: $spacing-3xl;
+}
+
+/* ---------- Total Monthly Container ---------- */
+.total-monthly-container {
+  margin-bottom: clamp(12px, 2vw, 22px);
+}
+
+/* ---------- Total Monthly Wrapper ---------- */
+.total-monthly-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: $spacing-md;
+
+  @media (max-width: $breakpoint-tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Total Monthly Expandable ---------- */
+.total-monthly-expandable {
+  .totals-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-md $spacing-lg;
+    background: linear-gradient(135deg, 
+      rgba(255, 255, 255, 0.8), 
+      rgba(255, 255, 255, 0.4)
+    );
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 2px 8px rgba(2, 6, 23, 0.04);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 8px 16px rgba(2, 6, 23, 0.08);
+      border-color: rgba(37, 99, 235, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .totals-toggle-info {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+      flex: 1;
+
+      i {
+        font-size: 18px;
+        color: $primary-600;
+      }
+
+      .totals-toggle-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: $text-700;
+      }
+
+      .totals-count {
+        font-size: 13px;
+        font-weight: 500;
+        color: $text-500;
+        margin-left: 4px;
+      }
+    }
+
+    .expand-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: rgba(37, 99, 235, 0.1);
+      color: $primary-600;
+      font-size: 12px;
+      flex-shrink: 0;
+
+      i {
+        transition: transform 0.2s ease;
+      }
+
+      &.expanded {
+        i {
+          transform: rotate(180deg);
+        }
+      }
+
+      &:hover {
+        background: rgba(37, 99, 235, 0.15);
+        transform: scale(1.05);
+      }
+    }
+  }
+
+  .total-monthly-wrapper {
+    margin-top: $spacing-md;
+    animation: slideDown 0.2s ease;
+  }
+}
+
+/* ---------- Currency Item ---------- */
+.currency-item {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.8), 
+    rgba(255, 255, 255, 0.4)
+  );
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 2px 8px rgba(2, 6, 23, 0.04);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(180deg, $primary-600, #60a5fa);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &:hover {
+    box-shadow: 0 8px 16px rgba(2, 6, 23, 0.08);
+    border-color: rgba(37, 99, 235, 0.15);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  .currency-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-lg;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+
+  .currency-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    flex: 1;
+    min-width: 0;
+
+    .currency-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(59, 130, 246, 0.05));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      i {
+        font-size: 18px;
+        color: $primary-600;
+      }
+    }
+
+    .currency-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+
+      .currency-code {
+        font-size: 14px;
+        font-weight: 700;
+        color: $text-700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        line-height: 1.2;
+      }
+
+      .currency-label {
+        font-size: 11px;
+        font-weight: 500;
+        color: $text-500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+
+  .currency-amount-wrapper {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+
+    .currency-amount {
+      font-size: clamp(20px, 2.5vw, 24px);
+      font-weight: 700;
+      color: $primary-600;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, $primary-600, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: $breakpoint-tablet) {
+  .total-monthly-wrapper {
+    gap: $spacing-sm;
+  }
+
+  .currency-item {
+    .currency-main {
+      padding: $spacing-md;
+    }
+
+    .currency-info {
+      gap: $spacing-sm;
+
+      .currency-icon {
+        width: 36px;
+        height: 36px;
+
+        i {
+          font-size: 16px;
+        }
+      }
+
+      .currency-details .currency-code {
+        font-size: 13px;
+      }
+    }
+
+    .currency-amount-wrapper {
+      .currency-amount {
+        font-size: 18px;
+      }
+
+      .expand-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+      }
+    }
+
+    .currency-details-list {
+      padding: 0 $spacing-md $spacing-md $spacing-md;
+
+      .subscription-detail-item {
+        padding: $spacing-xs $spacing-sm;
+
+        .detail-info .detail-name {
+          font-size: 12px;
+        }
+
+        .detail-amount {
+          font-size: 13px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: $breakpoint-mobile) {
+  .total-monthly-wrapper {
+    gap: $spacing-sm;
+  }
+
+  .currency-item {
+    .currency-main {
+      padding: $spacing-sm $spacing-md;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: $spacing-sm;
+    }
+
+    .currency-info {
+      width: 100%;
+    }
+
+    .currency-amount-wrapper {
+      width: 100%;
+      justify-content: space-between;
+
+      .currency-amount {
+        font-size: 20px;
+      }
+
+      .expand-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+      }
+    }
+
+    .currency-details-list {
+      padding: 0 $spacing-sm $spacing-sm $spacing-sm;
+
+      .subscription-detail-item {
+        padding: $spacing-xs $spacing-sm;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+
+        .detail-info {
+          width: 100%;
+        }
+
+        .detail-amount {
+          width: 100%;
+          text-align: right;
+        }
+      }
+    }
+  }
+}
+
+/* ---------- Add Subscription Button ---------- */
+.add-subscription-btn {
+  --pk-button-radius: 14px;
+  --pk-button-padding: 12px 18px;
+  --pk-button-font-weight: 600;
+  --pk-button-font-size: 0.95rem;
+  --pk-button-bg: #1d4ed8;
+  --pk-button-bg-hover: #1e40af;
+  --pk-button-shadow: 0 10px 26px rgba(29, 78, 216, 0.22);
+}
+
+/* ---------- Subscriptions Content ---------- */
+.subscriptions-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0; // Allows flex child to shrink below content size
+}
+
+/* ---------- Responsive Design ---------- */
+@media (max-width: $breakpoint-tablet) {
+  .subscriptions-container {
+    gap: $spacing-2xl;
+  }
+}
