@@ -20,6 +20,7 @@ export class PockitoSelectorComponent {
   // Generic inputs
   @Input() selectedId?: string;
   @Input() isInvalid: boolean = false;
+  @Input() disabled: boolean = false;
   @Input() placeholder: string = '';
   @Input() title: string = '';
   @Input() searchPlaceholder: string = '';
@@ -37,6 +38,7 @@ export class PockitoSelectorComponent {
   showDialog: boolean = false;
 
   openDialog(): void {
+    if (this.disabled) return;
     this.showDialog = true;
   }
 

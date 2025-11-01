@@ -273,8 +273,8 @@ export class TransactionFormComponent implements OnInit {
     } else if (transactionType === TransactionType.TRANSFER) {
       // Transfer: set walletFrom to the default wallet
       this.transactionForm.patchValue({
-        walletFromId: defaultWalletToUse.id,
-        walletToId: null
+        walletFromId: null,
+        walletToId: defaultWalletToUse.id
       }, { emitEvent: false });
     }
     this.emitWalletChange();

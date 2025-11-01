@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { catchError, finalize, map, tap } from 'rxjs/operators';
 import { WalletService } from '../../api/services/wallet.service';
-import { Wallet, WalletList, WalletRequest, WalletType } from '../../api/models';
+import { Wallet, WalletList, WalletRequest, WalletType, ReorderWalletsRequest } from '../../api/models';
 
 @Injectable({ providedIn: 'root' })
 export class WalletStateService {
@@ -196,17 +196,15 @@ export class WalletStateService {
       .subscribe();
   }
 
-  /** Reorder wallets server-side and reflect the new order locally if provided. */
-  reorderWallets(request: { walletIdsOrdered: string[] }): void {
-    // Wrap the specific request type if needed later; for now keep it simple
+  /** Reorder wallets server-side and reflect the new order locally. */
+  reorderWallets(request: ReorderWalletsRequest): void {
     this.beginLoading();
-    // Using any to avoid tight coupling if generated type differs; adjust if needed
     this.walletApi
-      .reorderWallets(request as any)
+      .reorderWallets(request)
       .pipe(
         tap(() => {
           const wallets = this.walletsSubject.value ?? [];
-          const order = request.walletIdsOrdered;
+          const order = request.walletIds;
           const mapById = new Map(wallets.map((w) => [w.id, w] as const));
           const next: Wallet[] = [];
           order.forEach((id) => {

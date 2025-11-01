@@ -42,6 +42,7 @@
         [selectedItem]="getSelectedCurrency(walletForm.get('currency')?.value)"
         [options]="currencyDialogOptions"
         [isInvalid]="(walletForm.get('currency')?.invalid && walletForm.get('currency')?.touched) || false"
+        [disabled]="isEditMode"
         [placeholder]="'wallets.form.currencyPlaceholder'"
         [title]="'wallets.form.selectCurrency'"
         [searchPlaceholder]="'wallets.form.searchCurrencies'"
