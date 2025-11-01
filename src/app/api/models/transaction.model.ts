@@ -8,7 +8,7 @@ export interface TransactionRequest {
   exchangeRate: number;
   categoryId?: string;
   note?: string;
-  effectiveDate: string;
+  effectiveDate?: string;
 }
 
 export interface Transaction {
@@ -31,6 +31,8 @@ export interface Transaction {
   effectiveDate: Date;
   createdAt: Date;
   updatedAt: Date;
+  subscriptionId?: string;
+  subscriptionName?: string;
 }
 
 export interface TransactionDto {
@@ -53,6 +55,8 @@ export interface TransactionDto {
   effectiveDate: Date;
   createdAt: Date;
   updatedAt: Date;
+  subscriptionId?: string;
+  subscriptionName?: string;
 }
 
 export interface TransactionList {

@@ -1,1 +1,3008 @@
-{"openapi":"3.1.0","info":{"title":"Pockito API","description":"Personal Finance Application API","contact":{"name":"Pockito Team","email":"pockito@ghassen.io"},"license":{"name":"MIT License","url":"https://opensource.org/licenses/MIT"},"version":"1.0.0"},"servers":[{"url":"http://localhost:8080","description":"Generated server url"}],"tags":[{"name":"Transaction Management","description":"APIs for managing financial transactions"},{"name":"User Management","description":"APIs for managing application users"},{"name":"Category Management","description":"APIs for managing user categories"}],"paths":{"/api/wallets/{walletId}":{"get":{"tags":["wallet-controller"],"operationId":"getWallet","parameters":[{"name":"walletId","in":"path","required":true,"schema":{"type":"string","format":"uuid"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/WalletResponse"}}}}}},"put":{"tags":["wallet-controller"],"operationId":"updateWallet","parameters":[{"name":"walletId","in":"path","required":true,"schema":{"type":"string","format":"uuid"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/WalletRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/WalletResponse"}}}}}},"delete":{"tags":["wallet-controller"],"operationId":"deleteWallet","parameters":[{"name":"walletId","in":"path","required":true,"schema":{"type":"string","format":"uuid"}}],"responses":{"200":{"description":"OK"}}}},"/api/users/{username}/currency":{"put":{"tags":["User Management"],"summary":"Update user default currency","description":"Updates the default currency for a specific user. Accepts 3-letter ISO currency codes.","operationId":"updateUserCurrency","parameters":[{"name":"username","in":"path","description":"Username of the user to update","required":true,"schema":{"type":"string"}},{"name":"currencyCode","in":"query","description":"Currency code (3-letter ISO)","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/UserResponse"}}}}}}},"/api/users/{username}/country":{"put":{"tags":["User Management"],"summary":"Update user country","description":"Updates the country for a specific user. Accepts both alpha-2 and alpha-3 country codes.","operationId":"updateUserCountry","parameters":[{"name":"username","in":"path","description":"Username of the user to update","required":true,"schema":{"type":"string"}},{"name":"countryCode","in":"query","description":"Country code (alpha-2 or alpha-3)","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/UserResponse"}}}}}}},"/api/transactions/{transactionId}":{"get":{"tags":["Transaction Management"],"summary":"Get transaction by ID","description":"Retrieves a single transaction by its unique ID.","operationId":"getTransaction","parameters":[{"name":"transactionId","in":"path","description":"Transaction ID to retrieve","required":true,"schema":{"type":"string","format":"uuid"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/TransactionResponse"}}}}}},"put":{"tags":["Transaction Management"],"summary":"Update an existing transaction","description":"Updates an existing transaction with the same validation rules as creation.","operationId":"updateTransaction","parameters":[{"name":"transactionId","in":"path","description":"Transaction ID to update","required":true,"schema":{"type":"string","format":"uuid"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/TransactionRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/TransactionResponse"}}}}}},"delete":{"tags":["Transaction Management"],"summary":"Delete a transaction","description":"Removes a transaction by ID.","operationId":"deleteTransaction","parameters":[{"name":"transactionId","in":"path","description":"Transaction ID to delete","required":true,"schema":{"type":"string","format":"uuid"}}],"responses":{"200":{"description":"OK"}}}},"/api/categories/{categoryId}":{"get":{"tags":["Category Management"],"summary":"Get category by ID","description":"Retrieves a specific category by its ID for the authenticated user.","operationId":"getCategory","parameters":[{"name":"categoryId","in":"path","description":"Category ID","required":true,"schema":{"type":"string","format":"uuid"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CategoryResponse"}}}}}},"put":{"tags":["Category Management"],"summary":"Update category","description":"Updates an existing category for the authenticated user. Category names must remain unique per user.","operationId":"updateCategory","parameters":[{"name":"categoryId","in":"path","description":"Category ID to update","required":true,"schema":{"type":"string","format":"uuid"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CategoryRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CategoryResponse"}}}}}},"delete":{"tags":["Category Management"],"summary":"Delete category","description":"Deletes a category for the authenticated user. Category must not have child categories.","operationId":"deleteCategory","parameters":[{"name":"categoryId","in":"path","description":"Category ID to delete","required":true,"schema":{"type":"string","format":"uuid"}}],"responses":{"200":{"description":"OK"}}}},"/api/wallets":{"get":{"tags":["wallet-controller"],"operationId":"getUserWallets","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/WalletListResponse"}}}}}},"post":{"tags":["wallet-controller"],"operationId":"createWallet","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/WalletRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/WalletResponse"}}}}}}},"/api/wallets/{walletId}/set-default":{"post":{"tags":["wallet-controller"],"operationId":"setDefaultWallet","parameters":[{"name":"walletId","in":"path","required":true,"schema":{"type":"string","format":"uuid"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/WalletResponse"}}}}}}},"/api/wallets/reorder":{"post":{"tags":["wallet-controller"],"operationId":"reorderWallets","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ReorderWalletsRequest"}}},"required":true},"responses":{"200":{"description":"OK"}}}},"/api/transactions":{"get":{"tags":["Transaction Management"],"summary":"List transactions by criteria","description":"Retrieves transactions with filtering by userId, walletId, effectiveDate range, and transactionType. Supports pagination for large transaction volumes.","operationId":"listTransactions","parameters":[{"name":"walletId","in":"query","description":"Wallet ID to filter by","required":false,"schema":{"type":"string","format":"uuid"}},{"name":"startDate","in":"query","description":"Start date for date range filtering (yyyy-MM-dd)","required":false,"schema":{"type":"string","format":"date"}},{"name":"endDate","in":"query","description":"End date for date range filtering (yyyy-MM-dd)","required":false,"schema":{"type":"string","format":"date"}},{"name":"transactionType","in":"query","description":"Transaction type to filter by","required":false,"schema":{"type":"string","enum":["TRANSFER","EXPENSE","INCOME"]}},{"name":"pageable","in":"query","required":true,"schema":{"$ref":"#/components/schemas/Pageable"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageTransactionDto"}}}}}},"post":{"tags":["Transaction Management"],"summary":"Create a new transaction","description":"Creates a new transaction with validation rules based on transaction type. EXPENSE requires walletFrom, INCOME requires walletTo, TRANSFER requires at least one wallet.","operationId":"createTransaction","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/TransactionRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/TransactionResponse"}}}}}}},"/api/categories":{"get":{"tags":["Category Management"],"summary":"Get all categories","description":"Retrieves all categories for the authenticated user, ordered by name.","operationId":"getUserCategories","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CategoryListResponse"}}}}}},"post":{"tags":["Category Management"],"summary":"Create a new category","description":"Creates a new category for the authenticated user. Category names must be unique per user.","operationId":"createCategory","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CategoryRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CategoryResponse"}}}}}}},"/api/wallets/type/{type}":{"get":{"tags":["wallet-controller"],"operationId":"getWalletsByType","parameters":[{"name":"type","in":"path","required":true,"schema":{"type":"string","enum":["BANK_ACCOUNT","CASH","CREDIT_CARD","SAVINGS","CUSTOM"]}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/WalletListResponse"}}}}}}},"/api/wallets/default":{"get":{"tags":["wallet-controller"],"operationId":"getDefaultWallet","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/WalletResponse"}}}}}}},"/api/users/{username}":{"get":{"tags":["User Management"],"summary":"Get user by username","description":"Retrieves a user by their username","operationId":"getUserByUsername","parameters":[{"name":"username","in":"path","description":"Username to search for","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/UserResponse"}}}}}}},"/api/users/{username}/exists":{"get":{"tags":["User Management"],"summary":"Check if user exists","description":"Checks whether a user with the specified username exists","operationId":"checkUserExists","parameters":[{"name":"username","in":"path","description":"Username to check","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK"}}}},"/api/users/me":{"get":{"tags":["User Management"],"summary":"Get or create current user","description":"Retrieves the current authenticated user or creates a new one if it doesn't exist. This implements the core requirement to create users on first Keycloak token authentication.","operationId":"getOrCreateCurrentUser","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/UserResponse"}}}}}}},"/api/transactions/wallet/{walletId}":{"get":{"tags":["Transaction Management"],"summary":"Get transactions by wallet","description":"Retrieves all transactions involving a specific wallet with pagination.","operationId":"getTransactionsByWallet","parameters":[{"name":"walletId","in":"path","description":"Wallet ID to filter by","required":true,"schema":{"type":"string","format":"uuid"}},{"name":"pageable","in":"query","required":true,"schema":{"$ref":"#/components/schemas/Pageable"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageTransactionDto"}}}}}}},"/api/transactions/type/{transactionType}":{"get":{"tags":["Transaction Management"],"summary":"Get transactions by type","description":"Retrieves transactions of a specific type (EXPENSE, INCOME, TRANSFER) with pagination.","operationId":"getTransactionsByType","parameters":[{"name":"transactionType","in":"path","description":"Transaction type to filter by","required":true,"schema":{"type":"string","enum":["TRANSFER","EXPENSE","INCOME"]}},{"name":"pageable","in":"query","required":true,"schema":{"$ref":"#/components/schemas/Pageable"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageTransactionDto"}}}}}}},"/api/transactions/date-range":{"get":{"tags":["Transaction Management"],"summary":"Get transactions by date range","description":"Retrieves transactions within a specific date range with pagination.","operationId":"getTransactionsByDateRange","parameters":[{"name":"startDate","in":"query","description":"Start date for date range filtering (yyyy-MM-dd)","required":true,"schema":{"type":"string","format":"date"}},{"name":"endDate","in":"query","description":"End date for date range filtering (yyyy-MM-dd)","required":true,"schema":{"type":"string","format":"date"}},{"name":"pageable","in":"query","required":true,"schema":{"$ref":"#/components/schemas/Pageable"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PageTransactionDto"}}}}}}},"/api/transactions/all":{"get":{"tags":["Transaction Management"],"summary":"Get all user transactions","description":"Retrieves all transactions for the authenticated user without pagination. Use with caution for users with large transaction volumes.","operationId":"getAllTransactions","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/TransactionListResponse"}}}}}}},"/api/categories/{parentCategoryId}/children":{"get":{"tags":["Category Management"],"summary":"Get child categories","description":"Retrieves all child categories of a specific parent category for the authenticated user.","operationId":"getChildCategories","parameters":[{"name":"parentCategoryId","in":"path","description":"Parent category ID","required":true,"schema":{"type":"string","format":"uuid"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CategoryListResponse"}}}}}}},"/api/categories/type/{categoryType}":{"get":{"tags":["Category Management"],"summary":"Get categories by type","description":"Retrieves all categories of a specific type (EXPENSE or INCOME) for the authenticated user.","operationId":"getCategoriesByType","parameters":[{"name":"categoryType","in":"path","description":"Category type to filter by","required":true,"schema":{"type":"string","enum":["EXPENSE","INCOME"]}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CategoryListResponse"}}}}}}},"/api/categories/root":{"get":{"tags":["Category Management"],"summary":"Get root categories","description":"Retrieves all root categories (categories without a parent) for the authenticated user.","operationId":"getRootCategories","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CategoryListResponse"}}}}}}},"/api/categories/hierarchical":{"get":{"tags":["Category Management"],"summary":"Get hierarchical categories","description":"Retrieves all categories for the authenticated user in hierarchical order (parents first, then children).","operationId":"getHierarchicalCategories","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CategoryListResponse"}}}}}}},"/api/categories/hierarchical/type/{categoryType}":{"get":{"tags":["Category Management"],"summary":"Get hierarchical categories by type","description":"Retrieves all categories of a specific type for the authenticated user in hierarchical order.","operationId":"getHierarchicalCategoriesByType","parameters":[{"name":"categoryType","in":"path","description":"Category type to filter by","required":true,"schema":{"type":"string","enum":["EXPENSE","INCOME"]}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CategoryListResponse"}}}}}}},"/api/categories/color/{color}":{"get":{"tags":["Category Management"],"summary":"Get categories by color","description":"Retrieves all categories with a specific color for the authenticated user.","operationId":"getCategoriesByColor","parameters":[{"name":"color","in":"path","description":"Color to filter by (hex format, e.g., #A1B2C3)","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CategoryListResponse"}}}}}}}},"components":{"schemas":{"WalletRequest":{"type":"object","properties":{"name":{"type":"string","maxLength":100,"minLength":1},"description":{"type":"string","maxLength":500,"minLength":0},"color":{"type":"string","maxLength":50,"minLength":0},"initialBalance":{"type":"number"},"currency":{"type":"string","enum":["JPY","CNY","HKD","PLN","CZK","HUF","RUB","TRY","KRW","SGD","TWD","THB","MYR","IDR","PHP","VND","INR","PKR","BDT","LKR","NPR","MMK","KHR","LAK","BND","MNT","KZT","UZS","KGS","TJS","TMT","AFN","IRR","IQD","SYP","LBP","JOD","ILS","EGP","LYD","TND","DZD","MAD","SDG","SSP","ETB","ERN","DJF","SOS","KES","UGX","TZS","RWF","BIF","CDF","XPF","NGN","XOF","ZAR","NAD","BWP","ZWL","ZMW","MWK","MZN","MGA","MUR","SCR","KMF","STN","CVE","AOA","XAF","SLL","LRD","MRO","LSL","SZL","GMD","GNF","GWP","MRT","AMD","AZN","GEL","UAH","BYN","MDL","RON","BGN","HRK","RSD","MKD","ALL","BAM","ISK","NOK","DKK","SEK","CHF","GBP","EUR","USD","CAD","MXN","GTQ","BZD","SVC","HNL","NIO","CRC","PAB","CUP","JMD","HTG","DOP","TTD","BBD","XCD","AWG","ANG","SRD","GYD","VEF","COP","PEN","CLP","ARS","UYU","PYG","BOB","VES","BRL","AUD","NZD","FJD","PGK","SBD","VUV","WST","TOP","KID","TVD","NUD","MHD","FMD","PWD"]},"iconUrl":{"type":"string","maxLength":500,"minLength":0},"goalAmount":{"type":"number","minimum":0.0},"type":{"type":"string","enum":["BANK_ACCOUNT","CASH","CREDIT_CARD","SAVINGS","CUSTOM"]},"isDefault":{"type":"boolean"}},"required":["currency","initialBalance","isDefault","name","type"]},"WalletResponse":{"type":"object","properties":{"id":{"type":"string","format":"uuid"},"username":{"type":"string"},"name":{"type":"string"},"description":{"type":"string"},"color":{"type":"string"},"initialBalance":{"type":"number"},"balance":{"type":"number"},"currency":{"type":"string","enum":["JPY","CNY","HKD","PLN","CZK","HUF","RUB","TRY","KRW","SGD","TWD","THB","MYR","IDR","PHP","VND","INR","PKR","BDT","LKR","NPR","MMK","KHR","LAK","BND","MNT","KZT","UZS","KGS","TJS","TMT","AFN","IRR","IQD","SYP","LBP","JOD","ILS","EGP","LYD","TND","DZD","MAD","SDG","SSP","ETB","ERN","DJF","SOS","KES","UGX","TZS","RWF","BIF","CDF","XPF","NGN","XOF","ZAR","NAD","BWP","ZWL","ZMW","MWK","MZN","MGA","MUR","SCR","KMF","STN","CVE","AOA","XAF","SLL","LRD","MRO","LSL","SZL","GMD","GNF","GWP","MRT","AMD","AZN","GEL","UAH","BYN","MDL","RON","BGN","HRK","RSD","MKD","ALL","BAM","ISK","NOK","DKK","SEK","CHF","GBP","EUR","USD","CAD","MXN","GTQ","BZD","SVC","HNL","NIO","CRC","PAB","CUP","JMD","HTG","DOP","TTD","BBD","XCD","AWG","ANG","SRD","GYD","VEF","COP","PEN","CLP","ARS","UYU","PYG","BOB","VES","BRL","AUD","NZD","FJD","PGK","SBD","VUV","WST","TOP","KID","TVD","NUD","MHD","FMD","PWD"]},"iconUrl":{"type":"string"},"goalAmount":{"type":"number"},"type":{"type":"string","enum":["BANK_ACCOUNT","CASH","CREDIT_CARD","SAVINGS","CUSTOM"]},"isDefault":{"type":"boolean"},"orderPosition":{"type":"integer","format":"int32"},"createdAt":{"type":"string","format":"date-time"},"updatedAt":{"type":"string","format":"date-time"},"active":{"type":"boolean"}}},"UserResponse":{"type":"object","properties":{"username":{"type":"string"},"country":{"type":"string","enum":["US","CA","GB","DE","FR","IT","ES","NL","BE","CH","AT","SE","NO","DK","FI","PL","CZ","HU","RO","BG","HR","SI","SK","LT","LV","EE","IE","PT","GR","CY","MT","LU","JP","CN","KR","IN","AU","NZ","SG","TH","MY","ID","PH","VN","PK","BD","LK","NP","MM","KH","LA","BN","MN","KZ","UZ","KG","TJ","TM","AF","IR","IQ","SY","LB","JO","IL","PS","SA","AE","QA","BH","KW","OM","YE","EG","LY","TN","DZ","MA","SD","SS","ET","ER","DJ","SO","KE","UG","TZ","RW","BI","CD","CG","CF","TD","CM","NG","NE","ML","BF","CI","GH","TG","BJ","SN","GM","GN","GW","SL","LR","MR","ZA","NA","BW","ZW","ZM","MW","MZ","MG","MU","SC","KM","ST","CV","AO","GA","GQ","LS","SZ","BR","AR","CL","CO","PE","UY","PY","BO","EC","VE","GY","SR","GF","MX","GT","BZ","SV","HN","NI","CR","PA","CU","JM","HT","DO","PR","TT","BB","LC","VC","GD","AG","KN","DM","BS","FJ","PG","SB","VU","NC","PF","WS","TO","KI","TV","NR","MH","FM","PW","GL","IS","FO","SJ","AX","AD","MC","SM","VA","LI","GI","IM","JE","GG","FK","GS","SH","AC","TA","BV","HM","CC","CX","NF","CK","NU","TK","PN","WF","AS","GU","MP","VI","AI","BM","VG","KY","TC","MS","AW","AN","CW","SX","BQ","GP","MQ","BL","MF","RE","YT","IO","TF","EH","XK","TW","HK","MO"]},"defaultCurrency":{"type":"string","enum":["JPY","CNY","HKD","PLN","CZK","HUF","RUB","TRY","KRW","SGD","TWD","THB","MYR","IDR","PHP","VND","INR","PKR","BDT","LKR","NPR","MMK","KHR","LAK","BND","MNT","KZT","UZS","KGS","TJS","TMT","AFN","IRR","IQD","SYP","LBP","JOD","ILS","EGP","LYD","TND","DZD","MAD","SDG","SSP","ETB","ERN","DJF","SOS","KES","UGX","TZS","RWF","BIF","CDF","XPF","NGN","XOF","ZAR","NAD","BWP","ZWL","ZMW","MWK","MZN","MGA","MUR","SCR","KMF","STN","CVE","AOA","XAF","SLL","LRD","MRO","LSL","SZL","GMD","GNF","GWP","MRT","AMD","AZN","GEL","UAH","BYN","MDL","RON","BGN","HRK","RSD","MKD","ALL","BAM","ISK","NOK","DKK","SEK","CHF","GBP","EUR","USD","CAD","MXN","GTQ","BZD","SVC","HNL","NIO","CRC","PAB","CUP","JMD","HTG","DOP","TTD","BBD","XCD","AWG","ANG","SRD","GYD","VEF","COP","PEN","CLP","ARS","UYU","PYG","BOB","VES","BRL","AUD","NZD","FJD","PGK","SBD","VUV","WST","TOP","KID","TVD","NUD","MHD","FMD","PWD"]},"createdAt":{"type":"string","format":"date-time"},"updatedAt":{"type":"string","format":"date-time"}}},"TransactionRequest":{"type":"object","properties":{"transactionType":{"type":"string","enum":["TRANSFER","EXPENSE","INCOME"]},"walletFromId":{"type":"string","format":"uuid"},"walletToId":{"type":"string","format":"uuid"},"amount":{"type":"number","minimum":0.01},"exchangeRate":{"type":"number","minimum":0.000001},"categoryId":{"type":"string","format":"uuid"},"note":{"type":"string","maxLength":1000,"minLength":0},"effectiveDate":{"type":"string","format":"date"}},"required":["amount","exchangeRate","transactionType"]},"TransactionResponse":{"type":"object","properties":{"id":{"type":"string","format":"uuid"},"username":{"type":"string"},"transactionType":{"type":"string","enum":["TRANSFER","EXPENSE","INCOME"]},"walletFromId":{"type":"string","format":"uuid"},"walletFromName":{"type":"string"},"walletToId":{"type":"string","format":"uuid"},"walletToName":{"type":"string"},"walletFromCurrency":{"type":"string","enum":["JPY","CNY","HKD","PLN","CZK","HUF","RUB","TRY","KRW","SGD","TWD","THB","MYR","IDR","PHP","VND","INR","PKR","BDT","LKR","NPR","MMK","KHR","LAK","BND","MNT","KZT","UZS","KGS","TJS","TMT","AFN","IRR","IQD","SYP","LBP","JOD","ILS","EGP","LYD","TND","DZD","MAD","SDG","SSP","ETB","ERN","DJF","SOS","KES","UGX","TZS","RWF","BIF","CDF","XPF","NGN","XOF","ZAR","NAD","BWP","ZWL","ZMW","MWK","MZN","MGA","MUR","SCR","KMF","STN","CVE","AOA","XAF","SLL","LRD","MRO","LSL","SZL","GMD","GNF","GWP","MRT","AMD","AZN","GEL","UAH","BYN","MDL","RON","BGN","HRK","RSD","MKD","ALL","BAM","ISK","NOK","DKK","SEK","CHF","GBP","EUR","USD","CAD","MXN","GTQ","BZD","SVC","HNL","NIO","CRC","PAB","CUP","JMD","HTG","DOP","TTD","BBD","XCD","AWG","ANG","SRD","GYD","VEF","COP","PEN","CLP","ARS","UYU","PYG","BOB","VES","BRL","AUD","NZD","FJD","PGK","SBD","VUV","WST","TOP","KID","TVD","NUD","MHD","FMD","PWD"]},"walletToCurrency":{"type":"string","enum":["JPY","CNY","HKD","PLN","CZK","HUF","RUB","TRY","KRW","SGD","TWD","THB","MYR","IDR","PHP","VND","INR","PKR","BDT","LKR","NPR","MMK","KHR","LAK","BND","MNT","KZT","UZS","KGS","TJS","TMT","AFN","IRR","IQD","SYP","LBP","JOD","ILS","EGP","LYD","TND","DZD","MAD","SDG","SSP","ETB","ERN","DJF","SOS","KES","UGX","TZS","RWF","BIF","CDF","XPF","NGN","XOF","ZAR","NAD","BWP","ZWL","ZMW","MWK","MZN","MGA","MUR","SCR","KMF","STN","CVE","AOA","XAF","SLL","LRD","MRO","LSL","SZL","GMD","GNF","GWP","MRT","AMD","AZN","GEL","UAH","BYN","MDL","RON","BGN","HRK","RSD","MKD","ALL","BAM","ISK","NOK","DKK","SEK","CHF","GBP","EUR","USD","CAD","MXN","GTQ","BZD","SVC","HNL","NIO","CRC","PAB","CUP","JMD","HTG","DOP","TTD","BBD","XCD","AWG","ANG","SRD","GYD","VEF","COP","PEN","CLP","ARS","UYU","PYG","BOB","VES","BRL","AUD","NZD","FJD","PGK","SBD","VUV","WST","TOP","KID","TVD","NUD","MHD","FMD","PWD"]},"amount":{"type":"number"},"exchangeRate":{"type":"number"},"walletToAmount":{"type":"number"},"categoryId":{"type":"string","format":"uuid"},"categoryName":{"type":"string"},"iconUrl":{"type":"string"},"note":{"type":"string"},"effectiveDate":{"type":"string","format":"date"},"createdAt":{"type":"string","format":"date-time"},"updatedAt":{"type":"string","format":"date-time"}}},"CategoryRequest":{"type":"object","properties":{"name":{"type":"string","maxLength":100,"minLength":1},"color":{"type":"string","maxLength":7,"minLength":7,"pattern":"^#[0-9A-Fa-f]{6}$"},"categoryType":{"type":"string","enum":["EXPENSE","INCOME"]},"iconUrl":{"type":"string","maxLength":500,"minLength":0},"parentCategoryId":{"type":"string","format":"uuid"}},"required":["categoryType","color","name"]},"CategoryResponse":{"type":"object","properties":{"id":{"type":"string","format":"uuid"},"username":{"type":"string"},"name":{"type":"string"},"description":{"type":"string"},"color":{"type":"string"},"categoryType":{"type":"string","enum":["EXPENSE","INCOME"]},"iconUrl":{"type":"string"},"parentCategoryId":{"type":"string","format":"uuid"},"parentCategoryName":{"type":"string"},"createdAt":{"type":"string","format":"date-time"},"updatedAt":{"type":"string","format":"date-time"},"active":{"type":"boolean"},"childCount":{"type":"integer","format":"int32"}}},"ReorderWalletsRequest":{"type":"object","properties":{"walletIds":{"type":"array","items":{"type":"string","format":"uuid"}}},"required":["walletIds"]},"WalletListResponse":{"type":"object","properties":{"wallets":{"type":"array","items":{"$ref":"#/components/schemas/WalletResponse"}},"totalCount":{"type":"integer","format":"int64"}}},"Pageable":{"type":"object","properties":{"page":{"type":"integer","format":"int32","minimum":0},"size":{"type":"integer","format":"int32","minimum":1},"sort":{"type":"array","items":{"type":"string"}}}},"PageTransactionDto":{"type":"object","properties":{"totalPages":{"type":"integer","format":"int32"},"totalElements":{"type":"integer","format":"int64"},"first":{"type":"boolean"},"last":{"type":"boolean"},"size":{"type":"integer","format":"int32"},"content":{"type":"array","items":{"$ref":"#/components/schemas/TransactionDto"}},"number":{"type":"integer","format":"int32"},"sort":{"$ref":"#/components/schemas/Sortnull"},"numberOfElements":{"type":"integer","format":"int32"},"pageable":{"$ref":"#/components/schemas/Pageablenull"},"empty":{"type":"boolean"}}},"Pageablenull":{"type":"object","properties":{"offset":{"type":"integer","format":"int64"},"sort":{"$ref":"#/components/schemas/Sortnull"},"unpaged":{"type":"boolean"},"paged":{"type":"boolean"},"pageNumber":{"type":"integer","format":"int32"},"pageSize":{"type":"integer","format":"int32"}}},"Sortnull":{"type":"object","properties":{"empty":{"type":"boolean"},"unsorted":{"type":"boolean"},"sorted":{"type":"boolean"}}},"TransactionDto":{"type":"object","properties":{"id":{"type":"string","format":"uuid"},"username":{"type":"string"},"transactionType":{"type":"string","enum":["TRANSFER","EXPENSE","INCOME"]},"walletFromId":{"type":"string","format":"uuid"},"walletFromName":{"type":"string"},"walletToId":{"type":"string","format":"uuid"},"walletToName":{"type":"string"},"walletFromCurrency":{"type":"string","enum":["JPY","CNY","HKD","PLN","CZK","HUF","RUB","TRY","KRW","SGD","TWD","THB","MYR","IDR","PHP","VND","INR","PKR","BDT","LKR","NPR","MMK","KHR","LAK","BND","MNT","KZT","UZS","KGS","TJS","TMT","AFN","IRR","IQD","SYP","LBP","JOD","ILS","EGP","LYD","TND","DZD","MAD","SDG","SSP","ETB","ERN","DJF","SOS","KES","UGX","TZS","RWF","BIF","CDF","XPF","NGN","XOF","ZAR","NAD","BWP","ZWL","ZMW","MWK","MZN","MGA","MUR","SCR","KMF","STN","CVE","AOA","XAF","SLL","LRD","MRO","LSL","SZL","GMD","GNF","GWP","MRT","AMD","AZN","GEL","UAH","BYN","MDL","RON","BGN","HRK","RSD","MKD","ALL","BAM","ISK","NOK","DKK","SEK","CHF","GBP","EUR","USD","CAD","MXN","GTQ","BZD","SVC","HNL","NIO","CRC","PAB","CUP","JMD","HTG","DOP","TTD","BBD","XCD","AWG","ANG","SRD","GYD","VEF","COP","PEN","CLP","ARS","UYU","PYG","BOB","VES","BRL","AUD","NZD","FJD","PGK","SBD","VUV","WST","TOP","KID","TVD","NUD","MHD","FMD","PWD"]},"walletToCurrency":{"type":"string","enum":["JPY","CNY","HKD","PLN","CZK","HUF","RUB","TRY","KRW","SGD","TWD","THB","MYR","IDR","PHP","VND","INR","PKR","BDT","LKR","NPR","MMK","KHR","LAK","BND","MNT","KZT","UZS","KGS","TJS","TMT","AFN","IRR","IQD","SYP","LBP","JOD","ILS","EGP","LYD","TND","DZD","MAD","SDG","SSP","ETB","ERN","DJF","SOS","KES","UGX","TZS","RWF","BIF","CDF","XPF","NGN","XOF","ZAR","NAD","BWP","ZWL","ZMW","MWK","MZN","MGA","MUR","SCR","KMF","STN","CVE","AOA","XAF","SLL","LRD","MRO","LSL","SZL","GMD","GNF","GWP","MRT","AMD","AZN","GEL","UAH","BYN","MDL","RON","BGN","HRK","RSD","MKD","ALL","BAM","ISK","NOK","DKK","SEK","CHF","GBP","EUR","USD","CAD","MXN","GTQ","BZD","SVC","HNL","NIO","CRC","PAB","CUP","JMD","HTG","DOP","TTD","BBD","XCD","AWG","ANG","SRD","GYD","VEF","COP","PEN","CLP","ARS","UYU","PYG","BOB","VES","BRL","AUD","NZD","FJD","PGK","SBD","VUV","WST","TOP","KID","TVD","NUD","MHD","FMD","PWD"]},"amount":{"type":"number"},"exchangeRate":{"type":"number"},"walletToAmount":{"type":"number"},"categoryId":{"type":"string","format":"uuid"},"categoryName":{"type":"string"},"iconUrl":{"type":"string"},"note":{"type":"string"},"effectiveDate":{"type":"string","format":"date"},"createdAt":{"type":"string","format":"date-time"},"updatedAt":{"type":"string","format":"date-time"}}},"TransactionListResponse":{"type":"object","properties":{"transactions":{"type":"array","items":{"$ref":"#/components/schemas/TransactionResponse"}},"totalCount":{"type":"integer","format":"int64"}}},"CategoryListResponse":{"type":"object","properties":{"categories":{"type":"array","items":{"$ref":"#/components/schemas/CategoryResponse"}},"totalCount":{"type":"integer","format":"int64"}}}}}}
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Pockito API",
+    "description": "Personal Finance Application API",
+    "contact": { "name": "Pockito Team", "email": "pockito@ghassen.io" },
+    "license": {
+      "name": "MIT License",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    { "url": "http://localhost:8080", "description": "Generated server url" }
+  ],
+  "tags": [
+    {
+      "name": "Subscription Management",
+      "description": "APIs for managing user subscriptions"
+    },
+    {
+      "name": "Transaction Management",
+      "description": "APIs for managing financial transactions"
+    },
+    {
+      "name": "User Management",
+      "description": "APIs for managing application users"
+    },
+    {
+      "name": "Category Management",
+      "description": "APIs for managing user categories"
+    }
+  ],
+  "paths": {
+    "/api/wallets/{walletId}": {
+      "get": {
+        "tags": ["wallet-controller"],
+        "operationId": "getWallet",
+        "parameters": [
+          {
+            "name": "walletId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/WalletResponse" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["wallet-controller"],
+        "operationId": "updateWallet",
+        "parameters": [
+          {
+            "name": "walletId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/WalletRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/WalletResponse" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["wallet-controller"],
+        "operationId": "deleteWallet",
+        "parameters": [
+          {
+            "name": "walletId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/users/{username}/currency": {
+      "put": {
+        "tags": ["User Management"],
+        "summary": "Update user default currency",
+        "description": "Updates the default currency for a specific user. Accepts 3-letter ISO currency codes.",
+        "operationId": "updateUserCurrency",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "Username of the user to update",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "currencyCode",
+            "in": "query",
+            "description": "Currency code (3-letter ISO)",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/UserResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{username}/country": {
+      "put": {
+        "tags": ["User Management"],
+        "summary": "Update user country",
+        "description": "Updates the country for a specific user. Accepts both alpha-2 and alpha-3 country codes.",
+        "operationId": "updateUserCountry",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "Username of the user to update",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "countryCode",
+            "in": "query",
+            "description": "Country code (alpha-2 or alpha-3)",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/UserResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/transactions/{transactionId}": {
+      "get": {
+        "tags": ["Transaction Management"],
+        "summary": "Get transaction by ID",
+        "description": "Retrieves a single transaction by its unique ID.",
+        "operationId": "getTransaction",
+        "parameters": [
+          {
+            "name": "transactionId",
+            "in": "path",
+            "description": "Transaction ID to retrieve",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/TransactionResponse" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Transaction Management"],
+        "summary": "Update an existing transaction",
+        "description": "Updates an existing transaction with the same validation rules as creation.",
+        "operationId": "updateTransaction",
+        "parameters": [
+          {
+            "name": "transactionId",
+            "in": "path",
+            "description": "Transaction ID to update",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TransactionRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/TransactionResponse" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Transaction Management"],
+        "summary": "Delete a transaction",
+        "description": "Removes a transaction by ID.",
+        "operationId": "deleteTransaction",
+        "parameters": [
+          {
+            "name": "transactionId",
+            "in": "path",
+            "description": "Transaction ID to delete",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/subscriptions/{subscriptionId}": {
+      "get": {
+        "tags": ["Subscription Management"],
+        "summary": "Get subscription by ID",
+        "description": "Retrieves a specific subscription by its ID for the authenticated user.",
+        "operationId": "getSubscription",
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "description": "Subscription ID",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Subscription Management"],
+        "summary": "Update subscription",
+        "description": "Updates an existing subscription for the authenticated user.",
+        "operationId": "updateSubscription",
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "description": "Subscription ID to update",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubscriptionRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Subscription Management"],
+        "summary": "Delete subscription",
+        "description": "Deletes a subscription for the authenticated user.",
+        "operationId": "deleteSubscription",
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "description": "Subscription ID to delete",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/categories/{categoryId}": {
+      "get": {
+        "tags": ["Category Management"],
+        "summary": "Get category by ID",
+        "description": "Retrieves a specific category by its ID for the authenticated user.",
+        "operationId": "getCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "Category ID",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/CategoryResponse" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Category Management"],
+        "summary": "Update category",
+        "description": "Updates an existing category for the authenticated user. Category names must remain unique per user.",
+        "operationId": "updateCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "Category ID to update",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CategoryRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/CategoryResponse" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Category Management"],
+        "summary": "Delete category",
+        "description": "Deletes a category for the authenticated user. Category must not have child categories.",
+        "operationId": "deleteCategory",
+        "parameters": [
+          {
+            "name": "categoryId",
+            "in": "path",
+            "description": "Category ID to delete",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/wallets": {
+      "get": {
+        "tags": ["wallet-controller"],
+        "operationId": "getUserWallets",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/WalletListResponse" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["wallet-controller"],
+        "operationId": "createWallet",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/WalletRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/WalletResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wallets/{walletId}/set-default": {
+      "post": {
+        "tags": ["wallet-controller"],
+        "operationId": "setDefaultWallet",
+        "parameters": [
+          {
+            "name": "walletId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/WalletResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wallets/reorder": {
+      "post": {
+        "tags": ["wallet-controller"],
+        "operationId": "reorderWallets",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ReorderWalletsRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/transactions": {
+      "get": {
+        "tags": ["Transaction Management"],
+        "summary": "List transactions by criteria",
+        "description": "Retrieves transactions with filtering by userId, walletId, effectiveDate range, and transactionType. Supports pagination for large transaction volumes.",
+        "operationId": "listTransactions",
+        "parameters": [
+          {
+            "name": "walletId",
+            "in": "query",
+            "description": "Wallet ID to filter by",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "Start date for date range filtering (yyyy-MM-dd)",
+            "required": false,
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "End date for date range filtering (yyyy-MM-dd)",
+            "required": false,
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "transactionType",
+            "in": "query",
+            "description": "Transaction type to filter by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["TRANSFER", "EXPENSE", "INCOME"]
+            }
+          },
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/Pageable" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/PageTransactionDto" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Transaction Management"],
+        "summary": "Create a new transaction",
+        "description": "Creates a new transaction with validation rules based on transaction type. EXPENSE requires walletFrom, INCOME requires walletTo, TRANSFER requires at least one wallet.",
+        "operationId": "createTransaction",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/TransactionRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/TransactionResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/subscriptions": {
+      "get": {
+        "tags": ["Subscription Management"],
+        "summary": "Get all subscriptions",
+        "description": "Retrieves all subscriptions for the authenticated user, ordered by name.",
+        "operationId": "listSubscriptions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SubscriptionResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Subscription Management"],
+        "summary": "Create a new subscription",
+        "description": "Creates a new subscription for the authenticated user.",
+        "operationId": "createSubscription",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SubscriptionRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/subscriptions/{subscriptionId}/pay": {
+      "post": {
+        "tags": ["Subscription Management"],
+        "summary": "Pay subscription",
+        "description": "Processes a payment for a subscription. Creates a new EXPENSE transaction and updates the subscription's nextDueDate. Exchange rate is only used if subscription currency differs from wallet currency, otherwise it's ignored.",
+        "operationId": "paySubscription",
+        "parameters": [
+          {
+            "name": "subscriptionId",
+            "in": "path",
+            "description": "Subscription ID to pay",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaySubscriptionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/TransactionResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories": {
+      "get": {
+        "tags": ["Category Management"],
+        "summary": "Get all categories",
+        "description": "Retrieves all categories for the authenticated user, ordered by name.",
+        "operationId": "getUserCategories",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryListResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Category Management"],
+        "summary": "Create a new category",
+        "description": "Creates a new category for the authenticated user. Category names must be unique per user.",
+        "operationId": "createCategory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CategoryRequest" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/CategoryResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wallets/type/{type}": {
+      "get": {
+        "tags": ["wallet-controller"],
+        "operationId": "getWalletsByType",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "BANK_ACCOUNT",
+                "CASH",
+                "CREDIT_CARD",
+                "SAVINGS",
+                "CUSTOM"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/WalletListResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wallets/default": {
+      "get": {
+        "tags": ["wallet-controller"],
+        "operationId": "getDefaultWallet",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/WalletResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{username}": {
+      "get": {
+        "tags": ["User Management"],
+        "summary": "Get user by username",
+        "description": "Retrieves a user by their username",
+        "operationId": "getUserByUsername",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "Username to search for",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/UserResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{username}/exists": {
+      "get": {
+        "tags": ["User Management"],
+        "summary": "Check if user exists",
+        "description": "Checks whether a user with the specified username exists",
+        "operationId": "checkUserExists",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "Username to check",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "OK" } }
+      }
+    },
+    "/api/users/me": {
+      "get": {
+        "tags": ["User Management"],
+        "summary": "Get or create current user",
+        "description": "Retrieves the current authenticated user or creates a new one if it doesn't exist. This implements the core requirement to create users on first Keycloak token authentication.",
+        "operationId": "getOrCreateCurrentUser",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/UserResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/transactions/wallet/{walletId}": {
+      "get": {
+        "tags": ["Transaction Management"],
+        "summary": "Get transactions by wallet",
+        "description": "Retrieves all transactions involving a specific wallet with pagination.",
+        "operationId": "getTransactionsByWallet",
+        "parameters": [
+          {
+            "name": "walletId",
+            "in": "path",
+            "description": "Wallet ID to filter by",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/Pageable" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/PageTransactionDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/transactions/type/{transactionType}": {
+      "get": {
+        "tags": ["Transaction Management"],
+        "summary": "Get transactions by type",
+        "description": "Retrieves transactions of a specific type (EXPENSE, INCOME, TRANSFER) with pagination.",
+        "operationId": "getTransactionsByType",
+        "parameters": [
+          {
+            "name": "transactionType",
+            "in": "path",
+            "description": "Transaction type to filter by",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["TRANSFER", "EXPENSE", "INCOME"]
+            }
+          },
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/Pageable" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/PageTransactionDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/transactions/date-range": {
+      "get": {
+        "tags": ["Transaction Management"],
+        "summary": "Get transactions by date range",
+        "description": "Retrieves transactions within a specific date range with pagination.",
+        "operationId": "getTransactionsByDateRange",
+        "parameters": [
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "Start date for date range filtering (yyyy-MM-dd)",
+            "required": true,
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "description": "End date for date range filtering (yyyy-MM-dd)",
+            "required": true,
+            "schema": { "type": "string", "format": "date" }
+          },
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": { "$ref": "#/components/schemas/Pageable" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": { "$ref": "#/components/schemas/PageTransactionDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/transactions/all": {
+      "get": {
+        "tags": ["Transaction Management"],
+        "summary": "Get all user transactions",
+        "description": "Retrieves all transactions for the authenticated user without pagination. Use with caution for users with large transaction volumes.",
+        "operationId": "getAllTransactions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransactionListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories/{parentCategoryId}/children": {
+      "get": {
+        "tags": ["Category Management"],
+        "summary": "Get child categories",
+        "description": "Retrieves all child categories of a specific parent category for the authenticated user.",
+        "operationId": "getChildCategories",
+        "parameters": [
+          {
+            "name": "parentCategoryId",
+            "in": "path",
+            "description": "Parent category ID",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories/type/{categoryType}": {
+      "get": {
+        "tags": ["Category Management"],
+        "summary": "Get categories by type",
+        "description": "Retrieves all categories of a specific type (EXPENSE or INCOME) for the authenticated user.",
+        "operationId": "getCategoriesByType",
+        "parameters": [
+          {
+            "name": "categoryType",
+            "in": "path",
+            "description": "Category type to filter by",
+            "required": true,
+            "schema": { "type": "string", "enum": ["EXPENSE", "INCOME"] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories/root": {
+      "get": {
+        "tags": ["Category Management"],
+        "summary": "Get root categories",
+        "description": "Retrieves all root categories (categories without a parent) for the authenticated user.",
+        "operationId": "getRootCategories",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories/hierarchical": {
+      "get": {
+        "tags": ["Category Management"],
+        "summary": "Get hierarchical categories",
+        "description": "Retrieves all categories for the authenticated user in hierarchical order (parents first, then children).",
+        "operationId": "getHierarchicalCategories",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories/hierarchical/type/{categoryType}": {
+      "get": {
+        "tags": ["Category Management"],
+        "summary": "Get hierarchical categories by type",
+        "description": "Retrieves all categories of a specific type for the authenticated user in hierarchical order.",
+        "operationId": "getHierarchicalCategoriesByType",
+        "parameters": [
+          {
+            "name": "categoryType",
+            "in": "path",
+            "description": "Category type to filter by",
+            "required": true,
+            "schema": { "type": "string", "enum": ["EXPENSE", "INCOME"] }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories/color/{color}": {
+      "get": {
+        "tags": ["Category Management"],
+        "summary": "Get categories by color",
+        "description": "Retrieves all categories with a specific color for the authenticated user.",
+        "operationId": "getCategoriesByColor",
+        "parameters": [
+          {
+            "name": "color",
+            "in": "path",
+            "description": "Color to filter by (hex format, e.g., #A1B2C3)",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "WalletRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "maxLength": 100, "minLength": 1 },
+          "description": { "type": "string", "maxLength": 500, "minLength": 0 },
+          "color": { "type": "string", "maxLength": 50, "minLength": 0 },
+          "initialBalance": { "type": "number" },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "JPY",
+              "CNY",
+              "HKD",
+              "PLN",
+              "CZK",
+              "HUF",
+              "RUB",
+              "TRY",
+              "KRW",
+              "SGD",
+              "TWD",
+              "THB",
+              "MYR",
+              "IDR",
+              "PHP",
+              "VND",
+              "INR",
+              "PKR",
+              "BDT",
+              "LKR",
+              "NPR",
+              "MMK",
+              "KHR",
+              "LAK",
+              "BND",
+              "MNT",
+              "KZT",
+              "UZS",
+              "KGS",
+              "TJS",
+              "TMT",
+              "AFN",
+              "IRR",
+              "IQD",
+              "SYP",
+              "LBP",
+              "JOD",
+              "EGP",
+              "LYD",
+              "TND",
+              "DZD",
+              "MAD",
+              "SDG",
+              "SSP",
+              "ETB",
+              "ERN",
+              "DJF",
+              "SOS",
+              "KES",
+              "UGX",
+              "TZS",
+              "RWF",
+              "BIF",
+              "CDF",
+              "XPF",
+              "NGN",
+              "XOF",
+              "ZAR",
+              "NAD",
+              "BWP",
+              "ZWL",
+              "ZMW",
+              "MWK",
+              "MZN",
+              "MGA",
+              "MUR",
+              "SCR",
+              "KMF",
+              "STN",
+              "CVE",
+              "AOA",
+              "XAF",
+              "SLL",
+              "LRD",
+              "MRO",
+              "LSL",
+              "SZL",
+              "GMD",
+              "GNF",
+              "GWP",
+              "MRT",
+              "AMD",
+              "AZN",
+              "GEL",
+              "UAH",
+              "BYN",
+              "MDL",
+              "RON",
+              "BGN",
+              "HRK",
+              "RSD",
+              "MKD",
+              "ALL",
+              "BAM",
+              "ISK",
+              "NOK",
+              "DKK",
+              "SEK",
+              "CHF",
+              "GBP",
+              "EUR",
+              "USD",
+              "CAD",
+              "MXN",
+              "GTQ",
+              "BZD",
+              "SVC",
+              "HNL",
+              "NIO",
+              "CRC",
+              "PAB",
+              "CUP",
+              "JMD",
+              "HTG",
+              "DOP",
+              "TTD",
+              "BBD",
+              "XCD",
+              "AWG",
+              "ANG",
+              "SRD",
+              "GYD",
+              "VEF",
+              "COP",
+              "PEN",
+              "CLP",
+              "ARS",
+              "UYU",
+              "PYG",
+              "BOB",
+              "VES",
+              "BRL",
+              "AUD",
+              "NZD",
+              "FJD",
+              "PGK",
+              "SBD",
+              "VUV",
+              "WST",
+              "TOP",
+              "KID",
+              "TVD",
+              "NUD",
+              "MHD",
+              "FMD",
+              "PWD"
+            ]
+          },
+          "iconUrl": { "type": "string", "maxLength": 500, "minLength": 0 },
+          "goalAmount": { "type": "number", "minimum": 0.0 },
+          "type": {
+            "type": "string",
+            "enum": ["BANK_ACCOUNT", "CASH", "CREDIT_CARD", "SAVINGS", "CUSTOM"]
+          },
+          "isDefault": { "type": "boolean" }
+        },
+        "required": ["currency", "initialBalance", "isDefault", "name", "type"]
+      },
+      "WalletResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "username": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "color": { "type": "string" },
+          "initialBalance": { "type": "number" },
+          "balance": { "type": "number" },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "JPY",
+              "CNY",
+              "HKD",
+              "PLN",
+              "CZK",
+              "HUF",
+              "RUB",
+              "TRY",
+              "KRW",
+              "SGD",
+              "TWD",
+              "THB",
+              "MYR",
+              "IDR",
+              "PHP",
+              "VND",
+              "INR",
+              "PKR",
+              "BDT",
+              "LKR",
+              "NPR",
+              "MMK",
+              "KHR",
+              "LAK",
+              "BND",
+              "MNT",
+              "KZT",
+              "UZS",
+              "KGS",
+              "TJS",
+              "TMT",
+              "AFN",
+              "IRR",
+              "IQD",
+              "SYP",
+              "LBP",
+              "JOD",
+              "EGP",
+              "LYD",
+              "TND",
+              "DZD",
+              "MAD",
+              "SDG",
+              "SSP",
+              "ETB",
+              "ERN",
+              "DJF",
+              "SOS",
+              "KES",
+              "UGX",
+              "TZS",
+              "RWF",
+              "BIF",
+              "CDF",
+              "XPF",
+              "NGN",
+              "XOF",
+              "ZAR",
+              "NAD",
+              "BWP",
+              "ZWL",
+              "ZMW",
+              "MWK",
+              "MZN",
+              "MGA",
+              "MUR",
+              "SCR",
+              "KMF",
+              "STN",
+              "CVE",
+              "AOA",
+              "XAF",
+              "SLL",
+              "LRD",
+              "MRO",
+              "LSL",
+              "SZL",
+              "GMD",
+              "GNF",
+              "GWP",
+              "MRT",
+              "AMD",
+              "AZN",
+              "GEL",
+              "UAH",
+              "BYN",
+              "MDL",
+              "RON",
+              "BGN",
+              "HRK",
+              "RSD",
+              "MKD",
+              "ALL",
+              "BAM",
+              "ISK",
+              "NOK",
+              "DKK",
+              "SEK",
+              "CHF",
+              "GBP",
+              "EUR",
+              "USD",
+              "CAD",
+              "MXN",
+              "GTQ",
+              "BZD",
+              "SVC",
+              "HNL",
+              "NIO",
+              "CRC",
+              "PAB",
+              "CUP",
+              "JMD",
+              "HTG",
+              "DOP",
+              "TTD",
+              "BBD",
+              "XCD",
+              "AWG",
+              "ANG",
+              "SRD",
+              "GYD",
+              "VEF",
+              "COP",
+              "PEN",
+              "CLP",
+              "ARS",
+              "UYU",
+              "PYG",
+              "BOB",
+              "VES",
+              "BRL",
+              "AUD",
+              "NZD",
+              "FJD",
+              "PGK",
+              "SBD",
+              "VUV",
+              "WST",
+              "TOP",
+              "KID",
+              "TVD",
+              "NUD",
+              "MHD",
+              "FMD",
+              "PWD"
+            ]
+          },
+          "iconUrl": { "type": "string" },
+          "goalAmount": { "type": "number" },
+          "type": {
+            "type": "string",
+            "enum": ["BANK_ACCOUNT", "CASH", "CREDIT_CARD", "SAVINGS", "CUSTOM"]
+          },
+          "isDefault": { "type": "boolean" },
+          "orderPosition": { "type": "integer", "format": "int32" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "active": { "type": "boolean" }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "username": { "type": "string" },
+          "country": {
+            "type": "string",
+            "enum": [
+              "US",
+              "CA",
+              "GB",
+              "DE",
+              "FR",
+              "IT",
+              "ES",
+              "NL",
+              "BE",
+              "CH",
+              "AT",
+              "SE",
+              "NO",
+              "DK",
+              "FI",
+              "PL",
+              "CZ",
+              "HU",
+              "RO",
+              "BG",
+              "HR",
+              "SI",
+              "SK",
+              "LT",
+              "LV",
+              "EE",
+              "IE",
+              "PT",
+              "GR",
+              "CY",
+              "MT",
+              "LU",
+              "JP",
+              "CN",
+              "KR",
+              "IN",
+              "AU",
+              "NZ",
+              "SG",
+              "TH",
+              "MY",
+              "ID",
+              "PH",
+              "VN",
+              "PK",
+              "BD",
+              "LK",
+              "NP",
+              "MM",
+              "KH",
+              "LA",
+              "BN",
+              "MN",
+              "KZ",
+              "UZ",
+              "KG",
+              "TJ",
+              "TM",
+              "AF",
+              "IR",
+              "IQ",
+              "SY",
+              "LB",
+              "JO",
+              "PS",
+              "SA",
+              "AE",
+              "QA",
+              "BH",
+              "KW",
+              "OM",
+              "YE",
+              "EG",
+              "LY",
+              "TN",
+              "DZ",
+              "MA",
+              "SD",
+              "SS",
+              "ET",
+              "ER",
+              "DJ",
+              "SO",
+              "KE",
+              "UG",
+              "TZ",
+              "RW",
+              "BI",
+              "CD",
+              "CG",
+              "CF",
+              "TD",
+              "CM",
+              "NG",
+              "NE",
+              "ML",
+              "BF",
+              "CI",
+              "GH",
+              "TG",
+              "BJ",
+              "SN",
+              "GM",
+              "GN",
+              "GW",
+              "SL",
+              "LR",
+              "MR",
+              "ZA",
+              "NA",
+              "BW",
+              "ZW",
+              "ZM",
+              "MW",
+              "MZ",
+              "MG",
+              "MU",
+              "SC",
+              "KM",
+              "ST",
+              "CV",
+              "AO",
+              "GA",
+              "GQ",
+              "LS",
+              "SZ",
+              "BR",
+              "AR",
+              "CL",
+              "CO",
+              "PE",
+              "UY",
+              "PY",
+              "BO",
+              "EC",
+              "VE",
+              "GY",
+              "SR",
+              "GF",
+              "MX",
+              "GT",
+              "BZ",
+              "SV",
+              "HN",
+              "NI",
+              "CR",
+              "PA",
+              "CU",
+              "JM",
+              "HT",
+              "DO",
+              "PR",
+              "TT",
+              "BB",
+              "LC",
+              "VC",
+              "GD",
+              "AG",
+              "KN",
+              "DM",
+              "BS",
+              "FJ",
+              "PG",
+              "SB",
+              "VU",
+              "NC",
+              "PF",
+              "WS",
+              "TO",
+              "KI",
+              "TV",
+              "NR",
+              "MH",
+              "FM",
+              "PW",
+              "GL",
+              "IS",
+              "FO",
+              "SJ",
+              "AX",
+              "AD",
+              "MC",
+              "SM",
+              "VA",
+              "LI",
+              "GI",
+              "IM",
+              "JE",
+              "GG",
+              "FK",
+              "GS",
+              "SH",
+              "AC",
+              "TA",
+              "BV",
+              "HM",
+              "CC",
+              "CX",
+              "NF",
+              "CK",
+              "NU",
+              "TK",
+              "PN",
+              "WF",
+              "AS",
+              "GU",
+              "MP",
+              "VI",
+              "AI",
+              "BM",
+              "VG",
+              "KY",
+              "TC",
+              "MS",
+              "AW",
+              "AN",
+              "CW",
+              "SX",
+              "BQ",
+              "GP",
+              "MQ",
+              "BL",
+              "MF",
+              "RE",
+              "YT",
+              "IO",
+              "TF",
+              "EH",
+              "XK",
+              "TW",
+              "HK",
+              "MO"
+            ]
+          },
+          "defaultCurrency": {
+            "type": "string",
+            "enum": [
+              "JPY",
+              "CNY",
+              "HKD",
+              "PLN",
+              "CZK",
+              "HUF",
+              "RUB",
+              "TRY",
+              "KRW",
+              "SGD",
+              "TWD",
+              "THB",
+              "MYR",
+              "IDR",
+              "PHP",
+              "VND",
+              "INR",
+              "PKR",
+              "BDT",
+              "LKR",
+              "NPR",
+              "MMK",
+              "KHR",
+              "LAK",
+              "BND",
+              "MNT",
+              "KZT",
+              "UZS",
+              "KGS",
+              "TJS",
+              "TMT",
+              "AFN",
+              "IRR",
+              "IQD",
+              "SYP",
+              "LBP",
+              "JOD",
+              "EGP",
+              "LYD",
+              "TND",
+              "DZD",
+              "MAD",
+              "SDG",
+              "SSP",
+              "ETB",
+              "ERN",
+              "DJF",
+              "SOS",
+              "KES",
+              "UGX",
+              "TZS",
+              "RWF",
+              "BIF",
+              "CDF",
+              "XPF",
+              "NGN",
+              "XOF",
+              "ZAR",
+              "NAD",
+              "BWP",
+              "ZWL",
+              "ZMW",
+              "MWK",
+              "MZN",
+              "MGA",
+              "MUR",
+              "SCR",
+              "KMF",
+              "STN",
+              "CVE",
+              "AOA",
+              "XAF",
+              "SLL",
+              "LRD",
+              "MRO",
+              "LSL",
+              "SZL",
+              "GMD",
+              "GNF",
+              "GWP",
+              "MRT",
+              "AMD",
+              "AZN",
+              "GEL",
+              "UAH",
+              "BYN",
+              "MDL",
+              "RON",
+              "BGN",
+              "HRK",
+              "RSD",
+              "MKD",
+              "ALL",
+              "BAM",
+              "ISK",
+              "NOK",
+              "DKK",
+              "SEK",
+              "CHF",
+              "GBP",
+              "EUR",
+              "USD",
+              "CAD",
+              "MXN",
+              "GTQ",
+              "BZD",
+              "SVC",
+              "HNL",
+              "NIO",
+              "CRC",
+              "PAB",
+              "CUP",
+              "JMD",
+              "HTG",
+              "DOP",
+              "TTD",
+              "BBD",
+              "XCD",
+              "AWG",
+              "ANG",
+              "SRD",
+              "GYD",
+              "VEF",
+              "COP",
+              "PEN",
+              "CLP",
+              "ARS",
+              "UYU",
+              "PYG",
+              "BOB",
+              "VES",
+              "BRL",
+              "AUD",
+              "NZD",
+              "FJD",
+              "PGK",
+              "SBD",
+              "VUV",
+              "WST",
+              "TOP",
+              "KID",
+              "TVD",
+              "NUD",
+              "MHD",
+              "FMD",
+              "PWD"
+            ]
+          },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "TransactionRequest": {
+        "type": "object",
+        "properties": {
+          "transactionType": {
+            "type": "string",
+            "enum": ["TRANSFER", "EXPENSE", "INCOME"]
+          },
+          "walletFromId": { "type": "string" },
+          "walletToId": { "type": "string" },
+          "amount": { "type": "number", "minimum": 0.01 },
+          "exchangeRate": { "type": "number", "minimum": 0.000001 },
+          "categoryId": { "type": "string" },
+          "note": { "type": "string", "maxLength": 1000, "minLength": 0 },
+          "effectiveDate": { "type": "string", "format": "date" }
+        },
+        "required": ["amount", "exchangeRate", "transactionType"]
+      },
+      "TransactionResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "username": { "type": "string" },
+          "transactionType": {
+            "type": "string",
+            "enum": ["TRANSFER", "EXPENSE", "INCOME"]
+          },
+          "walletFromId": { "type": "string" },
+          "walletFromName": { "type": "string" },
+          "walletToId": { "type": "string" },
+          "walletToName": { "type": "string" },
+          "walletFromCurrency": {
+            "type": "string",
+            "enum": [
+              "JPY",
+              "CNY",
+              "HKD",
+              "PLN",
+              "CZK",
+              "HUF",
+              "RUB",
+              "TRY",
+              "KRW",
+              "SGD",
+              "TWD",
+              "THB",
+              "MYR",
+              "IDR",
+              "PHP",
+              "VND",
+              "INR",
+              "PKR",
+              "BDT",
+              "LKR",
+              "NPR",
+              "MMK",
+              "KHR",
+              "LAK",
+              "BND",
+              "MNT",
+              "KZT",
+              "UZS",
+              "KGS",
+              "TJS",
+              "TMT",
+              "AFN",
+              "IRR",
+              "IQD",
+              "SYP",
+              "LBP",
+              "JOD",
+              "EGP",
+              "LYD",
+              "TND",
+              "DZD",
+              "MAD",
+              "SDG",
+              "SSP",
+              "ETB",
+              "ERN",
+              "DJF",
+              "SOS",
+              "KES",
+              "UGX",
+              "TZS",
+              "RWF",
+              "BIF",
+              "CDF",
+              "XPF",
+              "NGN",
+              "XOF",
+              "ZAR",
+              "NAD",
+              "BWP",
+              "ZWL",
+              "ZMW",
+              "MWK",
+              "MZN",
+              "MGA",
+              "MUR",
+              "SCR",
+              "KMF",
+              "STN",
+              "CVE",
+              "AOA",
+              "XAF",
+              "SLL",
+              "LRD",
+              "MRO",
+              "LSL",
+              "SZL",
+              "GMD",
+              "GNF",
+              "GWP",
+              "MRT",
+              "AMD",
+              "AZN",
+              "GEL",
+              "UAH",
+              "BYN",
+              "MDL",
+              "RON",
+              "BGN",
+              "HRK",
+              "RSD",
+              "MKD",
+              "ALL",
+              "BAM",
+              "ISK",
+              "NOK",
+              "DKK",
+              "SEK",
+              "CHF",
+              "GBP",
+              "EUR",
+              "USD",
+              "CAD",
+              "MXN",
+              "GTQ",
+              "BZD",
+              "SVC",
+              "HNL",
+              "NIO",
+              "CRC",
+              "PAB",
+              "CUP",
+              "JMD",
+              "HTG",
+              "DOP",
+              "TTD",
+              "BBD",
+              "XCD",
+              "AWG",
+              "ANG",
+              "SRD",
+              "GYD",
+              "VEF",
+              "COP",
+              "PEN",
+              "CLP",
+              "ARS",
+              "UYU",
+              "PYG",
+              "BOB",
+              "VES",
+              "BRL",
+              "AUD",
+              "NZD",
+              "FJD",
+              "PGK",
+              "SBD",
+              "VUV",
+              "WST",
+              "TOP",
+              "KID",
+              "TVD",
+              "NUD",
+              "MHD",
+              "FMD",
+              "PWD"
+            ]
+          },
+          "walletToCurrency": {
+            "type": "string",
+            "enum": [
+              "JPY",
+              "CNY",
+              "HKD",
+              "PLN",
+              "CZK",
+              "HUF",
+              "RUB",
+              "TRY",
+              "KRW",
+              "SGD",
+              "TWD",
+              "THB",
+              "MYR",
+              "IDR",
+              "PHP",
+              "VND",
+              "INR",
+              "PKR",
+              "BDT",
+              "LKR",
+              "NPR",
+              "MMK",
+              "KHR",
+              "LAK",
+              "BND",
+              "MNT",
+              "KZT",
+              "UZS",
+              "KGS",
+              "TJS",
+              "TMT",
+              "AFN",
+              "IRR",
+              "IQD",
+              "SYP",
+              "LBP",
+              "JOD",
+              "EGP",
+              "LYD",
+              "TND",
+              "DZD",
+              "MAD",
+              "SDG",
+              "SSP",
+              "ETB",
+              "ERN",
+              "DJF",
+              "SOS",
+              "KES",
+              "UGX",
+              "TZS",
+              "RWF",
+              "BIF",
+              "CDF",
+              "XPF",
+              "NGN",
+              "XOF",
+              "ZAR",
+              "NAD",
+              "BWP",
+              "ZWL",
+              "ZMW",
+              "MWK",
+              "MZN",
+              "MGA",
+              "MUR",
+              "SCR",
+              "KMF",
+              "STN",
+              "CVE",
+              "AOA",
+              "XAF",
+              "SLL",
+              "LRD",
+              "MRO",
+              "LSL",
+              "SZL",
+              "GMD",
+              "GNF",
+              "GWP",
+              "MRT",
+              "AMD",
+              "AZN",
+              "GEL",
+              "UAH",
+              "BYN",
+              "MDL",
+              "RON",
+              "BGN",
+              "HRK",
+              "RSD",
+              "MKD",
+              "ALL",
+              "BAM",
+              "ISK",
+              "NOK",
+              "DKK",
+              "SEK",
+              "CHF",
+              "GBP",
+              "EUR",
+              "USD",
+              "CAD",
+              "MXN",
+              "GTQ",
+              "BZD",
+              "SVC",
+              "HNL",
+              "NIO",
+              "CRC",
+              "PAB",
+              "CUP",
+              "JMD",
+              "HTG",
+              "DOP",
+              "TTD",
+              "BBD",
+              "XCD",
+              "AWG",
+              "ANG",
+              "SRD",
+              "GYD",
+              "VEF",
+              "COP",
+              "PEN",
+              "CLP",
+              "ARS",
+              "UYU",
+              "PYG",
+              "BOB",
+              "VES",
+              "BRL",
+              "AUD",
+              "NZD",
+              "FJD",
+              "PGK",
+              "SBD",
+              "VUV",
+              "WST",
+              "TOP",
+              "KID",
+              "TVD",
+              "NUD",
+              "MHD",
+              "FMD",
+              "PWD"
+            ]
+          },
+          "amount": { "type": "number" },
+          "exchangeRate": { "type": "number" },
+          "walletToAmount": { "type": "number" },
+          "categoryId": { "type": "string" },
+          "categoryName": { "type": "string" },
+          "iconUrl": { "type": "string" },
+          "note": { "type": "string" },
+          "effectiveDate": { "type": "string", "format": "date" },
+          "subscriptionId": { "type": "string" },
+          "subscriptionName": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "SubscriptionRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "maxLength": 200, "minLength": 1 },
+          "iconUrl": { "type": "string", "maxLength": 500, "minLength": 0 },
+          "frequency": {
+            "type": "string",
+            "enum": ["DAILY", "WEEKLY", "MONTHLY", "YEARLY"]
+          },
+          "interval": { "type": "integer", "format": "int32", "minimum": 1 },
+          "amount": { "type": "number", "minimum": 0.01 },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "JPY",
+              "CNY",
+              "HKD",
+              "PLN",
+              "CZK",
+              "HUF",
+              "RUB",
+              "TRY",
+              "KRW",
+              "SGD",
+              "TWD",
+              "THB",
+              "MYR",
+              "IDR",
+              "PHP",
+              "VND",
+              "INR",
+              "PKR",
+              "BDT",
+              "LKR",
+              "NPR",
+              "MMK",
+              "KHR",
+              "LAK",
+              "BND",
+              "MNT",
+              "KZT",
+              "UZS",
+              "KGS",
+              "TJS",
+              "TMT",
+              "AFN",
+              "IRR",
+              "IQD",
+              "SYP",
+              "LBP",
+              "JOD",
+              "EGP",
+              "LYD",
+              "TND",
+              "DZD",
+              "MAD",
+              "SDG",
+              "SSP",
+              "ETB",
+              "ERN",
+              "DJF",
+              "SOS",
+              "KES",
+              "UGX",
+              "TZS",
+              "RWF",
+              "BIF",
+              "CDF",
+              "XPF",
+              "NGN",
+              "XOF",
+              "ZAR",
+              "NAD",
+              "BWP",
+              "ZWL",
+              "ZMW",
+              "MWK",
+              "MZN",
+              "MGA",
+              "MUR",
+              "SCR",
+              "KMF",
+              "STN",
+              "CVE",
+              "AOA",
+              "XAF",
+              "SLL",
+              "LRD",
+              "MRO",
+              "LSL",
+              "SZL",
+              "GMD",
+              "GNF",
+              "GWP",
+              "MRT",
+              "AMD",
+              "AZN",
+              "GEL",
+              "UAH",
+              "BYN",
+              "MDL",
+              "RON",
+              "BGN",
+              "HRK",
+              "RSD",
+              "MKD",
+              "ALL",
+              "BAM",
+              "ISK",
+              "NOK",
+              "DKK",
+              "SEK",
+              "CHF",
+              "GBP",
+              "EUR",
+              "USD",
+              "CAD",
+              "MXN",
+              "GTQ",
+              "BZD",
+              "SVC",
+              "HNL",
+              "NIO",
+              "CRC",
+              "PAB",
+              "CUP",
+              "JMD",
+              "HTG",
+              "DOP",
+              "TTD",
+              "BBD",
+              "XCD",
+              "AWG",
+              "ANG",
+              "SRD",
+              "GYD",
+              "VEF",
+              "COP",
+              "PEN",
+              "CLP",
+              "ARS",
+              "UYU",
+              "PYG",
+              "BOB",
+              "VES",
+              "BRL",
+              "AUD",
+              "NZD",
+              "FJD",
+              "PGK",
+              "SBD",
+              "VUV",
+              "WST",
+              "TOP",
+              "KID",
+              "TVD",
+              "NUD",
+              "MHD",
+              "FMD",
+              "PWD"
+            ]
+          },
+          "startDate": { "type": "string", "format": "date" },
+          "nextDueDate": { "type": "string", "format": "date" },
+          "endDate": { "type": "string", "format": "date" },
+          "isActive": { "type": "boolean" },
+          "categoryId": { "type": "string" },
+          "dayOfMonth": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 31,
+            "minimum": 1
+          },
+          "dayOfWeek": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 7,
+            "minimum": 1
+          },
+          "monthOfYear": {
+            "type": "integer",
+            "format": "int32",
+            "maximum": 12,
+            "minimum": 1
+          },
+          "defaultWalletId": { "type": "string" },
+          "note": { "type": "string", "maxLength": 1000, "minLength": 0 }
+        },
+        "required": [
+          "amount",
+          "categoryId",
+          "currency",
+          "defaultWalletId",
+          "frequency",
+          "interval",
+          "isActive",
+          "name",
+          "startDate"
+        ]
+      },
+      "SubscriptionResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "username": { "type": "string" },
+          "name": { "type": "string" },
+          "iconUrl": { "type": "string" },
+          "frequency": {
+            "type": "string",
+            "enum": ["DAILY", "WEEKLY", "MONTHLY", "YEARLY"]
+          },
+          "interval": { "type": "integer", "format": "int32" },
+          "amount": { "type": "number" },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "JPY",
+              "CNY",
+              "HKD",
+              "PLN",
+              "CZK",
+              "HUF",
+              "RUB",
+              "TRY",
+              "KRW",
+              "SGD",
+              "TWD",
+              "THB",
+              "MYR",
+              "IDR",
+              "PHP",
+              "VND",
+              "INR",
+              "PKR",
+              "BDT",
+              "LKR",
+              "NPR",
+              "MMK",
+              "KHR",
+              "LAK",
+              "BND",
+              "MNT",
+              "KZT",
+              "UZS",
+              "KGS",
+              "TJS",
+              "TMT",
+              "AFN",
+              "IRR",
+              "IQD",
+              "SYP",
+              "LBP",
+              "JOD",
+              "EGP",
+              "LYD",
+              "TND",
+              "DZD",
+              "MAD",
+              "SDG",
+              "SSP",
+              "ETB",
+              "ERN",
+              "DJF",
+              "SOS",
+              "KES",
+              "UGX",
+              "TZS",
+              "RWF",
+              "BIF",
+              "CDF",
+              "XPF",
+              "NGN",
+              "XOF",
+              "ZAR",
+              "NAD",
+              "BWP",
+              "ZWL",
+              "ZMW",
+              "MWK",
+              "MZN",
+              "MGA",
+              "MUR",
+              "SCR",
+              "KMF",
+              "STN",
+              "CVE",
+              "AOA",
+              "XAF",
+              "SLL",
+              "LRD",
+              "MRO",
+              "LSL",
+              "SZL",
+              "GMD",
+              "GNF",
+              "GWP",
+              "MRT",
+              "AMD",
+              "AZN",
+              "GEL",
+              "UAH",
+              "BYN",
+              "MDL",
+              "RON",
+              "BGN",
+              "HRK",
+              "RSD",
+              "MKD",
+              "ALL",
+              "BAM",
+              "ISK",
+              "NOK",
+              "DKK",
+              "SEK",
+              "CHF",
+              "GBP",
+              "EUR",
+              "USD",
+              "CAD",
+              "MXN",
+              "GTQ",
+              "BZD",
+              "SVC",
+              "HNL",
+              "NIO",
+              "CRC",
+              "PAB",
+              "CUP",
+              "JMD",
+              "HTG",
+              "DOP",
+              "TTD",
+              "BBD",
+              "XCD",
+              "AWG",
+              "ANG",
+              "SRD",
+              "GYD",
+              "VEF",
+              "COP",
+              "PEN",
+              "CLP",
+              "ARS",
+              "UYU",
+              "PYG",
+              "BOB",
+              "VES",
+              "BRL",
+              "AUD",
+              "NZD",
+              "FJD",
+              "PGK",
+              "SBD",
+              "VUV",
+              "WST",
+              "TOP",
+              "KID",
+              "TVD",
+              "NUD",
+              "MHD",
+              "FMD",
+              "PWD"
+            ]
+          },
+          "startDate": { "type": "string", "format": "date" },
+          "nextDueDate": { "type": "string", "format": "date" },
+          "endDate": { "type": "string", "format": "date" },
+          "isActive": { "type": "boolean" },
+          "categoryId": { "type": "string" },
+          "categoryName": { "type": "string" },
+          "dayOfMonth": { "type": "integer", "format": "int32" },
+          "dayOfWeek": { "type": "integer", "format": "int32" },
+          "monthOfYear": { "type": "integer", "format": "int32" },
+          "defaultWalletId": { "type": "string" },
+          "defaultWalletName": { "type": "string" },
+          "note": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "monthlyEquivalentAmount": { "type": "number" }
+        }
+      },
+      "CategoryRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "maxLength": 100, "minLength": 1 },
+          "color": {
+            "type": "string",
+            "maxLength": 7,
+            "minLength": 7,
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          },
+          "categoryType": { "type": "string", "enum": ["EXPENSE", "INCOME"] },
+          "iconUrl": { "type": "string", "maxLength": 500, "minLength": 0 },
+          "parentCategoryId": { "type": "string" }
+        },
+        "required": ["categoryType", "color", "name"]
+      },
+      "CategoryResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "username": { "type": "string" },
+          "name": { "type": "string" },
+          "color": { "type": "string" },
+          "categoryType": { "type": "string", "enum": ["EXPENSE", "INCOME"] },
+          "iconUrl": { "type": "string" },
+          "parentCategoryId": { "type": "string" },
+          "parentCategoryName": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "active": { "type": "boolean" },
+          "childCount": { "type": "integer", "format": "int32" }
+        }
+      },
+      "ReorderWalletsRequest": {
+        "type": "object",
+        "properties": {
+          "walletIds": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["walletIds"]
+      },
+      "PaySubscriptionRequest": {
+        "type": "object",
+        "properties": {
+          "walletId": { "type": "string" },
+          "exchangeRate": { "type": "number", "minimum": 0.000001 }
+        }
+      },
+      "WalletListResponse": {
+        "type": "object",
+        "properties": {
+          "wallets": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/WalletResponse" }
+          },
+          "totalCount": { "type": "integer", "format": "int64" }
+        }
+      },
+      "Pageable": {
+        "type": "object",
+        "properties": {
+          "page": { "type": "integer", "format": "int32", "minimum": 0 },
+          "size": { "type": "integer", "format": "int32", "minimum": 1 },
+          "sort": { "type": "array", "items": { "type": "string" } }
+        }
+      },
+      "PageTransactionDto": {
+        "type": "object",
+        "properties": {
+          "totalElements": { "type": "integer", "format": "int64" },
+          "totalPages": { "type": "integer", "format": "int32" },
+          "size": { "type": "integer", "format": "int32" },
+          "content": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/TransactionDto" }
+          },
+          "number": { "type": "integer", "format": "int32" },
+          "sort": { "$ref": "#/components/schemas/Sortnull" },
+          "first": { "type": "boolean" },
+          "last": { "type": "boolean" },
+          "numberOfElements": { "type": "integer", "format": "int32" },
+          "pageable": { "$ref": "#/components/schemas/Pageablenull" },
+          "empty": { "type": "boolean" }
+        }
+      },
+      "Pageablenull": {
+        "type": "object",
+        "properties": {
+          "offset": { "type": "integer", "format": "int64" },
+          "sort": { "$ref": "#/components/schemas/Sortnull" },
+          "paged": { "type": "boolean" },
+          "pageNumber": { "type": "integer", "format": "int32" },
+          "pageSize": { "type": "integer", "format": "int32" },
+          "unpaged": { "type": "boolean" }
+        }
+      },
+      "Sortnull": {
+        "type": "object",
+        "properties": {
+          "empty": { "type": "boolean" },
+          "sorted": { "type": "boolean" },
+          "unsorted": { "type": "boolean" }
+        }
+      },
+      "TransactionDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "username": { "type": "string" },
+          "transactionType": {
+            "type": "string",
+            "enum": ["TRANSFER", "EXPENSE", "INCOME"]
+          },
+          "walletFromId": { "type": "string" },
+          "walletFromName": { "type": "string" },
+          "walletToId": { "type": "string" },
+          "walletToName": { "type": "string" },
+          "walletFromCurrency": {
+            "type": "string",
+            "enum": [
+              "JPY",
+              "CNY",
+              "HKD",
+              "PLN",
+              "CZK",
+              "HUF",
+              "RUB",
+              "TRY",
+              "KRW",
+              "SGD",
+              "TWD",
+              "THB",
+              "MYR",
+              "IDR",
+              "PHP",
+              "VND",
+              "INR",
+              "PKR",
+              "BDT",
+              "LKR",
+              "NPR",
+              "MMK",
+              "KHR",
+              "LAK",
+              "BND",
+              "MNT",
+              "KZT",
+              "UZS",
+              "KGS",
+              "TJS",
+              "TMT",
+              "AFN",
+              "IRR",
+              "IQD",
+              "SYP",
+              "LBP",
+              "JOD",
+              "EGP",
+              "LYD",
+              "TND",
+              "DZD",
+              "MAD",
+              "SDG",
+              "SSP",
+              "ETB",
+              "ERN",
+              "DJF",
+              "SOS",
+              "KES",
+              "UGX",
+              "TZS",
+              "RWF",
+              "BIF",
+              "CDF",
+              "XPF",
+              "NGN",
+              "XOF",
+              "ZAR",
+              "NAD",
+              "BWP",
+              "ZWL",
+              "ZMW",
+              "MWK",
+              "MZN",
+              "MGA",
+              "MUR",
+              "SCR",
+              "KMF",
+              "STN",
+              "CVE",
+              "AOA",
+              "XAF",
+              "SLL",
+              "LRD",
+              "MRO",
+              "LSL",
+              "SZL",
+              "GMD",
+              "GNF",
+              "GWP",
+              "MRT",
+              "AMD",
+              "AZN",
+              "GEL",
+              "UAH",
+              "BYN",
+              "MDL",
+              "RON",
+              "BGN",
+              "HRK",
+              "RSD",
+              "MKD",
+              "ALL",
+              "BAM",
+              "ISK",
+              "NOK",
+              "DKK",
+              "SEK",
+              "CHF",
+              "GBP",
+              "EUR",
+              "USD",
+              "CAD",
+              "MXN",
+              "GTQ",
+              "BZD",
+              "SVC",
+              "HNL",
+              "NIO",
+              "CRC",
+              "PAB",
+              "CUP",
+              "JMD",
+              "HTG",
+              "DOP",
+              "TTD",
+              "BBD",
+              "XCD",
+              "AWG",
+              "ANG",
+              "SRD",
+              "GYD",
+              "VEF",
+              "COP",
+              "PEN",
+              "CLP",
+              "ARS",
+              "UYU",
+              "PYG",
+              "BOB",
+              "VES",
+              "BRL",
+              "AUD",
+              "NZD",
+              "FJD",
+              "PGK",
+              "SBD",
+              "VUV",
+              "WST",
+              "TOP",
+              "KID",
+              "TVD",
+              "NUD",
+              "MHD",
+              "FMD",
+              "PWD"
+            ]
+          },
+          "walletToCurrency": {
+            "type": "string",
+            "enum": [
+              "JPY",
+              "CNY",
+              "HKD",
+              "PLN",
+              "CZK",
+              "HUF",
+              "RUB",
+              "TRY",
+              "KRW",
+              "SGD",
+              "TWD",
+              "THB",
+              "MYR",
+              "IDR",
+              "PHP",
+              "VND",
+              "INR",
+              "PKR",
+              "BDT",
+              "LKR",
+              "NPR",
+              "MMK",
+              "KHR",
+              "LAK",
+              "BND",
+              "MNT",
+              "KZT",
+              "UZS",
+              "KGS",
+              "TJS",
+              "TMT",
+              "AFN",
+              "IRR",
+              "IQD",
+              "SYP",
+              "LBP",
+              "JOD",
+              "EGP",
+              "LYD",
+              "TND",
+              "DZD",
+              "MAD",
+              "SDG",
+              "SSP",
+              "ETB",
+              "ERN",
+              "DJF",
+              "SOS",
+              "KES",
+              "UGX",
+              "TZS",
+              "RWF",
+              "BIF",
+              "CDF",
+              "XPF",
+              "NGN",
+              "XOF",
+              "ZAR",
+              "NAD",
+              "BWP",
+              "ZWL",
+              "ZMW",
+              "MWK",
+              "MZN",
+              "MGA",
+              "MUR",
+              "SCR",
+              "KMF",
+              "STN",
+              "CVE",
+              "AOA",
+              "XAF",
+              "SLL",
+              "LRD",
+              "MRO",
+              "LSL",
+              "SZL",
+              "GMD",
+              "GNF",
+              "GWP",
+              "MRT",
+              "AMD",
+              "AZN",
+              "GEL",
+              "UAH",
+              "BYN",
+              "MDL",
+              "RON",
+              "BGN",
+              "HRK",
+              "RSD",
+              "MKD",
+              "ALL",
+              "BAM",
+              "ISK",
+              "NOK",
+              "DKK",
+              "SEK",
+              "CHF",
+              "GBP",
+              "EUR",
+              "USD",
+              "CAD",
+              "MXN",
+              "GTQ",
+              "BZD",
+              "SVC",
+              "HNL",
+              "NIO",
+              "CRC",
+              "PAB",
+              "CUP",
+              "JMD",
+              "HTG",
+              "DOP",
+              "TTD",
+              "BBD",
+              "XCD",
+              "AWG",
+              "ANG",
+              "SRD",
+              "GYD",
+              "VEF",
+              "COP",
+              "PEN",
+              "CLP",
+              "ARS",
+              "UYU",
+              "PYG",
+              "BOB",
+              "VES",
+              "BRL",
+              "AUD",
+              "NZD",
+              "FJD",
+              "PGK",
+              "SBD",
+              "VUV",
+              "WST",
+              "TOP",
+              "KID",
+              "TVD",
+              "NUD",
+              "MHD",
+              "FMD",
+              "PWD"
+            ]
+          },
+          "amount": { "type": "number" },
+          "exchangeRate": { "type": "number" },
+          "walletToAmount": { "type": "number" },
+          "categoryId": { "type": "string" },
+          "categoryName": { "type": "string" },
+          "iconUrl": { "type": "string" },
+          "note": { "type": "string" },
+          "effectiveDate": { "type": "string", "format": "date" },
+          "subscriptionId": { "type": "string" },
+          "subscriptionName": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "date-time" }
+        }
+      },
+      "TransactionListResponse": {
+        "type": "object",
+        "properties": {
+          "transactions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/TransactionResponse" }
+          },
+          "totalCount": { "type": "integer", "format": "int64" }
+        }
+      },
+      "CategoryListResponse": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CategoryResponse" }
+          },
+          "totalCount": { "type": "integer", "format": "int64" }
+        }
+      }
+    }
+  }
+}
