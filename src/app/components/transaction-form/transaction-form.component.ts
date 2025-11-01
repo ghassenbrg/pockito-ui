@@ -27,8 +27,8 @@ import {
 } from '@shared/components/pockito-button/pockito-button.component';
 import { PockitoSelectorComponent } from '@shared/components/pockito-selector/pockito-selector.component';
 import { ToastService } from '@shared/services/toast.service';
-import { TransactionsStateService } from '../../../state/transaction/transactions-state.service';
-import { WalletStateService } from '../../../state/wallet/wallet-state.service';
+import { TransactionsStateService } from '../../state/transaction/transactions-state.service';
+import { WalletStateService } from '../../state/wallet/wallet-state.service';
 
 // PrimeNG imports
 import { CalendarModule } from 'primeng/calendar';

@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { TransactionType, TransactionDto } from '@api/models';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PockitoDialogComponent } from '@shared/components/pockito-dialog/pockito-dialog.component';
-import { TransactionFormComponent } from '@shared/components/transaction-form/transaction-form.component';
-import { TransactionsStateService } from '../../../state/transaction/transactions-state.service';
+import { TransactionFormComponent } from '@app/components/transaction-form/transaction-form.component';
+import { TransactionsStateService } from '../../state/transaction/transactions-state.service';
 import { LoadingService } from '@shared/services/loading.service';
 import { ToastService } from '@shared/services/toast.service';
 

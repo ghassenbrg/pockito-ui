@@ -7,11 +7,11 @@ import { TransactionsStateService } from '../../../state/transaction/transaction
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PockitoButtonType } from '@shared/components/pockito-button/pockito-button.component';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
-import { TransactionListComponent } from '@shared/components/transaction-list/transaction-list.component';
+import { TransactionListComponent } from '@app/components/transaction-list/transaction-list.component';
 import { LoadingService, ToastService } from '@shared/services';
 import { PockitoCurrencyPipe } from '@shared/pipes/pockito-currency.pipe';
 import { ButtonModule } from 'primeng/button';
-import { WalletFormDialogComponent } from '@shared/components/wallet-form-dialog/wallet-form-dialog.component';
+import { WalletFormDialogComponent } from '@app/components/wallet-form-dialog/wallet-form-dialog.component';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 

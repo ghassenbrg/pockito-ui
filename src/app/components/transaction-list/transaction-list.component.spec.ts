@@ -4,7 +4,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TransactionListComponent } from './transaction-list.component';
-import { TransactionsStateService } from '../../../state/transaction/transactions-state.service';
+import { TransactionsStateService } from '../../state/transaction/transactions-state.service';
 
 describe('TransactionListComponent', () => {
   let component: TransactionListComponent;

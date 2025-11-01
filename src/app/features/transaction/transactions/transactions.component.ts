@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PageTransactionDto, Pageable, TransactionDto } from '@api/models';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
-import { TransactionListComponent } from '@shared/components/transaction-list/transaction-list.component';
+import { TransactionListComponent } from '@app/components/transaction-list/transaction-list.component';
 import { LoadingService, ToastService } from '@shared/services';
 import { TransactionsStateService } from '../../../state/transaction/transactions-state.service';
 import { Observable, Subject } from 'rxjs';

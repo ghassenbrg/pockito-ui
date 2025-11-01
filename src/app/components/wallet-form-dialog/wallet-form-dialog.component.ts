@@ -4,7 +4,7 @@ import { Wallet } from '@api/models';
 import { TranslatePipe } from '@ngx-translate/core';
 import { PockitoDialogComponent } from '@shared/components/pockito-dialog/pockito-dialog.component';
 import { WalletFormComponent } from '@features/wallet/wallet-form/wallet-form.component';
-import { WalletStateService } from '../../../state/wallet/wallet-state.service';
+import { WalletStateService } from '../../state/wallet/wallet-state.service';
 import { ToastService } from '@shared/services/toast.service';
 import { TranslateService } from '@ngx-translate/core';
 import { LoadingService } from '@shared/services/loading.service';

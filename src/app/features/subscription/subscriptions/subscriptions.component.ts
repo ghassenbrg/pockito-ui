@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription as SubscriptionModel, SubscriptionFrequency } from '@api/models';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { PageHeaderComponent } from '@shared/components/page-header/page-header.component';
-import { SubscriptionListComponent } from '@shared/components/subscription-list/subscription-list.component';
+import { SubscriptionListComponent } from '@app/components/subscription-list/subscription-list.component';
 import { PockitoButtonComponent, PockitoButtonType } from '@shared/components/pockito-button/pockito-button.component';
 import { PockitoCurrencyPipe } from '@shared/pipes/pockito-currency.pipe';
 import { LoadingService, ToastService } from '@shared/services';

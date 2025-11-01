@@ -3,8 +3,8 @@ import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange
 import { Subscription, SubscriptionFrequency } from '@api/models';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
-import { PockitoCurrencyPipe } from '../../pipes/pockito-currency.pipe';
-import { EmptyStateComponent } from '../empty-state/empty-state.component';
+import { PockitoCurrencyPipe } from '../../shared/pipes/pockito-currency.pipe';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-subscription-list',

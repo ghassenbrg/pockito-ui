@@ -14,7 +14,7 @@ import { PageHeaderComponent } from '@shared/components/page-header/page-header.
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { LoadingService, ToastService } from '@shared/services';
 import { PockitoCurrencyPipe } from '../../../shared/pipes/pockito-currency.pipe';
-import { WalletFormDialogComponent } from '@shared/components/wallet-form-dialog/wallet-form-dialog.component';
+import { WalletFormDialogComponent } from '@app/components/wallet-form-dialog/wallet-form-dialog.component';
 
 @Component({
   selector: 'app-wallets',

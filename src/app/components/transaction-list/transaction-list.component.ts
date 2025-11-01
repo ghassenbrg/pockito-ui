@@ -4,8 +4,8 @@ import { PageTransactionDto, TransactionType, Wallet, TransactionDto } from '@ap
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
-import { PockitoCurrencyPipe } from '../../pipes/pockito-currency.pipe';
-import { EmptyStateComponent } from '../empty-state/empty-state.component';
+import { PockitoCurrencyPipe } from '../../shared/pipes/pockito-currency.pipe';
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 import { TransactionFormDialogComponent } from '../transaction-form-dialog/transaction-form-dialog.component';
 
 @Component({
