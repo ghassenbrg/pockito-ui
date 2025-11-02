@@ -274,6 +274,7 @@
       "searchFrequencies": "Search frequencies",
       "interval": "Interval",
       "intervalPlaceholder": "1",
+      "intervalExplanation": "(Every X times of the selected frequency - e.g., every 3 months)",
       "dayOfMonth": "Day of Month",
       "dayOfMonthPlaceholder": "1-31",
       "dayOfWeek": "Day of Week",

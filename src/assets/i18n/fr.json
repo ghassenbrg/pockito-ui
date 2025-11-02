@@ -272,6 +272,7 @@
       "searchFrequencies": "Rechercher des fréquences",
       "interval": "Intervalle",
       "intervalPlaceholder": "1",
+      "intervalExplanation": "(Tous les X fois de la fréquence sélectionnée - ex. tous les 3 mois)",
       "dayOfMonth": "Jour du Mois",
       "dayOfMonthPlaceholder": "1-31",
       "dayOfWeek": "Jour de la Semaine",

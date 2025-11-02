@@ -272,6 +272,7 @@
       "searchFrequencies": "頻度を検索",
       "interval": "間隔",
       "intervalPlaceholder": "1",
+      "intervalExplanation": "(選択された頻度のX回ごと - 例：3ヶ月ごと)",
       "dayOfMonth": "月の日",
       "dayOfMonthPlaceholder": "1-31",
       "dayOfWeek": "週の日",

@@ -620,7 +620,7 @@ export class SubscriptionFormComponent implements OnInit {
     this.frequencyDialogOptions = this.frequencies.map((frequency) => ({
       id: frequency,
       name: this.getFrequencyLabel(frequency),
-      iconUrl: 'pi pi-calendar',
+      iconUrl: `/assets/icons/frequency/${frequency}.png`,
       fallbackIcon: 'pi pi-calendar',
       type: 'FREQUENCY',
       typeLabel: this.translate.instant('common.frequency'),
@@ -635,7 +635,8 @@ export class SubscriptionFormComponent implements OnInit {
     this.dayOfWeekDialogOptions = this.daysOfWeek.map((day) => ({
       id: day,
       name: this.translate.instant(`enums.dayOfWeek.${day}`),
-      iconUrl: 'pi pi-calendar',
+      iconUrl: `/assets/icons/days/${day}.png`,
+      fallbackIcon: 'pi pi-calendar',
       type: 'DAY_OF_WEEK',
       typeLabel: this.translate.instant('common.dayOfWeek'),
     }));
@@ -649,7 +650,8 @@ export class SubscriptionFormComponent implements OnInit {
     this.monthOfYearDialogOptions = this.monthsOfYear.map((month) => ({
       id: month,
       name: this.translate.instant(`enums.monthOfYear.${month}`),
-      iconUrl: 'pi pi-calendar',
+      iconUrl: `/assets/icons/months/${month}.png`,
+      fallbackIcon: 'pi pi-calendar',
       type: 'MONTH_OF_YEAR',
       typeLabel: this.translate.instant('common.monthOfYear'),
     }));
