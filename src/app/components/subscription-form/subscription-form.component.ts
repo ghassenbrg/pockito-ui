@@ -16,6 +16,8 @@ import {
   CategoryType,
   Wallet,
   User,
+  DayOfWeek,
+  MonthOfYear,
 } from '@api/models';
 import { CategoryService, UserService } from '@api/services';
 import { getCurrencyFlagIcon, getCurrencySymbol } from '@core/utils/currency-country.mapping';
@@ -72,6 +74,8 @@ export class SubscriptionFormComponent implements OnInit {
   // Available options
   currencies = Object.values(Currency);
   frequencies = Object.values(SubscriptionFrequency);
+  daysOfWeek = Object.values(DayOfWeek);
+  monthsOfYear = Object.values(MonthOfYear);
 
   // Data arrays
   categories: Category[] = [];
@@ -81,12 +85,16 @@ export class SubscriptionFormComponent implements OnInit {
   // PrimeNG dropdown options
   currencyOptions: any[] = [];
   frequencyOptions: any[] = [];
+  dayOfWeekOptions: any[] = [];
+  monthOfYearOptions: any[] = [];
 
   // Dialog options for selectors
   currencyDialogOptions: DialogOption[] = [];
   frequencyDialogOptions: DialogOption[] = [];
   categoryDialogOptions: DialogOption[] = [];
   walletDialogOptions: DialogOption[] = [];
+  dayOfWeekDialogOptions: DialogOption[] = [];
+  monthOfYearDialogOptions: DialogOption[] = [];
 
   // Button types and sizes for template
   PockitoButtonType = PockitoButtonType;
@@ -151,7 +159,6 @@ export class SubscriptionFormComponent implements OnInit {
       amount: [null, [Validators.required, Validators.min(0)]],
       currency: [undefined, Validators.required],
       startDate: [null, Validators.required],
-      nextDueDate: [null],
       endDate: [null],
       isActive: [true],
       categoryId: [undefined, Validators.required],
@@ -184,9 +191,9 @@ export class SubscriptionFormComponent implements OnInit {
     if (frequency === SubscriptionFrequency.MONTHLY) {
       dayOfMonthControl?.setValidators([Validators.required, Validators.min(1), Validators.max(31)]);
     } else if (frequency === SubscriptionFrequency.WEEKLY) {
-      dayOfWeekControl?.setValidators([Validators.required, Validators.min(1), Validators.max(7)]);
+      dayOfWeekControl?.setValidators([Validators.required]);
     } else if (frequency === SubscriptionFrequency.YEARLY) {
-      monthOfYearControl?.setValidators([Validators.required, Validators.min(1), Validators.max(12)]);
+      monthOfYearControl?.setValidators([Validators.required]);
       dayOfMonthControl?.setValidators([Validators.required, Validators.min(1), Validators.max(31)]);
     }
 
@@ -222,14 +229,13 @@ export class SubscriptionFormComponent implements OnInit {
       interval: subscription.interval,
       amount: subscription.amount,
       currency: subscription.currency,
-      startDate: subscription.startDate ? new Date(subscription.startDate) : null,
-      nextDueDate: subscription.nextDueDate ? new Date(subscription.nextDueDate) : null,
-      endDate: subscription.endDate ? new Date(subscription.endDate) : null,
+      startDate: this.parseLocalDate(subscription.startDate),
+      endDate: this.parseLocalDate(subscription.endDate),
       isActive: subscription.isActive,
       categoryId: subscription.categoryId,
       dayOfMonth: subscription.dayOfMonth,
-      dayOfWeek: subscription.dayOfWeek,
-      monthOfYear: subscription.monthOfYear,
+      dayOfWeek: subscription.dayOfWeek || undefined,
+      monthOfYear: subscription.monthOfYear || undefined,
       defaultWalletId: subscription.defaultWalletId,
       note: subscription.note || '',
     });
@@ -305,15 +311,14 @@ export class SubscriptionFormComponent implements OnInit {
         frequency: formValue.frequency,
         interval: formValue.interval,
         amount: formValue.amount,
-        currency: formValue.currency,
-        startDate: this.formatLocalDateString(formValue.startDate),
-        nextDueDate: formValue.nextDueDate ? this.formatLocalDateString(formValue.nextDueDate) : undefined,
-        endDate: formValue.endDate ? this.formatLocalDateString(formValue.endDate) : undefined,
-        isActive: formValue.isActive ?? true,
-        categoryId: formValue.categoryId,
-        dayOfMonth: formValue.dayOfMonth || undefined,
-        dayOfWeek: formValue.dayOfWeek ?? undefined,
-        monthOfYear: formValue.monthOfYear || undefined,
+      currency: formValue.currency,
+      startDate: this.formatLocalDateString(formValue.startDate),
+      endDate: formValue.endDate ? this.formatLocalDateString(formValue.endDate) : undefined,
+      isActive: formValue.isActive ?? true,
+      categoryId: formValue.categoryId,
+      dayOfMonth: formValue.dayOfMonth || undefined,
+      dayOfWeek: formValue.dayOfWeek || undefined,
+      monthOfYear: formValue.monthOfYear || undefined,
         defaultWalletId: formValue.defaultWalletId,
         note: formValue.note || undefined,
       };
@@ -334,6 +339,24 @@ export class SubscriptionFormComponent implements OnInit {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  }
+
+  /**
+   * Parses a date from API response without timezone conversion
+   * @param dateValue - Date string or Date object from API
+   * @returns Date object representing the local date
+   */
+  private parseLocalDate(dateValue: string | Date | null | undefined): Date | null {
+    if (!dateValue) return null;
+    if (dateValue instanceof Date) {
+      return new Date(dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate());
+    }
+    if (typeof dateValue === 'string') {
+      // Parse date string and create local date
+      const date = new Date(dateValue);
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+    return null;
   }
 
   private createSubscription(subscriptionData: SubscriptionRequest): void {
@@ -532,6 +555,46 @@ export class SubscriptionFormComponent implements OnInit {
     return this.walletDialogOptions.find((option) => option.id === walletId);
   }
 
+  getSelectedDayOfWeek(dayOfWeek?: DayOfWeek): DialogOption | undefined {
+    if (!dayOfWeek) return undefined;
+    return this.dayOfWeekDialogOptions.find((option) => option.id === dayOfWeek);
+  }
+
+  getSelectedMonthOfYear(monthOfYear?: MonthOfYear): DialogOption | undefined {
+    if (!monthOfYear) return undefined;
+    return this.monthOfYearDialogOptions.find((option) => option.id === monthOfYear);
+  }
+
+  // Day of week selector event handlers
+  onDayOfWeekSelected(dayOfWeek: string | null): void {
+    this.subscriptionForm.patchValue({ dayOfWeek: dayOfWeek || undefined });
+    this.subscriptionForm.get('dayOfWeek')?.markAsTouched();
+  }
+
+  onDayOfWeekCleared(): void {
+    this.subscriptionForm.patchValue({ dayOfWeek: undefined });
+    this.subscriptionForm.get('dayOfWeek')?.markAsTouched();
+  }
+
+  onDayOfWeekTouched(): void {
+    this.subscriptionForm.get('dayOfWeek')?.markAsTouched();
+  }
+
+  // Month of year selector event handlers
+  onMonthOfYearSelected(monthOfYear: string | null): void {
+    this.subscriptionForm.patchValue({ monthOfYear: monthOfYear || undefined });
+    this.subscriptionForm.get('monthOfYear')?.markAsTouched();
+  }
+
+  onMonthOfYearCleared(): void {
+    this.subscriptionForm.patchValue({ monthOfYear: undefined });
+    this.subscriptionForm.get('monthOfYear')?.markAsTouched();
+  }
+
+  onMonthOfYearTouched(): void {
+    this.subscriptionForm.get('monthOfYear')?.markAsTouched();
+  }
+
   private initializeDropdownOptions(): void {
     // Initialize currency options for PrimeNG dropdown (keeping for compatibility)
     this.currencyOptions = this.currencies.map((currency) => ({
@@ -561,6 +624,34 @@ export class SubscriptionFormComponent implements OnInit {
       fallbackIcon: 'pi pi-calendar',
       type: 'FREQUENCY',
       typeLabel: this.translate.instant('common.frequency'),
+    }));
+
+    // Initialize day of week options
+    this.dayOfWeekOptions = this.daysOfWeek.map((day) => ({
+      label: this.translate.instant(`enums.dayOfWeek.${day}`),
+      value: day,
+    }));
+
+    this.dayOfWeekDialogOptions = this.daysOfWeek.map((day) => ({
+      id: day,
+      name: this.translate.instant(`enums.dayOfWeek.${day}`),
+      iconUrl: 'pi pi-calendar',
+      type: 'DAY_OF_WEEK',
+      typeLabel: this.translate.instant('common.dayOfWeek'),
+    }));
+
+    // Initialize month of year options
+    this.monthOfYearOptions = this.monthsOfYear.map((month) => ({
+      label: this.translate.instant(`enums.monthOfYear.${month}`),
+      value: month,
+    }));
+
+    this.monthOfYearDialogOptions = this.monthsOfYear.map((month) => ({
+      id: month,
+      name: this.translate.instant(`enums.monthOfYear.${month}`),
+      iconUrl: 'pi pi-calendar',
+      type: 'MONTH_OF_YEAR',
+      typeLabel: this.translate.instant('common.monthOfYear'),
     }));
   }
 

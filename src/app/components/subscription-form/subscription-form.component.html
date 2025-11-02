@@ -181,20 +181,19 @@
         {{ "subscriptions.form.dayOfWeek" | translate }}
         <span class="required">{{ "subscriptions.form.required" | translate }}</span>
       </label>
-      <p-inputNumber
+      <app-pockito-selector
         id="subscription-day-of-week"
-        formControlName="dayOfWeek"
-        [placeholder]="'subscriptions.form.dayOfWeekPlaceholder' | translate"
-        [min]="1"
-        [max]="7"
-        [step]="1"
-        [useGrouping]="false"
-        inputMode="numeric"
-        [class.p-invalid]="
-          subscriptionForm.get('dayOfWeek')?.invalid &&
-          subscriptionForm.get('dayOfWeek')?.touched
+        [options]="dayOfWeekDialogOptions"
+        [selectedId]="subscriptionForm.get('dayOfWeek')?.value"
+        [selectedItem]="getSelectedDayOfWeek(subscriptionForm.get('dayOfWeek')?.value)"
+        (itemSelected)="onDayOfWeekSelected($event)"
+        (itemCleared)="onDayOfWeekCleared()"
+        (itemTouched)="onDayOfWeekTouched()"
+        [isInvalid]="
+          (subscriptionForm.get('dayOfWeek')?.invalid &&
+          subscriptionForm.get('dayOfWeek')?.touched) || false
         "
-        styleClass="w-full"
+        [placeholder]="'subscriptions.form.dayOfWeekPlaceholder' | translate"
       />
       <small
         *ngIf="getFieldError('dayOfWeek')"
@@ -211,20 +210,19 @@
         {{ "subscriptions.form.monthOfYear" | translate }}
         <span class="required">{{ "subscriptions.form.required" | translate }}</span>
       </label>
-      <p-inputNumber
+      <app-pockito-selector
         id="subscription-month-of-year"
-        formControlName="monthOfYear"
-        [placeholder]="'subscriptions.form.monthOfYearPlaceholder' | translate"
-        [min]="1"
-        [max]="12"
-        [step]="1"
-        [useGrouping]="false"
-        inputMode="numeric"
-        [class.p-invalid]="
-          subscriptionForm.get('monthOfYear')?.invalid &&
-          subscriptionForm.get('monthOfYear')?.touched
+        [options]="monthOfYearDialogOptions"
+        [selectedId]="subscriptionForm.get('monthOfYear')?.value"
+        [selectedItem]="getSelectedMonthOfYear(subscriptionForm.get('monthOfYear')?.value)"
+        (itemSelected)="onMonthOfYearSelected($event)"
+        (itemCleared)="onMonthOfYearCleared()"
+        (itemTouched)="onMonthOfYearTouched()"
+        [isInvalid]="
+          (subscriptionForm.get('monthOfYear')?.invalid &&
+          subscriptionForm.get('monthOfYear')?.touched) || false
         "
-        styleClass="w-full"
+        [placeholder]="'subscriptions.form.monthOfYearPlaceholder' | translate"
       />
       <small
         *ngIf="getFieldError('monthOfYear')"
