@@ -21,7 +21,7 @@ export class PockitoToggleComponent implements ControlValueAccessor {
   @Input() disabled: boolean = false;
 
   value: boolean = false;
-  private onChange = (value: boolean) => {};
+  private onChange = (_value: boolean) => {};
   private onTouched = () => {};
 
   toggle(): void {
@@ -34,11 +34,11 @@ export class PockitoToggleComponent implements ControlValueAccessor {
   }
 
   // ControlValueAccessor implementation
-  writeValue(value: boolean): void {
-    this.value = value || false;
+  writeValue(_value: boolean): void {
+    this.value = _value || false;
   }
 
-  registerOnChange(fn: (value: boolean) => void): void {
+  registerOnChange(fn: (_value: boolean) => void): void {
     this.onChange = fn;
   }
 
