@@ -32,7 +32,6 @@ import { PockitoSelectorComponent } from '@shared/components/pockito-selector/po
 import { ToastService } from '@shared/services/toast.service';
 import { SubscriptionStateService } from '../../state/subscription/subscription-state.service';
 import { WalletStateService } from '../../state/wallet/wallet-state.service';
-import { LoadingService } from '@shared/services/loading.service';
 import { filter, take } from 'rxjs/operators';
 import { PockitoToggleComponent } from '@shared/components/pockito-toggle/pockito-toggle.component';
 
@@ -69,7 +68,6 @@ export class SubscriptionFormComponent implements OnInit {
   subscriptionForm: FormGroup;
   currentUser: User | null = null;
   isEditMode: boolean = false;
-  isLoading: boolean = false;
 
   // Available options
   currencies = Object.values(Currency);
@@ -100,6 +98,11 @@ export class SubscriptionFormComponent implements OnInit {
   PockitoButtonType = PockitoButtonType;
   PockitoButtonSize = PockitoButtonSize;
 
+  // Expose loading state for template
+  get isLoading$() {
+    return this.subscriptionState.isLoading$;
+  }
+
   constructor(
     private fb: FormBuilder,
     private subscriptionState: SubscriptionStateService,
@@ -107,8 +110,7 @@ export class SubscriptionFormComponent implements OnInit {
     private categoryService: CategoryService,
     private userService: UserService,
     private translate: TranslateService,
-    private toastService: ToastService,
-    private loadingService: LoadingService
+    private toastService: ToastService
   ) {
     this.subscriptionForm = this.createForm();
   }
@@ -360,11 +362,8 @@ export class SubscriptionFormComponent implements OnInit {
   }
 
   private createSubscription(subscriptionData: SubscriptionRequest): void {
-    const loadingId = this.loadingService.show(this.translate.instant('common.loading'));
-
     this.subscriptionState.createSubscription(subscriptionData).subscribe({
       next: (created) => {
-        this.loadingService.hide(loadingId);
         this.subscriptionSaved.emit(created);
         this.toastService.showSuccess(
           'subscriptions.createSubscriptionSuccess',
@@ -373,18 +372,14 @@ export class SubscriptionFormComponent implements OnInit {
         );
       },
       error: () => {
-        this.loadingService.hide(loadingId);
         this.toastService.showError('subscriptions.createSubscriptionError', 'subscriptions.createSubscriptionErrorMessage');
       },
     });
   }
 
   private updateSubscription(subscriptionId: string, subscriptionData: SubscriptionRequest): void {
-    const loadingId = this.loadingService.show(this.translate.instant('common.loading'));
-
     this.subscriptionState.updateSubscription(subscriptionId, subscriptionData).subscribe({
       next: (updated) => {
-        this.loadingService.hide(loadingId);
         this.subscriptionSaved.emit(updated);
         this.toastService.showSuccess(
           'subscriptions.updateSubscriptionSuccess',
@@ -393,7 +388,6 @@ export class SubscriptionFormComponent implements OnInit {
         );
       },
       error: () => {
-        this.loadingService.hide(loadingId);
         this.toastService.showError('subscriptions.updateSubscriptionError', 'subscriptions.updateSubscriptionErrorMessage');
       },
     });

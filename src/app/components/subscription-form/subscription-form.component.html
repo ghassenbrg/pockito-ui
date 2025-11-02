@@ -69,9 +69,12 @@
         id="subscription-amount"
         formControlName="amount"
         [placeholder]="'subscriptions.form.amountPlaceholder' | translate"
+        mode="decimal"
         [min]="0"
         [step]="0.01"
         [useGrouping]="true"
+        [minFractionDigits]="0"
+        [maxFractionDigits]="2"
         inputMode="decimal"
         [class.p-invalid]="
           subscriptionForm.get('amount')?.invalid &&
@@ -442,7 +445,7 @@
         [type]="PockitoButtonType.CANCEL"
         [size]="PockitoButtonSize.MEDIUM"
         (click)="onCancel()"
-        [disabled]="isLoading"
+        [disabled]="(isLoading$ | async) ?? false"
         class="cancel-button"
       >
         {{ "subscriptions.form.actions.cancel" | translate }}
@@ -452,8 +455,8 @@
         [type]="PockitoButtonType.SUBMIT"
         [size]="PockitoButtonSize.MEDIUM"
         buttonType="submit"
-        [loading]="isLoading"
-        [disabled]="subscriptionForm.invalid || isLoading"
+        [loading]="(isLoading$ | async) ?? false"
+        [disabled]="subscriptionForm.invalid || ((isLoading$ | async) ?? false)"
       >
         {{
           isEditMode
