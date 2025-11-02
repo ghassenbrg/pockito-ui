@@ -91,31 +91,43 @@
                       transaction.transactionType === TransactionType.TRANSFER
                     "
                   >
-                    <span class="wallet-from">{{
-                      transaction.walletFromName || ('common.outOfPockito' | translate)
-                    }}</span>
+                    <span class="wallet-from">
+                      <i [class]="transaction.walletFromName ? 'fa-solid fa-wallet wallet-icon' : 'fa-solid fa-external-link-alt wallet-icon'"></i>
+                      {{
+                        transaction.walletFromName || ('common.outOfPockito' | translate)
+                      }}
+                    </span>
                     <span class="wallet-separator">→</span>
-                    <span class="wallet-to">{{
-                      transaction.walletToName || ('common.outOfPockito' | translate)
-                    }}</span>
+                    <span class="wallet-to">
+                      <i [class]="transaction.walletToName ? 'fa-solid fa-wallet wallet-icon' : 'fa-solid fa-external-link-alt wallet-icon'"></i>
+                      {{
+                        transaction.walletToName || ('common.outOfPockito' | translate)
+                      }}
+                    </span>
                   </ng-container>
                   <ng-container
                     *ngIf="
                       transaction.transactionType === TransactionType.EXPENSE
                     "
                   >
-                    <span class="wallet-from">{{
-                      transaction.walletFromName || ('common.outOfPockito' | translate)
-                    }}</span>
+                    <span class="wallet-from">
+                      <i [class]="transaction.walletFromName ? 'fa-solid fa-wallet wallet-icon' : 'fa-solid fa-external-link-alt wallet-icon'"></i>
+                      {{
+                        transaction.walletFromName || ('common.outOfPockito' | translate)
+                      }}
+                    </span>
                   </ng-container>
                   <ng-container
                     *ngIf="
                       transaction.transactionType === TransactionType.INCOME
                     "
                   >
-                    <span class="wallet-from">{{
-                      transaction.walletToName || ('common.outOfPockito' | translate)
-                    }}</span>
+                    <span class="wallet-from">
+                      <i [class]="transaction.walletToName ? 'fa-solid fa-wallet wallet-icon' : 'fa-solid fa-external-link-alt wallet-icon'"></i>
+                      {{
+                        transaction.walletToName || ('common.outOfPockito' | translate)
+                      }}
+                    </span>
                   </ng-container>
                 </span>
 
@@ -164,7 +176,7 @@
                 </span>
                 <span
                   *ngIf="!walletId && transaction.transactionType === 'EXPENSE'"
-                  class="amount-negative"
+                  [ngClass]="transaction.walletFromId ? 'amount-negative' : 'amount-neutral'"
                 >
                   {{
                     transaction.amount * -1

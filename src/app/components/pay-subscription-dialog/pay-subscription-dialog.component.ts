@@ -41,7 +41,14 @@ export class PaySubscriptionDialogComponent implements OnInit, OnDestroy, OnChan
   payForm: FormGroup;
   wallets: Wallet[] = [];
   walletOptions: DialogOption[] = [];
-  
+  outOfPockitoOption: DialogOption = {
+    id: null,
+    name: this.translate.instant('common.outOfPockito'),
+    iconUrl: '/assets/icons/out-of-pockito.png',
+    fallbackIcon: 'pi pi-external-link',
+    type: 'OUT_OF_POCKITO',
+    typeLabel: this.translate.instant('common.outOfPockito')
+  };
   PockitoButtonType = PockitoButtonType;
   PockitoButtonSize = PockitoButtonSize;
   
@@ -76,7 +83,7 @@ export class PaySubscriptionDialogComponent implements OnInit, OnDestroy, OnChan
 
   private createForm(): FormGroup {
     return this.fb.group({
-      walletId: [null, Validators.required],
+      walletId: [null],
       exchangeRate: [1, [Validators.required, Validators.min(0.0001)]]
     });
   }
@@ -102,10 +109,15 @@ export class PaySubscriptionDialogComponent implements OnInit, OnDestroy, OnChan
       return;
     }
 
+    // Need both subscription and wallets to set default wallet
+    if (!this.subscription || !this.wallets || this.wallets.length === 0) {
+      return;
+    }
+
     let defaultWallet: Wallet | undefined;
 
     // First priority: subscription's default wallet
-    if (this.subscription?.defaultWalletId) {
+    if (this.subscription.defaultWalletId) {
       defaultWallet = this.wallets.find(w => w.id === this.subscription?.defaultWalletId);
     }
 
@@ -121,7 +133,17 @@ export class PaySubscriptionDialogComponent implements OnInit, OnDestroy, OnChan
   }
 
   private updateWalletOptions(): void {
-    this.walletOptions = this.wallets.map(wallet => ({
+    // Add "Out of Pockito" option at the beginning
+    this.outOfPockitoOption = {
+      id: null,
+      name: this.translate.instant('common.outOfPockito'),
+      iconUrl: '/assets/icons/out-of-pockito.png',
+      fallbackIcon: 'pi pi-external-link',
+      type: 'OUT_OF_POCKITO',
+      typeLabel: this.translate.instant('common.outOfPockito')
+    };
+
+    const walletOptions = this.wallets.map(wallet => ({
       id: wallet.id!,
       name: wallet.name,
       iconUrl: wallet.iconUrl || this.getWalletIcon(wallet.type),
@@ -130,6 +152,8 @@ export class PaySubscriptionDialogComponent implements OnInit, OnDestroy, OnChan
       currency: wallet.currency,
       balance: wallet.balance
     }));
+
+    this.walletOptions = [this.outOfPockitoOption, ...walletOptions];
   }
 
   private updateExchangeRateLogic(): void {
@@ -169,7 +193,11 @@ export class PaySubscriptionDialogComponent implements OnInit, OnDestroy, OnChan
     return wallet.currency !== subscription.currency;
   }
 
-  getSelectedWallet(walletId?: string): Wallet | undefined {
+  getSelectedWallet(walletId?: string | null): any {
+    if (walletId === null) {
+      // Return "Out of Pockito" option
+      return this.outOfPockitoOption;
+    }
     if (!walletId) {
       return undefined;
     }

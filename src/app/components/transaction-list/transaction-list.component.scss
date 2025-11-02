@@ -153,6 +153,18 @@ $transaction-icon-size-mobile: 34px;
       gap: $spacing-xs;
     }
 
+    .wallet-icon {
+      font-size: 11px;
+      color: $text-500;
+      flex-shrink: 0;
+    }
+
+    .note-icon {
+      font-size: 11px;
+      color: $text-500;
+      flex-shrink: 0;
+    }
+
     .wallet-from,
     .wallet-to {
       white-space: nowrap;

@@ -14,7 +14,7 @@ export interface SubscriptionRequest {
   dayOfMonth?: number;
   dayOfWeek?: DayOfWeek;
   monthOfYear?: MonthOfYear;
-  defaultWalletId: string;
+  defaultWalletId?: string;
   note?: string;
 }
 
@@ -36,7 +36,7 @@ export interface Subscription {
   dayOfMonth?: number;
   dayOfWeek?: DayOfWeek;
   monthOfYear?: MonthOfYear;
-  defaultWalletId: string;
+  defaultWalletId?: string;
   defaultWalletName?: string;
   note?: string;
   createdAt: Date;

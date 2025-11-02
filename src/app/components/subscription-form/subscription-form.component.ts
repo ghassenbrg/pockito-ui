@@ -165,7 +165,7 @@ export class SubscriptionFormComponent implements OnInit {
       dayOfMonth: [null],
       dayOfWeek: [null],
       monthOfYear: [null],
-      defaultWalletId: [undefined, Validators.required],
+      defaultWalletId: [undefined],
       note: [undefined, Validators.maxLength(500)],
     });
 
