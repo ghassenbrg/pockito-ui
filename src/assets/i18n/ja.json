@@ -251,6 +251,8 @@
       "exchangeRate": "為替レート",
       "exchangeRatePlaceholder": "1.0000",
       "payingAmount": "支払い金額",
+      "skip": "次の支払いをスキップ",
+      "skipButton": "支払いをスキップ",
       "confirm": "支払いを確認",
       "success": "支払い成功",
       "successMessage": "サブスクリプションの支払いが正常に処理されました。",

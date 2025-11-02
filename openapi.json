@@ -225,22 +225,6 @@
             }
           }
         }
-      },
-      "delete": {
-        "tags": ["Transaction Management"],
-        "summary": "Delete a transaction",
-        "description": "Removes a transaction by ID.",
-        "operationId": "deleteTransaction",
-        "parameters": [
-          {
-            "name": "transactionId",
-            "in": "path",
-            "description": "Transaction ID to delete",
-            "required": true,
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": { "200": { "description": "OK" } }
       }
     },
     "/api/subscriptions/{subscriptionId}": {
@@ -610,7 +594,7 @@
       "post": {
         "tags": ["Subscription Management"],
         "summary": "Pay subscription",
-        "description": "Processes a payment for a subscription. Creates a new EXPENSE transaction and updates the subscription's nextDueDate. Exchange rate is only used if subscription currency differs from wallet currency, otherwise it's ignored.",
+        "description": "Processes a payment for a subscription. Creates a new EXPENSE transaction and updates the subscription's nextDueDate. Exchange rate is only used if subscription currency differs from wallet currency, otherwise it's ignored. If skip is true, skips payment and transaction creation, only updates nextDueDate and lastPaymentDate.",
         "operationId": "paySubscription",
         "parameters": [
           {
@@ -2334,7 +2318,7 @@
           },
           "startDate": { "type": "string", "format": "date" },
           "endDate": { "type": "string", "format": "date" },
-          "isActive": { "type": "boolean" },
+          "enabled": { "type": "boolean" },
           "categoryId": { "type": "string" },
           "dayOfMonth": {
             "type": "integer",
@@ -2379,9 +2363,9 @@
           "categoryId",
           "currency",
           "defaultWalletId",
+          "enabled",
           "frequency",
           "interval",
-          "isActive",
           "name",
           "startDate"
         ]
@@ -2552,7 +2536,9 @@
           },
           "startDate": { "type": "string", "format": "date" },
           "nextDueDate": { "type": "string", "format": "date" },
+          "lastPaymentDate": { "type": "string", "format": "date" },
           "endDate": { "type": "string", "format": "date" },
+          "enabled": { "type": "boolean" },
           "isActive": { "type": "boolean" },
           "categoryId": { "type": "string" },
           "categoryName": { "type": "string" },
@@ -2638,7 +2624,8 @@
         "type": "object",
         "properties": {
           "walletId": { "type": "string" },
-          "exchangeRate": { "type": "number", "minimum": 0.000001 }
+          "exchangeRate": { "type": "number", "minimum": 0.000001 },
+          "skip": { "type": "boolean" }
         }
       },
       "WalletListResponse": {
@@ -2662,8 +2649,11 @@
       "PageTransactionDto": {
         "type": "object",
         "properties": {
-          "totalElements": { "type": "integer", "format": "int64" },
           "totalPages": { "type": "integer", "format": "int32" },
+          "totalElements": { "type": "integer", "format": "int64" },
+          "first": { "type": "boolean" },
+          "last": { "type": "boolean" },
+          "numberOfElements": { "type": "integer", "format": "int32" },
           "size": { "type": "integer", "format": "int32" },
           "content": {
             "type": "array",
@@ -2671,9 +2661,6 @@
           },
           "number": { "type": "integer", "format": "int32" },
           "sort": { "$ref": "#/components/schemas/Sortnull" },
-          "numberOfElements": { "type": "integer", "format": "int32" },
-          "first": { "type": "boolean" },
-          "last": { "type": "boolean" },
           "pageable": { "$ref": "#/components/schemas/Pageablenull" },
           "empty": { "type": "boolean" }
         }
@@ -2683,18 +2670,18 @@
         "properties": {
           "offset": { "type": "integer", "format": "int64" },
           "sort": { "$ref": "#/components/schemas/Sortnull" },
-          "unpaged": { "type": "boolean" },
-          "pageNumber": { "type": "integer", "format": "int32" },
+          "paged": { "type": "boolean" },
           "pageSize": { "type": "integer", "format": "int32" },
-          "paged": { "type": "boolean" }
+          "pageNumber": { "type": "integer", "format": "int32" },
+          "unpaged": { "type": "boolean" }
         }
       },
       "Sortnull": {
         "type": "object",
         "properties": {
           "empty": { "type": "boolean" },
-          "unsorted": { "type": "boolean" },
-          "sorted": { "type": "boolean" }
+          "sorted": { "type": "boolean" },
+          "unsorted": { "type": "boolean" }
         }
       },
       "TransactionDto": {

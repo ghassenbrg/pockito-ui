@@ -149,7 +149,7 @@ export class SubscriptionStateService {
           // Refresh the subscription to get updated nextDueDate
           this.refreshSubscriptionSilently(subscriptionId);
           // Refresh affected wallet balance if provided
-          if (transaction.walletFromId) {
+          if (transaction && transaction.walletFromId) {
             this.walletState.refreshWalletSilently(transaction.walletFromId);
           }
         }),

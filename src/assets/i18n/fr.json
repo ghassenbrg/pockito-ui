@@ -251,6 +251,8 @@
       "exchangeRate": "Taux de Change",
       "exchangeRatePlaceholder": "1,0000",
       "payingAmount": "Montant à Payer",
+      "skip": "Ignorer le Prochain Paiement",
+      "skipButton": "Ignorer le Paiement",
       "confirm": "Confirmer le Paiement",
       "success": "Paiement réussi",
       "successMessage": "Votre paiement d'abonnement a été traité avec succès.",

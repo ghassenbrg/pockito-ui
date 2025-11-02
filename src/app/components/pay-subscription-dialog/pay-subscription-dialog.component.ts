@@ -12,6 +12,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { SubscriptionStateService } from '../../state/subscription/subscription-state.service';
 import { WalletStateService } from '../../state/wallet/wallet-state.service';
 import { ToastService } from '@shared/services/toast.service';
+import { PockitoToggleComponent } from '@shared/components/pockito-toggle/pockito-toggle.component';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -27,6 +28,7 @@ import { takeUntil } from 'rxjs/operators';
     PockitoButtonComponent,
     PockitoCurrencyPipe,
     InputNumberModule,
+    PockitoToggleComponent,
   ],
   templateUrl: './pay-subscription-dialog.component.html',
   styleUrl: './pay-subscription-dialog.component.scss'
@@ -84,7 +86,8 @@ export class PaySubscriptionDialogComponent implements OnInit, OnDestroy, OnChan
   private createForm(): FormGroup {
     return this.fb.group({
       walletId: [null],
-      exchangeRate: [1, [Validators.required, Validators.min(0.0001)]]
+      exchangeRate: [1, [Validators.required, Validators.min(0.0001)]],
+      skip: [false]
     });
   }
 
@@ -240,6 +243,17 @@ export class PaySubscriptionDialogComponent implements OnInit, OnDestroy, OnChan
     return this.translate.instant(`enums.walletType.${type}`);
   }
 
+  getConfirmButtonLabel(): string {
+    const isSkip = this.payForm.get('skip')?.value;
+    return isSkip 
+      ? this.translate.instant('subscriptions.pay.skipButton') 
+      : this.translate.instant('subscriptions.pay.confirm');
+  }
+
+  shouldShowWalletFields(): boolean {
+    return !this.payForm.get('skip')?.value;
+  }
+
   getFieldError(fieldName: string): string {
     const control = this.payForm.get(fieldName);
     if (control?.errors && control.touched) {
@@ -270,7 +284,7 @@ export class PaySubscriptionDialogComponent implements OnInit, OnDestroy, OnChan
   onDialogVisibleChange(visible: boolean): void {
     this.visibleChange.emit(visible);
     if (!visible) {
-      this.payForm.reset({ walletId: null, exchangeRate: 1 });
+      this.payForm.reset({ walletId: null, exchangeRate: 1, skip: false });
     } else {
       // When dialog opens, set the default wallet
       this.setDefaultWallet();
@@ -286,7 +300,8 @@ export class PaySubscriptionDialogComponent implements OnInit, OnDestroy, OnChan
     const formValue = this.payForm.value;
     const request = {
       walletId: formValue.walletId,
-      exchangeRate: this.shouldShowExchangeRateField() ? formValue.exchangeRate : undefined
+      exchangeRate: this.shouldShowExchangeRateField() ? formValue.exchangeRate : undefined,
+      skip: formValue.skip || undefined
     };
 
     this.subscriptionState.paySubscription(this.subscription.id, request).subscribe({

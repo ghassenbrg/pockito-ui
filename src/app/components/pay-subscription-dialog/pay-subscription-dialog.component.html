@@ -38,7 +38,7 @@
 
     <form [formGroup]="payForm" class="pay-form">
       <!-- Wallet Selection -->
-      <div class="form-field">
+      <div class="form-field" *ngIf="shouldShowWalletFields()">
         <label for="wallet" class="form-field__label">
           {{ "subscriptions.pay.selectWallet" | translate }}
         </label>
@@ -73,7 +73,7 @@
       </div>
 
       <!-- Exchange Rate Field (for different currencies) -->
-      <div class="form-field" *ngIf="shouldShowExchangeRateField()">
+      <div class="form-field" *ngIf="shouldShowExchangeRateField() && shouldShowWalletFields()">
         <label for="exchange-rate" class="form-field__label">
           {{ "subscriptions.pay.exchangeRate" | translate }}
           <span class="required">*</span>
@@ -121,6 +121,14 @@
           </span>
         </div>
       </div>
+
+      <!-- Skip Toggle -->
+      <div class="form-field">
+        <app-pockito-toggle
+          formControlName="skip"
+          [label]="'subscriptions.pay.skip' | translate"
+        />
+      </div>
     </form>
   </div>
 
@@ -139,7 +147,7 @@
       (click)="onConfirm()"
       [disabled]="payForm.invalid"
     >
-      {{ "subscriptions.pay.confirm" | translate }}
+      {{ getConfirmButtonLabel() }}
     </pockito-button>
   </div>
 </app-pockito-dialog>

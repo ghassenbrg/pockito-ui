@@ -9,12 +9,12 @@ export interface SubscriptionRequest {
   currency: Currency;
   startDate: string;
   endDate?: string;
-  isActive: boolean;
+  enabled: boolean;
   categoryId: string;
   dayOfMonth?: number;
   dayOfWeek?: DayOfWeek;
   monthOfYear?: MonthOfYear;
-  defaultWalletId?: string;
+  defaultWalletId: string;
   note?: string;
 }
 
@@ -29,14 +29,16 @@ export interface Subscription {
   currency: Currency;
   startDate: Date;
   nextDueDate?: Date;
+  lastPaymentDate?: Date;
   endDate?: Date;
+  enabled: boolean;
   isActive: boolean;
   categoryId: string;
   categoryName?: string;
   dayOfMonth?: number;
   dayOfWeek?: DayOfWeek;
   monthOfYear?: MonthOfYear;
-  defaultWalletId?: string;
+  defaultWalletId: string;
   defaultWalletName?: string;
   note?: string;
   createdAt: Date;
@@ -47,4 +49,5 @@ export interface Subscription {
 export interface PaySubscriptionRequest {
   walletId?: string;
   exchangeRate?: number;
+  skip?: boolean;
 }

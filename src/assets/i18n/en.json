@@ -253,6 +253,8 @@
       "exchangeRate": "Exchange Rate",
       "exchangeRatePlaceholder": "1.0000",
       "payingAmount": "Paying Amount",
+      "skip": "Skip Next Payment",
+      "skipButton": "Skip Payment",
       "confirm": "Confirm Payment",
       "success": "Payment successful",
       "successMessage": "Your subscription payment has been processed successfully.",
@@ -298,7 +300,7 @@
       "iconPreview": "Preview",
       "note": "Note",
       "notePlaceholder": "Optional note or description",
-      "isActive": "Active",
+      "enabled": "Enabled",
       "required": "*",
       "actions": {
         "cancel": "Cancel",
