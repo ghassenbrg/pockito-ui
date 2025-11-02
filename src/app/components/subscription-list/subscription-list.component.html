@@ -28,15 +28,10 @@
       <div class="subscription-item-header">
         <span class="subscription-icon">
           <img
-            *ngIf="subscription.iconUrl"
-            [src]="subscription.iconUrl"
+            [src]="subscription.iconUrl || '/assets/icons/subscription.png'"
             [alt]="subscription.name"
             onerror="this.src='/assets/images/placeholder.png'"
           />
-          <i
-            *ngIf="!subscription.iconUrl"
-            class="fa-solid fa-calendar-days"
-          ></i>
         </span>
 
         <div class="subscription-info">

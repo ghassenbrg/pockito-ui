@@ -19,15 +19,10 @@
       <div class="subscription-name">
         <span class="subscription-icon">
           <img
-            *ngIf="subscription.iconUrl"
-            [src]="subscription.iconUrl"
+            [src]="subscription.iconUrl || '/assets/icons/subscription-no-bg.png'"
             [alt]="subscription.name"
-            onerror="this.src='/assets/images/placeholder.png'"
+            onerror="this.src='/assets/icons/subscription-no-bg.png'"
           />
-          <i
-            *ngIf="!subscription.iconUrl"
-            class="fa-solid fa-calendar-days"
-          ></i>
         </span>
         <span>{{ subscription.name }}</span>
       </div>
