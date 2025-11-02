@@ -29,10 +29,10 @@ export interface Transaction {
   iconUrl?: string;
   note?: string;
   effectiveDate: Date;
-  createdAt: Date;
-  updatedAt: Date;
   subscriptionId?: string;
   subscriptionName?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface TransactionDto {
@@ -53,10 +53,10 @@ export interface TransactionDto {
   iconUrl?: string;
   note?: string;
   effectiveDate: Date;
-  createdAt: Date;
-  updatedAt: Date;
   subscriptionId?: string;
   subscriptionName?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface TransactionList {
@@ -71,15 +71,15 @@ export interface Pageable {
 }
 
 export interface PageTransactionDto {
-  totalPages: number;
   totalElements: number;
-  first: boolean;
-  last: boolean;
+  totalPages: number;
   size: number;
   content: TransactionDto[];
   number: number;
   sort?: Sort;
   numberOfElements: number;
+  first: boolean;
+  last: boolean;
   pageable?: PageableInfo;
   empty: boolean;
 }

@@ -12,7 +12,6 @@ export interface Category {
   id: string;
   username: string;
   name: string;
-  description?: string;
   color: string;
   categoryType: CategoryType;
   iconUrl?: string;

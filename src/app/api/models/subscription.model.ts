@@ -1,4 +1,4 @@
-import { SubscriptionFrequency, Currency } from './enum';
+import { SubscriptionFrequency, Currency, DayOfWeek, MonthOfYear } from './enum';
 
 export interface SubscriptionRequest {
   name: string;
@@ -8,13 +8,12 @@ export interface SubscriptionRequest {
   amount: number;
   currency: Currency;
   startDate: string;
-  nextDueDate?: string;
   endDate?: string;
   isActive: boolean;
   categoryId: string;
   dayOfMonth?: number;
-  dayOfWeek?: number;
-  monthOfYear?: number;
+  dayOfWeek?: DayOfWeek;
+  monthOfYear?: MonthOfYear;
   defaultWalletId: string;
   note?: string;
 }
@@ -35,8 +34,8 @@ export interface Subscription {
   categoryId: string;
   categoryName?: string;
   dayOfMonth?: number;
-  dayOfWeek?: number;
-  monthOfYear?: number;
+  dayOfWeek?: DayOfWeek;
+  monthOfYear?: MonthOfYear;
   defaultWalletId: string;
   defaultWalletName?: string;
   note?: string;

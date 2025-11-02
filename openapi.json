@@ -2333,7 +2333,6 @@
             ]
           },
           "startDate": { "type": "string", "format": "date" },
-          "nextDueDate": { "type": "string", "format": "date" },
           "endDate": { "type": "string", "format": "date" },
           "isActive": { "type": "boolean" },
           "categoryId": { "type": "string" },
@@ -2344,16 +2343,33 @@
             "minimum": 1
           },
           "dayOfWeek": {
-            "type": "integer",
-            "format": "int32",
-            "maximum": 7,
-            "minimum": 1
+            "type": "string",
+            "enum": [
+              "MONDAY",
+              "TUESDAY",
+              "WEDNESDAY",
+              "THURSDAY",
+              "FRIDAY",
+              "SATURDAY",
+              "SUNDAY"
+            ]
           },
           "monthOfYear": {
-            "type": "integer",
-            "format": "int32",
-            "maximum": 12,
-            "minimum": 1
+            "type": "string",
+            "enum": [
+              "JANUARY",
+              "FEBRUARY",
+              "MARCH",
+              "APRIL",
+              "MAY",
+              "JUNE",
+              "JULY",
+              "AUGUST",
+              "SEPTEMBER",
+              "OCTOBER",
+              "NOVEMBER",
+              "DECEMBER"
+            ]
           },
           "defaultWalletId": { "type": "string" },
           "note": { "type": "string", "maxLength": 1000, "minLength": 0 }
@@ -2541,8 +2557,35 @@
           "categoryId": { "type": "string" },
           "categoryName": { "type": "string" },
           "dayOfMonth": { "type": "integer", "format": "int32" },
-          "dayOfWeek": { "type": "integer", "format": "int32" },
-          "monthOfYear": { "type": "integer", "format": "int32" },
+          "dayOfWeek": {
+            "type": "string",
+            "enum": [
+              "MONDAY",
+              "TUESDAY",
+              "WEDNESDAY",
+              "THURSDAY",
+              "FRIDAY",
+              "SATURDAY",
+              "SUNDAY"
+            ]
+          },
+          "monthOfYear": {
+            "type": "string",
+            "enum": [
+              "JANUARY",
+              "FEBRUARY",
+              "MARCH",
+              "APRIL",
+              "MAY",
+              "JUNE",
+              "JULY",
+              "AUGUST",
+              "SEPTEMBER",
+              "OCTOBER",
+              "NOVEMBER",
+              "DECEMBER"
+            ]
+          },
           "defaultWalletId": { "type": "string" },
           "defaultWalletName": { "type": "string" },
           "note": { "type": "string" },
@@ -2628,9 +2671,9 @@
           },
           "number": { "type": "integer", "format": "int32" },
           "sort": { "$ref": "#/components/schemas/Sortnull" },
+          "numberOfElements": { "type": "integer", "format": "int32" },
           "first": { "type": "boolean" },
           "last": { "type": "boolean" },
-          "numberOfElements": { "type": "integer", "format": "int32" },
           "pageable": { "$ref": "#/components/schemas/Pageablenull" },
           "empty": { "type": "boolean" }
         }
@@ -2640,18 +2683,18 @@
         "properties": {
           "offset": { "type": "integer", "format": "int64" },
           "sort": { "$ref": "#/components/schemas/Sortnull" },
-          "paged": { "type": "boolean" },
+          "unpaged": { "type": "boolean" },
           "pageNumber": { "type": "integer", "format": "int32" },
           "pageSize": { "type": "integer", "format": "int32" },
-          "unpaged": { "type": "boolean" }
+          "paged": { "type": "boolean" }
         }
       },
       "Sortnull": {
         "type": "object",
         "properties": {
           "empty": { "type": "boolean" },
-          "sorted": { "type": "boolean" },
-          "unsorted": { "type": "boolean" }
+          "unsorted": { "type": "boolean" },
+          "sorted": { "type": "boolean" }
         }
       },
       "TransactionDto": {

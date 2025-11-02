@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { UserDto, User, Currency, Country } from '../models';
+import { User, Currency, Country } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,7 @@ export class UserService {
   private readonly baseUrl = '/api/users';
 
   // <keep this when geenrating from prompt.md>
-  private currentUserSubject = new BehaviorSubject<UserDto | null>(null);
+  private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
   // </end of keep this when geenrating from prompt.md>
 
@@ -30,6 +30,7 @@ export class UserService {
 
   /**
    * Get user by username
+   * Retrieves a user by their username
    */
   getUserByUsername(username: string): Observable<User> {
     return this.http.get<User>(`${this.baseUrl}/${username}`);
@@ -37,6 +38,7 @@ export class UserService {
 
   /**
    * Check if user exists
+   * Checks whether a user with the specified username exists
    */
   checkUserExists(username: string): Observable<void> {
     return this.http.get<void>(`${this.baseUrl}/${username}/exists`);
