@@ -53,7 +53,7 @@
             <span class="meta-separator" *ngIf="subscription.categoryName">•</span>
             <span 
               class="meta-item due-date-item" 
-              *ngIf="subscription.nextDueDate && subscription.isActive"
+              *ngIf="subscription.nextDueDate"
               [class.overdue]="isOverdue(subscription)"
               [class.due-soon]="isDueSoon(subscription)"
             >

@@ -51,8 +51,8 @@ $subscription-icon-radius: 16px;
 
   .status-indicator {
     position: absolute;
-    top: clamp(16px, 2.2vw, 22px);
-    right: clamp(16px, 2.2vw, 22px);
+    top: 10px;
+    right: 10px;
     width: 10px;
     height: 10px;
     border-radius: 50%;

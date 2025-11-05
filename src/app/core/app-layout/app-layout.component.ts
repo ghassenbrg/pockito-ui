@@ -10,15 +10,15 @@ import {
 import { NavigationEnd, Router } from '@angular/router';
 import { User } from '@api/models';
 import { UserService } from '@api/services';
+import { LanguageSwitcherComponent } from '@app/components/language-switcher/language-switcher.component';
+import { TransactionFormDialogComponent } from '@app/components/transaction-form-dialog/transaction-form-dialog.component';
 import { KeycloakService } from '@core/security/keycloak.service';
 import { MobileService } from '@core/services/mobile.service';
 import { ResponsiveService } from '@core/services/responsive.service';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { LanguageSwitcherComponent } from '@app/components/language-switcher/language-switcher.component';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
 import { PockitoDialogComponent } from '@shared/components/pockito-dialog/pockito-dialog.component';
 import { ToastComponent } from '@shared/components/toast/toast.component';
-import { TransactionFormDialogComponent } from '@app/components/transaction-form-dialog/transaction-form-dialog.component';
 import { LoadingService } from '@shared/services/loading.service';
 import { MenuItem, MessageService } from 'primeng/api';
 import { DockModule } from 'primeng/dock';
@@ -155,6 +155,7 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
   private initializeMenuItems() {
     this.dockItems = [
       {
+        id: 'dashboard',
         label: this.translate.instant('appLayout.navigation.dashboard'),
         tooltipOptions: {
           tooltipLabel: this.translate.instant(
@@ -168,9 +169,11 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         icon: '/assets/favicon.png',
         command: () => {
           this.navigateTo('/app/dashboard');
+          this.activeRoute = 'dashboard';
         },
       },
       {
+        id: 'wallets',
         label: this.translate.instant('appLayout.navigation.wallets'),
         tooltipOptions: {
           tooltipLabel: this.translate.instant('appLayout.navigation.wallets'),
@@ -182,9 +185,11 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         icon: '/assets/icons/wallet.png',
         command: () => {
           this.navigateTo('/app/wallets');
+          this.activeRoute = 'wallets';
         },
       },
       {
+        id: 'transactions',
         label: this.translate.instant('appLayout.navigation.transactions'),
         tooltipOptions: {
           tooltipLabel: this.translate.instant(
@@ -198,9 +203,11 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         icon: '/assets/icons/transaction.png',
         command: () => {
           this.navigateTo('/app/transactions');
+          this.activeRoute = 'transactions';
         },
       },
       {
+        id: 'subscriptions',
         label: this.translate.instant('appLayout.navigation.subscriptions'),
         tooltipOptions: {
           tooltipLabel: this.translate.instant(
@@ -214,9 +221,11 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         icon: '/assets/icons/subscription.png',
         command: () => {
           this.navigateTo('/app/subscriptions');
+          this.activeRoute = 'subscriptions';
         },
       },
       {
+        id: 'budgets',
         label: this.translate.instant('appLayout.navigation.budgets'),
         tooltipOptions: {
           tooltipLabel: this.translate.instant('appLayout.navigation.budgets'),
@@ -228,9 +237,11 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         icon: '/assets/icons/budget.png',
         command: () => {
           this.navigateTo('/app/budgets');
+          this.activeRoute = 'budgets';
         },
       },
       {
+        id: 'agreements',
         label: this.translate.instant('appLayout.navigation.agreements'),
         tooltipOptions: {
           tooltipLabel: this.translate.instant(
@@ -244,9 +255,11 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         icon: '/assets/icons/agreement.png',
         command: () => {
           this.navigateTo('/app/agreements');
+          this.activeRoute = 'agreements';
         },
       },
       {
+        id: 'more',
         label: this.translate.instant('appLayout.navigation.more'),
         tooltipOptions: {
           tooltipLabel: this.translate.instant('appLayout.navigation.more'),
@@ -258,12 +271,14 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         icon: '/assets/icons/more.png',
         command: () => {
           this.displayMore = true;
+          this.activeRoute = 'more';
         },
       },
     ];
 
     this.moreItems = [
       {
+        id: 'categories',
         label: this.translate.instant('appLayout.navigation.categories'),
         tooltipOptions: {
           tooltipLabel: this.translate.instant(
@@ -277,9 +292,11 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         icon: '/assets/icons/category.png',
         command: () => {
           this.navigateTo('/app/categories');
+          this.activeRoute = 'categories';
         },
       },
       {
+        id: 'account',
         label: this.translate.instant('appLayout.navigation.account'),
         tooltipOptions: {
           tooltipLabel: this.translate.instant('appLayout.navigation.account'),
@@ -291,9 +308,11 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         icon: '/assets/icons/account.png',
         command: () => {
           this.navigateTo('/app/account');
+          this.activeRoute = 'account';
         },
       },
       {
+        id: 'settings',
         label: this.translate.instant('appLayout.navigation.settings'),
         tooltipOptions: {
           tooltipLabel: this.translate.instant('appLayout.navigation.settings'),
@@ -305,9 +324,11 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         icon: '/assets/icons/settings.png',
         command: () => {
           this.navigateTo('/app/settings');
+          this.activeRoute = 'settings';
         },
       },
       {
+        id: 'language',
         label: this.translate.instant('appLayout.navigation.language'),
         tooltipOptions: {
           tooltipLabel: this.translate.instant('appLayout.navigation.language'),
@@ -319,9 +340,11 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         icon: '/assets/icons/language.png',
         command: () => {
           this.displaySwitchLanguage = true;
+          this.activeRoute = 'language';
         },
       },
       {
+        id: 'github',
         label: this.translate.instant('appLayout.navigation.github'),
         tooltipOptions: {
           tooltipLabel: this.translate.instant('appLayout.navigation.github'),
@@ -333,9 +356,11 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         icon: '/assets/icons/github.svg',
         command: () => {
           window.open('https://github.com/ghassenbrg/pockito', '_blank');
+          this.activeRoute = 'github';
         },
       },
       {
+        id: 'logout',
         label: this.translate.instant('appLayout.navigation.logout'),
         tooltipOptions: {
           tooltipLabel: this.translate.instant('appLayout.navigation.logout'),
@@ -347,6 +372,7 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         icon: '/assets/icons/logout.png',
         command: () => {
           this.KeycloakService.logout();
+          this.activeRoute = 'logout';
         },
       },
     ];
@@ -362,12 +388,14 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         this.moreItems.unshift({
           ...this.dockItems[4], // Budgets
           icon: '/assets/icons/budget-no-bg.png',
+          id: 'budgets',
         });
 
         // Insert agreements after subscriptions
         this.moreItems.splice(2, 0, {
           ...this.dockItems[5], // Agreements
           icon: '/assets/icons/agreement-no-bg.png',
+          id: 'agreements',
         });
       }
     }
@@ -455,25 +483,33 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
   // Update active route based on current URL
   private updateActiveRoute(url: string): void {
     if (url.includes('/app/dashboard')) {
-      this.activeRoute = this.translate.instant(
-        'appLayout.navigation.dashboard'
-      );
+      this.activeRoute = 'dashboard';
     } else if (url.includes('/app/wallets')) {
-      this.activeRoute = this.translate.instant('appLayout.navigation.wallets');
+      this.activeRoute = 'wallets';
     } else if (url.includes('/app/transactions')) {
-      this.activeRoute = this.translate.instant(
-        'appLayout.navigation.transactions'
-      );
-    } else if (url.includes('/app/budgets')) {
-      this.activeRoute = this.translate.instant('appLayout.navigation.budgets');
+      this.activeRoute = 'transactions';
+    } 
+    else if (url.includes('/app/budgets')) {
+      this.activeRoute = 'budgets';
+    } else if (url.includes('/app/subscriptions')) {
+      this.activeRoute = 'subscriptions';
+    } else if (url.includes('/app/agreements')) {
+      this.activeRoute = 'agreements';
+    } else if (url.includes('/app/categories')) {
+      this.activeRoute = 'categories';
+    } else if (url.includes('/app/account')) {
+      this.activeRoute = 'account';
+    } else if (url.includes('/app/settings')) {
+      this.activeRoute = 'settings';
+    } else if (url.includes('/app/language')) {
+      this.activeRoute = 'language';
+    } else if (url.includes('/app/github')) {
+      this.activeRoute = 'github';
+    } else if (url.includes('/app/logout')) {
+      this.activeRoute = 'logout';
     } else {
-      this.activeRoute = '';
+      this.activeRoute = 'more';
     }
-  }
-
-  // Check if a navigation item is active
-  isActiveTab(item: MenuItem): boolean {
-    return item.label === this.activeRoute;
   }
 
   // Touch gesture support
